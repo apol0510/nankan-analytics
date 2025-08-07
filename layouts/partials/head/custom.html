@@ -5,13 +5,13 @@
 <script defer src="{{ "js/newsletter.js" | relURL }}"></script>
 
 <!-- Google Analytics 4 (設定後に有効化) -->
-{{- if .Site.Services.googleAnalytics.ID }}
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Services.googleAnalytics.ID }}"></script>
+{{- with site.Config.Services.GoogleAnalytics.ID }}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', '{{ .Site.Services.googleAnalytics.ID }}', {
+  gtag('config', '{{ . }}', {
     anonymize_ip: true,
     respect_do_not_track: true
   });
@@ -155,7 +155,7 @@
 
 <!-- メタタグの最適化 -->
 {{- if .IsPage }}
-<meta name="keywords" content="{{ delimit .Params.tags ", " }}, 競馬, 機械学習, AI, Python, データサイエンス">
+<meta name="keywords" content="{{ if .Params.tags }}{{ delimit .Params.tags ", " }}, {{ end }}競馬, 機械学習, AI, Python, データサイエンス">
 <meta name="robots" content="index, follow">
 <meta name="googlebot" content="index, follow">
 {{- end }}

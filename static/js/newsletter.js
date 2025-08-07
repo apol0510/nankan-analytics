@@ -1,319 +1,183 @@
-// メルマガ登録フォーム JavaScript
+// NANKANアナリティクス - メルマガ・UI機能
 
-// Exit Intent Detection
-let exitIntentTriggered = false;
-const exitIntentDelay = 2000; // 2秒後に有効化
-
+// メルマガフォーム機能
 document.addEventListener('DOMContentLoaded', function() {
-    // Exit Intent Popupの初期化
-    initExitIntentPopup();
-    
-    // フォーム送信の処理
-    initNewsletterForms();
-    
-    // スクロール位置での記事中CTA表示
-    initScrollCTA();
-});
-
-// Exit Intent Popup初期化
-function initExitIntentPopup() {
-    // ポップアップHTML作成
-    const popup = document.createElement('div');
-    popup.id = 'exit-intent-popup';
-    popup.className = 'exit-intent-popup';
-    popup.innerHTML = `
-        <div class="exit-intent-content">
-            <button class="exit-intent-close" onclick="closeExitIntentPopup()">&times;</button>
-            <h3>🎁 特典を受け取りませんか？</h3>
-            <p>競馬AI構築完全マニュアル（Python実装コード付き）をプレゼント！</p>
-            <form name="exit-intent-newsletter" method="POST" data-netlify="true" onsubmit="handleNewsletterSubmit(event)">
-                <input type="hidden" name="form-name" value="exit-intent-newsletter">
-                <input type="email" name="email" placeholder="メールアドレスを入力" required>
-                <button type="submit" class="cta-button">今すぐ無料で受け取る</button>
-            </form>
-        </div>
-    `;
-    document.body.appendChild(popup);
-    
-    // Exit Intentイベントリスナー
-    setTimeout(() => {
-        document.addEventListener('mouseleave', function(e) {
-            if (e.clientY < 0 && !exitIntentTriggered) {
-                showExitIntentPopup();
+    // スムーススクロール
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth'
+                });
             }
         });
-        
-        // モバイル用：スクロールアップ検知
-        let lastScrollY = window.scrollY;
-        window.addEventListener('scroll', function() {
-            if (window.scrollY < lastScrollY && window.scrollY < 100 && !exitIntentTriggered) {
-                showExitIntentPopup();
-            }
-            lastScrollY = window.scrollY;
-        });
-    }, exitIntentDelay);
-}
+    });
 
-// Exit Intent Popup表示
-function showExitIntentPopup() {
-    if (localStorage.getItem('newsletter-subscribed') || localStorage.getItem('exit-popup-closed')) {
-        return;
+    // アニメーション効果
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // 要素にアニメーションを適用
+    document.querySelectorAll('.article-card, .sidebar-card, .stat-card, .model-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+
+    // メルマガフォーム送信処理
+    const newsletterForms = document.querySelectorAll('.newsletter-form');
+    newsletterForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const email = form.querySelector('input[name="mailaddr"]').value;
+            
+            // 簡単なバリデーション
+            if (!email || !isValidEmail(email)) {
+                e.preventDefault();
+                alert('有効なメールアドレスを入力してください。');
+                return false;
+            }
+
+            // 送信中の表示
+            const submitButton = form.querySelector('.newsletter-button');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = '登録中...';
+            submitButton.disabled = true;
+
+            // フォームが配配メールに送信される前にユーザーフィードバック
+            setTimeout(() => {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }, 3000);
+        });
+    });
+
+    // メールアドレス検証関数
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     }
+
+    // カードホバー効果の強化
+    document.querySelectorAll('.article-card, .model-card, .stat-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            if (this.classList.contains('article-card')) {
+                this.style.boxShadow = '0 10px 30px rgba(59, 130, 246, 0.2)';
+            }
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+
+    // スクロールアニメーションの調整
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const parallax = document.querySelector('.hero-section');
+        if (parallax) {
+            const speed = scrolled * 0.5;
+            parallax.style.transform = `translateY(${speed}px)`;
+        }
+    });
+
+    // レスポンシブメニューの処理
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
     
-    exitIntentTriggered = true;
-    const popup = document.getElementById('exit-intent-popup');
-    if (popup) {
-        popup.style.display = 'flex';
-        // アニメーション
+    if (mobileMenuToggle && navMenu) {
+        mobileMenuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+    }
+
+    // 統計数値のカウントアップアニメーション
+    function countUp(element, target, duration = 2000) {
+        const increment = target / (duration / 16);
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            
+            // パーセンテージや数値の表示調整
+            if (target.toString().includes('%')) {
+                element.textContent = current.toFixed(1) + '%';
+            } else if (target >= 1000) {
+                element.textContent = Math.floor(current).toLocaleString() + '+';
+            } else {
+                element.textContent = Math.floor(current) + '+';
+            }
+        }, 16);
+    }
+
+    // 統計カードが見えたときにアニメーション開始
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const statNumber = entry.target.querySelector('.stat-number');
+                const text = statNumber.textContent;
+                
+                // 数値を抽出してアニメーション
+                if (text.includes('87.3%')) {
+                    countUp(statNumber, 87.3);
+                } else if (text.includes('156%')) {
+                    countUp(statNumber, 156);
+                } else if (text.includes('10,000+')) {
+                    countUp(statNumber, 10000);
+                } else if (text.includes('50+')) {
+                    countUp(statNumber, 50);
+                }
+                
+                statsObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-card').forEach(card => {
+        statsObserver.observe(card);
+    });
+
+    // タイピング効果（ヒーロータイトル）
+    function typeWriter(element, text, speed = 100) {
+        let i = 0;
+        element.textContent = '';
+        
+        function type() {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            }
+        }
+        
+        type();
+    }
+
+    // ページロード時のヒーロータイトルアニメーション
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) {
+        const originalText = heroTitle.textContent;
         setTimeout(() => {
-            popup.style.opacity = '1';
-        }, 10);
-        
-        // Google Analytics イベント
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'popup_shown', {
-                'event_category': 'Newsletter',
-                'event_label': 'Exit Intent'
-            });
-        }
+            typeWriter(heroTitle, originalText, 150);
+        }, 500);
     }
-}
-
-// Exit Intent Popup閉じる
-function closeExitIntentPopup() {
-    const popup = document.getElementById('exit-intent-popup');
-    if (popup) {
-        popup.style.display = 'none';
-        localStorage.setItem('exit-popup-closed', 'true');
-        
-        // Google Analytics イベント
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'popup_closed', {
-                'event_category': 'Newsletter',
-                'event_label': 'Exit Intent'
-            });
-        }
-    }
-}
-
-// フォーム送信処理
-function initNewsletterForms() {
-    const forms = document.querySelectorAll('form[name*="newsletter"]');
-    forms.forEach(form => {
-        form.addEventListener('submit', handleNewsletterSubmit);
-    });
-}
-
-// Newsletter フォーム送信処理
-function handleNewsletterSubmit(event) {
-    event.preventDefault();
-    
-    const form = event.target;
-    const email = form.querySelector('input[type="email"]').value;
-    const formName = form.getAttribute('name');
-    
-    // バリデーション
-    if (!isValidEmail(email)) {
-        showMessage('有効なメールアドレスを入力してください', 'error');
-        return;
-    }
-    
-    // 送信ボタン無効化
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
-    submitButton.disabled = true;
-    submitButton.textContent = '送信中...';
-    
-    // Netlify Forms に送信
-    fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode({
-            'form-name': formName,
-            'email': email
-        })
-    })
-    .then(() => {
-        // 成功処理
-        showMessage('登録ありがとうございます！特典をメールでお送りします。', 'success');
-        form.reset();
-        localStorage.setItem('newsletter-subscribed', 'true');
-        
-        // Exit Intent Popup閉じる
-        if (formName.includes('exit-intent')) {
-            closeExitIntentPopup();
-        }
-        
-        // Google Analytics イベント
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'newsletter_signup', {
-                'event_category': 'Newsletter',
-                'event_label': formName
-            });
-        }
-        
-        // 配配メールAPI連携（実装が必要な場合）
-        sendToHaihaiMail(email);
-    })
-    .catch(() => {
-        showMessage('エラーが発生しました。しばらく経ってから再度お試しください。', 'error');
-    })
-    .finally(() => {
-        // 送信ボタン復元
-        submitButton.disabled = false;
-        submitButton.textContent = originalText;
-    });
-}
-
-// 配配メール API連携（プレースホルダー）
-function sendToHaihaiMail(email) {
-    // 配配メールAPIへの連携処理をここに実装
-    // 実際の実装では、サーバーサイドでAPI連携を行うことを推奨
-    console.log('配配メールに登録:', email);
-}
-
-// フォームデータエンコード
-function encode(data) {
-    return Object.keys(data)
-        .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-        .join("&");
-}
-
-// メールアドレスバリデーション
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// メッセージ表示
-function showMessage(message, type) {
-    // 既存のメッセージを削除
-    const existingMessage = document.querySelector('.newsletter-message');
-    if (existingMessage) {
-        existingMessage.remove();
-    }
-    
-    // メッセージ要素作成
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `newsletter-message newsletter-message-${type}`;
-    messageDiv.textContent = message;
-    messageDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        border-radius: 0.5rem;
-        color: white;
-        font-weight: 600;
-        z-index: 10000;
-        max-width: 300px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        ${type === 'success' 
-            ? 'background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);' 
-            : 'background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);'
-        }
-    `;
-    
-    document.body.appendChild(messageDiv);
-    
-    // 3秒後に自動削除
-    setTimeout(() => {
-        if (messageDiv.parentNode) {
-            messageDiv.remove();
-        }
-    }, 3000);
-}
-
-// スクロール位置での記事中CTA表示
-function initScrollCTA() {
-    let ctaShown = false;
-    
-    window.addEventListener('scroll', () => {
-        if (ctaShown || localStorage.getItem('newsletter-subscribed')) {
-            return;
-        }
-        
-        const scrollPercent = (window.scrollY) / (document.body.scrollHeight - window.innerHeight);
-        
-        // 50%スクロールした時点でCTA表示
-        if (scrollPercent > 0.5) {
-            showScrollCTA();
-            ctaShown = true;
-        }
-    });
-}
-
-// スクロールCTA表示
-function showScrollCTA() {
-    const article = document.querySelector('.article-content, .post-content, article');
-    if (!article) return;
-    
-    const cta = document.createElement('div');
-    cta.className = 'article-cta';
-    cta.innerHTML = `
-        <h4>🚀 競馬AIで予想精度を向上させませんか？</h4>
-        <p>Python実装コード付きの完全マニュアルを無料プレゼント中！</p>
-        <form name="scroll-newsletter" method="POST" data-netlify="true" onsubmit="handleNewsletterSubmit(event)">
-            <input type="hidden" name="form-name" value="scroll-newsletter">
-            <input type="email" name="email" placeholder="メールアドレスを入力" required style="width: 100%; margin-bottom: 1rem; padding: 0.75rem; border: 1px solid #475569; border-radius: 0.5rem; background-color: #0f172a; color: #e2e8f0;">
-            <button type="submit">今すぐ無料で受け取る</button>
-        </form>
-    `;
-    
-    // 記事の中間に挿入
-    const paragraphs = article.querySelectorAll('p');
-    if (paragraphs.length > 3) {
-        const insertAfter = paragraphs[Math.floor(paragraphs.length / 2)];
-        insertAfter.parentNode.insertBefore(cta, insertAfter.nextSibling);
-    } else {
-        article.appendChild(cta);
-    }
-    
-    // Google Analytics イベント
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'scroll_cta_shown', {
-            'event_category': 'Newsletter',
-            'event_label': 'Article CTA'
-        });
-    }
-}
-
-// ヘッダー固定CTA（オプション）
-function addHeaderCTA() {
-    if (localStorage.getItem('newsletter-subscribed') || localStorage.getItem('header-cta-dismissed')) {
-        return;
-    }
-    
-    const headerCTA = document.createElement('div');
-    headerCTA.className = 'header-newsletter-cta';
-    headerCTA.innerHTML = `
-        🎯 競馬AI完全マニュアル無料プレゼント中！
-        <a href="#newsletter" onclick="scrollToNewsletter()"">今すぐ受け取る</a>
-        <button onclick="dismissHeaderCTA()" style="background:none;border:none;color:white;margin-left:10px;cursor:pointer;">✕</button>
-    `;
-    
-    document.body.insertBefore(headerCTA, document.body.firstChild);
-}
-
-// ヘッダーCTA削除
-function dismissHeaderCTA() {
-    const headerCTA = document.querySelector('.header-newsletter-cta');
-    if (headerCTA) {
-        headerCTA.remove();
-        localStorage.setItem('header-cta-dismissed', 'true');
-    }
-}
-
-// Newsletter セクションにスクロール
-function scrollToNewsletter() {
-    const newsletterSection = document.querySelector('.newsletter-form, form[name*="newsletter"]');
-    if (newsletterSection) {
-        newsletterSection.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-// 外部からアクセス可能な関数をグローバル化
-window.closeExitIntentPopup = closeExitIntentPopup;
-window.handleNewsletterSubmit = handleNewsletterSubmit;
-window.dismissHeaderCTA = dismissHeaderCTA;
-window.scrollToNewsletter = scrollToNewsletter;
+});

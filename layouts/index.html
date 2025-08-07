@@ -1,0 +1,243 @@
+{{ define "main" }}
+<!DOCTYPE html>
+<html lang="ja" class="home">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Site.Title }} | AI×機械学習で南関競馬を攻略</title>
+    <meta name="description" content="{{ .Site.Params.description }}">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+    
+    <!-- SEO Meta Tags -->
+    {{ partial "head/custom.html" . }}
+</head>
+<body class="home">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="{{ .Site.BaseURL }}" class="logo">{{ .Site.Title }}</a>
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="/categories/machine-learning/">機械学習</a></li>
+                        <li><a href="/categories/deep-learning/">深層学習</a></li>
+                        <li><a href="/categories/data-science/">データサイエンス</a></li>
+                        <li><a href="/tools/">ツール</a></li>
+                        <li><a href="/about/">About</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <h1 class="hero-title">AI×南関競馬</h1>
+                <p class="hero-subtitle">
+                    機械学習とデータサイエンスで次世代の的中率を実現。<br>
+                    人間の感覚を超えた、科学的予想法を無料で学べます。
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">87.3%</div>
+                        <div class="stat-label">AIモデル精度</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">156%</div>
+                        <div class="stat-label">平均回収率</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10,000+</div>
+                        <div class="stat-label">学習データ数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">特徴量</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Newsletter Section -->
+            <section class="newsletter-section">
+                <h2 class="newsletter-title">🚀 AI予想技術を無料で学ぼう</h2>
+                <p>Python実装コード付きの機械学習講座を毎週配信。<br>有料AI予想の一部も無料でお届けします。</p>
+                <form class="newsletter-form" action="https://a16.hm-f.jp/index.php" method="post">
+                    <input type="hidden" name="charset" value="UTF-8" />
+                    <input type="hidden" name="action" value="R3" />
+                    <input type="hidden" name="a" value="742" />
+                    <input type="hidden" name="f" value="36" />
+                    <input type="hidden" name="g" value="16" />
+                    <input type="hidden" name="fa_code" value="f3fc06d607f3277d0a2e64be633bee90" />
+                    <input type="email" name="mailaddr" class="newsletter-input" placeholder="メールアドレスを入力" required>
+                    <button type="submit" class="newsletter-button">無料で学習開始</button>
+                </form>
+                <p style="font-size: 0.9rem; margin-top: 15px; color: var(--accent-text-color);">※いつでも配信停止可能 | プライバシー保護</p>
+            </section>
+
+            <!-- AI Models Section -->
+            <section class="ai-model-section">
+                <h2 style="text-align: center; font-size: 1.8rem; color: var(--accent-color); margin-bottom: 20px;">
+                    🤖 現在稼働中のAIモデル
+                </h2>
+                <p style="text-align: center; color: var(--accent-text-color); margin-bottom: 30px;">
+                    複数の機械学習アルゴリズムを組み合わせて、最高精度の予想を実現
+                </p>
+                <div class="model-grid">
+                    <div class="model-card">
+                        <div class="model-name">XGBoost分類器</div>
+                        <div class="model-accuracy">91.2%</div>
+                        <p style="font-size: 0.9rem; color: var(--accent-text-color); margin-top: 10px;">
+                            勾配ブースティングによる着順予測
+                        </p>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">LSTM回帰</div>
+                        <div class="model-accuracy">85.7%</div>
+                        <p style="font-size: 0.9rem; color: var(--accent-text-color); margin-top: 10px;">
+                            時系列データによるオッズ予測
+                        </p>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">ランダムフォレスト</div>
+                        <div class="model-accuracy">88.4%</div>
+                        <p style="font-size: 0.9rem; color: var(--accent-text-color); margin-top: 10px;">
+                            アンサンブル学習による安定予測
+                        </p>
+                    </div>
+                    <div class="model-card">
+                        <div class="model-name">ニューラルネット</div>
+                        <div class="model-accuracy">89.1%</div>
+                        <p style="font-size: 0.9rem; color: var(--accent-text-color); margin-top: 10px;">
+                            深層学習による複合要因分析
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Main Articles -->
+                <section class="main-articles">
+                    {{ range first 4 .Site.RegularPages }}
+                    <article class="article-card">
+                        <div class="article-content">
+                            {{ with .Params.categories }}
+                            <span class="article-category">{{ index . 0 }}</span>
+                            {{ end }}
+                            <h2 class="article-title">
+                                <a href="{{ .Permalink }}" style="color: inherit; text-decoration: none;">{{ .Title }}</a>
+                            </h2>
+                            <p class="article-excerpt">
+                                {{ .Summary | truncate 120 }}
+                            </p>
+                            <div class="article-meta">
+                                <span>📅 {{ .Date.Format "2006年01月02日" }}</span>
+                                <span>⏱️ {{ .ReadingTime }}分で読める</span>
+                                <a href="{{ .Permalink }}" class="read-more">続きを読む →</a>
+                            </div>
+                        </div>
+                    </article>
+                    {{ end }}
+                </section>
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- Popular Tools -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">🛠️ 人気のツール</h3>
+                        {{ range where .Site.RegularPages "Section" "tools" | first 4 }}
+                        <div class="sidebar-item">
+                            <a href="{{ .Permalink }}" class="sidebar-link">{{ .Title }}</a>
+                        </div>
+                        {{ end }}
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">📚 カテゴリー</h3>
+                        {{ range .Site.Taxonomies.categories.ByCount | first 5 }}
+                        <div class="sidebar-item">
+                            <a href="{{ .Page.Permalink }}" class="sidebar-link">{{ .Page.Title }}</a>
+                        </div>
+                        {{ end }}
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">🏷️ タグ</h3>
+                        <div class="tag-cloud">
+                            {{ range .Site.Taxonomies.tags.ByCount | first 8 }}
+                            <a href="{{ .Page.Permalink }}" class="tag">{{ .Page.Title }}</a>
+                            {{ end }}
+                        </div>
+                    </div>
+
+                    <!-- Premium CTA -->
+                    <div class="sidebar-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%); border: 1px solid rgba(59, 130, 246, 0.4);">
+                        <h3 class="sidebar-title">⭐ 有料AI予想</h3>
+                        <p style="color: var(--accent-text-color); font-size: 0.9rem; margin-bottom: 15px;">
+                            プロ仕様のAIモデルによる高精度予想を毎日配信。回収率150%超えの実績。
+                        </p>
+                        <a href="/premium/" style="display: inline-block; background: var(--accent-color); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+                            詳細を見る
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ now.Year }} {{ .Site.Title }}. All rights reserved.</p>
+            <p>機械学習による競馬予想の研究・教育サイト</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // アニメーション効果
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 要素にアニメーションを適用
+        document.querySelectorAll('.article-card, .sidebar-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
+{{ end }}
