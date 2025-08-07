@@ -160,28 +160,28 @@ document.addEventListener('DOMContentLoaded', function() {
         statsObserver.observe(card);
     });
 
-    // タイピング効果（ヒーロータイトル）
-    function typeWriter(element, text, speed = 100) {
-        let i = 0;
-        element.textContent = '';
-        
-        function type() {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-                setTimeout(type, speed);
-            }
-        }
-        
-        type();
-    }
+    // タイピング効果（無効化）
+    // function typeWriter(element, text, speed = 100) {
+    //     let i = 0;
+    //     element.textContent = '';
+    //     
+    //     function type() {
+    //         if (i < text.length) {
+    //             element.textContent += text.charAt(i);
+    //             i++;
+    //             setTimeout(type, speed);
+    //         }
+    //     }
+    //     
+    //     type();
+    // }
 
-    // ページロード時のヒーロータイトルアニメーション
-    const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) {
-        const originalText = heroTitle.textContent;
-        setTimeout(() => {
-            typeWriter(heroTitle, originalText, 150);
-        }, 500);
-    }
+    // ページロード時のヒーロータイトルアニメーション（無効化）
+    // const heroTitle = document.querySelector('.hero-title');
+    // if (heroTitle) {
+    //     const originalText = heroTitle.textContent;
+    //     setTimeout(() => {
+    //         typeWriter(heroTitle, originalText, 150);
+    //     }, 500);
+    // }
 });
