@@ -107,8 +107,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 統計数値のカウントアップアニメーション
-    function countUp(element, target, duration = 2000) {
-        const increment = target / (duration / 16);
+    function countUp(element, target, suffix, duration = 2000) {
+        const increment = target / (duration / 20);
         let current = 0;
         
         const timer = setInterval(() => {
@@ -118,15 +118,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(timer);
             }
             
-            // パーセンテージや数値の表示調整
-            if (target.toString().includes('%')) {
-                element.textContent = current.toFixed(1) + '%';
+            // 表示フォーマット
+            if (suffix === '%') {
+                if (target >= 100) {
+                    element.textContent = Math.floor(current) + suffix;
+                } else {
+                    element.textContent = current.toFixed(1) + suffix;
+                }
             } else if (target >= 1000) {
-                element.textContent = Math.floor(current).toLocaleString() + '+';
+                element.textContent = Math.floor(current).toLocaleString() + suffix;
             } else {
-                element.textContent = Math.floor(current) + '+';
+                element.textContent = Math.floor(current) + suffix;
             }
-        }, 16);
+        }, 20);
     }
 
     // 統計カードが見えたときにアニメーション開始
@@ -138,19 +142,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 数値を抽出してアニメーション
                 if (text.includes('87.3%')) {
-                    countUp(statNumber, 87.3);
+                    countUp(statNumber, 87.3, '%');
                 } else if (text.includes('156%')) {
-                    countUp(statNumber, 156);
+                    countUp(statNumber, 156, '%');
                 } else if (text.includes('10,000+')) {
-                    countUp(statNumber, 10000);
+                    countUp(statNumber, 10000, '+');
                 } else if (text.includes('50+')) {
-                    countUp(statNumber, 50);
+                    countUp(statNumber, 50, '+');
                 }
                 
                 statsObserver.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.3 });
 
     document.querySelectorAll('.stat-card').forEach(card => {
         statsObserver.observe(card);
