@@ -387,38 +387,73 @@ body {
     }
 }
 
-/* Stack Theme Override - ホームページ専用スタイル */
+/* ============================================
+   HOMEPAGE ONLY: Stack Theme Complete Override
+   ============================================ */
+
+/* ホームページ専用の完全カスタムスタイル */
+html.home,
 body.home {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    overflow-x: hidden;
 }
 
-/* Stackテーマの既存要素を非表示 */
-.home .main-container {
-    max-width: none !important;
-    padding: 0 !important;
-}
-
-.home .main-container .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* Stackテーマのヘッダー・サイドバーを無効化（ホームページのみ） */
-.home #site-header {
-    display: none !important;
-}
-
-.home .left-sidebar {
-    display: none !important;
-}
-
+/* Stackテーマの全ての既存要素を完全に非表示 */
+.home .container.main-container,
+.home .main-container,
+.home .left-sidebar,
+.home .sidebar,
+.home #site-header,
+.home .site-header,
+.home .hamburger,
+.home .site-avatar,
+.home .site-meta,
+.home .menu-social,
+.home .menu,
+.home .main.full-width,
 .home .main {
-    margin: 0 !important;
-    width: 100% !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
-.home .main-container {
-    width: 100% !important;
+/* ホームページでのみカスタムデザインを表示 */
+.home .header,
+.home .main-content,
+.home .footer {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ホームページの完全リセット */
+.home * {
+    box-sizing: border-box;
+}
+
+/* ホームページのbodyスタイル強制適用 */
+body.home {
+    margin: 0 !important;
     padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    color: var(--body-text-color) !important;
+    line-height: 1.6 !important;
+    min-height: 100vh !important;
+}
+
+/* 追加: Stack theme scripts/styles の上書き */
+.home .main,
+.home .main-container,
+.home .container.main-container {
+    all: unset !important;
+    display: none !important;
+}
+
+/* カスタムレイアウトのルート要素保護 */
+.home > .header,
+.home > .main-content,
+.home > .footer {
+    position: relative !important;
+    z-index: 1000 !important;
 }
