@@ -1,0 +1,205 @@
+<!-- カスタムCSS -->
+<link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+
+<!-- カスタムJavaScript -->
+<script defer src="{{ "js/newsletter.js" | relURL }}"></script>
+
+<!-- Google Analytics 4 (設定後に有効化) -->
+{{- if .Site.Services.googleAnalytics.ID }}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Services.googleAnalytics.ID }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ .Site.Services.googleAnalytics.ID }}', {
+    anonymize_ip: true,
+    respect_do_not_track: true
+  });
+</script>
+{{- end }}
+
+<!-- 構造化データ - Article Schema -->
+{{- if .IsPage }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ .Title }}",
+  "description": "{{ .Description | default .Summary }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ .Site.Params.author | default "NANKANアナリティクス" }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ .Site.Title }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ "img/logo.png" | absURL }}"
+    }
+  },
+  "datePublished": "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}",
+  "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}",
+  "image": "{{ with .Params.image }}{{ . | absURL }}{{ else }}{{ "img/default-og-image.png" | absURL }}{{ end }}",
+  "url": "{{ .Permalink }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ .Permalink }}"
+  }
+}
+</script>
+{{- end }}
+
+<!-- FAQスキーマ（FAQ記事の場合） -->
+{{- if .Params.faq }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{- range $index, $faq := .Params.faq }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "Question",
+      "name": "{{ $faq.question }}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ $faq.answer }}"
+      }
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{- end }}
+
+<!-- HowToスキーマ（チュートリアル記事の場合） -->
+{{- if .Params.tutorial }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "{{ .Title }}",
+  "description": "{{ .Description | default .Summary }}",
+  "totalTime": "{{ .Params.tutorial.duration | default "PT30M" }}",
+  "supply": [
+    {{- range $index, $supply := .Params.tutorial.supplies }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "HowToSupply",
+      "name": "{{ $supply }}"
+    }
+    {{- end }}
+  ],
+  "tool": [
+    {{- range $index, $tool := .Params.tutorial.tools }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "HowToTool",
+      "name": "{{ $tool }}"
+    }
+    {{- end }}
+  ],
+  "step": [
+    {{- range $index, $step := .Params.tutorial.steps }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "HowToStep",
+      "name": "{{ $step.name }}",
+      "text": "{{ $step.text }}",
+      "url": "{{ $.Permalink }}#step-{{ add $index 1 }}"
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{- end }}
+
+<!-- WebSiteスキーマ（ホームページの場合） -->
+{{- if .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "{{ .Site.Title }}",
+  "description": "{{ .Site.Params.description }}",
+  "url": "{{ .Site.BaseURL }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ .Site.BaseURL }}search/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{{- end }}
+
+<!-- Organizationスキーマ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ .Site.Title }}",
+  "description": "{{ .Site.Params.description }}",
+  "url": "{{ .Site.BaseURL }}",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "{{ "img/logo.png" | absURL }}"
+  },
+  "sameAs": [
+    "https://github.com/nankan-analytics",
+    "https://twitter.com/nankan_analytics",
+    "https://qiita.com/nankan-analytics"
+  ]
+}
+</script>
+
+<!-- メタタグの最適化 -->
+{{- if .IsPage }}
+<meta name="keywords" content="{{ delimit .Params.tags ", " }}, 競馬, 機械学習, AI, Python, データサイエンス">
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow">
+{{- end }}
+
+<!-- Open Graph -->
+<meta property="og:title" content="{{ .Title }} | {{ .Site.Title }}">
+<meta property="og:description" content="{{ .Description | default .Summary | truncate 160 }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ with .Params.image }}{{ . | absURL }}{{ else }}{{ "img/default-og-image.png" | absURL }}{{ end }}">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ .Title }} | {{ .Site.Title }}">
+<meta name="twitter:description" content="{{ .Description | default .Summary | truncate 160 }}">
+<meta name="twitter:image" content="{{ with .Params.image }}{{ . | absURL }}{{ else }}{{ "img/default-og-image.png" | absURL }}{{ end }}">
+
+<!-- 正規化URL -->
+<link rel="canonical" href="{{ .Permalink }}">
+
+<!-- 追加のメタタグ -->
+<meta name="author" content="{{ .Site.Params.author | default "NANKANアナリティクス" }}">
+{{- if .IsPage }}
+<meta name="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta name="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta name="article:author" content="{{ .Site.Params.author | default "NANKANアナリティクス" }}">
+{{- range .Params.categories }}
+<meta name="article:section" content="{{ . }}">
+{{- end }}
+{{- range .Params.tags }}
+<meta name="article:tag" content="{{ . }}">
+{{- end }}
+{{- end }}
+
+<!-- プリロード -->
+<link rel="preload" href="{{ "css/custom.css" | relURL }}" as="style">
+<link rel="preload" href="{{ "js/newsletter.js" | relURL }}" as="script">
+
+<!-- DNS プリフェッチ -->
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+<!-- セキュリティヘッダー -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">

@@ -1,0 +1,259 @@
+baseURL: 'https://nankan-analytics.keiba.link'
+languageCode: 'ja'
+title: 'NANKANアナリティクス'
+theme: 'hugo-theme-stack'
+defaultContentLanguage: 'ja'
+hasCJKLanguage: true
+
+# SEO設定
+enableRobotsTXT: true
+sitemap:
+  changefreq: weekly
+  priority: 0.5
+
+# パーマリンク設定
+permalinks:
+  post: /p/:slug/
+  page: /:slug/
+
+params:
+  mainSections:
+    - machine-learning
+    - deep-learning
+    - data-science
+    - tools
+    - case-studies
+  
+  # サイトの説明
+  description: 'AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム'
+  
+  # カラーテーマ設定
+  colorScheme:
+    default: dark
+    toggle: false
+  
+  # サイドバー設定
+  sidebar:
+    emoji: '🤖'
+    subtitle: 'AI×機械学習で南関競馬を攻略'
+    avatar:
+      enabled: true
+      local: true
+      src: img/avatar.png
+  
+  # 記事設定
+  article:
+    math: true
+    toc: true
+    readingTime: true
+    license:
+      enabled: false
+  
+  # コメント設定
+  comments:
+    enabled: true
+    provider: disqus
+  
+  disqusjs:
+    shortname: nankan-analytics
+    apiUrl: https://disqus.com/api/
+    apiKey: 
+    admin: 
+    adminLabel: 
+  
+  # ウィジェット設定
+  widgets:
+    homepage:
+      - type: search
+      - type: archives
+        params:
+          limit: 5
+      - type: categories
+        params:
+          limit: 10
+      - type: tag-cloud
+        params:
+          limit: 10
+    page:
+      - type: search
+      - type: archives
+        params:
+          limit: 5
+      - type: categories
+        params:
+          limit: 10
+      - type: tag-cloud
+        params:
+          limit: 10
+      - type: toc
+  
+  # イメージ処理設定
+  imageProcessing:
+    cover:
+      enabled: true
+    content:
+      enabled: true
+  
+  # OpenGraph設定
+  opengraph:
+    twitter:
+      site: 
+      card: summary_large_image
+  
+  # デフォルトイメージ
+  defaultImage:
+    opengraph:
+      enabled: false
+      local: false
+      src: 
+  
+  # 日付フォーマット
+  dateFormat:
+    published: 2006年01月02日
+    lastUpdated: 2006年01月02日
+  
+  # フッター設定
+  footer:
+    since: 2025
+    customText: 
+
+# メニュー設定
+menu:
+  main:
+    - identifier: home
+      name: ホーム
+      url: /
+      weight: 1
+      params:
+        icon: home
+    
+    - identifier: machine-learning
+      name: 機械学習
+      url: /categories/machine-learning/
+      weight: 2
+      params:
+        icon: categories
+    
+    - identifier: deep-learning
+      name: 深層学習
+      url: /categories/deep-learning/
+      weight: 3
+      params:
+        icon: categories
+    
+    - identifier: data-science
+      name: データサイエンス
+      url: /categories/data-science/
+      weight: 4
+      params:
+        icon: categories
+    
+    - identifier: tools
+      name: ツール
+      url: /tools/
+      weight: 5
+      params:
+        icon: tag
+    
+    - identifier: about
+      name: About
+      url: /about/
+      weight: 6
+      params:
+        icon: user
+    
+    - identifier: search
+      name: 検索
+      url: /search/
+      weight: 7
+      params:
+        icon: search
+  
+  social:
+    - identifier: github
+      name: GitHub
+      url: https://github.com
+      params:
+        icon: brand-github
+    
+    - identifier: twitter
+      name: Twitter
+      url: https://twitter.com
+      params:
+        icon: brand-twitter
+    
+    - identifier: rss
+      name: RSS
+      url: /index.xml
+      params:
+        icon: rss
+
+# 関連記事設定
+related:
+  includeNewer: true
+  threshold: 60
+  toLower: false
+  indices:
+    - name: tags
+      weight: 100
+    - name: categories
+      weight: 200
+
+# マークアップ設定
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  tableOfContents:
+    startLevel: 2
+    endLevel: 4
+    ordered: false
+  highlight:
+    style: monokai
+    lineNos: true
+    lineNumbersInTable: true
+    tabWidth: 2
+
+# サービス設定
+services:
+  googleAnalytics:
+    ID: 
+  disqus:
+    shortname: nankan-analytics
+
+# プライバシー設定
+privacy:
+  googleAnalytics:
+    anonymizeIP: true
+    respectDoNotTrack: true
+  twitter:
+    enableDNT: true
+  youtube:
+    privacyEnhanced: true
+
+# セキュリティ設定
+security:
+  enableInlineShortcodes: false
+  exec:
+    allow:
+      - '^(dart-)?sass(-embedded)?$'
+      - '^go$'
+      - '^npx$'
+      - '^postcss$'
+    osEnv:
+      - '(?i)^((HTTPS?|NO)_PROXY|PATH(EXT)?|APPDATA|TE?MP|TERM|GO\w+|(XDG_CONFIG_)?HOME|USERPROFILE|SSH_AUTH_SOCK|DISPLAY|LANG|SYSTEMDRIVE)$'
+  funcs:
+    getenv:
+      - '^HUGO_'
+      - '^CI$'
+  http:
+    methods:
+      - GET
+      - POST
+    urls:
+      - '.*'
+
+# タクソノミー設定
+taxonomies:
+  category: categories
+  tag: tags

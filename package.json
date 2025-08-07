@@ -1,0 +1,36 @@
+{
+  "name": "nankan-analytics",
+  "version": "1.0.0",
+  "description": "AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム",
+  "main": "index.js",
+  "scripts": {
+    "build": "hugo --gc --minify",
+    "build:preview": "hugo --gc --minify --buildFuture -b $DEPLOY_PRIME_URL",
+    "start": "hugo server --buildDrafts --buildFuture --port 1313",
+    "start:prod": "hugo server --disableFastRender --renderToDisk --port 1313",
+    "clean": "rm -rf public resources",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/[your-username]/nankan-analytics.git"
+  },
+  "keywords": [
+    "hugo",
+    "blog",
+    "競馬",
+    "機械学習",
+    "AI",
+    "データサイエンス",
+    "Python"
+  ],
+  "author": "NANKANアナリティクス",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/[your-username]/nankan-analytics/issues"
+  },
+  "homepage": "https://nankan-analytics.keiba.link",
+  "engines": {
+    "hugo": ">=0.148.0"
+  }
+}
