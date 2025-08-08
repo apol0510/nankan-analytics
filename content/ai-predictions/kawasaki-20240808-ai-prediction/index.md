@@ -291,69 +291,216 @@ toc: true
 
 ---
 
-### 4R スパーキングデビュー新馬（16:30発走）
-**ダ1,400m（外） 6頭**
+<div class="race-card">
+<div class="race-header">
+<h3>4R スパーキングデビュー新馬</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 16:30発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 6頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
+<div class="race-body">
 
-#### 軸馬分析
-- **②モンゲータイム** - 軸馬指数 **70%** ⭐
-- **③ミオサンダー** - 軸馬指数 **60%**
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ④カガヤクネガイ
-- ⑤フォーマイディア
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card star-horse">
+<div class="horse-name">②モンゲータイム</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+<div class="horse-card">
+<div class="horse-name">③ミオサンダー</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：② → ①③④⑤⑥
-軸：③ → ①②④⑤⑥
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">④カガヤクネガイ</div>
+<div class="rival-item">⑤フォーマイディア</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：② → ①③④⑤⑥</div>
+<div class="betting-line">軸：③ → ①②④⑤⑥</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
-### 5R スパーキングデビュー新馬（17:00発走）
-**ダ1,400m（外） 8頭**
+<div class="race-card">
+<div class="race-header">
+<h3>5R スパーキングデビュー新馬</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 17:00発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 8頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
+<div class="race-body">
 
-#### 軸馬分析
-- **⑦ガルドコー** - 軸馬指数 **60%**
-- **⑧キチョウ** - 軸馬指数 **70%** ⭐
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ③トゥルービューティ
-- ④リッキーズラック
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">⑦ガルドコー</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑧キチョウ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：⑦ → ①③④⑥⑧
-軸：⑧ → ①③④⑥⑦
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">③トゥルービューティ</div>
+<div class="rival-item">④リッキーズラック</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：⑦ → ①③④⑥⑧</div>
+<div class="betting-line">軸：⑧ → ①③④⑥⑦</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
-### 6R 3歳（六）（17:30発走）
-**ダ1,400m（外） 7頭**
+<div class="race-card">
+<div class="race-header">
+<h3>6R 3歳（六）</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 17:30発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 7頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
+<div class="race-body">
 
-#### 軸馬分析
-- **⑤シェナイーグル** - 軸馬指数 **60%**
-- **⑦リアンジュ** - 軸馬指数 **70%** ⭐
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ③スフォルツオ
-- ⑥ミヤビアンセム
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">⑤シェナイーグル</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑦リアンジュ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：⑤ → ①②③⑥⑦
-軸：⑦ → ①②③⑤⑥
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">③スフォルツオ</div>
+<div class="rival-item">⑥ミヤビアンセム</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：⑤ → ①②③⑥⑦</div>
+<div class="betting-line">軸：⑦ → ①②③⑤⑥</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
@@ -379,113 +526,358 @@ toc: true
 
 ---
 
-### 8R C3（六）（18:30発走）
-**ダ1,400m（外） 12頭**
+<div class="race-card">
+<div class="race-header">
+<h3>8R C3（六）</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 18:30発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 12頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
+<div class="race-body">
 
-#### 軸馬分析
-- **②メガミリオン** - 軸馬指数 **60%**
-- **⑧ナミエヒーロー** - 軸馬指数 **75%** ⭐
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ④マジェスティアスク
-- ⑥マッドリボンガール
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">②メガミリオン</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑧ナミエヒーロー</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 75%;"></div>
+<div class="index-percentage">75%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：② → ④⑥⑧⑨⑫
-軸：⑧ → ②④⑥⑨⑫
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">④マジェスティアスク</div>
+<div class="rival-item">⑥マッドリボンガール</div>
+</div>
+</div>
 
----
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：② → ④⑥⑧⑨⑫</div>
+<div class="betting-line">軸：⑧ → ②④⑥⑨⑫</div>
+</div>
+</div>
 
-### 9R 早涼（そうりょう）賞（19:05発走）
-**ダ1,500m（外） 14頭**
-
-**⚠️ 的中確率50%**  
-不安要素のある軸馬ですが配当的に妙味があります。
-
-#### 軸馬分析
-- **④トーセンジニアール** - 軸馬指数 **60%** ⭐
-- **⑬ブラッドライン** - 軸馬指数 **50%**
-
-#### 対抗馬
-- ⑥ビービーシャーンス
-- ⑩アズベリー
-
-#### 推奨買い目（馬単）
-```
-軸：④ → ①⑤⑥⑩⑬
-軸：⑬ → ①④⑤⑥⑩
-```
-
----
-
-### 10R 夏紅（かこう）特別（19:40発走）
-**ダ1,400m（外） 11頭**
-
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
-
-#### 軸馬分析
-- **②オリコウデレガンス** - 軸馬指数 **60%**
-- **⑦バクシンフォワード** - 軸馬指数 **70%** ⭐
-
-#### 対抗馬
-- ①ピンクタオルチャン
-- ⑥スカイアクロス
-
-#### 推奨買い目（馬単）
-```
-軸：② → ①⑥⑦⑧⑩
-軸：⑦ → ①②⑥⑧⑩
-```
-
----
-
-### 11R かなテクカレッジ記念（20:15発走）
-**ダ1,600m（外） 8頭**
-
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
-
-#### 軸馬分析
-- **④インナースティール** - 軸馬指数 **70%** ⭐
-- **⑧コパノマイアミ** - 軸馬指数 **60%**
-
-#### 対抗馬
-- ①ゼウスバイオ
-- ⑤オーウェル
-
-#### 推奨買い目（馬単）
-```
-軸：④ → ①②⑤⑥⑧
-軸：⑧ → ①②④⑤⑥
-```
+</div>
+</div>
 
 ---
 
-### 12R 納涼（のうりょう）賞（20:50発走）
-**ダ1,400m（外） 10頭**
+<div class="race-card">
+<div class="race-header">
+<h3>9R 早涼（そうりょう）賞</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 19:05発走</div>
+<div class="detail-item">🏁 ダ1,500m（外）</div>
+<div class="detail-item">🐎 14頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
+<div class="race-body">
 
-#### 軸馬分析
-- **⑤ノッテストラータ** - 軸馬指数 **60%**
-- **⑧スウィートドリーム** - 軸馬指数 **70%** ⭐
+<div class="hit-probability danger" style="--percentage: 50%;">
+<div class="probability-circle">
+<div class="percentage-text">50%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率50%</div>
+<div class="probability-description">不安要素のある軸馬ですが配当的に妙味があります。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ②ブライティアブエナ
-- ④ラブリエスト
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card star-horse">
+<div class="horse-name">④トーセンジニアール</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+<div class="horse-card">
+<div class="horse-name">⑬ブラッドライン</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 50%;"></div>
+<div class="index-percentage">50%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：⑤ → ②③④⑦⑧
-軸：⑧ → ②③④⑤⑦
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">⑥ビービーシャーンス</div>
+<div class="rival-item">⑩アズベリー</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：④ → ①⑤⑥⑩⑬</div>
+<div class="betting-line">軸：⑬ → ①④⑤⑥⑩</div>
+</div>
+</div>
+
+</div>
+</div>
+
+---
+
+<div class="race-card">
+<div class="race-header">
+<h3>10R 夏紅（かこう）特別</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 19:40発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 11頭</div>
+</div>
+</div>
+</div>
+
+<div class="race-body">
+
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
+
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">②オリコウデレガンス</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑦バクシンフォワード</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">①ピンクタオルチャン</div>
+<div class="rival-item">⑥スカイアクロス</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：② → ①⑥⑦⑧⑩</div>
+<div class="betting-line">軸：⑦ → ①②⑥⑧⑩</div>
+</div>
+</div>
+
+</div>
+</div>
+
+---
+
+<div class="race-card">
+<div class="race-header">
+<h3>11R かなテクカレッジ記念</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 20:15発走</div>
+<div class="detail-item">🏁 ダ1,600m（外）</div>
+<div class="detail-item">🐎 8頭</div>
+</div>
+</div>
+</div>
+
+<div class="race-body">
+
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
+
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card star-horse">
+<div class="horse-name">④インナースティール</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+<div class="horse-card">
+<div class="horse-name">⑧コパノマイアミ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">①ゼウスバイオ</div>
+<div class="rival-item">⑤オーウェル</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：④ → ①②⑤⑥⑧</div>
+<div class="betting-line">軸：⑧ → ①②④⑤⑥</div>
+</div>
+</div>
+
+</div>
+</div>
+
+---
+
+<div class="race-card">
+<div class="race-header">
+<h3>12R 納涼（のうりょう）賞</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 20:50発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 10頭</div>
+</div>
+</div>
+</div>
+
+<div class="race-body">
+
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
+
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">⑤ノッテストラータ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑧スウィートドリーム</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">②ブライティアブエナ</div>
+<div class="rival-item">④ラブリエスト</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：⑤ → ②③④⑦⑧</div>
+<div class="betting-line">軸：⑧ → ②③④⑤⑦</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
