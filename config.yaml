@@ -18,6 +18,7 @@ permalinks:
 
 params:
   mainSections:
+    - ai-predictions
     - machine-learning
     - deep-learning
     - data-science
@@ -148,24 +149,31 @@ menu:
       params:
         icon: categories
     
+    - identifier: ai-predictions
+      name: AI予想
+      url: /categories/ai予想/
+      weight: 5
+      params:
+        icon: categories
+    
     - identifier: tools
       name: ツール
       url: /tools/
-      weight: 5
+      weight: 6
       params:
         icon: tag
     
     - identifier: about
       name: About
       url: /about/
-      weight: 6
+      weight: 7
       params:
         icon: user
     
     - identifier: search
       name: 検索
       url: /search/
-      weight: 7
+      weight: 8
       params:
         icon: search
   
