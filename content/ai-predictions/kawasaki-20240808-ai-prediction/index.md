@@ -16,6 +16,8 @@ image: /img/kawasaki-racecourse.jpg
 toc: true
 ---
 
+<div class="ai-prediction-header">
+
 ## 8月8日川崎競馬AI予想概要
 
 機械学習モデル（XGBoost、LSTM、ニューラルネットワーク）による川崎競馬全12レースの科学的予想をお届けします。各レースの軸馬指数、的中確率、買い目戦略を詳細に分析しました。
@@ -25,82 +27,267 @@ toc: true
 - 50種類以上の特徴量を機械学習で解析
 - XGBoost・LSTM・ニューラルネットワークのアンサンブル予想
 
----
+<div class="prediction-stats">
+<div class="stat-item">
+<div class="stat-icon">🤖</div>
+<div class="stat-value">3</div>
+<div class="stat-label">AIモデル</div>
+</div>
+<div class="stat-item">
+<div class="stat-icon">📊</div>
+<div class="stat-value">50+</div>
+<div class="stat-label">特徴量</div>
+</div>
+<div class="stat-item">
+<div class="stat-icon">📈</div>
+<div class="stat-value">10,000+</div>
+<div class="stat-label">学習レース</div>
+</div>
+<div class="stat-item">
+<div class="stat-icon">🎯</div>
+<div class="stat-value">87.3%</div>
+<div class="stat-label">平均精度</div>
+</div>
+</div>
 
-## 🏆 本日のベストレース
+</div>
 
-### 1R・8R・10Rが狙い目
-- **1R**: 軸馬指数最高80%（グランドフロイデ）
-- **8R**: 軸馬指数75%（ナミエヒーロー）  
-- **10R**: 軸馬指数70%（バクシンフォワード）
+<div class="best-races">
 
----
+## 本日のベストレース
+
+<div class="best-race-grid">
+<div class="best-race-item">
+<div class="race-number">1R</div>
+<div class="horse-name">グランドフロイデ</div>
+<div class="horse-index">軸馬指数 80%</div>
+</div>
+<div class="best-race-item">
+<div class="race-number">8R</div>
+<div class="horse-name">ナミエヒーロー</div>
+<div class="horse-index">軸馬指数 75%</div>
+</div>
+<div class="best-race-item">
+<div class="race-number">10R</div>
+<div class="horse-name">バクシンフォワード</div>
+<div class="horse-index">軸馬指数 70%</div>
+</div>
+</div>
+
+</div>
 
 ## 📊 全レース詳細予想
 
-### 1R 未受賞（15:00発走）
-**ダ1,400m（外） 6頭**
+<div class="race-card">
+<div class="race-header">
+<h3>1R 未受賞</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 15:00発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 6頭</div>
+</div>
+</div>
+</div>
 
-**✅ 的中確率70%**  
-総合的に見て期待できますが、軸馬の当日の気配がカギになります。
+<div class="race-body">
 
-#### 軸馬分析
-- **①バックトラック** - 軸馬指数 **70%**
-- **④グランドフロイデ** - 軸馬指数 **80%** ⭐
+<div class="hit-probability" style="--percentage: 70%;">
+<div class="probability-circle">
+<div class="percentage-text">70%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率70%</div>
+<div class="probability-description">総合的に見て期待できますが、軸馬の当日の気配がカギになります。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ③ボンボローニ
-- ⑤エポナマーキュリー
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">①バックトラック</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">④グランドフロイデ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 80%;"></div>
+<div class="index-percentage">80%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：① → ②③④⑤⑥
-軸：④ → ①②③⑤⑥
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">③ボンボローニ</div>
+<div class="rival-item">⑤エポナマーキュリー</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：① → ②③④⑤⑥</div>
+<div class="betting-line">軸：④ → ①②③⑤⑥</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
-### 2R 未受賞（15:30発走）
-**ダ1,400m（外） 7頭**
+<div class="race-card">
+<div class="race-header">
+<h3>2R 未受賞</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 15:30発走</div>
+<div class="detail-item">🏁 ダ1,400m（外）</div>
+<div class="detail-item">🐎 7頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率60%**  
-人気薄の馬が絡めばそれなりに配当がつくことも期待できます。
+<div class="race-body">
 
-#### 軸馬分析
-- **③ウフール** - 軸馬指数 **60%**
-- **⑦ケリーアローズ** - 軸馬指数 **70%** ⭐
+<div class="hit-probability warning" style="--percentage: 60%;">
+<div class="probability-circle">
+<div class="percentage-text">60%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率60%</div>
+<div class="probability-description">人気薄の馬が絡めばそれなりに配当がつくことも期待できます。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ⑤カルカンサン
-- ⑥エルブフォール
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">③ウフール</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑦ケリーアローズ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 70%;"></div>
+<div class="index-percentage">70%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：③ → ②④⑤⑥⑧
-軸：⑦ → ②③④⑤⑥
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">⑤カルカンサン</div>
+<div class="rival-item">⑥エルブフォール</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：③ → ②④⑤⑥⑧</div>
+<div class="betting-line">軸：⑦ → ②③④⑤⑥</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
-### 3R 雷鳴（らいめい）賞（16:00発走）
-**ダ900m（外） 9頭**
+<div class="race-card">
+<div class="race-header">
+<h3>3R 雷鳴（らいめい）賞</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 16:00発走</div>
+<div class="detail-item">🏁 ダ900m（外）</div>
+<div class="detail-item">🐎 9頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率50%**  
-不安要素のある軸馬ですが配当的に妙味があります。
+<div class="race-body">
 
-#### 軸馬分析
-- **④カンノンアーニモ** - 軸馬指数 **50%**
-- **⑧ムーランアルザン** - 軸馬指数 **60%** ⭐
+<div class="hit-probability danger" style="--percentage: 50%;">
+<div class="probability-circle">
+<div class="percentage-text">50%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率50%</div>
+<div class="probability-description">不安要素のある軸馬ですが配当的に妙味があります。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ②ダズリングプレイス
-- ⑦ナキムシヒカル
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">④カンノンアーニモ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 50%;"></div>
+<div class="index-percentage">50%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑧ムーランアルザン</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：④ → ②⑤⑥⑦⑧
-軸：⑧ → ②④⑤⑥⑦
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">②ダズリングプレイス</div>
+<div class="rival-item">⑦ナキムシヒカル</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：④ → ②⑤⑥⑦⑧</div>
+<div class="betting-line">軸：⑧ → ②④⑤⑥⑦</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
