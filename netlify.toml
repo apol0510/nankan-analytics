@@ -41,7 +41,7 @@ X-Frame-Options = "DENY"
 X-XSS-Protection = "1; mode=block"
 X-Content-Type-Options = "nosniff"
 Referrer-Policy = "no-referrer-when-downgrade"
-Permissions-Policy = "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), speaker-selection=(), usb=(), vibrate=(), vr=(), web-share=(), xr-spatial-tracking=()"
+Permissions-Policy = "accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()"
 
 [[headers]]
 for = "/*.css"
@@ -71,8 +71,8 @@ Cache-Control = "public, max-age=2592000"
 [[redirects]]
 from = "/favicon.ico"
 to = "/img/favicon.ico"
-status = 200
-force = false
+status = 301
+force = true
 
 [[plugins]]
 package = "@netlify/plugin-sitemap"
