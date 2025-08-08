@@ -86,13 +86,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // スクロールアニメーションの調整
-    window.addEventListener('scroll', function() {
+    // スクロールアニメーションの調整（最適化版）
+    let ticking = false;
+    function updateParallax() {
         const scrolled = window.pageYOffset;
         const parallax = document.querySelector('.hero-section');
         if (parallax) {
             const speed = scrolled * 0.5;
             parallax.style.transform = `translateY(${speed}px)`;
+        }
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(updateParallax);
+            ticking = true;
         }
     });
 
