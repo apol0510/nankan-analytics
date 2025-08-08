@@ -18,18 +18,16 @@ toc: true
 
 <div class="ai-prediction-article">
 
-<div class="article-title-header">
-<h1 class="main-title">8月8日川崎競馬AI予想概要</h1>
-<div class="subtitle-text">機械学習モデル（XGBoost、LSTM、ニューラルネットワーク）による川崎競馬全12レースの科学的予想をお届けします。各レースの軸馬指数、的中確率、買い目戦略を詳細に分析しました。</div>
+<div class="ai-prediction-header">
 
-<div class="prediction-basis">
-<h3>📊 予想の根拠</h3>
-<div class="basis-list">
-<div class="basis-item">• 過去10,000レース以上の学習データ</div>
-<div class="basis-item">• 50種類以上の特徴量を機械学習で解析</div>
-<div class="basis-item">• XGBoost・LSTM・ニューラルネットワークのアンサンブル予想</div>
-</div>
-</div>
+## 8月8日川崎競馬AI予想概要
+
+機械学習モデル（XGBoost、LSTM、ニューラルネットワーク）による川崎競馬全12レースの科学的予想をお届けします。各レースの軸馬指数、的中確率、買い目戦略を詳細に分析しました。
+
+**📊 予想の根拠**  
+- 過去10,000レース以上の学習データ
+- 50種類以上の特徴量を機械学習で解析
+- XGBoost・LSTM・ニューラルネットワークのアンサンブル予想
 
 <div class="prediction-stats">
 <div class="stat-item">
