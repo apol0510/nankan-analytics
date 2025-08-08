@@ -16,16 +16,20 @@ image: /img/kawasaki-racecourse.jpg
 toc: true
 ---
 
-<div class="ai-prediction-header">
+<div class="ai-prediction-article">
 
-## 8月8日川崎競馬AI予想概要
+<div class="article-title-header">
+<h1 class="main-title">8月8日川崎競馬AI予想概要</h1>
+<div class="subtitle-text">機械学習モデル（XGBoost、LSTM、ニューラルネットワーク）による川崎競馬全12レースの科学的予想をお届けします。各レースの軸馬指数、的中確率、買い目戦略を詳細に分析しました。</div>
 
-機械学習モデル（XGBoost、LSTM、ニューラルネットワーク）による川崎競馬全12レースの科学的予想をお届けします。各レースの軸馬指数、的中確率、買い目戦略を詳細に分析しました。
-
-**📊 予想の根拠**  
-- 過去10,000レース以上の学習データ
-- 50種類以上の特徴量を機械学習で解析
-- XGBoost・LSTM・ニューラルネットワークのアンサンブル予想
+<div class="prediction-basis">
+<h3>📊 予想の根拠</h3>
+<div class="basis-list">
+<div class="basis-item">• 過去10,000レース以上の学習データ</div>
+<div class="basis-item">• 50種類以上の特徴量を機械学習で解析</div>
+<div class="basis-item">• XGBoost・LSTM・ニューラルネットワークのアンサンブル予想</div>
+</div>
+</div>
 
 <div class="prediction-stats">
 <div class="stat-item">
@@ -881,43 +885,116 @@ toc: true
 
 ---
 
-## 📈 予想戦略とリスク管理
+<div class="strategy-risk-section">
+<div class="section-title">📈 予想戦略とリスク管理</div>
 
-### 投資配分の推奨
-1. **1R（的中確率70%）**: 全体の25%
-2. **8R（的中確率60%）**: 全体の20%  
-3. **10R（的中確率60%）**: 全体の20%
-4. **その他9レース**: 残り35%を分散
+<div class="strategy-cards">
+<div class="strategy-card">
+<h3 class="card-title">💰 投資配分の推奨</h3>
+<div class="allocation-list">
+<div class="allocation-item high-confidence">
+<div class="race-info">1R（的中確率70%）</div>
+<div class="percentage">25%</div>
+</div>
+<div class="allocation-item medium-confidence">
+<div class="race-info">8R（的中確率60%）</div>
+<div class="percentage">20%</div>
+</div>
+<div class="allocation-item medium-confidence">
+<div class="race-info">10R（的中確率60%）</div>
+<div class="percentage">20%</div>
+</div>
+<div class="allocation-item low-confidence">
+<div class="race-info">その他9レース</div>
+<div class="percentage">35%分散</div>
+</div>
+</div>
+</div>
 
-### リスク管理のポイント
-- 的中確率50%のレースは配当重視の戦略
-- 軸馬指数70%以上の馬を中心に組み立て
-- 1日の投資上限を決めて資金管理を徹底
+<div class="strategy-card">
+<h3 class="card-title">⚠️ リスク管理のポイント</h3>
+<div class="risk-points">
+<div class="risk-item">• 的中確率50%のレースは配当重視の戦略</div>
+<div class="risk-item">• 軸馬指数70%以上の馬を中心に組み立て</div>
+<div class="risk-item">• 1日の投資上限を決めて資金管理を徹底</div>
+</div>
+</div>
+</div>
+</div>
 
 ---
 
-## 🔬 AI予想の技術的背景
+<div class="technical-background-section">
+<div class="section-title">🔬 AI予想の技術的背景</div>
 
-### 使用モデル
-- **XGBoost**: 着順予測（91.2%精度）
-- **LSTM**: オッズ変動予測（85.7%精度）  
-- **ニューラルネット**: 複合要因分析（89.1%精度）
+<div class="tech-cards">
+<div class="tech-card model-card">
+<h3 class="card-title">🤖 使用モデル</h3>
+<div class="model-list">
+<div class="model-item">
+<div class="model-name">XGBoost</div>
+<div class="model-purpose">着順予測</div>
+<div class="model-accuracy">91.2%精度</div>
+</div>
+<div class="model-item">
+<div class="model-name">LSTM</div>
+<div class="model-purpose">オッズ変動予測</div>
+<div class="model-accuracy">85.7%精度</div>
+</div>
+<div class="model-item">
+<div class="model-name">ニューラルネット</div>
+<div class="model-purpose">複合要因分析</div>
+<div class="model-accuracy">89.1%精度</div>
+</div>
+</div>
+</div>
 
-### 特徴量（50項目から抜粋）
-- 過去5走の着順・タイム
-- 騎手・調教師の成績
-- 馬場状態・天候条件
-- オッズ変動パターン
-- 血統・生産者データ
+<div class="tech-card feature-card">
+<h3 class="card-title">📊 特徴量（50項目から抜粋）</h3>
+<div class="feature-list">
+<div class="feature-item">• 過去5走の着順・タイム</div>
+<div class="feature-item">• 騎手・調教師の成績</div>
+<div class="feature-item">• 馬場状態・天候条件</div>
+<div class="feature-item">• オッズ変動パターン</div>
+<div class="feature-item">• 血統・生産者データ</div>
+</div>
+</div>
+</div>
+</div>
 
 ---
 
-**⚠️ 免責事項**  
-競馬予想は投資の一種です。必ず余裕資金の範囲内で楽しみ、自己責任でご利用ください。当予想による損失については一切の責任を負いません。
+<div class="disclaimer-section">
+<div class="disclaimer-card">
+<div class="disclaimer-icon">⚠️</div>
+<div class="disclaimer-content">
+<h3 class="disclaimer-title">免責事項</h3>
+<div class="disclaimer-text">競馬予想は投資の一種です。必ず余裕資金の範囲内で楽しみ、自己責任でご利用ください。当予想による損失については一切の責任を負いません。</div>
+</div>
+</div>
+</div>
 
 ---
 
-## 関連記事
-- [XGBoostを使った競馬予想モデル構築](/machine-learning/scikit-learn-horse-prediction/)
-- [LSTMによる時系列予想モデル](/deep-learning/lstm-time-series-tensorflow/)
-- [競馬データの前処理テクニック](/machine-learning/horse-data-preprocessing/)
+<div class="related-articles-section">
+<div class="section-title">📚 関連記事</div>
+<div class="related-articles">
+<a href="/machine-learning/scikit-learn-horse-prediction/" class="related-article">
+<div class="article-icon">🤖</div>
+<div class="article-title">XGBoostを使った競馬予想モデル構築</div>
+<div class="article-category">機械学習</div>
+</a>
+<a href="/deep-learning/lstm-time-series-tensorflow/" class="related-article">
+<div class="article-icon">🧠</div>
+<div class="article-title">LSTMによる時系列予想モデル</div>
+<div class="article-category">深層学習</div>
+</a>
+<a href="/machine-learning/horse-data-preprocessing/" class="related-article">
+<div class="article-icon">📊</div>
+<div class="article-title">競馬データの前処理テクニック</div>
+<div class="article-category">データサイエンス</div>
+</a>
+</div>
+</div>
+
+</div>

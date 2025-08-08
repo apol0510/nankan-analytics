@@ -956,6 +956,124 @@ pre {
 
 /* AI予想記事専用 - 現代風デザイン */
 
+/* 記事全体のコンテナと背景 */
+.ai-prediction-article {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  min-height: 100vh;
+  padding: 2rem 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* 記事タイトル */
+.article-title-header {
+  text-align: center;
+  padding: 3rem 0;
+  margin-bottom: 3rem;
+  position: relative;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+
+  .article-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #94a3b8;
+      font-size: 0.9rem;
+
+      .icon {
+        color: #3b82f6;
+      }
+    }
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+    border-radius: 2px;
+  }
+}
+
+/* セクション見出し */
+.section-heading {
+  text-align: center;
+  margin: 4rem 0 3rem 0;
+  position: relative;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%);
+    }
+  }
+
+  p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+}
+
 /* 記事ヘッダーカード */
 .ai-prediction-header {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
@@ -1465,5 +1583,335 @@ pre {
   .hit-probability {
     flex-direction: column;
     text-align: center;
+  }
+}
+
+/* 予想戦略とリスク管理セクション */
+.strategy-risk-section {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  margin: 3rem 0;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+  }
+
+  h2 {
+    color: #10b981;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    &::before {
+      content: '📈';
+      font-size: 2.5rem;
+    }
+  }
+
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+
+  .strategy-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      border-color: #10b981;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+    }
+
+    h3 {
+      color: #10b981;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .investment-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: rgba(16, 185, 129, 0.05);
+      border-radius: 0.5rem;
+      border-left: 4px solid #10b981;
+
+      .race-info {
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+
+      .percentage {
+        font-weight: 700;
+        color: #10b981;
+        font-size: 1.1rem;
+      }
+    }
+
+    .risk-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+
+      .icon {
+        color: #fbbf24;
+        font-size: 1.2rem;
+        margin-top: 0.2rem;
+      }
+
+      .text {
+        flex: 1;
+        color: #e2e8f0;
+        line-height: 1.6;
+      }
+    }
+  }
+}
+
+/* 技術的背景セクション */
+.technical-background-section {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  margin: 3rem 0;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8b5cf6 0%, #3b82f6 50%, #10b981 100%);
+  }
+
+  h2 {
+    color: #8b5cf6;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    &::before {
+      content: '🔬';
+      font-size: 2.5rem;
+    }
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+
+  .tech-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      border-color: #8b5cf6;
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.2);
+    }
+
+    h3 {
+      color: #8b5cf6;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .model-list {
+      list-style: none;
+      padding: 0;
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: rgba(139, 92, 246, 0.05);
+        border-radius: 0.5rem;
+        border-left: 4px solid #8b5cf6;
+
+        .model-name {
+          font-weight: 600;
+          color: #e2e8f0;
+        }
+
+        .accuracy {
+          font-weight: 700;
+          color: #10b981;
+        }
+      }
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        color: #e2e8f0;
+
+        &::before {
+          content: '✓';
+          color: #10b981;
+          font-weight: 700;
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+}
+
+/* 免責事項セクション */
+.disclaimer-section {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  margin: 3rem 0;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    &::before {
+      content: '⚠️';
+      font-size: 2rem;
+    }
+  }
+
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+/* 関連記事セクション */
+.related-articles-section {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  margin: 3rem 0;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+
+  h2 {
+    color: #3b82f6;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    &::before {
+      content: '📚';
+      font-size: 2.5rem;
+    }
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .article-link {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: block;
+
+    &:hover {
+      transform: translateY(-5px);
+      border-color: #3b82f6;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+    }
+
+    .article-title {
+      color: #3b82f6;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .article-description {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
   }
 }
