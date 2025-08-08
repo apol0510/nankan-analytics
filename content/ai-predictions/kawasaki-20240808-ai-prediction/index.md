@@ -506,25 +506,74 @@ toc: true
 
 ---
 
-### 7R 翡翠（かわせみ）賞（18:00発走）
-**ダ1,500m（外） 10頭**
+<div class="race-card">
+<div class="race-header">
+<h3>7R 翡翠（かわせみ）賞</h3>
+<div class="race-info">
+<div class="race-details">
+<div class="detail-item">🕒 18:00発走</div>
+<div class="detail-item">🏁 ダ1,500m（外）</div>
+<div class="detail-item">🐎 10頭</div>
+</div>
+</div>
+</div>
 
-**⚠️ 的中確率50%**  
-不安要素のある軸馬ですが配当的に妙味があります。
+<div class="race-body">
 
-#### 軸馬分析
-- **⑧ハヤブサナンデヒメ** - 軸馬指数 **50%**
-- **⑩ボールドポリシー** - 軸馬指数 **60%** ⭐
+<div class="hit-probability danger" style="--percentage: 50%;">
+<div class="probability-circle">
+<div class="percentage-text">50%</div>
+</div>
+<div class="probability-text">
+<div class="probability-label">的中確率50%</div>
+<div class="probability-description">不安要素のある軸馬ですが配当的に妙味があります。</div>
+</div>
+</div>
 
-#### 対抗馬
-- ④スコメッサ
-- ⑥ゴールドシリカ
+<div class="horse-analysis">
+<h4>軸馬分析</h4>
+<div class="analysis-grid">
+<div class="horse-card">
+<div class="horse-name">⑧ハヤブサナンデヒメ</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 50%;"></div>
+<div class="index-percentage">50%</div>
+</div>
+</div>
+</div>
+<div class="horse-card star-horse">
+<div class="horse-name">⑩ボールドポリシー</div>
+<div class="horse-index">
+<div class="index-label">軸馬指数</div>
+<div class="index-bar">
+<div class="index-fill" style="width: 60%;"></div>
+<div class="index-percentage">60%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-#### 推奨買い目（馬単）
-```
-軸：⑧ → ①④⑥⑦⑩
-軸：⑩ → ①④⑥⑦⑧
-```
+<div class="rival-horses">
+<h4>対抗馬</h4>
+<div class="rival-list">
+<div class="rival-item">④スコメッサ</div>
+<div class="rival-item">⑥ゴールドシリカ</div>
+</div>
+</div>
+
+<div class="betting-recommendation">
+<h4>推奨買い目（馬単）</h4>
+<div class="betting-combinations">
+<div class="betting-line">軸：⑧ → ①④⑥⑦⑩</div>
+<div class="betting-line">軸：⑩ → ①④⑥⑦⑧</div>
+</div>
+</div>
+
+</div>
+</div>
 
 ---
 
