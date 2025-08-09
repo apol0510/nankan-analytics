@@ -110,11 +110,17 @@
         /* Hero Section - 投資訴求重視 */
         .hero-section {
             text-align: center;
-            padding: 60px 0;
+            padding: 60px 40px;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
             border-radius: var(--card-border-radius);
             margin-bottom: 40px;
             border: 1px solid var(--border-color);
+        }
+        
+        .hero-stats-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
         }
 
         .hero-title {
@@ -546,13 +552,12 @@
                 gap: 20px !important;
             }
             
-            .stats-section {
-                padding: 30px 20px !important;
-                margin: 20px 0 !important;
+            .hero-section {
+                padding: 40px 20px !important;
             }
             
-            .stats-section h2 {
-                font-size: 1.8rem !important;
+            .hero-stats-section {
+                margin-top: 30px !important;
             }
             
             .stats-card {
@@ -565,8 +570,12 @@
         }
         
         @media (max-width: 480px) {
-            .stats-section h2 {
-                font-size: 1.6rem !important;
+            .hero-section {
+                padding: 30px 15px !important;
+            }
+            
+            .hero-stats-section {
+                margin-top: 25px !important;
             }
             
             .stats-number {
@@ -612,69 +621,60 @@
                     従来の感覚的予想から、データサイエンスによる科学的投資へ。<br>
                     AIが24時間365日、南関競馬を分析し続けています。
                 </p>
-            </section>
 
-            <!-- AI Stats Section - Investment Efficiency Maximization -->
-            <section class="stats-section" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%); padding: 50px 40px; border-radius: 16px; margin: 40px 0; border: 1px solid var(--border-color);">
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 15px; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        AI競馬予想で投資効率を最大化
-                    </h2>
-                    <p style="color: var(--accent-text-color); font-size: 1.1rem;">
-                        圧倒的なデータ量と最先端のAI技術で実現する高精度予想システム
-                    </p>
-                </div>
+                <!-- AI Statistics Cards -->
+                <div class="hero-stats-section" style="margin-top: 50px;">
+                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto;">
+                        <!-- AI Model Accuracy -->
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(59, 130, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="87.3" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                                0%
+                            </div>
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                                AIモデル精度
+                            </div>
+                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                                最新のXGBoost・LSTM技術による高精度予想
+                            </div>
+                        </div>
 
-                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto;">
-                    <!-- AI Model Accuracy -->
-                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(59, 130, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                        <div class="stats-number" data-target="87.3" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
-                            0%
+                        <!-- Average Return Rate -->
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="156" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                                0%
+                            </div>
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                                平均回収率
+                            </div>
+                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                                継続的な利益を実現する投資効率
+                            </div>
                         </div>
-                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
-                            AIモデル精度
-                        </div>
-                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                            最新のXGBoost・LSTM技術による高精度予想
-                        </div>
-                    </div>
 
-                    <!-- Average Return Rate -->
-                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                        <div class="stats-number" data-target="156" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
-                            0%
+                        <!-- Training Data -->
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(139, 92, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="10000" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                                0+
+                            </div>
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                                学習データ数
+                            </div>
+                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                                過去5年間の豊富なレースデータで訓練
+                            </div>
                         </div>
-                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
-                            平均回収率
-                        </div>
-                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                            継続的な利益を実現する投資効率
-                        </div>
-                    </div>
 
-                    <!-- Training Data -->
-                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(139, 92, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                        <div class="stats-number" data-target="10000" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
-                            0+
-                        </div>
-                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
-                            学習データ数
-                        </div>
-                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                            過去5年間の豊富なレースデータで訓練
-                        </div>
-                    </div>
-
-                    <!-- Features -->
-                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                        <div class="stats-number" data-target="50" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
-                            0+
-                        </div>
-                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
-                            特徴量
-                        </div>
-                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                            多角度から分析する予想ファクター
+                        <!-- Features -->
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="50" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                                0+
+                            </div>
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                                特徴量
+                            </div>
+                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                                多角度から分析する予想ファクター
+                            </div>
                         </div>
                     </div>
                 </div>
