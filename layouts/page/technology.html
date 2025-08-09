@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI技術 | NANKANアナリティクス - 競馬予想AIの技術詳細</title>
-    <meta name="description" content="NANKANアナリティクスのAI技術詳細。XGBoost、LSTM、ニューラルネットワークを組み合わせた最先端の競馬予想システムの仕組みを解説。">
+    <title>{{ .Title }} | {{ .Site.Title }}</title>
+    <meta name="description" content="{{ .Description }}">
     
     <style>
         :root {
@@ -439,13 +439,13 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="/" class="logo">NANKANアナリティクス</a>
+                <a href="{{ .Site.BaseURL }}" class="logo">{{ .Site.Title }}</a>
                 <nav>
                     <ul class="nav-menu">
                         <li><a href="/">トップ</a></li>
                         <li><a href="/#predictions">本日の予想</a></li>
                         <li><a href="/#results">実績</a></li>
-                        <li><a href="/technology.html" class="active">AI技術</a></li>
+                        <li><a href="{{ .Permalink }}" class="active">AI技術</a></li>
                         <li><a href="/premium" class="premium-button">有料予想</a></li>
                     </ul>
                 </nav>
@@ -766,7 +766,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 NANKANアナリティクス. All rights reserved.</p>
+            <p>&copy; {{ now.Year }} {{ .Site.Title }}. All rights reserved.</p>
             <p>AI技術による科学的競馬投資プラットフォーム</p>
         </div>
     </footer>
