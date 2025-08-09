@@ -6,6 +6,12 @@
     <title>{{ .Site.Title }} | AI競馬予想で的中率向上</title>
     <meta name="description" content="AI技術で実現する競馬予想の未来。XGBoost・LSTMによる高精度分析で的中率87%、回収率156%を実現。無料予想から始めて投資効率を最大化。">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg">
+    <link rel="manifest" href="/site.webmanifest">
+    
     <style>
         :root {
             --card-background: rgba(255, 255, 255, 0.1);
@@ -67,6 +73,14 @@
             font-weight: 700;
             color: var(--accent-color);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
         }
 
         .nav-menu {
@@ -524,6 +538,14 @@
             .nav-menu {
                 display: none;
             }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .logo-icon {
+                font-size: 24px;
+            }
 
             .hero-title {
                 font-size: 2.2rem;
@@ -598,7 +620,10 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="{{ .Site.BaseURL }}" class="logo">{{ .Site.Title }}</a>
+                <a href="{{ .Site.BaseURL }}" class="logo">
+                    <span class="logo-icon">🤖</span>
+                    {{ .Site.Title }}
+                </a>
                 <nav>
                     <ul class="nav-menu">
                         <li><a href="#predictions">本日の予想</a></li>
