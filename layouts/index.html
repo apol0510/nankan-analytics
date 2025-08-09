@@ -561,11 +561,11 @@
             }
             
             .stats-card {
-                padding: 25px 20px !important;
+                padding: 18px 12px !important;
             }
             
             .stats-number {
-                font-size: 2.5rem !important;
+                font-size: 2rem !important;
             }
         }
         
@@ -578,12 +578,17 @@
                 margin-top: 25px !important;
             }
             
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 15px !important;
+            }
+            
             .stats-number {
-                font-size: 2.2rem !important;
+                font-size: 1.8rem !important;
             }
             
             .stats-card {
-                padding: 20px 15px !important;
+                padding: 15px 10px !important;
             }
         }
     </style>
@@ -624,56 +629,56 @@
 
                 <!-- AI Statistics Cards -->
                 <div class="hero-stats-section" style="margin-top: 50px;">
-                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto;">
+                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto;">
                         <!-- AI Model Accuracy -->
-                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(59, 130, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                            <div class="stats-number" data-target="87.3" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 20px 15px; border-radius: 10px; text-align: center; border: 2px solid rgba(59, 130, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="87.3" data-suffix="%" style="font-size: 2.2rem; font-weight: 800; color: var(--success-color); margin-bottom: 8px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
                                 0%
                             </div>
-                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 0.95rem; margin-bottom: 5px;">
                                 AIモデル精度
                             </div>
-                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                                最新のXGBoost・LSTM技術による高精度予想
+                            <div style="color: var(--accent-text-color); font-size: 0.75rem; line-height: 1.3;">
+                                XGBoost・LSTM技術
                             </div>
                         </div>
 
                         <!-- Average Return Rate -->
-                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                            <div class="stats-number" data-target="156" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 20px 15px; border-radius: 10px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="156" data-suffix="%" style="font-size: 2.2rem; font-weight: 800; color: var(--success-color); margin-bottom: 8px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
                                 0%
                             </div>
-                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 0.95rem; margin-bottom: 5px;">
                                 平均回収率
                             </div>
-                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                                継続的な利益を実現する投資効率
+                            <div style="color: var(--accent-text-color); font-size: 0.75rem; line-height: 1.3;">
+                                投資効率最大化
                             </div>
                         </div>
 
                         <!-- Training Data -->
-                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(139, 92, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                            <div class="stats-number" data-target="10000" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 20px 15px; border-radius: 10px; text-align: center; border: 2px solid rgba(139, 92, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="10000" data-suffix="+" style="font-size: 2.2rem; font-weight: 800; color: var(--success-color); margin-bottom: 8px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
                                 0+
                             </div>
-                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 0.95rem; margin-bottom: 5px;">
                                 学習データ数
                             </div>
-                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                                過去5年間の豊富なレースデータで訓練
+                            <div style="color: var(--accent-text-color); font-size: 0.75rem; line-height: 1.3;">
+                                5年間レースデータ
                             </div>
                         </div>
 
                         <!-- Features -->
-                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
-                            <div class="stats-number" data-target="50" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                        <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 20px 15px; border-radius: 10px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                            <div class="stats-number" data-target="50" data-suffix="+" style="font-size: 2.2rem; font-weight: 800; color: var(--success-color); margin-bottom: 8px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
                                 0+
                             </div>
-                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            <div style="color: var(--body-text-color); font-weight: 600; font-size: 0.95rem; margin-bottom: 5px;">
                                 特徴量
                             </div>
-                            <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
-                                多角度から分析する予想ファクター
+                            <div style="color: var(--accent-text-color); font-size: 0.75rem; line-height: 1.3;">
+                                多角度分析ファクター
                             </div>
                         </div>
                     </div>
