@@ -540,6 +540,42 @@
                 grid-template-columns: 1fr;
                 text-align: left;
             }
+            
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+            
+            .stats-section {
+                padding: 30px 20px !important;
+                margin: 20px 0 !important;
+            }
+            
+            .stats-section h2 {
+                font-size: 1.8rem !important;
+            }
+            
+            .stats-card {
+                padding: 25px 20px !important;
+            }
+            
+            .stats-number {
+                font-size: 2.5rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-section h2 {
+                font-size: 1.6rem !important;
+            }
+            
+            .stats-number {
+                font-size: 2.2rem !important;
+            }
+            
+            .stats-card {
+                padding: 20px 15px !important;
+            }
         }
     </style>
 </head>
@@ -576,6 +612,72 @@
                     従来の感覚的予想から、データサイエンスによる科学的投資へ。<br>
                     AIが24時間365日、南関競馬を分析し続けています。
                 </p>
+            </section>
+
+            <!-- AI Stats Section - Investment Efficiency Maximization -->
+            <section class="stats-section" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%); padding: 50px 40px; border-radius: 16px; margin: 40px 0; border: 1px solid var(--border-color);">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 15px; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        AI競馬予想で投資効率を最大化
+                    </h2>
+                    <p style="color: var(--accent-text-color); font-size: 1.1rem;">
+                        圧倒的なデータ量と最先端のAI技術で実現する高精度予想システム
+                    </p>
+                </div>
+
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto;">
+                    <!-- AI Model Accuracy -->
+                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(59, 130, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                        <div class="stats-number" data-target="87.3" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                            0%
+                        </div>
+                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            AIモデル精度
+                        </div>
+                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                            最新のXGBoost・LSTM技術による高精度予想
+                        </div>
+                    </div>
+
+                    <!-- Average Return Rate -->
+                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                        <div class="stats-number" data-target="156" data-suffix="%" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                            0%
+                        </div>
+                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            平均回収率
+                        </div>
+                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                            継続的な利益を実現する投資効率
+                        </div>
+                    </div>
+
+                    <!-- Training Data -->
+                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(139, 92, 246, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                        <div class="stats-number" data-target="10000" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                            0+
+                        </div>
+                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            学習データ数
+                        </div>
+                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                            過去5年間の豊富なレースデータで訓練
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="stats-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); padding: 30px 25px; border-radius: 12px; text-align: center; border: 2px solid rgba(16, 185, 129, 0.2); transition: transform 0.3s, box-shadow 0.3s;">
+                        <div class="stats-number" data-target="50" data-suffix="+" style="font-size: 3rem; font-weight: 800; color: var(--success-color); margin-bottom: 10px; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
+                            0+
+                        </div>
+                        <div style="color: var(--body-text-color); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                            特徴量
+                        </div>
+                        <div style="color: var(--accent-text-color); font-size: 0.9rem; line-height: 1.4;">
+                            多角度から分析する予想ファクター
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Live Predictions -->
@@ -897,11 +999,68 @@
         }, observerOptions);
 
         // 要素にアニメーションを適用
-        document.querySelectorAll('.tech-card, .article-card').forEach(el => {
+        document.querySelectorAll('.tech-card, .article-card, .stats-card').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
+        });
+
+        // カウントアップアニメーション
+        function animateValue(element, start, end, duration, suffix = '') {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                
+                let current;
+                if (end >= 1000) {
+                    // 大きな数値の場合は整数で表示
+                    current = Math.floor(progress * (end - start) + start);
+                    element.innerHTML = current.toLocaleString() + suffix;
+                } else {
+                    // 小数点を含む数値の場合
+                    current = (progress * (end - start) + start);
+                    element.innerHTML = current.toFixed(1) + suffix;
+                }
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Stats section のカウントアップを観察
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
+                    const target = parseFloat(entry.target.getAttribute('data-target'));
+                    const suffix = entry.target.getAttribute('data-suffix') || '';
+                    
+                    // アニメーション開始
+                    animateValue(entry.target, 0, target, 2000, suffix);
+                    entry.target.setAttribute('data-animated', 'true');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        // Stats numbers を観察対象に追加
+        document.querySelectorAll('.stats-number').forEach(el => {
+            statsObserver.observe(el);
+        });
+
+        // Stats cards hover effect
+        document.querySelectorAll('.stats-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+                this.style.boxShadow = '0 15px 40px rgba(59, 130, 246, 0.2)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+            });
         });
     </script>
 </body>
