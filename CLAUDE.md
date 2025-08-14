@@ -274,3 +274,91 @@ menu:
 - **収益化**: メルマガ → 有料AI予想サービスへの段階的導線
 
 このサイトは技術系の専門性と競馬という大衆娯楽を組み合わせた、ユニークで価値の高いプラットフォームを目指します。
+
+## サーバー管理とトラブルシューティング
+
+### 複数プロジェクト混在問題の対処法
+
+**問題**: 複数の競馬関連プロジェクトが同じワークスペースにある場合、異なるサイトが表示される
+
+**解決手順**:
+1. **実行中サーバーの確認**:
+   ```bash
+   ps aux | grep -E "(hugo|server|http\.server)"
+   ```
+
+2. **不要なサーバーの停止**:
+   ```bash
+   pkill -f "python.*http.server"
+   pkill -f "hugo server"
+   ```
+
+3. **ポート使用状況の確認**:
+   ```bash
+   lsof -i tcp | grep LISTEN
+   netstat -an | grep :1313
+   ```
+
+4. **正しいディレクトリでのサーバー起動**:
+   ```bash
+   cd /Users/apolon/Desktop/WorkSpace/nankan-analytics
+   hugo server --port 1313 --buildDrafts --bind 127.0.0.1
+   ```
+
+### ブラウザキャッシュ問題の対処法
+
+**症状**: 正しいサーバーが起動しているのに別のサイトが表示される
+
+**解決方法**:
+1. **ブラウザキャッシュのクリア**:
+   - Firefox: `Cmd+Shift+Delete`
+   - Chrome: `Cmd+Shift+Delete`
+   - Safari: `Cmd+Option+E`
+
+2. **プライベートモードでの確認**:
+   ```bash
+   open -a Firefox --new --args --private-window http://localhost:1313/
+   ```
+
+3. **URL の確認**: アドレスバーで `http://localhost:1313/` を確認
+
+### 開発時のベストプラクティス
+
+1. **作業開始時の手順**:
+   ```bash
+   # 既存サーバーの停止
+   pkill -f "hugo server"
+   pkill -f "python.*http.server"
+   
+   # 正しいディレクトリに移動
+   cd /Users/apolon/Desktop/WorkSpace/nankan-analytics
+   
+   # サーバー起動
+   hugo server --port 1313 --buildDrafts
+   ```
+
+2. **作業終了時の手順**:
+   ```bash
+   # Ctrl+C でサーバー停止
+   # 残存プロセス確認
+   ps aux | grep server
+   ```
+
+3. **トラブル時の診断コマンド**:
+   ```bash
+   # 現在のディレクトリ確認
+   pwd
+   
+   # プロジェクト構成確認
+   ls -la
+   
+   # サーバー応答確認
+   curl -s http://localhost:1313/ | head -10
+   ```
+
+### 注意事項
+
+- **単一サーバー原則**: 同時に複数のHugoサーバーを起動しない
+- **ポート管理**: 1313番ポートは nankan-analytics 専用とする
+- **プロジェクト分離**: 他のプロジェクト（nankan-inteli, nankan-courese等）と混在させない
+- **キャッシュ管理**: ブラウザキャッシュは定期的にクリアする
