@@ -1,6 +1,6 @@
 ---
-const title = "南関競馬・初心者講座【完全ガイド】";
-const description = "南関競馬で「損しない」から「勝てる型」まで。初心者向けに7つのステップで基礎から実戦まで完全解説。";
+const title = "南関競馬・初心者講座【完全ガイド】7ステップで基礎完成";
+const description = "南関4場の特徴から買い方・資金管理まで、約1時間50分で基礎を習得。各Stepの実戦チェックリスト付き。";
 ---
 
 <html lang="ja">
@@ -9,6 +9,43 @@ const description = "南関競馬で「損しない」から「勝てる型」�
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
     <meta name="description" content={description}>
+    <meta name="keywords" content="南関競馬,初心者,講座,馬券,買い方,資金管理,大井競馬場,川崎競馬場,船橋競馬場,浦和競馬場">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nankan-analytics.keiba.link/beginner/">
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:site_name" content="NANKANアナリティクス">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://nankan-analytics.keiba.link/beginner/">
+    <meta property="twitter:title" content={title}>
+    <meta property="twitter:description" content={description}>
+    
+    <!-- 構造化データ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "南関競馬・初心者講座",
+      "description": "南関4場の特徴から買い方・資金管理まで、約1時間50分で基礎を習得",
+      "provider": {
+        "@type": "Organization",
+        "name": "NANKANアナリティクス"
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "estimatedDuration": "PT1H50M"
+      },
+      "coursePrerequisites": "なし",
+      "numberOfCredits": 7,
+      "teaches": ["馬券の基本", "南関の特徴", "馬柱の読み方", "買い目の作り方", "配当の考え方", "コース別戦略", "実戦チェックリスト"]
+    }
+    </script>
+    
     <link rel="stylesheet" href="/styles/global.css">
 </head>
 
@@ -19,7 +56,11 @@ const description = "南関競馬で「損しない」から「勝てる型」�
         </nav>
 
         <header class="page-header">
-            <h1>南関競馬・初心者講座【完全ガイド】</h1>
+            <h1>南関競馬・初心者講座【完全ガイド】7ステップで基礎完成</h1>
+            <div class="last-updated">
+                <span class="updated-label">最終更新日：</span>
+                <time datetime="2025-08-20">2025年8月20日</time>
+            </div>
             <p class="lead">最短で「損しない」→「勝てる型」へ</p>
         </header>
 
@@ -211,7 +252,28 @@ const description = "南関競馬で「損しない」から「勝てる型」�
         .page-header h1 {
             font-size: 2.5rem;
             color: #1a1a1a;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .last-updated {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .updated-label {
+            font-weight: normal;
+            color: #888;
+        }
+
+        .last-updated time {
+            font-weight: bold;
+            color: #3b82f6;
+            background: #f0f9ff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            margin-left: 0.5rem;
         }
 
         .lead {
@@ -431,6 +493,16 @@ const description = "南関競馬で「損しない」から「勝てる型」�
 
             .page-header h1 {
                 font-size: 2rem;
+            }
+
+            .last-updated {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+
+            .last-updated time {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.8rem;
             }
 
             .lessons-grid {
