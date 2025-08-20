@@ -17,11 +17,18 @@
 ## 技術要件
 
 ### 基盤技術
-- **Hugo** 静的サイトジェネレーター
-- **Stack テーマ** (https://github.com/CaiJimmy/hugo-theme-stack)
-- **参考URL**: https://stack.jimmycai.com/
+- **Astro** 静的サイトジェネレーター（Hugoから移行済み）
+- **カスタムテーマ** 独自開発
 - **デプロイ**: GitHub + Netlify 自動デプロイ
 - **ドメイン**: nankan-analytics.keiba.link
+
+### 技術選定の経緯
+- **Hugo廃止理由**: より柔軟なコンポーネント開発とモダンなフロントエンド技術の活用のため
+- **Astro採用理由**: 
+  - 軽量で高速な静的サイト生成
+  - コンポーネントベースの開発
+  - モダンなJavaScript/TypeScript対応
+  - 優れたSEO最適化機能
 
 ### テーマカスタマイズ要件
 - ダークテーマベースでAI/データサイエンス系の洗練されたデザイン
@@ -184,43 +191,26 @@ https://nankan-analytics.keiba.link/
 
 ## 設定ファイル要件
 
-### config.yaml 主要設定
+### astro.config.mjs 主要設定
+```javascript
+export default defineConfig({
+  site: 'https://nankan-analytics.keiba.link',
+  integrations: [
+    // 必要な統合機能
+  ],
+  markdown: {
+    // マークダウン設定
+  }
+});
+```
+
+### 設定ファイル（参考：旧Hugo設定）
 ```yaml
+# 以下は旧Hugo設定（現在未使用）
 baseURL: 'https://nankan-analytics.keiba.link'
 languageCode: 'ja'
 title: 'NANKANアナリティクス'
 theme: 'hugo-theme-stack'
-
-params:
-  mainSections:
-    - machine-learning
-    - deep-learning
-    - data-science
-  
-  colorScheme: 'dark'
-  
-  sidebar:
-    emoji: '🤖'
-    subtitle: 'AI×機械学習で南関競馬を攻略'
-  
-  comments:
-    enabled: true
-    provider: disqus
-
-menu:
-  main:
-    - identifier: machine-learning
-      name: 機械学習
-      url: /categories/machine-learning/
-    - identifier: deep-learning
-      name: 深層学習
-      url: /categories/deep-learning/
-    - identifier: data-science
-      name: データサイエンス
-      url: /categories/data-science/
-    - identifier: tools
-      name: ツール
-      url: /tools/
 ```
 
 ## 運営・更新方針
@@ -250,7 +240,7 @@ menu:
 ## 開発優先順位
 
 ### Phase 1: 基盤構築
-1. Hugo + Stack環境構築
+1. ~~Hugo + Stack環境構築~~ → **Astro環境構築完了**
 2. 基本設定・カスタマイズ
 3. メルマガ連携設定
 4. SEO基本設定
@@ -324,24 +314,25 @@ menu:
 
 ### 開発時のベストプラクティス
 
-1. **作業開始時の手順**:
+1. **作業開始時の手順（Astro版）**:
    ```bash
    # 既存サーバーの停止
    pkill -f "hugo server"
    pkill -f "python.*http.server"
+   pkill -f "astro dev"
    
    # 正しいディレクトリに移動
-   cd /Users/apolon/Desktop/WorkSpace/nankan-analytics
+   cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
    
-   # サーバー起動
-   hugo server --port 1313 --buildDrafts
+   # Astroサーバー起動
+   npm run dev
    ```
 
 2. **作業終了時の手順**:
    ```bash
    # Ctrl+C でサーバー停止
    # 残存プロセス確認
-   ps aux | grep server
+   ps aux | grep -E "(server|astro)"
    ```
 
 3. **トラブル時の診断コマンド**:
@@ -352,13 +343,15 @@ menu:
    # プロジェクト構成確認
    ls -la
    
-   # サーバー応答確認
-   curl -s http://localhost:1313/ | head -10
+   # Astroサーバー応答確認
+   curl -s http://localhost:4321/ | head -10
    ```
 
 ### 注意事項
 
-- **単一サーバー原則**: 同時に複数のHugoサーバーを起動しない
-- **ポート管理**: 1313番ポートは nankan-analytics 専用とする
+- **Hugo完全廃止**: Hugoは使用しない（Astroに完全移行済み）
+- **単一サーバー原則**: 同時に複数のAstroサーバーを起動しない
+- **ポート管理**: 4321番ポートはAstro専用、1313番ポートは使用しない
 - **プロジェクト分離**: 他のプロジェクト（nankan-inteli, nankan-courese等）と混在させない
 - **キャッシュ管理**: ブラウザキャッシュは定期的にクリアする
+- **ディレクトリ注意**: astro-site ディレクトリ内で作業すること
