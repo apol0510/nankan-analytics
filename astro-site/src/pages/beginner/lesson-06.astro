@@ -442,6 +442,17 @@ const description = "南関東4競馬場の各距離における最適な初手�
                     <label><input type="checkbox"> 買い方を決定した</label>
                 </div>
 
+                <div class="related-content">
+                    <h3>📚 さらに詳しく学ぶ</h3>
+                    <div class="related-links">
+                        <div class="related-link-card">
+                            <h4>各競馬場の詳細攻略法</h4>
+                            <p>より具体的なコース分析と実戦データを確認</p>
+                            <a href="/course/" class="related-link">コース攻略ガイドを見る →</a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="next-step">
                     <h3>🚀 次のステップへ</h3>
                     <p>ここまでの知識を実戦で活用するための、最終チェックリストと継続的改善の方法を学びましょう。</p>
@@ -691,6 +702,58 @@ const description = "南関東4競馬場の各距離における最適な初手�
         .targets h5, .breakdown h5 {
             color: #3b82f6;
             margin-top: 0;
+        }
+
+        .related-content {
+            margin: 2rem 0;
+        }
+
+        .related-content h3 {
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .related-links {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .related-link-card {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .related-link-card:hover {
+            border-color: #3b82f6;
+        }
+
+        .related-link-card h4 {
+            color: #1a1a1a;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .related-link-card p {
+            color: #666;
+            margin: 0 0 1rem 0;
+        }
+
+        .related-link {
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-block;
+            transition: background-color 0.2s ease;
+        }
+
+        .related-link:hover {
+            background: #2563eb;
         }
 
         .next-step {

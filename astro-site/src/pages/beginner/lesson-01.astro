@@ -291,6 +291,17 @@ const description = "南関競馬の馬券種類と特徴、オッズの見方�
                     <label><input type="checkbox"> 控除率の意味を説明できる</label>
                     <label><input type="checkbox"> 初心者向けの券種を選べる</label>
                 </div>
+
+                <div class="related-content">
+                    <h3>📚 さらに詳しく学ぶ</h3>
+                    <div class="related-links">
+                        <div class="related-link-card">
+                            <h4>実戦的な買い方パターン集</h4>
+                            <p>券種別の具体的な買い方と成功事例を詳しく解説</p>
+                            <a href="/betting-strategies/" class="related-link">買い方ガイドを見る →</a>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <nav class="lesson-nav">
@@ -533,6 +544,58 @@ const description = "南関競馬の馬券種類と特徴、オッズの見方�
 
         .final-checklist input[type="checkbox"] {
             margin-right: 0.5rem;
+        }
+
+        .related-content {
+            margin: 2rem 0;
+        }
+
+        .related-content h3 {
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .related-links {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .related-link-card {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .related-link-card:hover {
+            border-color: #3b82f6;
+        }
+
+        .related-link-card h4 {
+            color: #1a1a1a;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .related-link-card p {
+            color: #666;
+            margin: 0 0 1rem 0;
+        }
+
+        .related-link {
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-block;
+            transition: background-color 0.2s ease;
+        }
+
+        .related-link:hover {
+            background: #2563eb;
         }
 
         .lesson-nav {
