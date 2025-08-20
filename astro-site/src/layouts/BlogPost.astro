@@ -1,0 +1,350 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  tags?: string[];
+  categories?: string[];
+}
+
+const { title, description, pubDate, updatedDate, heroImage, tags = [], categories = [] } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} image={heroImage} type="article">
+  <article class="blog-post">
+    <!-- 記事ヘッダー -->
+    <header class="article-title-header">
+      <div class="container">
+        <h1>{title}</h1>
+        <div class="article-meta">
+          <div class="meta-item">
+            <span class="icon">📅</span>
+            <time datetime={pubDate.toISOString()}>
+              {pubDate.toLocaleDateString('ja-JP')}
+            </time>
+          </div>
+          {updatedDate && (
+            <div class="meta-item">
+              <span class="icon">🔄</span>
+              <time datetime={updatedDate.toISOString()}>
+                更新: {updatedDate.toLocaleDateString('ja-JP')}
+              </time>
+            </div>
+          )}
+          <div class="meta-item">
+            <span class="icon">⏱️</span>
+            <span>約5分で読める</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- カテゴリーとタグ -->
+    {(categories.length > 0 || tags.length > 0) && (
+      <div class="article-taxonomies container">
+        {categories.length > 0 && (
+          <div class="article-categories">
+            {categories.map(category => (
+              <a href={`/categories/${category}/`} class="article-category">
+                {category}
+              </a>
+            ))}
+          </div>
+        )}
+        {tags.length > 0 && (
+          <div class="article-tags">
+            {tags.map(tag => (
+              <a href={`/tags/${tag}/`} class="article-tag">
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+
+    <!-- アイキャッチ画像 -->
+    {heroImage && (
+      <div class="hero-image container">
+        <img src={heroImage} alt={title} />
+      </div>
+    )}
+
+    <!-- 記事本文 -->
+    <div class="article-content container">
+      <!-- 記事途中のメルマガCTA -->
+      <div class="newsletter-form highlight">
+        <h3>📧 AI競馬予想メルマガ</h3>
+        <p>最新のAI予想結果と機械学習テクニックを無料でお届けします</p>
+        <form>
+          <input type="email" placeholder="メールアドレスを入力" required />
+          <button type="submit" class="cta-button">無料登録</button>
+        </form>
+        <p class="note">週2回配信・いつでも解除可能</p>
+      </div>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <!-- 記事終了後CTA -->
+      <div class="article-cta">
+        <h4>📈 もっと詳しい情報をゲット</h4>
+        <p>AI予想の詳細分析や機械学習コードを無料メルマガでお届け</p>
+        <button class="cta-button">メルマガに登録する</button>
+      </div>
+    </div>
+
+    <!-- 関連記事 -->
+    <section class="related-articles-section">
+      <div class="container">
+        <h2>📚 関連記事</h2>
+        <div class="articles-grid">
+          <!-- 関連記事は動的に生成 -->
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <!-- 構造化データ -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "description": description,
+    "author": {
+      "@type": "Person",
+      "name": "NANKANアナリティクス"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "NANKANアナリティクス",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nankan-analytics.keiba.link/img/logo.png"
+      }
+    },
+    "datePublished": pubDate.toISOString(),
+    "dateModified": (updatedDate || pubDate).toISOString(),
+    "image": heroImage ? `https://nankan-analytics.keiba.link${heroImage}` : "https://nankan-analytics.keiba.link/img/default-og.png"
+  })} />
+</BaseLayout>
+
+<style>
+  .blog-post {
+    max-width: none;
+  }
+
+  .article-title-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    position: relative;
+    padding: 4rem 0;
+    text-align: center;
+  }
+
+  .article-title-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .article-title-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+  }
+
+  .article-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .meta-item .icon {
+    color: #3b82f6;
+  }
+
+  .article-taxonomies {
+    padding: 2rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .article-category,
+  .article-tag {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+  }
+
+  .article-category:hover,
+  .article-tag:hover {
+    transform: scale(1.05);
+  }
+
+  .article-tag {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  }
+
+  .hero-image {
+    margin: 2rem auto;
+    text-align: center;
+  }
+
+  .hero-image img {
+    max-width: 100%;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .article-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .prose {
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  .prose h2 {
+    font-size: 1.8rem;
+    margin: 3rem 0 1.5rem 0;
+    color: #3b82f6;
+    border-bottom: 3px solid #3b82f6;
+    padding-bottom: 0.5rem;
+  }
+
+  .prose h3 {
+    font-size: 1.4rem;
+    margin: 2rem 0 1rem 0;
+    color: #8b5cf6;
+  }
+
+  .prose p {
+    margin: 1.5rem 0;
+  }
+
+  .prose ul, .prose ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+  }
+
+  .prose li {
+    margin: 0.5rem 0;
+  }
+
+  .prose code {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+
+  .prose pre {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+
+  .prose pre code {
+    background: transparent;
+    color: #e2e8f0;
+    padding: 0;
+  }
+
+  .prose blockquote {
+    border-left: 4px solid #3b82f6;
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: rgba(59, 130, 246, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background: #1e293b;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .prose th,
+  .prose td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+  }
+
+  .prose th {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    color: white;
+    font-weight: 700;
+  }
+
+  .prose tbody tr:hover {
+    background: #334155;
+  }
+
+  @media (max-width: 768px) {
+    .article-title-header h1 {
+      font-size: 2rem;
+    }
+
+    .article-meta {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .article-content {
+      padding: 1rem;
+    }
+
+    .prose {
+      font-size: 1rem;
+    }
+  }
+</style>

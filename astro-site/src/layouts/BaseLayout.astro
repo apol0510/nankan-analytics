@@ -1,0 +1,320 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+}
+
+const { title, description = 'AI技術で実現する競馬予想の未来。XGBoost・LSTMによる高精度分析で的中率87%、回収率156%を実現。', image, type = 'website' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- SEO -->
+    <meta name="keywords" content="競馬,AI,機械学習,南関競馬,データサイエンス,Python,予想,分析" />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    {image && <meta property="twitter:image" content={new URL(image, Astro.site)} />}
+
+    <!-- 構造化データ -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "NANKANアナリティクス",
+      "description": description,
+      "url": "https://nankan-analytics.keiba.link"
+    })} />
+    
+    <style>
+        :root {
+            --card-background: rgba(255, 255, 255, 0.1);
+            --body-background: #0f172a;
+            --accent-color: #3b82f6;
+            --accent-color-darker: #1d4ed8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --card-border-radius: 10px;
+            --tag-border-radius: 6px;
+            --card-padding: 20px;
+            --main-top-padding: 30px;
+            --body-text-color: #e2e8f0;
+            --accent-text-color: #64748b;
+            --border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--body-text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: var(--body-text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        .premium-button {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+
+        .premium-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding-top: var(--main-top-padding);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            margin-top: 60px;
+            text-align: center;
+            color: var(--accent-text-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .logo-icon {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">🤖</span>
+                    NANKANアナリティクス
+                </a>
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="#predictions">本日の予想</a></li>
+                        <li><a href="#results">実績</a></li>
+                        <li><a href="/technology/">AI技術</a></li>
+                        <li><a href="#reports">分析レポート</a></li>
+                        <li><a href="/free-prediction/">無料予想</a></li>
+                        <li><a href="/premium" class="premium-button">有料予想</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <slot />
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NANKANアナリティクス. All rights reserved.</p>
+            <p>AI技術による科学的競馬投資プラットフォーム</p>
+        </div>
+    </footer>
+
+    <script>
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // アニメーション効果
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 要素にアニメーションを適用
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tech-card, .article-card, .stats-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+
+            // カウントアップアニメーション
+            function animateValue(element, start, end, duration, suffix = '') {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    
+                    let current;
+                    if (end >= 1000) {
+                        current = Math.floor(progress * (end - start) + start);
+                        element.innerHTML = current.toLocaleString() + suffix;
+                    } else {
+                        current = (progress * (end - start) + start);
+                        element.innerHTML = current.toFixed(1) + suffix;
+                    }
+                    
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+
+            // Stats section のカウントアップを観察
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
+                        const target = parseFloat(entry.target.getAttribute('data-target'));
+                        const suffix = entry.target.getAttribute('data-suffix') || '';
+                        
+                        animateValue(entry.target, 0, target, 2000, suffix);
+                        entry.target.setAttribute('data-animated', 'true');
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            document.querySelectorAll('.stats-number').forEach(el => {
+                statsObserver.observe(el);
+            });
+
+            // Stats cards hover effect
+            document.querySelectorAll('.stats-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                    this.style.boxShadow = '0 15px 40px rgba(59, 130, 246, 0.2)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

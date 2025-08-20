@@ -1,0 +1,22 @@
+{
+  "name": "nankan-analytics-astro",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "clean": "rm -rf dist",
+    "typecheck": "astro check",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.12",
+    "@astrojs/sitemap": "^3.5.0",
+    "@types/node": "^24.3.0",
+    "astro": "^5.13.2",
+    "sass": "^1.90.0"
+  }
+}

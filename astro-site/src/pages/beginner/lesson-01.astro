@@ -1,0 +1,620 @@
+---
+const title = "Step 1: 馬券の基本 - 券種・オッズ・控除率の超要点";
+const description = "南関競馬の馬券種類と特徴、オッズの見方、控除率25%を考慮した期待値の基本を初心者向けに解説。";
+---
+
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <link rel="stylesheet" href="/styles/global.css">
+</head>
+
+<body>
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/beginner/">初心者講座</a> > Step 1
+        </nav>
+
+        <header class="lesson-header">
+            <h1>Step 1: 馬券の基本 - 券種・オッズ・控除率の超要点</h1>
+        </header>
+
+        <main class="lesson-content">
+            <section class="intro">
+                <h2>このステップで学ぶこと</h2>
+                <p>馬券を購入する前に、必ず理解しておくべき3つの基本知識を解説します。</p>
+                <ol>
+                    <li><strong>7つの券種とその特徴</strong></li>
+                    <li><strong>オッズの読み方と計算方法</strong></li>
+                    <li><strong>控除率25%の意味と期待値</strong></li>
+                </ol>
+                <p>これらを理解することで、無駄な損失を避け、効率的な投資が可能になります。</p>
+            </section>
+
+            <section class="ticket-types">
+                <h2>1. 馬券の種類と選び方</h2>
+                
+                <h3>7つの券種一覧</h3>
+                <div class="table-container">
+                    <table class="ticket-table">
+                        <thead>
+                            <tr>
+                                <th>券種</th>
+                                <th>的中条件</th>
+                                <th>難易度</th>
+                                <th>平均配当</th>
+                                <th>初心者推奨度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>単勝</strong></td>
+                                <td>1着を当てる</td>
+                                <td>★☆☆</td>
+                                <td>3～10倍</td>
+                                <td>◎</td>
+                            </tr>
+                            <tr>
+                                <td><strong>複勝</strong></td>
+                                <td>3着以内を当てる</td>
+                                <td>★☆☆</td>
+                                <td>1.1～3倍</td>
+                                <td>◎</td>
+                            </tr>
+                            <tr>
+                                <td><strong>馬連</strong></td>
+                                <td>1・2着を順不同で当てる</td>
+                                <td>★★☆</td>
+                                <td>10～50倍</td>
+                                <td>○</td>
+                            </tr>
+                            <tr>
+                                <td><strong>馬単</strong></td>
+                                <td>1・2着を順番通り当てる</td>
+                                <td>★★★</td>
+                                <td>20～100倍</td>
+                                <td>△</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ワイド</strong></td>
+                                <td>3着以内の2頭を当てる</td>
+                                <td>★☆☆</td>
+                                <td>2～20倍</td>
+                                <td>◎</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3連複</strong></td>
+                                <td>1・2・3着を順不同で当てる</td>
+                                <td>★★★</td>
+                                <td>50～500倍</td>
+                                <td>△</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3連単</strong></td>
+                                <td>1・2・3着を順番通り当てる</td>
+                                <td>★★★</td>
+                                <td>100～5000倍</td>
+                                <td>×</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>初心者が選ぶべき券種</h3>
+                <div class="recommendation-box">
+                    <h4>最初に覚える3つの券種</h4>
+                    <ol>
+                        <li><strong>複勝</strong>：最も的中しやすく、資金管理の基本を学べる</li>
+                        <li><strong>ワイド</strong>：複勝より配当が高く、リスクとリターンのバランスが良い</li>
+                        <li><strong>馬連</strong>：中級への橋渡しとなる券種</li>
+                    </ol>
+                </div>
+
+                <div class="warning-box">
+                    <h4>避けるべき券種とその理由</h4>
+                    <ul>
+                        <li><strong>3連単</strong>：的中率が極めて低く、資金がすぐに底をつく</li>
+                        <li><strong>馬単</strong>：馬連と比べて難易度が2倍なのに配当は2倍にならない</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="odds-calculation">
+                <h2>2. オッズの見方と期待値計算</h2>
+                
+                <h3>オッズの基本的な読み方</h3>
+                <p>オッズは「賭け金が何倍になって返ってくるか」を示す数字です。</p>
+                
+                <div class="calculation-example">
+                    <h4>計算例：</h4>
+                    <ul>
+                        <li>単勝オッズ5.0倍の馬に1,000円賭けた場合</li>
+                        <li>的中時の払戻金 = 1,000円 × 5.0 = 5,000円</li>
+                        <li>利益 = 5,000円 - 1,000円 = 4,000円</li>
+                    </ul>
+                </div>
+
+                <h3>人気と実力の関係</h3>
+                <div class="table-container">
+                    <table class="odds-table">
+                        <thead>
+                            <tr>
+                                <th>オッズ帯</th>
+                                <th>人気順位の目安</th>
+                                <th>勝率の目安</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1.0～2.0倍</td>
+                                <td>1番人気</td>
+                                <td>30～35%</td>
+                            </tr>
+                            <tr>
+                                <td>2.1～4.0倍</td>
+                                <td>2～3番人気</td>
+                                <td>15～20%</td>
+                            </tr>
+                            <tr>
+                                <td>4.1～10.0倍</td>
+                                <td>4～6番人気</td>
+                                <td>8～12%</td>
+                            </tr>
+                            <tr>
+                                <td>10.1倍以上</td>
+                                <td>7番人気以下</td>
+                                <td>5%以下</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="important-note">
+                    <p><strong>重要：</strong> オッズは他の購入者の投票で決まるため、必ずしも実力を反映しません。</p>
+                </div>
+            </section>
+
+            <section class="deduction-rate">
+                <h2>3. 控除率25%の真実</h2>
+                
+                <h3>控除率とは何か</h3>
+                <p>南関競馬では、売上の<strong>25%が主催者の取り分</strong>となります。残りの75%が的中者に配分されます。</p>
+                
+                <div class="example-box">
+                    <h4>売上100万円の場合：</h4>
+                    <ul>
+                        <li>主催者取り分：25万円</li>
+                        <li>配当原資：75万円</li>
+                    </ul>
+                </div>
+
+                <h3>期待値がマイナスになる理由</h3>
+                <div class="expectation-calculation">
+                    <p><strong>全員が適当に賭けた場合の期待値：</strong></p>
+                    <p>期待値 = 1 × 0.75 = 0.75</p>
+                    <p>（100円賭けて75円返ってくる計算）</p>
+                </div>
+                
+                <p>つまり、<strong>何も考えずに賭け続けると25%ずつ資金が減っていく</strong>設計になっています。</p>
+
+                <h3>控除率を克服する3つの方法</h3>
+                <div class="methods-grid">
+                    <div class="method-card">
+                        <h4>1. 的中率を上げる</h4>
+                        <ul>
+                            <li>データ分析による予想精度向上</li>
+                            <li>得意なレースパターンに絞る</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="method-card">
+                        <h4>2. 高配当を狙う</h4>
+                        <ul>
+                            <li>過小評価されている馬を見つける</li>
+                            <li>人気馬の死角を突く</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="method-card">
+                        <h4>3. 資金管理を徹底する</h4>
+                        <ul>
+                            <li>1レースの投資額を総資金の5%以内に</li>
+                            <li>連敗時の追い上げ禁止</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="practical-example">
+                <h2>実践例：初心者の最初の一歩</h2>
+                
+                <h3>例題レース</h3>
+                <div class="race-info">
+                    <p><strong>大井競馬場 第3レース 1200m</strong></p>
+                    <ul>
+                        <li>出走頭数：12頭</li>
+                        <li>1番人気：3番（単勝2.5倍）</li>
+                        <li>2番人気：7番（単勝4.0倍）</li>
+                        <li>3番人気：1番（単勝5.5倍）</li>
+                    </ul>
+                </div>
+
+                <h3>推奨する買い方</h3>
+                <div class="betting-examples">
+                    <div class="betting-option">
+                        <h4>複勝で手堅く：</h4>
+                        <ul>
+                            <li>3番 複勝 1,000円</li>
+                            <li>予想払戻：1,300～1,500円</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="betting-option">
+                        <h4>ワイドでバランス良く：</h4>
+                        <ul>
+                            <li>3-7 ワイド 500円</li>
+                            <li>3-1 ワイド 500円</li>
+                            <li>予想払戻：1,500～3,000円</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="warning-example">
+                    <h4>❌ やってはいけない買い方</h4>
+                    <p><strong>3連単ボックス（1-3-7）</strong></p>
+                    <ul>
+                        <li>購入点数：6点</li>
+                        <li>必要資金：600円（100円×6）</li>
+                        <li>的中確率：約2%</li>
+                        <li>理由：的中率が低すぎて継続困難</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="summary">
+                <h2>まとめ：次のステップへ</h2>
+                
+                <h3>このステップで学んだこと</h3>
+                <div class="checklist">
+                    <div class="check-item">✅ 馬券は複勝・ワイド・馬連から始める</div>
+                    <div class="check-item">✅ オッズは人気の指標であり、実力の指標ではない</div>
+                    <div class="check-item">✅ 控除率25%を理解し、期待値を意識する</div>
+                </div>
+
+                <h3>チェックリスト</h3>
+                <div class="final-checklist">
+                    <label><input type="checkbox"> 7つの券種の違いを理解した</label>
+                    <label><input type="checkbox"> オッズから払戻金を計算できる</label>
+                    <label><input type="checkbox"> 控除率の意味を説明できる</label>
+                    <label><input type="checkbox"> 初心者向けの券種を選べる</label>
+                </div>
+            </section>
+
+            <nav class="lesson-nav">
+                <a href="/beginner/" class="nav-prev">← 講座トップ</a>
+                <a href="/beginner/lesson-02/" class="nav-next">Step 2: 南関の特徴 →</a>
+            </nav>
+
+            <div class="cta-section">
+                <div class="cta-box">
+                    <h3>＼ 実戦の買い目はここで公開 ／</h3>
+                    <p>講座で学んだ知識を、AI予想で実戦活用。<br>プロの予想家も使う最新AIモデルの予想を毎日配信中。</p>
+                    <a href="/premium/" class="cta-button">有料AI予想の詳細を見る →</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            color: #1a1a1a;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .lesson-header h1 {
+            font-size: 2rem;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .lesson-content section {
+            margin-bottom: 3rem;
+        }
+
+        .lesson-content h2 {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .lesson-content h3 {
+            color: #1a1a1a;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .lesson-content p, .lesson-content li, .lesson-content td {
+            color: #1a1a1a;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .ticket-table, .odds-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background-color: #ffffff;
+        }
+
+        .ticket-table th, .ticket-table td,
+        .odds-table th, .odds-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            text-align: center;
+            color: #1a1a1a;
+            background-color: #ffffff;
+        }
+
+        .ticket-table th, .odds-table th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .ticket-table td, .odds-table td {
+            background-color: #ffffff;
+        }
+
+        .recommendation-box {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            color: #1a1a1a;
+        }
+
+        .recommendation-box h4, .recommendation-box p, .recommendation-box li {
+            color: #1a1a1a;
+        }
+
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            color: #1a1a1a;
+        }
+
+        .warning-box h4, .warning-box p, .warning-box li {
+            color: #1a1a1a;
+        }
+
+        .calculation-example {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .important-note {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .example-box {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .expectation-calculation {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            margin: 1rem 0;
+        }
+
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .method-card {
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .method-card h4 {
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .race-info {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .betting-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .betting-option {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .warning-example {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .checklist {
+            margin: 1.5rem 0;
+        }
+
+        .check-item {
+            background: #ecfdf5;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            border-left: 4px solid #10b981;
+        }
+
+        .final-checklist {
+            margin: 1.5rem 0;
+        }
+
+        .final-checklist label {
+            display: block;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .final-checklist input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 3rem 0;
+            padding: 2rem 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .nav-prev, .nav-next {
+            background: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-prev:hover, .nav-next:hover {
+            background: #2563eb;
+        }
+
+        .cta-section {
+            margin: 4rem 0;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-box h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .cta-box p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: white;
+            color: #667eea;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .lesson-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .methods-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .betting-examples {
+                grid-template-columns: 1fr;
+            }
+
+            .lesson-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</body>
+</html>
