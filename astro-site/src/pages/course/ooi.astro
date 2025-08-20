@@ -1,6 +1,6 @@
 ---
-const title = "大井競馬場コース攻略【完全版】全距離・枠順データ分析";
-const description = "大井競馬場の1200m～2000m全距離を徹底攻略。内外回り別戦略、枠順データ、重賞レース攻略法まで実戦で使える情報を完全網羅。";
+const title = "大井競馬場 - 右回りコースの長い直線が特徴的 | NANKANアナリティクス";
+const description = "大井競馬場のコース攻略法を距離別に詳しく解説。右回り・長直線コースの特性、枠順有利不利、各距離の攻略ポイントを分析。";
 ---
 
 <html lang="ja">
@@ -9,7 +9,11 @@ const description = "大井競馬場の1200m～2000m全距離を徹底攻略。�
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
     <meta name="description" content={description}>
-    <meta name="keywords" content="大井競馬場,コース攻略,1200m,1400m,1600m,1800m,2000m,外回り,枠順,重賞">
+    <meta name="keywords" content="南関競馬,大井競馬場,川崎競馬場,船橋競馬場,浦和競馬場,コース解説,競馬予想,枠順,攻略法,地方競馬">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="南関競馬コース解説">
+    <meta name="language" content="ja">
+    <link rel="canonical" href="https://nankan-analytics.keiba.link/course/ooi/">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -24,25 +28,6 @@ const description = "大井競馬場の1200m～2000m全距離を徹底攻略。�
     <meta property="twitter:title" content={title}>
     <meta property="twitter:description" content={description}>
     
-    <!-- 構造化データ -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Guide",
-      "name": "大井競馬場コース攻略ガイド",
-      "description": "大井競馬場の全距離を徹底分析した攻略ガイド",
-      "provider": {
-        "@type": "Organization",
-        "name": "NANKANアナリティクス"
-      },
-      "about": {
-        "@type": "Place",
-        "name": "大井競馬場",
-        "address": "東京都品川区勝島"
-      }
-    }
-    </script>
-    
     <link rel="stylesheet" href="/styles/global.css">
 </head>
 
@@ -53,362 +38,130 @@ const description = "大井競馬場の1200m～2000m全距離を徹底攻略。�
         </nav>
 
         <header class="page-header">
-            <h1>大井競馬場コース攻略【完全版】全距離・枠順データ分析</h1>
+            <h1>大井競馬場 - 右回りコースの長い直線が特徴的</h1>
             <div class="last-updated">
                 <span class="updated-label">最終更新日：</span>
                 <time datetime="2025-08-20">2025年8月20日</time>
             </div>
-            <p class="lead">南関最大の舞台を科学的アプローチで完全攻略</p>
+            <p class="lead">右回り・長直線コースの攻略法</p>
         </header>
 
         <main class="content">
-            <section class="track-overview">
-                <h2>大井競馬場の基本情報</h2>
-                
-                <div class="overview-grid">
-                    <div class="info-card">
-                        <h3>🏟️ コース特徴</h3>
-                        <ul>
-                            <li>南関東で最大規模の競馬場</li>
-                            <li>内回り・外回りの2コース</li>
-                            <li>重賞レース多数開催</li>
-                            <li>砂被りが少なく走りやすい</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="info-card">
-                        <h3>📊 データ概要</h3>
-                        <ul>
-                            <li>年間開催日数：<strong>約180日</strong></li>
-                            <li>1日平均レース数：<strong>12レース</strong></li>
-                            <li>主要重賞：<strong>東京大賞典</strong></li>
-                            <li>最高賞金：<strong>1億円</strong></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="info-card highlight">
-                        <h3>🎯 攻略ポイント</h3>
-                        <ul>
-                            <li>1200m外回りが最重要</li>
-                            <li>先行馬の信頼度が高い</li>
-                            <li>重賞は人気馬中心</li>
-                        </ul>
-                    </div>
+            <div class="course-image">
+                <img src="/images/ooi_course.png" alt="大井競馬場 - 右回りコースの長い直線が特徴的コース図" title="大井競馬場 - 右回りコースの長い直線が特徴的コースの詳細図" loading="lazy" />
+            </div>
+            
+            <div class="course-data">
+                <h2>大井競馬場 - 右回りコースの長い直線が特徴的のコース特徴・基本データ</h2>
+                <table class="course-specs">
+                    <tr>
+                        <th>1周距離</th>
+                        <td>1,600m</td>
+                    </tr>
+                    <tr>
+                        <th>フルゲート</th>
+                        <td>16頭</td>
+                    </tr>
+                    <tr>
+                        <th>回り</th>
+                        <td>右回り</td>
+                    </tr>
+                    <tr>
+                        <th>幅員</th>
+                        <td>25m</td>
+                    </tr>
+                    <tr>
+                        <th>特徴</th>
+                        <td>長い直線（486m）が特徴的</td>
+                    </tr>
+                    <tr>
+                        <th>直線</th>
+                        <td>486m（ゴールまで386m）</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content">
+                <p>大井競馬場は右回りコースで、長い直線（486m）が最大の特徴です。内枠有利で、先行馬が有利に展開しやすいコースとなっています。2021年11月19日（金）最終12Rに、大井では初となる左回りレースを実施しました。</p>
+            </div>
+
+            <div class="distance-explanations">
+                <div class="distance-item ooi-1000m">
+                    <h3>大井競馬場1000m攻略法｜スタート力と初速が勝敗を分ける超短距離戦</h3>
+                    <p>スタートして間もなく最初のコーナーに差し掛かるため、発馬での出遅れは致命的な不利となります。特にフルゲートに近い出走頭数の場合、内外の枠順による影響が顕著に現れ、位置取りの巧さが勝敗に直結します。<br><br>この舞台で最も重要なのは「スタートダッシュ」と「初速の速さ」。序盤で前に出た馬がそのまま粘り込むケースが多く見られます。一方で、先行勢が競り合ってオーバーペースになった場合は、直線で後方からの差し・追込みが決まることもあり、展開読みが大きなカギとなるコースです。<br><br><a href="/blog/2025-08-16-ooi-1000m/" class="distance-cta-button">🚀 大井1000m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1000.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="distance-analysis">
-                <h2>距離別完全攻略</h2>
-                
-                <div class="distance-cards">
-                    <div class="distance-card featured">
-                        <div class="distance-header">
-                            <h3>1200m（外回り）</h3>
-                            <span class="difficulty easy">★☆☆ 初心者推奨</span>
-                        </div>
-                        
-                        <div class="course-layout">
-                            <h4>📍 コースレイアウト</h4>
-                            <p>スタート→2コーナー出口→外回り→直線386m</p>
-                            <div class="layout-points">
-                                <span class="point">短距離</span>
-                                <span class="point">外回り</span>
-                                <span class="point">人気馬安定</span>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box success">
-                                <h5>推奨：バランス重視の複勝・ワイド</h5>
-                                <ul>
-                                    <li>枠順による差は少ないため実力重視</li>
-                                    <li>先行馬の複勝を基本軸にする</li>
-                                    <li>2頭目は人気・脚質バランスで選択</li>
-                                    <li>3番人気以内から選択</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="data-analysis">
-                                <h5>📊 実戦データ分析（馬番別成績）</h5>
-                                <div class="bracket-stats">
-                                    <div class="bracket-row">
-                                        <span class="bracket-label">1～4番：</span>
-                                        <span class="stat-good">3着内率 26.8%</span>
-                                    </div>
-                                    <div class="bracket-row">
-                                        <span class="bracket-label">5～8番：</span>
-                                        <span class="stat-good">3着内率 27.3%</span>
-                                    </div>
-                                    <div class="bracket-row">
-                                        <span class="bracket-label">9～12番：</span>
-                                        <span class="stat-normal">3着内率 22.4%</span>
-                                    </div>
-                                    <div class="bracket-row">
-                                        <span class="bracket-label">13番以降：</span>
-                                        <span class="stat-bad">3着内率 16.8%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="betting-example">
-                            <h4>💰 実データ基づく投資例（予算3,000円）</h4>
-                            <div class="example-bet">
-                                <p><strong>1番人気中心戦略：</strong></p>
-                                <p>1番人気単勝：1,500円（勝率42.1%）</p>
-                                <p>1番人気複勝：1,500円（複勝率74.1%）</p>
-                                <p class="expected">期待払戻：4,000～6,500円（実績ベース）</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>1400m（外回り）</h3>
-                            <span class="difficulty medium">★★☆ 中級者向け</span>
-                        </div>
-                        
-                        <div class="course-layout">
-                            <h4>📍 コースレイアウト</h4>
-                            <p>スタート→外回り→直線386m</p>
-                            <div class="layout-points">
-                                <span class="point">中距離</span>
-                                <span class="point">外回り</span>
-                                <span class="point">展開重視</span>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box">
-                                <h5>推奨：先行+差しのワイド・馬連</h5>
-                                <ul>
-                                    <li>前半3F通過タイムを重視</li>
-                                    <li>中団待機策も有効</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="pace-analysis">
-                                <h5>⏱️ ペース分析</h5>
-                                <div class="pace-patterns">
-                                    <div class="pace-item">
-                                        <span class="pace-type">ハイペース：</span>
-                                        <span class="pace-result">差し馬有利</span>
-                                    </div>
-                                    <div class="pace-item">
-                                        <span class="pace-type">スローペース：</span>
-                                        <span class="pace-result">先行馬有利</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>1600m（内回り）</h3>
-                            <span class="difficulty medium">★★☆ 展開読み重要</span>
-                        </div>
-                        
-                        <div class="course-layout">
-                            <h4>📍 コースレイアウト</h4>
-                            <p>スタート→内回り→直線約350m</p>
-                            <div class="layout-points">
-                                <span class="point">中距離</span>
-                                <span class="point">内回り</span>
-                                <span class="point">差し有効</span>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box warning">
-                                <h5>展開を読んで馬連・馬単</h5>
-                                <ul>
-                                    <li>逃げ馬が1頭なら差し有利</li>
-                                    <li>逃げ馬が複数なら先行有利</li>
-                                    <li>重賞なら人気馬中心</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>1800m（外回り）</h3>
-                            <span class="difficulty hard">★★★ 上級者向け</span>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box advanced">
-                                <h5>持続力+瞬発力の馬連・3連複</h5>
-                                <ul>
-                                    <li>スタミナ重視の選択</li>
-                                    <li>直線での伸び脚に注目</li>
-                                    <li>重賞経験者を優先</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>2000m（外回り）</h3>
-                            <span class="difficulty hard">★★★ 重賞メイン</span>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box special">
-                                <h5>東京大賞典など重賞限定</h5>
-                                <ul>
-                                    <li>実績・格を最重視</li>
-                                    <li>人気馬の単勝・複勝</li>
-                                    <li>高配当は狙わず手堅く</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="distance-item ooi-1200m">
+                    <h3>大井競馬場1200m攻略法｜外枠に厳しいスピード決戦</h3>
+                    <p>スタートから序盤の直線部分は比較的長めに確保されていますが、フルゲートに近い多頭数レースでは外枠の馬が不利を受けやすいコースです。特に外枠から逃げを狙う場合は、スタートでしっかり加速して前へ行けるかどうかが勝負の分かれ目になります。<br><br>一方、内枠の馬も序盤で前に出られないと、外から被されて進路を失うリスクがあり、位置取り次第では苦戦するケースも少なくありません。ペースは速く流れる傾向にあり、基本的には先行馬が粘り込みやすい舞台ですが、差し馬も前目のポジションを取っておくことが好走の条件です。<br><br>大井1200mは「枠順とスタートが勝敗を左右するスピード決戦」の典型であり、展開予想においては先行力とポジショニングの巧さを重視することが重要です。<br><br><a href="/blog/2025-08-16-ooi-1200m/" class="distance-cta-button">⚡ 大井1200m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1200.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-
-            <section class="situation-strategies">
-                <h2>シチュエーション別攻略法</h2>
-                
-                <div class="situations-grid">
-                    <div class="situation-card">
-                        <h3>🌟 重賞レース</h3>
-                        <div class="situation-strategy">
-                            <h4>基本方針：</h4>
-                            <ul>
-                                <li>人気馬の信頼度アップ</li>
-                                <li>実績・格を最重視</li>
-                                <li>単勝・複勝中心</li>
-                                <li>荒れにくいため手堅く</li>
-                            </ul>
-                            <div class="investment-ratio">
-                                <h4>投資配分：</h4>
-                                <p>本命70% / 対抗20% / 穴10%</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="situation-card">
-                        <h3>🎲 一般戦</h3>
-                        <div class="situation-strategy">
-                            <h4>基本方針：</h4>
-                            <ul>
-                                <li>展開を重視</li>
-                                <li>コース適性を最優先</li>
-                                <li>ワイド・馬連で幅を持たせる</li>
-                                <li>穴馬も検討対象</li>
-                            </ul>
-                            <div class="investment-ratio">
-                                <h4>投資配分：</h4>
-                                <p>本命50% / 対抗30% / 穴20%</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="situation-card">
-                        <h3>🌧️ 雨天・重馬場</h3>
-                        <div class="situation-strategy">
-                            <h4>基本方針：</h4>
-                            <ul>
-                                <li>内枠の価値が大幅アップ</li>
-                                <li>先行馬がより有利に</li>
-                                <li>差し馬は大幅割引</li>
-                                <li>パワーのある馬を重視</li>
-                            </ul>
-                            <div class="special-note">
-                                <p><strong>特に1200m外回りでは人気馬が安定</strong></p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="distance-item ooi-1400m">
+                    <h3>大井競馬場1400m攻略法｜内枠優勢で展開予測が勝負のカギ</h3>
+                    <p>スタート地点は2コーナーポケット。最初のコーナーまでの距離が短いため、内枠が全体的に有利となりやすいコースです。逃げ・先行タイプの馬が外枠に入ると、コーナーで大きな距離ロスを強いられやすく、位置取りに苦労する展開になりがちです。<br><br>逆に内枠に入った馬でも、スタートで出遅れると他馬に囲まれて動きが制限され、力を発揮できないケースも少なくありません。差し馬の場合は、内枠からスムーズにポジションを確保できれば無駄なくコーナーを回り、長い大井の直線を生かして末脚を繰り出すチャンスが広がります。<br><br>大井1400mは「内枠優勢＋展開が勝敗を左右する典型的な舞台」であり、予想においては枠順とスタート、さらに序盤の位置取りが最重要ポイントといえるでしょう。<br><br><a href="/blog/2025-08-16-ooi-1400m/" class="distance-cta-button">⚖️ 大井1400m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1400.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="practical-tips">
-                <h2>実戦テクニック</h2>
-                
-                <div class="tips-container">
-                    <div class="tip-card">
-                        <h3>🔍 レース選択のコツ</h3>
-                        <ul>
-                            <li>まずは1200m外回りから始める</li>
-                            <li>出走頭数10頭以上を選ぶ</li>
-                            <li>3番人気以内に先行馬がいるレース</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="tip-card">
-                        <h3>📈 買い目構築のポイント</h3>
-                        <ul>
-                            <li>軸は1～4枠の先行馬から選択</li>
-                            <li>相手は人気・実力バランス重視</li>
-                            <li>3点以内でシンプルに勝負</li>
-                            <li>オッズ1.5倍以下は避ける</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="tip-card">
-                        <h3>⚠️ 避けるべきパターン</h3>
-                        <ul>
-                            <li>8枠の1番人気</li>
-                            <li>初回騎乗のコンビ</li>
-                            <li>前走大敗（5着以下）の馬</li>
-                            <li>休み明け3戦目以降の馬</li>
-                        </ul>
-                    </div>
+                <div class="distance-item ooi-1500m">
+                    <h3>大井競馬場1500m攻略法｜内枠有利で先行馬が主導権を握る</h3>
+                    <p>2コーナーポケットからのスタート。コーナーまでの距離が短いため、内枠の馬が位置を取りやすく、序盤の展開をコントロールしやすい傾向があります。外枠の馬は無理に前に行こうとすると距離ロスが大きくなるため、位置取りに苦労することが多いコースです。<br><br>展開としては逃げ・先行勢が有利で、差し馬は前目のポジションを確保できるかどうかが勝負のカギ。後方待機組にとっては厳しい条件となりやすく、予想時は枠順とスタートの重要度が非常に高い舞台といえます。<br><br><a href="/blog/2025-08-16-ooi-1500m/" class="distance-cta-button">🏆 大井1500m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1500.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="monthly-results">
-                <h2>月間成績目標</h2>
-                
-                <div class="results-planning">
-                    <h3>大井競馬場専門戦略（月間プラン）</h3>
-                    <div class="plan-details">
-                        <div class="plan-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">対象レース</span>
-                                <span class="stat-value">20レース/月</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">主力距離</span>
-                                <span class="stat-value">1200m 70%</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">目標的中率</span>
-                                <span class="stat-value">74.5%</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">目標回収率</span>
-                                <span class="stat-value">90%</span>
-                            </div>
-                        </div>
-                        
-                        <div class="investment-breakdown">
-                            <h4>📊 投資配分</h4>
-                            <ul>
-                                <li>大井1200m：60%（12レース）- 1番人気中心</li>
-                                <li>大井1400m：25%（5レース）</li>
-                                <li>大井1600m：15%（3レース）</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="distance-item ooi-1600m">
+                    <h3>大井競馬場1600m攻略法｜バランスの取れたマイル戦</h3>
+                    <p>スタート地点は向正面の奥。最初のコーナーまでの距離が比較的長いため、外枠の馬も位置取りで不利になりにくく、内外の格差が少ないコースです。展開面でも特定の脚質に極端に有利・不利が生じにくく、力通りの結果になりやすい舞台として知られています。<br><br>先行勢がペースをコントロールしやすい一方で、差し・追込みタイプも展開次第で十分に台頭可能。大井のマイル戦の中では最もフラットな条件といえ、純粋な地力が問われるコースです。<br><br><a href="/blog/2025-08-16-ooi-1600m/" class="distance-cta-button">🎯 大井1600m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1600.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <div class="cta-section">
-                <div class="cta-box">
-                    <h3>＼ 大井攻略を実戦で活用 ／</h3>
-                    <a href="/premium/" class="cta-button">有料AI予想の詳細を見る →</a>
+                <div class="distance-item ooi-1650m">
+                    <h3>大井競馬場1650m攻略法｜わずかな距離差が生む独特の流れ</h3>
+                    <p>1600mよりもわずか50m長い設定ながら、その微妙な距離差が独特のレース展開を生み出すコースです。スタート位置は1600mとほぼ同じながら、わずかに余裕が生まれることで、前半のペースが落ち着きやすく、後半勝負になるケースが多く見られます。<br><br>1600mでは届かなかった差し・追込み馬にもチャンスが広がり、逆に1600mで通用していた先行馬が苦戦することも。この微細な距離設定の違いを理解することが、予想精度向上のカギとなります。<br><br><a href="/blog/2025-08-16-ooi-1650m/" class="distance-cta-button">🎪 大井1650m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1650.png" alt="コース図" title="コースレイアウト" loading="lazy" />
+                </div>
+
+                <div class="distance-item ooi-1700m">
+                    <h3>大井競馬場1700m攻略法｜中距離戦の入り口</h3>
+                    <p>向正面の奥深くからのスタート。序盤は直線部分が長く、ペースが落ち着きやすいコース形態です。内外の枠順差は比較的少ないものの、やや内枠有利の傾向があります。展開としては先行馬が有利ですが、差し馬にも十分なチャンスが残されている舞台です。<br><br>長い直線を生かした末脚勝負も見応えがあり、持久力と地力の高さが結果に直結しやすいコースといえるでしょう。<br><br><a href="/blog/2025-08-16-ooi-1700m/" class="distance-cta-button">🏃 大井1700m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1700.png" alt="コース図" title="コースレイアウト" loading="lazy" />
+                </div>
+
+                <div class="distance-item ooi-1800m">
+                    <h3>大井競馬場1800m攻略法｜持久力が問われる中距離戦</h3>
+                    <p>向正面の奥深くからのスタート。序盤は直線部分が長く、スピードに乗った状態で流れに入るため、前半3ハロンが想像以上に速くなるケースもあります。それでも枠順による明確な有利不利はなく、内外どの枠からでも力を発揮しやすいコース形態です。<br><br>展開面では、逃げ・先行馬が押し切ることもあれば、差し・追込みが台頭することもある「フラットな条件」。特定の脚質に偏らず、各馬が持てる力を発揮しやすい点が最大の特徴です。結果的に、純粋な地力やスタミナ、そして騎手のペース判断が勝敗を分ける舞台となります。<br><br><a href="/blog/2025-08-16-ooi-1800m/" class="distance-cta-button">💪 大井1800m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_1800.png" alt="コース図" title="コースレイアウト" loading="lazy" />
+                </div>
+
+                <div class="distance-item ooi-2000m">
+                    <h3>大井競馬場2000m攻略法｜総合力が試される中長距離戦</h3>
+                    <p>スタート地点はゴール前から少し奥。序盤の直線が十分確保されているため、枠順による影響は限定的で、比較的公平な条件となります。展開面では逃げ・先行勢がやや有利ですが、差し・追込みタイプも力を発揮しやすく、バランスの良いコースです。<br><br>持久力と総合力が問われる舞台で、レース全体を通じたペース判断と騎手の技量が重要なポイントとなります。<br><br><a href="/blog/2025-08-16-ooi-2000m/" class="distance-cta-button">🏇 大井2000m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_2000.png" alt="コース図" title="コースレイアウト" loading="lazy" />
+                </div>
+
+                <div class="distance-item ooi-2400m">
+                    <h3>大井競馬場2400m攻略法｜スタミナと戦略が勝負を決める</h3>
+                    <p>ゴール前からのスタート。1周と少しの長丁場となるため、序盤のポジション取りよりもペース配分と持久力が重要になります。枠順の影響は最小限で、純粋にスタミナと地力が問われる舞台です。<br><br>逃げ・先行馬が粘り込むケースもあれば、差し・追込み馬が力を発揮することもあり、展開次第で様々な脚質にチャンスがある距離といえます。<br><br><a href="/blog/2025-08-16-ooi-2400m/" class="distance-cta-button">🚩 大井2400m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_2400.png" alt="コース図" title="コースレイアウト" loading="lazy" />
+                </div>
+
+                <div class="distance-item ooi-2600m">
+                    <h3>大井競馬場2600m攻略法｜究極のスタミナテスト</h3>
+                    <p>大井競馬場で行われる最長距離設定。1周半弱の超長距離戦となり、スタミナと総合的な競走能力が最も重要視される舞台です。序盤のペース配分、中盤での位置取り、そして最後の長い直線での持続力と、全てが高いレベルで要求されます。<br><br>枠順による影響はほぼなく、純粋な実力勝負。長距離適性のある馬が本領を発揮しやすく、番狂わせが起きにくい距離設定といえるでしょう。予想においては過去の長距離実績とスタミナ評価が最重要ポイントとなります。<br><br><a href="/blog/2025-08-16-ooi-2600m/" class="distance-cta-button">🏁 大井2600m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/ooi/ooi_2600.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
             </div>
+
+            <nav class="section-nav" aria-label="他の競馬場へ">
+                <h3>他の南関競馬場も見る</h3>
+                <ul>
+                    <li><a href="/">ホームの攻略法を見る →</a></li>
+                    <li><a href="/course/funabashi/">船橋の攻略法を見る →</a></li>
+                    <li><a href="/course/kawasaki/">川崎の攻略法を見る →</a></li>
+                    <li><a href="/course/urawa/">浦和の攻略法を見る →</a></li>
+                </ul>
+            </nav>
         </main>
     </div>
 
@@ -421,7 +174,7 @@ const description = "大井競馬場の1200m～2000m全距離を徹底攻略。�
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
             background-color: #ffffff;
@@ -467,8 +220,8 @@ const description = "大井競馬場の1200m～2000m全距離を徹底攻略。�
 
         .last-updated time {
             font-weight: bold;
-            color: #3b82f6;
-            background: #f0f9ff;
+            color: #ef4444;
+            background: #fef2f2;
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
             margin-left: 0.5rem;
@@ -480,501 +233,160 @@ const description = "大井競馬場の1200m～2000m全距離を徹底攻略。�
             margin-bottom: 2rem;
         }
 
-        .content section {
-            margin-bottom: 3rem;
-        }
-
-        .content p, .content li, .content h2, .content h3, .content h4 {
-            color: #1a1a1a;
-        }
-
-        .overview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+        .course-image {
+            text-align: center;
             margin: 2rem 0;
         }
 
-        .info-card {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
+        .course-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .course-data {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
             padding: 2rem;
+            margin: 2rem 0;
         }
 
-        .info-card.highlight {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+        .course-data h2 {
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
         }
 
-        .info-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+        .course-specs {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .course-specs th {
+            background: #e9ecef;
+            padding: 1rem;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #dee2e6;
+            width: 30%;
+        }
+
+        .course-specs td {
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            background: #ffffff;
+        }
+
+        .content {
+            margin: 2rem 0;
+        }
+
+        .content p {
+            color: #1a1a1a;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .distance-explanations {
+            margin: 3rem 0;
+        }
+
+        .distance-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .distance-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .distance-item h3 {
+            color: #1a1a1a;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ef4444;
             padding-bottom: 0.5rem;
         }
 
-        .info-card ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .info-card li {
-            margin-bottom: 0.5rem;
-        }
-
-        .distance-cards {
-            display: grid;
-            gap: 3rem;
-            margin: 2rem 0;
-        }
-
-        .distance-card {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .distance-card.featured {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
-        }
-
-        .distance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 1rem;
-        }
-
-        .distance-header h3 {
+        .distance-item p {
             color: #1a1a1a;
-            font-size: 1.5rem;
-            margin: 0;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
         }
 
-        .difficulty {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .difficulty.easy {
-            background: #10b981;
-            color: white;
-        }
-
-        .difficulty.medium {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .difficulty.hard {
+        .distance-cta-button {
             background: #ef4444;
             color: white;
-        }
-
-        .course-layout {
-            margin-bottom: 2rem;
-        }
-
-        .course-layout h4 {
-            color: #3b82f6;
-            margin-bottom: 0.5rem;
-        }
-
-        .layout-points {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .point {
-            background: #f1f5f9;
-            color: #1a1a1a;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .strategy-section h4 {
-            color: #3b82f6;
-            margin: 1.5rem 0 1rem 0;
-        }
-
-        .strategy-box {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin: 1rem 0;
-        }
-
-        .strategy-box.success {
-            border-left-color: #10b981;
-            background: #ecfdf5;
-        }
-
-        .strategy-box.warning {
-            border-left-color: #f59e0b;
-            background: #fef3c7;
-        }
-
-        .strategy-box.advanced {
-            border-left-color: #8b5cf6;
-            background: #f3e8ff;
-        }
-
-        .strategy-box.special {
-            border-left-color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .strategy-box h5 {
-            color: #1a1a1a;
-            margin: 0 0 1rem 0;
-            font-size: 1.1rem;
-        }
-
-        .strategy-box ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .data-analysis {
-            margin: 1.5rem 0;
-        }
-
-        .data-analysis h5 {
-            color: #1a1a1a;
-            margin-bottom: 1rem;
-        }
-
-        .bracket-stats {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .bracket-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .bracket-label {
-            font-weight: bold;
-        }
-
-        .stat-good {
-            color: #10b981;
-            font-weight: bold;
-        }
-
-        .stat-normal {
-            color: #f59e0b;
-            font-weight: bold;
-        }
-
-        .stat-bad {
-            color: #ef4444;
-            font-weight: bold;
-        }
-
-        .pace-analysis {
-            margin: 1.5rem 0;
-        }
-
-        .pace-patterns {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .pace-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .pace-type {
-            font-weight: bold;
-        }
-
-        .pace-result {
-            color: #3b82f6;
-            font-weight: bold;
-        }
-
-        .betting-example {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
+            padding: 12px 24px;
             border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .betting-example h4 {
-            color: #10b981;
-            margin-bottom: 1rem;
-        }
-
-        .example-bet p {
-            margin: 0.5rem 0;
-            font-size: 0.95rem;
-        }
-
-        .expected {
-            color: #10b981;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        .jockey-stats {
-            margin: 2rem 0;
-        }
-
-        .ranking-table {
-            display: grid;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .rank-item {
-            display: grid;
-            grid-template-columns: 60px 120px 120px 1fr;
-            align-items: center;
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .rank-item.featured {
-            border-color: #3b82f6;
-            background: #f0f9ff;
-        }
-
-        .rank-number {
-            font-weight: bold;
-            color: #3b82f6;
-            font-size: 1.1rem;
-        }
-
-        .jockey-name {
-            font-weight: bold;
-            color: #1a1a1a;
-        }
-
-        .win-rate {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .recommendation {
-            color: #10b981;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .jockey-tips {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin: 2rem 0;
-        }
-
-        .jockey-tips h4 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .jockey-tips ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .situations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .situation-card {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .situation-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-        }
-
-        .situation-strategy h4 {
-            color: #1a1a1a;
-            margin: 1rem 0 0.5rem 0;
-        }
-
-        .situation-strategy ul {
-            margin: 0 0 1rem 0;
-            padding-left: 1.5rem;
-        }
-
-        .investment-ratio {
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-top: 1rem;
-        }
-
-        .investment-ratio h4 {
-            color: #3b82f6;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .special-note {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .tips-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .tip-card {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .tip-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .tip-card ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .tip-card li {
-            margin-bottom: 0.5rem;
-        }
-
-        .results-planning {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-
-        .plan-details {
-            display: grid;
-            gap: 2rem;
-            margin: 1.5rem 0;
-        }
-
-        .plan-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .stat-label {
-            display: block;
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #3b82f6;
-        }
-
-        .investment-breakdown {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .investment-breakdown h4 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .investment-breakdown ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .cta-section {
-            margin: 4rem 0;
-        }
-
-        .cta-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 3rem;
-            border-radius: 12px;
-            text-align: center;
-            color: white;
-        }
-
-        .cta-box h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .cta-box p {
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .cta-button {
-            background: white;
-            color: #667eea;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
             display: inline-block;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
         }
 
-        .cta-button:hover {
+        .distance-cta-button:hover {
+            background: #dc2626;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .distance-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-nav {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .section-nav h3 {
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-nav ul {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .section-nav li {
+            margin: 0;
+        }
+
+        .section-nav a {
+            display: block;
+            background: #ffffff;
+            color: #3b82f6;
+            padding: 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+        }
+
+        .section-nav a:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -986,49 +398,25 @@ const description = "大井競馬場の1200m～2000m全距離を徹底攻略。�
                 font-size: 2rem;
             }
 
-            .last-updated {
-                font-size: 0.8rem;
-                margin-bottom: 1rem;
+            .course-specs th {
+                width: 35%;
+                font-size: 0.9rem;
             }
 
-            .last-updated time {
-                padding: 0.2rem 0.5rem;
-                font-size: 0.8rem;
+            .course-specs td {
+                font-size: 0.9rem;
             }
 
-            .overview-grid {
+            .distance-item {
+                padding: 1.5rem;
+            }
+
+            .distance-item h3 {
+                font-size: 1.3rem;
+            }
+
+            .section-nav ul {
                 grid-template-columns: 1fr;
-            }
-
-            .distance-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .rank-item {
-                grid-template-columns: 50px 100px 1fr;
-                gap: 0.5rem;
-            }
-
-            .rank-item .win-rate {
-                grid-column: 2 / 4;
-            }
-
-            .rank-item .recommendation {
-                grid-column: 1 / 4;
-            }
-
-            .situations-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tips-container {
-                grid-template-columns: 1fr;
-            }
-
-            .plan-stats {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>

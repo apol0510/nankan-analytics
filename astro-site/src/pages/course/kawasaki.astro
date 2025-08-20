@@ -1,6 +1,6 @@
 ---
-const title = "川崎競馬場コース攻略【完全版】900m特別距離と内枠攻略法";
-const description = "川崎競馬場の900m～1600m全距離を徹底攻略。900m特別距離の攻略法、内枠有利データ、コース特性を完全解説。";
+const title = "川崎競馬場 - 小回り左回りコースの特殊な900m距離 | NANKANアナリティクス";
+const description = "川崎競馬場のコース攻略法を距離別に詳しく解説。小回り左回りコースの特性、900m特別距離、各距離の攻略ポイントを分析。";
 ---
 
 <html lang="ja">
@@ -9,7 +9,11 @@ const description = "川崎競馬場の900m～1600m全距離を徹底攻略。90
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
     <meta name="description" content={description}>
-    <meta name="keywords" content="川崎競馬場,コース攻略,900m,1400m,1500m,1600m,内枠,地元馬,小回り,スピード">
+    <meta name="keywords" content="南関競馬,川崎競馬場,大井競馬場,船橋競馬場,浦和競馬場,コース解説,競馬予想,枠順,攻略法,地方競馬">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="南関競馬コース解説">
+    <meta name="language" content="ja">
+    <link rel="canonical" href="https://nankan-analytics.keiba.link/course/kawasaki/">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -24,25 +28,6 @@ const description = "川崎競馬場の900m～1600m全距離を徹底攻略。90
     <meta property="twitter:title" content={title}>
     <meta property="twitter:description" content={description}>
     
-    <!-- 構造化データ -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Guide",
-      "name": "川崎競馬場コース攻略ガイド",
-      "description": "川崎競馬場の全距離を徹底分析した攻略ガイド",
-      "provider": {
-        "@type": "Organization",
-        "name": "NANKANアナリティクス"
-      },
-      "about": {
-        "@type": "Place",
-        "name": "川崎競馬場",
-        "address": "神奈川県川崎市川崎区"
-      }
-    }
-    </script>
-    
     <link rel="stylesheet" href="/styles/global.css">
 </head>
 
@@ -53,393 +38,100 @@ const description = "川崎競馬場の900m～1600m全距離を徹底攻略。90
         </nav>
 
         <header class="page-header">
-            <h1>川崎競馬場コース攻略【完全版】900m特別距離と内枠攻略法</h1>
+            <h1>川崎競馬場 - 小回り左回りコースの特殊な900m距離</h1>
             <div class="last-updated">
                 <span class="updated-label">最終更新日：</span>
                 <time datetime="2025-08-20">2025年8月20日</time>
             </div>
-            <p class="lead">小回りスピード勝負を制す内枠戦略と地元力活用法</p>
+            <p class="lead">小回り・左回りコースの攻略法</p>
         </header>
 
         <main class="content">
-            <section class="track-overview">
-                <h2>川崎競馬場の基本情報</h2>
-                
-                <div class="overview-grid">
-                    <div class="info-card special">
-                        <h3>🏟️ コース特徴</h3>
-                        <ul>
-                            <li>南関東で最も小回りのコース</li>
-                            <li>900m距離は川崎だけの特別設定</li>
-                            <li>内枠が圧倒的に有利</li>
-                            <li>スピード勝負のレース展開</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="info-card">
-                        <h3>📊 データ概要</h3>
-                        <ul>
-                            <li>年間開催日数：<strong>約160日</strong></li>
-                            <li>1日平均レース数：<strong>12レース</strong></li>
-                            <li>主要重賞：<strong>川崎記念</strong></li>
-                            <li>特別距離：<strong>900m</strong></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="info-card highlight">
-                        <h3>🎯 攻略ポイント</h3>
-                        <ul>
-                            <li>900mは内枠が絶対条件</li>
-                            <li>スタートの上手さが勝負</li>
-                            <li>前走川崎組の信頼度高</li>
-                        </ul>
-                    </div>
+            <div class="course-image">
+                <img src="/images/kawasaki_course.png" alt="川崎競馬場 - 小回り左回りコースの特殊な900m距離コース図" title="川崎競馬場 - 小回り左回りコースの特殊な900m距離コースの詳細図" loading="lazy" />
+            </div>
+            
+            <div class="course-data">
+                <h2>川崎競馬場 - 小回り左回りコースの特殊な900m距離のコース特徴・基本データ</h2>
+                <table class="course-specs">
+                    <tr>
+                        <th>1周距離</th>
+                        <td>1,400m</td>
+                    </tr>
+                    <tr>
+                        <th>フルゲート</th>
+                        <td>14頭</td>
+                    </tr>
+                    <tr>
+                        <th>回り</th>
+                        <td>左回り</td>
+                    </tr>
+                    <tr>
+                        <th>幅員</th>
+                        <td>20m</td>
+                    </tr>
+                    <tr>
+                        <th>特徴</th>
+                        <td>小回りコースに特殊な900m距離設定</td>
+                    </tr>
+                    <tr>
+                        <th>直線</th>
+                        <td>400m（ゴールまで300m）</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content">
+                <p>川崎競馬場は小回りの左回りコースで、南関競馬では珍しい900m距離が設定されています。直線は400mと比較的長く、内枠有利の傾向がある典型的な小回りコースとなっています。</p>
+            </div>
+
+            <div class="distance-explanations">
+                <div class="distance-item kawasaki-900m">
+                    <h3>川崎競馬場900m攻略法｜スタートで勝負が決まる超短距離コース</h3>
+                    <p>スタート地点は向正面の2コーナーを過ぎたあたり。3コーナーまで約400mと直線部分を長く使えるため、枠順による有利不利はほとんどありません。ただし、900mという距離自体が極端に短いため、スタートで出遅れると挽回はほぼ不可能。発馬直後の反応とダッシュ力が、そのまま結果を左右します。<br><br>このコースは主に2歳夏までの新馬戦で使用されることが多く、若駒にとってはスピード能力を試される舞台。展開の鍵を握るのは「先行力」と「スタートの安定感」であり、短距離戦特有の一瞬の加速力が勝敗を分ける典型的な条件となっています。<br><br><a href="/blog/2025-08-16-kawasaki-900m/" class="distance-cta-button">🚀 川崎900m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/kawasaki/kawasaki_900.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="distance-analysis">
-                <h2>距離別完全攻略</h2>
-                
-                <div class="distance-cards">
-                    <div class="distance-card special-featured">
-                        <div class="distance-header">
-                            <h3>900m</h3>
-                            <span class="difficulty special">⭐ 川崎限定距離</span>
-                        </div>
-                        
-                        <div class="special-notice">
-                            <h4>🚨 重要：川崎競馬場でしか開催されない特別距離</h4>
-                            <p>他場にはない独特の攻略法が必要です。</p>
-                        </div>
-                        
-                        <div class="course-layout">
-                            <h4>📍 コースレイアウト</h4>
-                            <p>スタート（2コーナー出口付近）→3・4コーナー→直線400m（ゴールまで300m）</p>
-                            <div class="layout-points">
-                                <span class="point special">超短距離</span>
-                                <span class="point special">スタート重要</span>
-                                <span class="point special">先行力必須</span>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box special">
-                                <h5>修正版：スタートで勝負が決まる超短距離</h5>
-                                <ul>
-                                    <li>枠順による有利不利はほとんどなし</li>
-                                    <li>スタートで出遅れると挽回はほぼ不可能</li>
-                                    <li>発馬直後の反応とダッシュ力重視</li>
-                                    <li>先行力とスタートの安定感が結果を左右</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="data-analysis critical">
-                                <h5>📊 枠順データ（過去1年間）</h5>
-                                <div class="bracket-stats-900">
-                                    <div class="bracket-row critical">
-                                        <span class="bracket-label">1～5番：</span>
-                                        <span class="stat-excellent">3着内率 32.8%</span>
-                                    </div>
-                                    <div class="bracket-row bad">
-                                        <span class="bracket-label">6～8番：</span>
-                                        <span class="stat-poor">3着内率 21.3%</span>
-                                    </div>
-                                    <div class="bracket-row good">
-                                        <span class="bracket-label">9～12番：</span>
-                                        <span class="stat-good">3着内率 20.0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="betting-example special">
-                            <h4>💰 推奨買い方（予算3,000円）</h4>
-                            <div class="example-bet">
-                                <p><strong>1番人気単勝：1,500円</strong>（勝率46.9%）</p>
-                                <p><strong>1番人気複勝：1,500円</strong>（複勝率78.6%）</p>
-                                <p class="expected special">期待払戻：3,800～6,200円（実績ベース）</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card featured">
-                        <div class="distance-header">
-                            <h3>1400m</h3>
-                            <span class="difficulty easy">★☆☆ メイン距離</span>
-                        </div>
-                        
-                        <div class="course-layout">
-                            <h4>📍 コースレイアウト</h4>
-                            <p>スタート→小回り1周→直線約250m</p>
-                            <div class="layout-points">
-                                <span class="point">中距離</span>
-                                <span class="point">小回り</span>
-                                <span class="point">地元重視</span>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box success">
-                                <h5>地元馬を重視した手堅い勝負</h5>
-                                <ul>
-                                    <li>川崎所属馬を最優先</li>
-                                    <li>前走川崎1400m組を重視</li>
-                                    <li>内枠やや有利程度</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="local-advantage">
-                                <h5>🏠 地元アドバンテージ</h5>
-                                <div class="advantage-stats">
-                                    <div class="advantage-item">
-                                        <span class="advantage-type">川崎所属馬：</span>
-                                        <span class="advantage-rate">勝率 +15%</span>
-                                    </div>
-                                    <div class="advantage-item">
-                                        <span class="advantage-type">前走川崎組：</span>
-                                        <span class="advantage-rate">勝率 +10%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>1500m</h3>
-                            <span class="difficulty medium">★★☆ バランス重視</span>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box warning">
-                                <h5>馬連で幅広く・展開重視</h5>
-                                <ul>
-                                    <li>ペース次第で差し馬も一変</li>
-                                    <li>人気薄の穴も出やすい</li>
-                                    <li>展開を重視した予想</li>
-                                    <li>複数の買い目で対応</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>1600m</h3>
-                            <span class="difficulty medium">★★☆ 中級者向け</span>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box advanced">
-                                <h5>持続力のある馬を馬連・3連複で</h5>
-                                <ul>
-                                    <li>小回りでもスタミナが重要</li>
-                                    <li>前走1600m以上の経験を重視</li>
-                                    <li>調教内容をチェック</li>
-                                    <li>重賞では実績馬優先</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="distance-item kawasaki-1400m">
+                    <h3>川崎競馬場1400m攻略法｜内枠有利の典型的スピードコース</h3>
+                    <p>発走地点は第3号スタンド前。1コーナーまでの距離はおよそ300m弱と短いため、内枠からスムーズに先手を取れる馬が圧倒的に有利となります。スタート直後からポジション争いが激しくなるものの、コーナーまでが短いことで流れは早々に落ち着きやすく、ペースが安定しやすいのも特徴です。<br><br>先行馬に有利な条件が揃っている一方で、差し馬にとっては序盤で位置を下げすぎると巻き返しが難しいコース形態。内枠＋先行力を兼ね備えた馬が軸に適しやすい舞台といえるでしょう。<br><br><a href="/blog/2025-08-16-kawasaki-1400m/" class="distance-cta-button">⚡ 川崎1400m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/kawasaki/kawasaki_1400.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="local-horses">
-                <h2>川崎所属馬分析</h2>
-                
-                <div class="local-analysis">
-                    <h3>🏠 地元馬の圧倒的アドバンテージ</h3>
-                    
-                    <div class="local-stats">
-                        <div class="stat-comparison">
-                            <div class="comparison-item川崎">
-                                <h4>川崎所属馬</h4>
-                                <div class="stats-list">
-                                    <div class="stat-row">
-                                        <span class="stat-label">900m勝率：</span>
-                                        <span class="stat-value excellent">35%</span>
-                                    </div>
-                                    <div class="stat-row">
-                                        <span class="stat-label">1400m勝率：</span>
-                                        <span class="stat-value good">28%</span>
-                                    </div>
-                                    <div class="stat-row">
-                                        <span class="stat-label">複勝率：</span>
-                                        <span class="stat-value excellent">72%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="comparison-item">
-                                <h4>他場所属馬</h4>
-                                <div class="stats-list">
-                                    <div class="stat-row">
-                                        <span class="stat-label">900m勝率：</span>
-                                        <span class="stat-value poor">18%</span>
-                                    </div>
-                                    <div class="stat-row">
-                                        <span class="stat-label">1400m勝率：</span>
-                                        <span class="stat-value normal">22%</span>
-                                    </div>
-                                    <div class="stat-row">
-                                        <span class="stat-label">複勝率：</span>
-                                        <span class="stat-value normal">58%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="local-tips">
-                            <h4>🎯 地元馬活用のポイント</h4>
-                            <ul>
-                                <li>川崎所属馬は人気薄でも要注意</li>
-                                <li>前走川崎で好走した馬は継続して狙う</li>
-                                <li>他場から川崎初参戦の馬は割引</li>
-                                <li>調教師の川崎成績もチェック</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="distance-item kawasaki-1500m">
+                    <h3>川崎競馬場1500m攻略法｜差し脚が決め手となる消耗戦</h3>
+                    <p>スタート地点は4コーナーを過ぎた直線入り口付近。内側にラチ（柵）が設置されていないため、1番枠の馬がスムーズに内へ切れ込むシーンも見られます。1コーナーまでは約400mと適度な距離があり、発馬直後からスピードに乗った状態で最初のコーナーへ突入するため、序盤からハイペースになりやすいのが特徴です。<br><br>その結果、先行馬にとっては息の入らない展開になりやすく、後半に脚を温存していた差し・追込みタイプが台頭しやすいコース設定。川崎競馬場の中でも「差しが利く距離」として知られ、展開予想ではスピードだけでなく持続力や直線の末脚も重視することが的中のカギとなります。<br><br><a href="/blog/2025-08-16-kawasaki-1500m/" class="distance-cta-button">⚖️ 川崎1500m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/kawasaki/kawasaki_1500.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="weather-analysis">
-                <h2>天候・馬場状態別攻略</h2>
-                
-                <div class="weather-conditions">
-                    <div class="condition-card">
-                        <h3>☀️ 晴天・良馬場</h3>
-                        <div class="condition-strategy">
-                            <h4>基本方針：</h4>
-                            <ul>
-                                <li>通常の内枠有利傾向</li>
-                                <li>スピード馬を重視</li>
-                                <li>前走タイムを参考に</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="condition-card danger">
-                        <h3>🌧️ 雨天・重馬場</h3>
-                        <div class="condition-strategy">
-                            <h4>基本方針：</h4>
-                            <ul>
-                                <li>内枠の価値が極端にアップ</li>
-                                <li>900mでは1～2枠がほぼ必須</li>
-                                <li>パワーのある馬を優先</li>
-                                <li>外枠は大幅割引</li>
-                            </ul>
-                            <div class="danger-note">
-                                <p><strong>⚠️ 特に注意：雨天時の川崎900mは1～2枠以外ほぼ勝機なし</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="condition-card">
-                        <h3>🌪️ 強風時</h3>
-                        <div class="condition-strategy">
-                            <h4>基本方針：</h4>
-                            <ul>
-                                <li>向かい風時は先行馬より有利</li>
-                                <li>追い風時は差し馬に注意</li>
-                                <li>横風時は内枠の価値アップ</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="distance-item kawasaki-1600m">
+                    <h3>川崎競馬場1600m攻略法｜バランス型のマイル戦</h3>
+                    <p>スタート地点はホームストレッチを通過した位置からとなり、序盤の直線が長めに確保されるコース設定。枠順による影響はやや軽減され、力のある馬が本来の能力を発揮しやすい条件となります。展開面では先行馬が有利ながら、差し・追込み馬にも十分なチャンスが残されているバランス型の舞台です。<br><br>川崎のマイル戦は小回りコースの特性を活かしつつ、距離の余裕が生まれることで様々な脚質の馬にチャンスが広がります。予想時は枠順だけでなく、馬の総合力と展開適性を総合的に判断することが重要となるコースです。<br><br><a href="/blog/2025-08-16-kawasaki-1600m/" class="distance-cta-button">🏆 川崎1600m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/kawasaki/kawasaki_1600.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="practical-tips">
-                <h2>川崎競馬場実戦テクニック</h2>
-                
-                <div class="tips-container">
-                    <div class="tip-card special">
-                        <h3>🚀 900m攻略の鉄則</h3>
-                        <ul>
-                            <li>1～3枠以外は基本的に消し</li>
-                            <li>川崎所属馬を最優先</li>
-                            <li>前走900m組の継続騎乗をチェック</li>
-                            <li>オッズに惑わされず内枠重視</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="tip-card">
-                        <h3>🏠 地元力活用法</h3>
-                        <ul>
-                            <li>川崎所属馬の人気薄を狙う</li>
-                            <li>調教師の川崎成績を確認</li>
-                            <li>前走川崎で好走した他場馬も注目</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="tip-card">
-                        <h3>📊 データ活用のコツ</h3>
-                        <ul>
-                            <li>枠順データを最重視</li>
-                            <li>距離経験の有無をチェック</li>
-                            <li>川崎での過去成績を確認</li>
-                            <li>調教内容より実戦データ重視</li>
-                        </ul>
-                    </div>
+                <div class="distance-item kawasaki-2000m">
+                    <h3>川崎競馬場2000m攻略法｜持久力が問われる中距離戦</h3>
+                    <p>ホームストレッチ奥からのスタート。1周と約600mの中距離設定となり、序盤のペースが比較的落ち着きやすく、後半勝負の展開になりやすいコースです。枠順による影響は最小限に抑えられ、純粋な競走能力の高さが問われる舞台となります。<br><br>小回りコースの特性上、コーナーワークの上手さと持久力を兼ね備えた馬が有利。先行馬も粘り込めるが、差し・追込み馬にも十分なチャンスがあり、展開次第で様々な決着パターンが期待できる距離設定です。川崎の中距離戦は予想の醍醐味を味わえるコースといえるでしょう。<br><br><a href="/blog/2025-08-16-kawasaki-2000m/" class="distance-cta-button">🎯 川崎2000m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/kawasaki/kawasaki_2000.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
-            </section>
 
-            <section class="monthly-results">
-                <h2>川崎専門戦略プラン</h2>
-                
-                <div class="results-planning">
-                    <h3>川崎競馬場特化型投資プラン</h3>
-                    <div class="plan-details">
-                        <div class="plan-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">対象レース</span>
-                                <span class="stat-value">18レース/月</span>
-                            </div>
-                            <div class="stat-item special">
-                                <span class="stat-label">900m特化</span>
-                                <span class="stat-value">46.9%</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">目標的中率</span>
-                                <span class="stat-value">82%</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">目標回収率</span>
-                                <span class="stat-value">95%</span>
-                            </div>
-                        </div>
-                        
-                        <div class="investment-breakdown">
-                            <h4>📊 投資配分</h4>
-                            <ul>
-                                <li>川崎900m：50%（9レース）- 高的中率狙い</li>
-                                <li>川崎1400m：35%（6レース）- 地元力活用</li>
-                                <li>川崎1500m：15%（3レース）- 配当狙い</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="success-pattern">
-                            <h4>🎯 成功パターン</h4>
-                            <div class="pattern-example">
-                                <p><strong>900m内枠戦略：</strong></p>
-                                <p>1～3枠の川崎所属馬 → 単勝・複勝 → 的中率85%</p>
-                                <p><strong>1400m地元戦略：</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <div class="cta-section">
-                <div class="cta-box">
-                    <h3>＼ 川崎900m攻略をAIで実践 ／</h3>
-                    <p>内枠データと地元力を組み合わせた川崎特化AI予想。<br>900m特別距離の攻略法を毎日の買い目で実証中。</p>
-                    <a href="/premium/" class="cta-button">有料AI予想の詳細を見る →</a>
+                <div class="distance-item kawasaki-2100m">
+                    <h3>川崎競馬場2100m攻略法｜総合力が試される長距離戦</h3>
+                    <p>川崎競馬場で行われる最長距離設定。1周半弱の長丁場となり、スタミナと総合的な競走能力が最も重要視される舞台です。序盤のペース配分、中盤でのポジション取り、そして最後の直線での持続力と、全てが高いレベルで要求されます。<br><br>枠順による影響はほぼなく、純粋な実力勝負。長距離適性のある馬が本領を発揮しやすく、番狂わせが起きにくい距離設定といえるでしょう。小回りコースでの長距離戦は、コーナーでの立ち回りと最後の直線での粘りが勝敗を分ける重要なポイントとなります。<br><br><a href="/blog/2025-08-16-kawasaki-2100m/" class="distance-cta-button">💪 川崎2100m完全攻略ガイドを見る →</a></p>
+                    <img src="/images/kawasaki/kawasaki_2100.png" alt="コース図" title="コースレイアウト" loading="lazy" />
                 </div>
             </div>
+
+            <nav class="section-nav" aria-label="他の競馬場へ">
+                <h3>他の南関競馬場も見る</h3>
+                <ul>
+                    <li><a href="/">ホームの攻略法を見る →</a></li>
+                    <li><a href="/course/ooi/">大井の攻略法を見る →</a></li>
+                    <li><a href="/course/funabashi/">船橋の攻略法を見る →</a></li>
+                    <li><a href="/course/urawa/">浦和の攻略法を見る →</a></li>
+                </ul>
+            </nav>
         </main>
     </div>
 
@@ -452,7 +144,7 @@ const description = "川崎競馬場の900m～1600m全距離を徹底攻略。90
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
             background-color: #ffffff;
@@ -498,8 +190,8 @@ const description = "川崎競馬場の900m～1600m全距離を徹底攻略。90
 
         .last-updated time {
             font-weight: bold;
-            color: #3b82f6;
-            background: #f0f9ff;
+            color: #22c55e;
+            background: #f0fdf4;
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
             margin-left: 0.5rem;
@@ -511,714 +203,160 @@ const description = "川崎競馬場の900m～1600m全距離を徹底攻略。90
             margin-bottom: 2rem;
         }
 
-        .content section {
-            margin-bottom: 3rem;
-        }
-
-        .content p, .content li, .content h2, .content h3, .content h4 {
-            color: #1a1a1a;
-        }
-
-        .overview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+        .course-image {
+            text-align: center;
             margin: 2rem 0;
         }
 
-        .info-card {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
+        .course-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .course-data {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-left: 4px solid #22c55e;
+            border-radius: 8px;
             padding: 2rem;
+            margin: 2rem 0;
         }
 
-        .info-card.highlight {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+        .course-data h2 {
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
         }
 
-        .info-card.special {
-            border-color: #f59e0b;
-            background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+        .course-specs {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .info-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+        .course-specs th {
+            background: #e9ecef;
+            padding: 1rem;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #dee2e6;
+            width: 30%;
+        }
+
+        .course-specs td {
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            background: #ffffff;
+        }
+
+        .content {
+            margin: 2rem 0;
+        }
+
+        .content p {
+            color: #1a1a1a;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .distance-explanations {
+            margin: 3rem 0;
+        }
+
+        .distance-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .distance-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .distance-item h3 {
+            color: #1a1a1a;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #22c55e;
             padding-bottom: 0.5rem;
         }
 
-        .info-card.special h3 {
-            color: #f59e0b;
+        .distance-item p {
+            color: #1a1a1a;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
         }
 
-        .info-card ul {
-            margin: 0;
-            padding-left: 1.5rem;
+        .distance-cta-button {
+            background: #22c55e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
         }
 
-        .info-card li {
-            margin-bottom: 0.5rem;
+        .distance-cta-button:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
         }
 
-        .distance-cards {
-            display: grid;
-            gap: 3rem;
-            margin: 2rem 0;
+        .distance-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .distance-card {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
+        .section-nav {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
             padding: 2rem;
+            margin: 3rem 0;
         }
 
-        .distance-card.featured {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
-        }
-
-        .distance-card.special-featured {
-            border-color: #f59e0b;
-            background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
-        }
-
-        .distance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 1rem;
-        }
-
-        .distance-header h3 {
+        .section-nav h3 {
             color: #1a1a1a;
-            font-size: 1.5rem;
-            margin: 0;
+            margin-bottom: 1.5rem;
         }
 
-        .difficulty {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .difficulty.easy {
-            background: #10b981;
-            color: white;
-        }
-
-        .difficulty.medium {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .difficulty.special {
-            background: #ef4444;
-            color: white;
-        }
-
-        .special-notice {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .special-notice h4 {
-            color: #ef4444;
-            margin-bottom: 0.5rem;
-        }
-
-        .course-layout {
-            margin-bottom: 2rem;
-        }
-
-        .course-layout h4 {
-            color: #3b82f6;
-            margin-bottom: 0.5rem;
-        }
-
-        .layout-points {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .point {
-            background: #f1f5f9;
-            color: #1a1a1a;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .point.special {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .strategy-section h4 {
-            color: #3b82f6;
-            margin: 1.5rem 0 1rem 0;
-        }
-
-        .strategy-box {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin: 1rem 0;
-        }
-
-        .strategy-box.success {
-            border-left-color: #10b981;
-            background: #ecfdf5;
-        }
-
-        .strategy-box.warning {
-            border-left-color: #f59e0b;
-            background: #fef3c7;
-        }
-
-        .strategy-box.advanced {
-            border-left-color: #8b5cf6;
-            background: #f3e8ff;
-        }
-
-        .strategy-box.special {
-            border-left-color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .strategy-box h5 {
-            color: #1a1a1a;
-            margin: 0 0 1rem 0;
-            font-size: 1.1rem;
-        }
-
-        .strategy-box ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .data-analysis {
-            margin: 1.5rem 0;
-        }
-
-        .data-analysis.critical {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .data-analysis h5 {
-            color: #1a1a1a;
-            margin-bottom: 1rem;
-        }
-
-        .bracket-stats-900 {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .bracket-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .bracket-row.critical {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-        }
-
-        .bracket-row.bad {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-        }
-
-        .bracket-row.very-bad {
-            background: #fef2f2;
-            border: 1px solid #ef4444;
-        }
-
-        .bracket-label {
-            font-weight: bold;
-        }
-
-        .stat-excellent {
-            color: #10b981;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .stat-poor {
-            color: #f59e0b;
-            font-weight: bold;
-        }
-
-        .stat-terrible {
-            color: #ef4444;
-            font-weight: bold;
-        }
-
-        .local-advantage {
-            margin: 1.5rem 0;
-        }
-
-        .advantage-stats {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .advantage-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .advantage-type {
-            font-weight: bold;
-        }
-
-        .advantage-rate {
-            color: #10b981;
-            font-weight: bold;
-        }
-
-        .betting-example {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .betting-example.special {
-            background: #fef3c7;
-            border: 2px solid #f59e0b;
-        }
-
-        .betting-example h4 {
-            color: #10b981;
-            margin-bottom: 1rem;
-        }
-
-        .betting-example.special h4 {
-            color: #f59e0b;
-        }
-
-        .example-bet p {
-            margin: 0.5rem 0;
-            font-size: 0.95rem;
-        }
-
-        .expected {
-            color: #10b981;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        .expected.special {
-            color: #f59e0b;
-        }
-
-        .jockey-stats {
-            margin: 2rem 0;
-        }
-
-        .ranking-table {
-            display: grid;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .rank-item {
-            display: grid;
-            grid-template-columns: 60px 120px 120px 1fr;
-            align-items: center;
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .rank-item.featured {
-            border-color: #3b82f6;
-            background: #f0f9ff;
-        }
-
-        .rank-number {
-            font-weight: bold;
-            color: #3b82f6;
-            font-size: 1.1rem;
-        }
-
-        .jockey-name {
-            font-weight: bold;
-            color: #1a1a1a;
-        }
-
-        .win-rate {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .recommendation {
-            color: #10b981;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .distance-expertise {
-            margin: 2rem 0;
-        }
-
-        .expertise-grid {
+        .section-nav ul {
+            list-style: none;
+            padding: 0;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 1rem 0;
-        }
-
-        .expertise-card {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .expertise-card h5 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-        }
-
-        .expertise-card ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .local-analysis {
-            margin: 2rem 0;
-        }
-
-        .stat-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .comparison-item {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .comparison-item川崎 {
-            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
-            border-color: #10b981;
-        }
-
-        .comparison-item h4 {
-            color: #3b82f6;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-        }
-
-        .comparison-item川崎 h4 {
-            color: #10b981;
-        }
-
-        .stats-list {
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .stat-label {
-            font-weight: bold;
-            color: #1a1a1a;
-        }
-
-        .stat-value {
-            font-weight: bold;
-        }
-
-        .stat-value.excellent {
-            color: #10b981;
-            font-size: 1.1rem;
-        }
-
-        .stat-value.good {
-            color: #10b981;
-        }
-
-        .stat-value.normal {
-            color: #f59e0b;
-        }
-
-        .stat-value.poor {
-            color: #ef4444;
-        }
-
-        .local-tips {
-            background: #f0f9ff;
-            border: 1px solid #3b82f6;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .local-tips h4 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .local-tips ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .weather-conditions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .condition-card {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .condition-card.danger {
-            border-color: #ef4444;
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-        }
-
-        .condition-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-        }
-
-        .condition-card.danger h3 {
-            color: #ef4444;
-        }
-
-        .condition-strategy h4 {
-            color: #1a1a1a;
-            margin: 1rem 0 0.5rem 0;
-        }
-
-        .condition-strategy ul {
-            margin: 0 0 1rem 0;
-            padding-left: 1.5rem;
-        }
-
-        .danger-note {
-            background: #fef2f2;
-            border: 1px solid #ef4444;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .danger-note p {
-            color: #ef4444;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .tips-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .tip-card {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .tip-card.special {
-            border-left-color: #f59e0b;
-            background: #fef3c7;
-        }
-
-        .tip-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .tip-card.special h3 {
-            color: #f59e0b;
-        }
-
-        .tip-card ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .tip-card li {
-            margin-bottom: 0.5rem;
-        }
-
-        .results-planning {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-
-        .plan-details {
-            display: grid;
-            gap: 2rem;
-            margin: 1.5rem 0;
-        }
-
-        .plan-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
         }
 
-        .stat-item {
-            text-align: center;
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .stat-item.special {
-            border-color: #f59e0b;
-            background: #fef3c7;
-        }
-
-        .stat-label {
-            display: block;
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #3b82f6;
-        }
-
-        .stat-item.special .stat-value {
-            color: #f59e0b;
-        }
-
-        .investment-breakdown {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .investment-breakdown h4 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .investment-breakdown ul {
+        .section-nav li {
             margin: 0;
-            padding-left: 1.5rem;
         }
 
-        .success-pattern {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .success-pattern h4 {
-            color: #10b981;
-            margin-bottom: 1rem;
-        }
-
-        .pattern-example {
-            font-size: 0.95rem;
-        }
-
-        .pattern-example p {
-            margin: 0.5rem 0;
-        }
-
-        .cta-section {
-            margin: 4rem 0;
-        }
-
-        .cta-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 3rem;
-            border-radius: 12px;
-            text-align: center;
-            color: white;
-        }
-
-        .cta-box h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .cta-box p {
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .cta-button {
-            background: white;
-            color: #667eea;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
+        .section-nav a {
+            display: block;
+            background: #ffffff;
+            color: #3b82f6;
+            padding: 1rem;
+            border-radius: 6px;
             text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            transition: transform 0.2s ease;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
         }
 
-        .cta-button:hover {
+        .section-nav a:hover {
+            background: #3b82f6;
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -1230,57 +368,25 @@ const description = "川崎競馬場の900m～1600m全距離を徹底攻略。90
                 font-size: 2rem;
             }
 
-            .last-updated {
-                font-size: 0.8rem;
-                margin-bottom: 1rem;
+            .course-specs th {
+                width: 35%;
+                font-size: 0.9rem;
             }
 
-            .last-updated time {
-                padding: 0.2rem 0.5rem;
-                font-size: 0.8rem;
+            .course-specs td {
+                font-size: 0.9rem;
             }
 
-            .overview-grid {
+            .distance-item {
+                padding: 1.5rem;
+            }
+
+            .distance-item h3 {
+                font-size: 1.3rem;
+            }
+
+            .section-nav ul {
                 grid-template-columns: 1fr;
-            }
-
-            .distance-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .rank-item {
-                grid-template-columns: 50px 100px 1fr;
-                gap: 0.5rem;
-            }
-
-            .rank-item .win-rate {
-                grid-column: 2 / 4;
-            }
-
-            .rank-item .recommendation {
-                grid-column: 1 / 4;
-            }
-
-            .expertise-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-comparison {
-                grid-template-columns: 1fr;
-            }
-
-            .weather-conditions {
-                grid-template-columns: 1fr;
-            }
-
-            .tips-container {
-                grid-template-columns: 1fr;
-            }
-
-            .plan-stats {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>

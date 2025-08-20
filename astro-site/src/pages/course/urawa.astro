@@ -1,1380 +1,434 @@
 ---
-const title = "浦和競馬場コース攻略【完全版】800m日本最小コースと先行天国の法則";
-const description = "浦和競馬場の800m～2000m全距離を徹底攻略。日本最小800mコースの特徴、先行有利データ、各距離の攻略法を完全解説。";
+import Layout from '../../layouts/Layout.astro';
 ---
 
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
-    <meta name="description" content={description}>
-    <meta name="keywords" content="浦和競馬場,コース攻略,800m,1000m,1400m,1500m,先行天国,逃げ馬,日本最小">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nankan-analytics.keiba.link/course/urawa/">
-    <meta property="og:title" content={title}>
-    <meta property="og:description" content={description}>
-    <meta property="og:site_name" content="NANKANアナリティクス">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://nankan-analytics.keiba.link/course/urawa/">
-    <meta property="twitter:title" content={title}>
-    <meta property="twitter:description" content={description}>
-    
-    <!-- 構造化データ -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Guide",
-      "name": "浦和競馬場コース攻略ガイド",
-      "description": "浦和競馬場の全距離を徹底分析した攻略ガイド",
-      "provider": {
-        "@type": "Organization",
-        "name": "NANKANアナリティクス"
-      },
-      "about": {
-        "@type": "Place",
-        "name": "浦和競馬場",
-        "address": "埼玉県さいたま市南区"
-      }
-    }
-    </script>
-    
-    <link rel="stylesheet" href="/styles/global.css">
-</head>
-
-<body>
-    <div class="container">
-        <nav class="breadcrumb">
-            <a href="/">ホーム</a> > <a href="/course/">コース攻略</a> > 浦和競馬場
-        </nav>
-
-        <header class="page-header">
-            <h1>浦和競馬場コース攻略【完全版】800m日本最小コースと先行天国の法則</h1>
-            <div class="last-updated">
-                <span class="updated-label">最終更新日：</span>
-                <time datetime="2025-08-20">2025年8月20日</time>
-            </div>
-            <p class="lead">日本最小コースを制する逃げ・先行馬の見極め方</p>
-        </header>
-
-        <main class="content">
-            <section class="track-overview">
-                <h2>浦和競馬場の基本情報</h2>
-                
-                <div class="overview-grid">
-                    <div class="info-card special">
-                        <h3>🏟️ コース特徴</h3>
-                        <ul>
-                            <li>日本最小の競馬場（1周1200m）</li>
-                            <li>800m距離は浦和のみ開催</li>
-                            <li>先行馬の楽園・差し馬不利</li>
-                            <li>小回りでスピード勝負</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="info-card">
-                        <h3>📊 データ概要</h3>
-                        <ul>
-                            <li>年間開催日数：<strong>約140日</strong></li>
-                            <li>1日平均レース数：<strong>12レース</strong></li>
-                            <li>主要重賞：<strong>浦和記念</strong></li>
-                            <li>特別距離：<strong>800m</strong></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="info-card highlight">
-                        <h3>🎯 攻略ポイント</h3>
-                        <ul>
-                            <li>800mは逃げ馬の独壇場</li>
-                            <li>どの距離でも先行有利</li>
-                            <li>差し馬は基本的に不利</li>
-                            <li>シンプル戦略で勝負</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <section class="distance-analysis">
-                <h2>距離別完全攻略</h2>
-                
-                <div class="distance-cards">
-                    <div class="distance-card special-featured">
-                        <div class="distance-header">
-                            <h3>800m</h3>
-                            <span class="difficulty special">⭐ 浦和限定・逃げ馬天国</span>
-                        </div>
-                        
-                        <div class="special-notice">
-                            <h4>🚨 最重要：浦和800mは逃げ馬が絶対的に有利</h4>
-                            <p>差し馬はほぼ勝機なし。逃げ・先行馬限定で勝負必須。</p>
-                        </div>
-                        
-                        <div class="course-layout">
-                            <h4>📍 コースレイアウト</h4>
-                            <p>スタート→即1コーナー→短い直線約150m</p>
-                            <div class="layout-points">
-                                <span class="point special">超短距離</span>
-                                <span class="point special">逃げ必勝</span>
-                                <span class="point special">差し不可</span>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box critical">
-                                <h5>絶対ルール：逃げ馬の単複勝負</h5>
-                                <ul>
-                                    <li>逃げ馬1頭の単勝・複勝が基本</li>
-                                    <li>逃げ馬複数なら内枠優先</li>
-                                    <li>先行馬も相手候補</li>
-                                    <li>中団以降の馬は除外</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="data-analysis critical">
-                                <h5>📊 衝撃の脚質データ（過去1年間）</h5>
-                                <div class="running-style-stats">
-                                    <div class="style-row excellent">
-                                        <span class="style-label">1番人気：</span>
-                                        <span class="stat-amazing">勝率 48.5%</span>
-                                    </div>
-                                    <div class="style-row good">
-                                        <span class="style-label">2番人気：</span>
-                                        <span class="stat-good">勝率 16.5%</span>
-                                    </div>
-                                    <div class="style-row good">
-                                        <span class="style-label">3番人気：</span>
-                                        <span class="stat-good">勝率 14.6%</span>
-                                    </div>
-                                    <div class="data-insight">
-                                        <p><strong>1番人気の信頼度が極めて高い！上位人気で65%</strong></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="betting-example special">
-                            <h4>💰 鉄板投資法（予算3,000円）</h4>
-                            <div class="example-bet">
-                                <p><strong>逃げ馬の単勝：2,000円</strong></p>
-                                <p><strong>逃げ馬の複勝：1,000円</strong></p>
-                                <p class="expected special">期待払戻：4,800～7,200円（的中率85%）</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card featured">
-                        <div class="distance-header">
-                            <h3>1000m</h3>
-                            <span class="difficulty easy">★☆☆ 先行馬の複勝</span>
-                        </div>
-                        
-                        <div class="course-layout">
-                            <h4>📍 コースレイアウト</h4>
-                            <p>スタート→小回り→直線約180m</p>
-                            <div class="layout-points">
-                                <span class="point">短距離</span>
-                                <span class="point">先行有利</span>
-                                <span class="point">内枠重視</span>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box success">
-                                <h5>先行馬の複勝で手堅く</h5>
-                                <ul>
-                                    <li>先行馬2頭の複勝</li>
-                                    <li>内枠を優先選択</li>
-                                    <li>浦和実績重視</li>
-                                    <li>シンプルに3点以内</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="track-suitability">
-                                <h5>🏇 浦和適性チェック</h5>
-                                <div class="suitability-stats">
-                                    <div class="suitability-item">
-                                        <span class="suitability-type">浦和実績あり：</span>
-                                        <span class="suitability-rate">勝率 +20%</span>
-                                    </div>
-                                    <div class="suitability-item">
-                                        <span class="suitability-type">小回り得意：</span>
-                                        <span class="suitability-rate">勝率 +15%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>1400m</h3>
-                            <span class="difficulty medium">★★☆ 中距離戦略</span>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box">
-                                <h5>先行馬の馬連・ワイド</h5>
-                                <ul>
-                                    <li>先行馬から2頭選択</li>
-                                    <li>展開次第で差しも一考</li>
-                                    <li>浦和巧者を狙う</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="distance-card">
-                        <div class="distance-header">
-                            <h3>1500m</h3>
-                            <span class="difficulty medium">★★☆ 展開重視</span>
-                        </div>
-                        
-                        <div class="strategy-section">
-                            <h4>🎯 基本戦略</h4>
-                            <div class="strategy-box warning">
-                                <h5>ペースを読んで勝負</h5>
-                                <ul>
-                                    <li>逃げ馬の数でペース判断</li>
-                                    <li>スローなら先行一択</li>
-                                    <li>ハイペースでも差しは不利</li>
-                                    <li>重賞は人気馬中心</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-            <section class="practical-tips">
-                <h2>浦和競馬場実戦テクニック</h2>
-                
-                <div class="tips-container">
-                    <div class="tip-card critical">
-                        <h3>🚀 800m必勝法</h3>
-                        <ul>
-                            <li>逃げ馬の単勝・複勝一択</li>
-                            <li>逃げ馬複数なら内枠優先</li>
-                            <li>前走も800mの馬を重視</li>
-                            <li>オッズに関係なく逃げ馬勝負</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="tip-card">
-                        <h3>💡 浦和攻略の極意</h3>
-                        <ul>
-                            <li>シンプルに先行馬狙い</li>
-                            <li>差し馬は絶対に買わない</li>
-                            <li>小回り実績を最重視</li>
-                            <li>浦和巧者の馬を狙う</li>
-                            <li>複雑に考えず単純戦略</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="tip-card warning">
-                        <h3>⚠️ 絶対に避けるべき</h3>
-                        <ul>
-                            <li>差し馬の人気馬</li>
-                            <li>浦和初参戦の差し馬</li>
-                            <li>大回りコース専門馬</li>
-                            <li>スタート不良の馬</li>
-                            <li>外枠の差し馬</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <section class="monthly-results">
-                <h2>浦和専門戦略プラン</h2>
-                
-                <div class="results-planning">
-                    <h3>浦和競馬場シンプル攻略プラン</h3>
-                    <div class="plan-details">
-                        <div class="plan-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">対象レース</span>
-                                <span class="stat-value">15レース/月</span>
-                            </div>
-                            <div class="stat-item critical">
-                                <span class="stat-label">800m特化</span>
-                                <span class="stat-value">48.5%</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">目標的中率</span>
-                                <span class="stat-value">80.6%</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">目標回収率</span>
-                                <span class="stat-value">92%</span>
-                            </div>
-                        </div>
-                        
-                        <div class="investment-breakdown">
-                            <h4>📊 投資配分</h4>
-                            <ul>
-                                <li>浦和800m：60%（9レース）- 逃げ馬単勝</li>
-                                <li>浦和1000m：30%（4レース）- 先行馬複勝</li>
-                                <li>浦和1400m：10%（2レース）- 馬連・ワイド</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="success-pattern">
-                            <h4>🎯 浦和成功パターン</h4>
-                            <div class="pattern-example">
-                                <p><strong>800m人気馬戦略：</strong></p>
-                                <p>1番人気中心 → 単勝・複勝 → 勝率48.5%・複勝率80.6%</p>
-                                <p><strong>1000m先行戦略：</strong></p>
-                                <p>先行馬2頭 → 複勝2点 → 実データ検証中</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="summary">
-                <h2>浦和攻略まとめ</h2>
-                
-                <div class="summary-box">
-                    <h3>📝 浦和で勝つための5か条</h3>
-                    <ol>
-                        <li><strong>800mは逃げ馬の単勝</strong> - これ以外考えない</li>
-                        <li><strong>どの距離でも先行馬</strong> - 差し馬は買わない</li>
-                        <li><strong>浦和実績を最重視</strong> - 小回り適性が必須</li>
-                        <li><strong>シンプルな戦略</strong> - 複雑に考えない</li>
-                        <li><strong>雨なら逃げ一択</strong> - 重馬場は逃げ天国</li>
-                    </ol>
-                </div>
-                
-                <div class="next-action">
-                    <h3>次のステップ</h3>
-                    <p>浦和競馬場の攻略法をマスターしたら、他の競馬場も攻略しましょう。</p>
-                    <div class="link-buttons">
-                        <a href="/course/ooi/" class="btn btn-primary">大井競馬場の攻略法を見る</a>
-                        <a href="/course/kawasaki/" class="btn btn-secondary">川崎競馬場の攻略法を見る</a>
-                        <a href="/course/funabashi/" class="btn btn-secondary">船橋競馬場の攻略法を見る</a>
-                    </div>
-                </div>
-            </section>
-
-            <div class="cta-section">
-                <div class="cta-box">
-                    <h3>＼ 浦和800m攻略をAIで実践 ／</h3>
-                    <p>逃げ馬データと先行優位を組み込んだ浦和特化AI予想。<br>日本最小コースの攻略法を毎日の的中で実証中。</p>
-                    <a href="/premium/" class="cta-button">有料AI予想の詳細を見る →</a>
-                </div>
-            </div>
-        </main>
+<Layout title="浦和競馬場コース攻略 | NANKANアナリティクス">
+  <main class="container mx-auto px-4 py-8">
+    <div class="header">
+      <nav>
+        <a href="/">トップページ</a> > 
+        <a href="/course/">コース攻略</a> > 
+        <span>浦和競馬場</span>
+      </nav>
     </div>
 
-    <style>
-        body {
-            background-color: #ffffff;
-            color: #1a1a1a;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #ffffff;
-            color: #1a1a1a;
-        }
-
-        .breadcrumb {
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .breadcrumb a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .last-updated {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .updated-label {
-            font-weight: normal;
-            color: #888;
-        }
-
-        .last-updated time {
-            font-weight: bold;
-            color: #3b82f6;
-            background: #f0f9ff;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            margin-left: 0.5rem;
-        }
-
-        .lead {
-            font-size: 1.25rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .content section {
-            margin-bottom: 3rem;
-        }
-
-        .content p, .content li, .content h2, .content h3, .content h4 {
-            color: #1a1a1a;
-        }
-
-        .overview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .info-card {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .info-card.highlight {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
-        }
-
-        .info-card.special {
-            border-color: #ef4444;
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-        }
-
-        .info-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-        }
-
-        .info-card.special h3 {
-            color: #ef4444;
-        }
-
-        .info-card ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .info-card li {
-            margin-bottom: 0.5rem;
-        }
-
-        .distance-cards {
-            display: grid;
-            gap: 3rem;
-            margin: 2rem 0;
-        }
-
-        .distance-card {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .distance-card.featured {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
-        }
-
-        .distance-card.special-featured {
-            border-color: #ef4444;
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-        }
-
-        .distance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 1rem;
-        }
-
-        .distance-header h3 {
-            color: #1a1a1a;
-            font-size: 1.5rem;
-            margin: 0;
-        }
-
-        .difficulty {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .difficulty.easy {
-            background: #10b981;
-            color: white;
-        }
-
-        .difficulty.medium {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .difficulty.special {
-            background: #ef4444;
-            color: white;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .special-notice {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .special-notice h4 {
-            color: #ef4444;
-            margin-bottom: 0.5rem;
-        }
-
-        .course-layout {
-            margin-bottom: 2rem;
-        }
-
-        .course-layout h4 {
-            color: #3b82f6;
-            margin-bottom: 0.5rem;
-        }
-
-        .layout-points {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .point {
-            background: #f1f5f9;
-            color: #1a1a1a;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .point.special {
-            background: #ef4444;
-            color: white;
-        }
-
-        .strategy-section h4 {
-            color: #3b82f6;
-            margin: 1.5rem 0 1rem 0;
-        }
-
-        .strategy-box {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin: 1rem 0;
-        }
-
-        .strategy-box.success {
-            border-left-color: #10b981;
-            background: #ecfdf5;
-        }
-
-        .strategy-box.warning {
-            border-left-color: #f59e0b;
-            background: #fef3c7;
-        }
-
-        .strategy-box.critical {
-            border-left-color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .strategy-box h5 {
-            color: #1a1a1a;
-            margin: 0 0 1rem 0;
-            font-size: 1.1rem;
-        }
-
-        .strategy-box ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .data-analysis {
-            margin: 1.5rem 0;
-        }
-
-        .data-analysis.critical {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .data-analysis h5 {
-            color: #1a1a1a;
-            margin-bottom: 1rem;
-        }
-
-        .running-style-stats {
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        .style-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem;
-            background: white;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .style-row.excellent {
-            background: #ecfdf5;
-            border: 2px solid #10b981;
-        }
-
-        .style-row.good {
-            background: #f0f9ff;
-            border: 2px solid #3b82f6;
-        }
-
-        .style-row.terrible {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-        }
-
-        .style-label {
-            font-weight: bold;
-            font-size: 1.05rem;
-        }
-
-        .stat-amazing {
-            color: #10b981;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .stat-good {
-            color: #3b82f6;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .stat-disaster {
-            color: #ef4444;
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        .data-insight {
-            background: #f0f9ff;
-            border: 1px solid #3b82f6;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .data-insight p {
-            color: #3b82f6;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .track-suitability {
-            margin: 1.5rem 0;
-        }
-
-        .suitability-stats {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .suitability-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .suitability-type {
-            font-weight: bold;
-        }
-
-        .suitability-rate {
-            color: #10b981;
-            font-weight: bold;
-        }
-
-        .betting-example {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .betting-example.special {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-        }
-
-        .betting-example h4 {
-            color: #10b981;
-            margin-bottom: 1rem;
-        }
-
-        .betting-example.special h4 {
-            color: #ef4444;
-        }
-
-        .example-bet p {
-            margin: 0.5rem 0;
-            font-size: 0.95rem;
-        }
-
-        .expected {
-            color: #10b981;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        .expected.special {
-            color: #ef4444;
-        }
-
-        .jockey-importance-section {
-            background: #f8fafc;
-            border-left: 4px solid #8b5cf6;
-            padding: 2rem;
-            border-radius: 0 12px 12px 0;
-            margin: 2rem 0;
-        }
-
-        .jockey-stats {
-            margin: 2rem 0;
-        }
-
-        .ranking-table {
-            display: grid;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .rank-item {
-            display: grid;
-            grid-template-columns: 60px 120px 120px 1fr;
-            align-items: center;
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .rank-item.featured {
-            border-color: #3b82f6;
-            background: #f0f9ff;
-        }
-
-        .rank-number {
-            font-weight: bold;
-            color: #3b82f6;
-            font-size: 1.1rem;
-        }
-
-        .jockey-name {
-            font-weight: bold;
-            color: #1a1a1a;
-        }
-
-        .win-rate {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .recommendation {
-            color: #10b981;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .distance-specialty {
-            margin: 2rem 0;
-        }
-
-        .specialty-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 1.5rem 0;
-        }
-
-        .specialty-card {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .specialty-card.critical {
-            border-color: #ef4444;
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-        }
-
-        .specialty-card h5 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-        }
-
-        .specialty-card.critical h5 {
-            color: #ef4444;
-        }
-
-        .specialty-card ul {
-            margin: 0 0 1rem 0;
-            padding-left: 1.5rem;
-        }
-
-        .specialty-note {
-            background: #fef2f2;
-            border: 1px solid #ef4444;
-            border-radius: 6px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .specialty-note p {
-            color: #ef4444;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .running-style-comparison {
-            margin: 2rem 0;
-        }
-
-        .style-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .comparison-item逃げ {
-            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
-            border: 2px solid #10b981;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .comparison-item先行 {
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
-            border: 2px solid #3b82f6;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .comparison-item差し {
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-            border: 2px solid #ef4444;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .comparison-item逃げ h4 {
-            color: #10b981;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid #10b981;
-            padding-bottom: 0.5rem;
-        }
-
-        .comparison-item先行 h4 {
-            color: #3b82f6;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid #3b82f6;
-            padding-bottom: 0.5rem;
-        }
-
-        .comparison-item差し h4 {
-            color: #ef4444;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid #ef4444;
-            padding-bottom: 0.5rem;
-        }
-
-        .stats-list {
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .stat-label {
-            font-weight: bold;
-            color: #1a1a1a;
-        }
-
-        .stat-value {
-            font-weight: bold;
-        }
-
-        .stat-value.amazing {
-            color: #10b981;
-            font-size: 1.2rem;
-        }
-
-        .stat-value.excellent {
-            color: #10b981;
-            font-size: 1.1rem;
-        }
-
-        .stat-value.good {
-            color: #3b82f6;
-        }
-
-        .stat-value.poor {
-            color: #f59e0b;
-        }
-
-        .stat-value.terrible {
-            color: #ef4444;
-        }
-
-        .style-strategy {
-            background: #f0f9ff;
-            border: 1px solid #3b82f6;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .style-strategy h4 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .style-strategy ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .weather-conditions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .condition-card {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .condition-card.critical {
-            border-color: #ef4444;
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-        }
-
-        .condition-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-        }
-
-        .condition-card.critical h3 {
-            color: #ef4444;
-        }
-
-        .condition-strategy h4 {
-            color: #1a1a1a;
-            margin: 1rem 0 0.5rem 0;
-        }
-
-        .condition-strategy ul {
-            margin: 0 0 1rem 0;
-            padding-left: 1.5rem;
-        }
-
-        .critical-note {
-            background: #fef2f2;
-            border: 1px solid #ef4444;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .critical-note p {
-            color: #ef4444;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .tips-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .tip-card {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .tip-card.critical {
-            border-left-color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .tip-card.warning {
-            border-left-color: #f59e0b;
-            background: #fef3c7;
-        }
-
-        .tip-card h3 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .tip-card.critical h3 {
-            color: #ef4444;
-        }
-
-        .tip-card.warning h3 {
-            color: #f59e0b;
-        }
-
-        .tip-card ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .tip-card li {
-            margin-bottom: 0.5rem;
-        }
-
-        .results-planning {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-
-        .plan-details {
-            display: grid;
-            gap: 2rem;
-            margin: 1.5rem 0;
-        }
-
-        .plan-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .stat-item.critical {
-            border-color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .stat-label {
-            display: block;
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #3b82f6;
-        }
-
-        .stat-item.critical .stat-value {
-            color: #ef4444;
-        }
-
-        .investment-breakdown {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .investment-breakdown h4 {
-            color: #3b82f6;
-            margin-bottom: 1rem;
-        }
-
-        .investment-breakdown ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .success-pattern {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .success-pattern h4 {
-            color: #10b981;
-            margin-bottom: 1rem;
-        }
-
-        .pattern-example {
-            font-size: 0.95rem;
-        }
-
-        .pattern-example p {
-            margin: 0.5rem 0;
-        }
-
-        .summary-box {
-            background: #f8fafc;
-            border: 2px solid #3b82f6;
-            border-radius: 8px;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-
-        .summary-box h3 {
-            color: #3b82f6;
-            margin-bottom: 1.5rem;
-        }
-
-        .summary-box ol {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .summary-box li {
-            margin-bottom: 0.75rem;
-            color: #1a1a1a;
-        }
-
-        .next-action {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: #f8fafc;
-            border-radius: 8px;
-        }
-
-        .next-action h3 {
-            color: #1a1a1a;
-            margin-bottom: 1rem;
-        }
-
-        .link-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: transform 0.2s ease;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-
-        .cta-section {
-            margin: 4rem 0;
-        }
-
-        .cta-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 3rem;
-            border-radius: 12px;
-            text-align: center;
-            color: white;
-        }
-
-        .cta-box h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .cta-box p {
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            color: white;
-        }
-
-        .cta-button {
-            background: white;
-            color: #667eea;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            transition: transform 0.2s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .page-header h1 {
-                font-size: 2rem;
-            }
-
-            .last-updated {
-                font-size: 0.8rem;
-                margin-bottom: 1rem;
-            }
-
-            .last-updated time {
-                padding: 0.2rem 0.5rem;
-                font-size: 0.8rem;
-            }
-
-            .overview-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .distance-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .rank-item {
-                grid-template-columns: 50px 100px 1fr;
-                gap: 0.5rem;
-            }
-
-            .rank-item .win-rate {
-                grid-column: 2 / 4;
-            }
-
-            .rank-item .recommendation {
-                grid-column: 1 / 4;
-            }
-
-            .specialty-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .style-comparison {
-                grid-template-columns: 1fr;
-            }
-
-            .weather-conditions {
-                grid-template-columns: 1fr;
-            }
-
-            .tips-container {
-                grid-template-columns: 1fr;
-            }
-
-            .plan-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .link-buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
-</body>
-</html>
+    <section class="hero">
+      <h1>浦和競馬場コース攻略ガイド</h1>
+      <p class="hero-description">AI・機械学習で勝つ南関競馬の次世代予想プラットフォーム</p>
+    </section>
+
+    <section class="racecourse-info">
+      <div class="info-card">
+        <h2>🏁 浦和競馬場の基本情報</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>1周距離:</strong> 834m
+          </div>
+          <div class="info-item">
+            <strong>コース形状:</strong> 左回り
+          </div>
+          <div class="info-item">
+            <strong>直線距離:</strong> 300m（ゴールまで220m）
+          </div>
+          <div class="info-item">
+            <strong>高低差:</strong> 平坦コース
+          </div>
+        </div>
+      </div>
+
+      <div class="course-features">
+        <h3>🔍 コースの特徴</h3>
+        <ul>
+          <li><strong>短い直線:</strong> ゴール前の直線が220mと短く、位置取りが重要</li>
+          <li><strong>平坦コース:</strong> 高低差がなく、実力通りの結果が出やすい</li>
+          <li><strong>左回り:</strong> 左回りコースで、内枠有利の傾向</li>
+          <li><strong>小回りコース:</strong> 834mと短い1周距離でコーナーワークが重要</li>
+        </ul>
+      </div>
+
+      <div class="statistics-summary">
+        <h3>📊 馬番別成績データ</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">1番</span>
+            <span class="stat-value">勝率 14.1%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">2番</span>
+            <span class="stat-value">勝率 5.0%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">3番</span>
+            <span class="stat-value">勝率 11.3%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">4番</span>
+            <span class="stat-value">勝率 8.0%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">5番</span>
+            <span class="stat-value">勝率 12.0%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">6番</span>
+            <span class="stat-value">勝率 15.3%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="distance-explanations">
+      
+      <div class="distance-item urawa-800m">
+        <div class="distance-content">
+          <h3 class="distance-title">浦和800m攻略法</h3>
+          <img src="/images/urawa-800m.jpg" alt="浦和競馬場800mコース図" class="course-image">
+          <p class="distance-description">
+            スタート地点は向正面2コーナー出口付近に位置し、レース序盤からスピード全開となる短距離戦。直線部分を長く使えるため、発馬直後の位置取り争いは極めて激しく、わずかな出遅れが命取りになります。特に内枠で出足が鈍ると、外の馬に進路を奪われやすく、最後の直線は約220mと短いため挽回はほぼ不可能。スタートダッシュと初速の速さが勝敗を大きく左右する、まさにスプリント戦の典型的な舞台です。
+          </p>
+          <p class="distance-description">
+            このコースでは「スタート勝負の極短距離戦」という表現が最も適切で、発馬の巧拙がそのまま着順に直結します。内枠の1番が勝率14.1%と高い数値を示す一方で、2番は5.0%と低迷。これは内枠からのスムーズなスタートが有利に働く一方で、わずかな出遅れが致命傷になることを意味しています。6番の勝率が15.3%と最も高いのは、外から内をこじ開ける馬の強さが評価されている証拠でもあります。
+          </p>
+          <div class="cta-section">
+            <a href="/course/urawa/800m/" class="cta-button">浦和800m詳細攻略ガイドを見る</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="distance-item urawa-1400m">
+        <div class="distance-content">
+          <h3 class="distance-title">浦和1400m攻略法</h3>
+          <img src="/images/urawa-1400m.jpg" alt="浦和競馬場1400mコース図" class="course-image">
+          <p class="distance-description">
+            スタート地点は4コーナー付近の直線入口。序盤から直線部分を使ってポジション争いができるため、外枠馬には内の動きを見ながらレースを組み立てられる利点があります。一方、内枠馬はスタートダッシュが極めて重要で、出遅れれば包まれる危険性が高まります。全体の流れは速くなりやすく、後方からの差し脚も届きやすい条件。交流重賞から一般戦まで幅広く組まれる浦和競馬場の主力距離であり、枠順と展開予測が予想のカギを握ります。
+          </p>
+          <p class="distance-description">
+            「位置取りと展開が勝敗を分ける主力コース」として、1400mは浦和競馬場で最も重要な距離設定です。4番の勝率12.9%、6番の勝率13.0%と中間的な枠順が好成績を収めているのは、スタート後の位置取りで融通が利くことが要因。1番人気の勝率が36.7%と比較的低いのは、能力上位馬でも枠順や展開で苦戦することがあるためで、予想の醍醐味が詰まった距離といえます。
+          </p>
+          <div class="cta-section">
+            <a href="/course/urawa/1400m/" class="cta-button">浦和1400m詳細攻略ガイドを見る</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="distance-item urawa-2000m">
+        <div class="distance-content">
+          <h3 class="distance-title">浦和2000m攻略法</h3>
+          <img src="/images/urawa-2000m.jpg" alt="浦和競馬場2000mコース図" class="course-image">
+          <p class="distance-description">
+            スタート地点は800mと同じ位置で、最初のコーナーまで余裕があるため、枠順の有利不利は比較的小さいコースです。レース中に計6回のコーナーを通過するため、コーナーワークの巧拙が勝敗を分ける大きなポイントとなります。
+          </p>
+          <p class="distance-description">
+            ただし、2000mという長距離では位置取りや器用さ以上に「馬自身の総合力」が明確に問われるのが特徴。末脚勝負に偏ることは少なく、実力差がそのまま結果に直結しやすい傾向があります。特に後方一気の差し切り決着が少ない点は、スタミナと持続力に優れたタイプが優勢となる証拠といえるでしょう。「総合力が試されるスタミナ勝負の舞台」として、真の実力馬が勝利を収めやすい条件設定です。
+          </p>
+          <div class="cta-section">
+            <a href="/course/urawa/2000m/" class="cta-button">浦和2000m詳細攻略ガイドを見る</a>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="newsletter-signup">
+      <div class="newsletter-card">
+        <h3>🚀 AI競馬予想の最新情報をお届け</h3>
+        <p>機械学習による競馬予想手法、最新のAI分析結果、限定データを無料でお届けします。</p>
+        <form class="newsletter-form" action="#" method="post">
+          <input type="email" placeholder="メールアドレスを入力" required>
+          <button type="submit">無料で登録</button>
+        </form>
+        <p class="newsletter-note">※配信はいつでも停止できます</p>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  :root {
+    --primary-color: #3b82f6;
+    --secondary-color: #8b5cf6;
+    --success-color: #10b981;
+    --text-color: #1f2937;
+    --text-light: #6b7280;
+    --bg-light: #f9fafb;
+    --bg-white: #ffffff;
+    --border-color: #e5e7eb;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.7;
+    color: var(--text-color);
+    background-color: var(--bg-light);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .header nav {
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+
+  .header nav a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  .header nav a:hover {
+    text-decoration: underline;
+  }
+
+  .hero {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 4rem 2rem;
+    margin-bottom: 3rem;
+    border-radius: 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .hero-description {
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+
+  .racecourse-info {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .info-card, .course-features, .statistics-summary {
+    background: var(--bg-white);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .info-card h2, .course-features h3, .statistics-summary h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    font-size: 1.5rem;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .info-item {
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 0.5rem;
+  }
+
+  .course-features ul {
+    list-style: none;
+  }
+
+  .course-features li {
+    margin-bottom: 0.8rem;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .course-features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+    font-weight: bold;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 0.5rem;
+  }
+
+  .stat-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+  }
+
+  .stat-value {
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+
+  .distance-explanations {
+    margin-bottom: 3rem;
+  }
+
+  .distance-item {
+    background: var(--bg-white);
+    margin-bottom: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .distance-content {
+    padding: 2rem;
+  }
+
+  .distance-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    font-weight: 600;
+  }
+
+  .course-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #f3f4f6, #e5e7eb);
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+
+  .distance-description {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    line-height: 1.8;
+  }
+
+  .cta-section {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .cta-button {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  }
+
+  .newsletter-signup {
+    margin-top: 4rem;
+  }
+
+  .newsletter-card {
+    background: var(--bg-white);
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .newsletter-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+
+  .newsletter-card p {
+    margin-bottom: 2rem;
+    color: var(--text-light);
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto 1rem;
+  }
+
+  .newsletter-form input {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .newsletter-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+
+  .newsletter-form button {
+    padding: 1rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .newsletter-form button:hover {
+    background: #2563eb;
+  }
+
+  .newsletter-note {
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+    }
+
+    .newsletter-form {
+      flex-direction: column;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
