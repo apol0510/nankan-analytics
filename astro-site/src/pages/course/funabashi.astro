@@ -28,7 +28,7 @@ const description = "船橋競馬場のコース攻略法を距離別に詳し�
     <meta property="twitter:title" content={title}>
     <meta property="twitter:description" content={description}>
     
-    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/light.css">
 </head>
 
 <body>
@@ -37,7 +37,7 @@ const description = "船橋競馬場のコース攻略法を距離別に詳し�
             <a href="/">ホーム</a> > <a href="/course/">コース攻略</a> > 船橋競馬場
         </nav>
 
-        <header class="page-header">
+        <header class="lesson-header">
             <h1>船橋競馬場 - スパイラルカーブの左回りコース攻略法</h1>
             <div class="last-updated">
                 <span class="updated-label">最終更新日：</span>
@@ -46,361 +46,231 @@ const description = "船橋競馬場のコース攻略法を距離別に詳し�
             <p class="lead">スパイラルカーブ・左回りコースの攻略法</p>
         </header>
 
-        <main class="content">
-            <div class="course-image">
-                <img src="/images/funabashi_course.png" alt="船橋競馬場 - スパイラルカーブの左回りコース攻略法コース図" title="船橋競馬場 - スパイラルカーブの左回りコース攻略法コースの詳細図" loading="lazy" />
-            </div>
-            
-            <div class="course-data">
-                <h2>船橋競馬場 - スパイラルカーブの左回りコース攻略法のコース特徴・基本データ</h2>
-                <table class="course-specs">
-                    <tr>
-                        <th>1周距離</th>
-                        <td>内回り：1,250m / 外回り：1,400m</td>
-                    </tr>
-                    <tr>
-                        <th>フルゲート</th>
-                        <td>14頭</td>
-                    </tr>
-                    <tr>
-                        <th>回り</th>
-                        <td>左回り</td>
-                    </tr>
-                    <tr>
-                        <th>幅員</th>
-                        <td>外：25m / 内：20m</td>
-                    </tr>
-                    <tr>
-                        <th>特徴</th>
-                        <td>スパイラルカーブが特徴的なコース</td>
-                    </tr>
-                    <tr>
-                        <th>直線</th>
-                        <td>308m</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="content">
+        <main class="lesson-content">
+            <section class="intro">
+                <h2>船橋競馬場の基本情報</h2>
                 <p>船橋競馬場はスパイラルカーブが特徴的な左回りコースです。内回りと外回りの2つのコースがあり、比較的バランスの取れたコース設計となっています。</p>
-            </div>
-
-            <div class="distance-explanations">
-                <div class="distance-item funabashi-1000m">
-                    <h3>船橋競馬場1000m攻略法｜逃げ・先行馬が主導権を握る短距離決戦</h3>
-                    <p>スタートからコーナーまで十分な距離があるため、枠順による明確な有利不利は少ないコース形態です。ただし、逃げを狙うタイプにとっては、やはり内枠からスムーズに先手を取れる形が理想的。外枠の場合は、他馬の出方を見ながら脚を使う分だけ不利になることもあります。展開面では、前を行く馬が粘り込みやすく、基本的に逃げ・先行勢に分がある舞台。スピード能力の高さとスタートダッシュの速さが結果を大きく左右するため、位置取りの巧さが予想の重要なポイントとなります。瞬発力勝負というより、序盤から押し切れる持続力を持った馬が優勢な条件といえるでしょう。<br><br><a href="/blog/2025-08-16-funabashi-1000m/" class="distance-cta-button">🚀 船橋1000m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_1000.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-
-                <div class="distance-item funabashi-1200m">
-                    <h3>船橋競馬場1200m攻略法｜外枠が優勢になりやすいハイペース戦</h3>
-                    <p>スタート地点は2コーナー奥のポケット。内枠の馬はコーナーへ斜めに向かう形になるため、発馬で出遅れると外の馬に囲まれやすく、位置取りに苦労するケースがあります。一方で外枠の馬はスムーズに加速できる利点があり、全体的にやや外側有利の傾向が見られるコースです。序盤の直線部分が長いため、ペースは自然と速くなりやすく、逃げ・先行勢だけでなく差し馬にも十分チャンスが生まれる舞台。スタートダッシュの速さと序盤の位置取りが勝敗を左右する一方で、最後の直線で脚を残せる差しタイプの激走も目立ちます。ハイペース必至の展開をどう読むかが予想のカギとなるコースといえるでしょう。<br><br><a href="/blog/2025-08-16-funabashi-1200m/" class="distance-cta-button">⚡ 船橋1200m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_1200.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-
-                <div class="distance-item funabashi-1500m">
-                    <h3>船橋競馬場1500m攻略法｜脚質を問わないバランス型コース</h3>
-                    <p>スタート地点から最初のコーナーまでの距離がやや短いため、内枠に入った馬が位置を取りやすく、全体的に内枠有利の傾向があります。序盤はコーナーまでの距離が短い影響で落ち着いたペースになりやすく、先行馬にとっては無理なく好位を確保できる条件です。一方で、このコースは逃げ・先行に偏らず、差し馬や追込み馬も展開次第で十分に台頭できる「バランス型」の舞台。内枠からスムーズに先行できる馬は能力を発揮しやすい一方、中団から差し脚を伸ばすタイプにもチャンスが残されている点が特徴です。船橋競馬場の中距離戦として安定感があり、各脚質に見せ場があるコースといえるでしょう。<br><br><a href="/blog/2025-08-16-funabashi-1500m/" class="distance-cta-button">⚖️ 船橋1500m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_1500.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-
-                <div class="distance-item funabashi-1600m">
-                    <h3>船橋競馬場1600m攻略法｜公平性の高いマイル戦</h3>
-                    <p>スタートから最初のコーナーまでの距離が十分に確保されているため、外枠でも不利になりにくいのが船橋1600mの大きな特徴です。内外の枠順による偏りはほとんどなく、全ての馬が持ち味を発揮しやすい「フラットな舞台」といえます。展開面でも特定の脚質に有利・不利が生じにくく、逃げ・先行・差し・追込みいずれも展開次第でチャンスを掴めるバランス型コース。南関東のマイル戦の中では最も安定感があり、競馬ファンや関係者から「力通りの決着になりやすい距離」と評価されています。予想においては枠順よりも、馬の総合力やその日の馬場傾向を見極めることがカギとなります。<br><br><a href="/blog/2025-08-16-funabashi-1600m/" class="distance-cta-button">🏆 船橋1600m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_1600.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-
-                <div class="distance-item funabashi-1700m">
-                    <h3>船橋競馬場1700m攻略法｜外枠不利が少なく先行力が生きる舞台</h3>
-                    <p>スタート地点は4コーナー出口付近。序盤の直線部分が1600mよりもさらに長いため、枠順による影響はほとんどなく、外枠からでも十分に好位を取れるコースです。外枠スタートの馬でも無理なくポジションを確保できる点が大きな特徴といえるでしょう。展開としては全体的に落ち着いたペースになりやすく、無理なく先行できた馬がそのまま粘り込むケースが多い舞台。逃げ・先行タイプがやや優勢ですが、差し馬にとっても展開次第で十分に勝機は残されています。船橋1700mは「枠順差が少ない＝純粋に地力が問われるコース」として知られており、予想を立てる際は脚質の相性や馬の持久力を重視するのが攻略のカギとなります。<br><br><a href="/blog/2025-08-16-funabashi-1700m/" class="distance-cta-button">🎯 船橋1700m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_1700.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-
-                <div class="distance-item funabashi-1800m">
-                    <h3>船橋競馬場1800m攻略法｜地力が問われるフラットな舞台</h3>
-                    <p>スタート地点は4コーナーの奥。序盤は直線部分が長く、スピードに乗った状態で流れに入るため、前半3ハロンが想像以上に速くなるケースもあります。それでも枠順による明確な有利不利はなく、内外どの枠からでも力を発揮しやすいコース形態です。展開面では、逃げ・先行馬が押し切ることもあれば、差し・追込みが台頭することもある「フラットな条件」。特定の脚質に偏らず、各馬が持てる力を発揮しやすい点が最大の特徴です。結果的に、純粋な地力やスタミナ、そして騎手のペース判断が勝敗を分ける舞台となります。船橋1800mは「枠順不問の実力勝負」として認識されており、予想を立てる際は展開の先読みと馬自身の総合力を重視することが攻略のカギです。<br><br><a href="/blog/2025-08-16-funabashi-1800m/" class="distance-cta-button">💪 船橋1800m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_1800.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-
-                <div class="distance-item funabashi-2200m">
-                    <h3>船橋競馬場2200m攻略法｜持久力と地力が試される舞台</h3>
-                    <p>スタート地点からすぐに3コーナーへ入るため、外枠の先行馬が内へ切り込んでくるケースがあり、その際に内枠の馬が窮屈な競馬を強いられることがあります。枠順の並び次第で位置取りに影響が出るのが、このコースの特徴です。展開面では先行馬が有利に映りますが、長距離戦らしく差し馬の台頭も十分に可能。直線に向けて脚を温存できた馬が力を発揮しやすく、結果的には「能力通りの決着」となりやすい舞台です。持久力と総合力の高さが問われるため、実力差が素直に結果へ反映されるコースといえるでしょう。<br><br><a href="/blog/2025-08-16-funabashi-2200m/" class="distance-cta-button">🏇 船橋2200m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_2200.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-
-                <div class="distance-item funabashi-2400m">
-                    <h3>船橋競馬場2400m攻略法｜持久力が問われる長距離コース</h3>
-                    <p>スタート地点は1000mと同じ位置で、最初の3コーナーまでは300m以上の直線が確保されています。そのため序盤は無理な先行争いが起きにくく、1周目のホームストレッチではペースが落ち着く展開が大半を占めます。レース全体では6回ものコーナーを通過するため、コーナーワークとスタミナ配分が勝敗を分けるポイント。流れ自体は安定しやすく、好位をスムーズに確保できる先行馬に有利な傾向があります。差し馬にとっては直線で脚を使う余地はあるものの、位置取りのロスが大きければ苦戦必至。総合力と持久力が問われる舞台といえるでしょう。<br><br><a href="/blog/2025-08-16-funabashi-2400m/" class="distance-cta-button">🚩 船橋2400m完全攻略ガイドを見る →</a></p>
-                    <img src="/images/funabashi/funabashi_2400.png" alt="コース図" title="コースレイアウト" loading="lazy" />
-                </div>
-            </div>
-
-            <nav class="section-nav" aria-label="他の競馬場へ">
-                <h3>他の南関競馬場も見る</h3>
                 <ul>
-                    <li><a href="/">ホームの攻略法を見る →</a></li>
-                    <li><a href="/course/ooi/">大井の攻略法を見る →</a></li>
-                    <li><a href="/course/kawasaki/">川崎の攻略法を見る →</a></li>
-                    <li><a href="/course/urawa/">浦和の攻略法を見る →</a></li>
+                    <li><strong>1周距離：</strong>内回り：1,250m / 外回り：1,400m</li>
+                    <li><strong>コース形状：</strong>左回り</li>
+                    <li><strong>直線距離：</strong>308m</li>
+                    <li><strong>幅員：</strong>外：25m / 内：20m</li>
+                    <li><strong>フルゲート：</strong>14頭</li>
                 </ul>
-            </nav>
+            </section>
+
+            <section class="venue-strategies">
+                <h2>船橋競馬場 距離別攻略法</h2>
+
+                <div class="distance-strategies">
+                    <div class="strategy-card">
+                        <h4>1000m - 逃げ・先行馬が主導権を握る短距離決戦</h4>
+                        <div class="strategy-details">
+                            <h5>🚀 基本戦略：先行力重視の単複勝負</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>スタートからコーナーまで十分な距離</li>
+                                    <li>枠順による明確な有利不利は少ない</li>
+                                    <li>前を行く馬が粘り込みやすい</li>
+                                    <li>逃げ・先行勢に有利な展開</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>先行タイプの単複勝負</li>
+                                    <li>スタートダッシュ重視</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>1200m - 外枠が優勢になりやすいハイペース戦</h4>
+                        <div class="strategy-details">
+                            <h5>⚡ 基本戦略：外枠重視の馬連・ワイド</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>2コーナー奥のポケットからスタート</li>
+                                    <li>外枠の馬がスムーズに加速可能</li>
+                                    <li>序盤の直線部分が長い</li>
+                                    <li>ペースが自然と速くなりやすい</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>外枠重視の馬連・ワイド</li>
+                                    <li>差し馬の激走も要注意</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>1500m - 脚質を問わないバランス型コース</h4>
+                        <div class="strategy-details">
+                            <h5>⚖️ 基本戦略：内枠先行馬の複勝・三連複</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>最初のコーナーまでの距離がやや短い</li>
+                                    <li>内枠が位置を取りやすい</li>
+                                    <li>落ち着いたペースになりやすい</li>
+                                    <li>各脚質にチャンスあり</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>内枠先行馬の複勝</li>
+                                    <li>バランス重視の三連複</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>1600m - 公平性の高いマイル戦</h4>
+                        <div class="strategy-details">
+                            <h5>🏆 基本戦略：実力重視の馬連・三連複</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>コーナーまでの距離が十分</li>
+                                    <li>内外の枠順による偏りが少ない</li>
+                                    <li>特定の脚質に偏らない</li>
+                                    <li>力通りの決着になりやすい</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>実力馬中心の馬連</li>
+                                    <li>総合力重視の三連複</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>1700m - 外枠不利が少なく先行力が生きる舞台</h4>
+                        <div class="strategy-details">
+                            <h5>🎯 基本戦略：先行馬重視の複勝・馬連</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>4コーナー出口付近からスタート</li>
+                                    <li>外枠でも好位を取りやすい</li>
+                                    <li>落ち着いたペースになりやすい</li>
+                                    <li>先行馬がやや優勢</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>先行馬の複勝・馬連</li>
+                                    <li>持久力重視の選択</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>1800m - 地力が問われるフラットな舞台</h4>
+                        <div class="strategy-details">
+                            <h5>💪 基本戦略：実力馬中心の馬連・三連複</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>4コーナーの奥からスタート</li>
+                                    <li>枠順による有利不利が少ない</li>
+                                    <li>特定の脚質に偏らない</li>
+                                    <li>純粋な地力が問われる</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>実力馬中心の馬連</li>
+                                    <li>総合力重視の三連複</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>2200m - 持久力と地力が試される舞台</h4>
+                        <div class="strategy-details">
+                            <h5>🏇 基本戦略：スタミナ馬重視の馬連・三連複</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>スタート後すぐに3コーナーへ</li>
+                                    <li>先行馬が有利だが差し馬も台頭可能</li>
+                                    <li>直線で脚を温存した馬が有利</li>
+                                    <li>能力通りの決着になりやすい</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>スタミナ馬重視の馬連</li>
+                                    <li>実力差重視の三連複</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>2400m - 持久力が問われる長距離コース</h4>
+                        <div class="strategy-details">
+                            <h5>🚩 基本戦略：先行力＋スタミナ馬の複勝・馬連</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>6回ものコーナーを通過</li>
+                                    <li>コーナーワークが重要</li>
+                                    <li>好位確保の先行馬に有利</li>
+                                    <li>位置取りロスは致命的</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>先行力のあるスタミナ馬</li>
+                                    <li>総合力重視の馬連</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="related-content">
+                <h2>他の南関競馬場も学ぶ</h2>
+                <div class="related-links">
+                    <div class="related-link-card">
+                        <h4>大井競馬場攻略</h4>
+                        <p>長い直線が特徴的な右回りコース</p>
+                        <a href="/course/ooi/" class="related-link">大井攻略ガイド →</a>
+                    </div>
+                    <div class="related-link-card">
+                        <h4>川崎競馬場攻略</h4>
+                        <p>900m特別距離を含む小回り左回りコース</p>
+                        <a href="/course/kawasaki/" class="related-link">川崎攻略ガイド →</a>
+                    </div>
+                    <div class="related-link-card">
+                        <h4>浦和競馬場攻略</h4>
+                        <p>日本最小周回コースの独特な展開</p>
+                        <a href="/course/urawa/" class="related-link">浦和攻略ガイド →</a>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
-    <style>
-        body {
-            background-color: #ffffff;
-            color: #1a1a1a;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #ffffff;
-            color: #1a1a1a;
-        }
-
-        .breadcrumb {
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .breadcrumb a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .last-updated {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .updated-label {
-            font-weight: normal;
-            color: #888;
-        }
-
-        .last-updated time {
-            font-weight: bold;
-            color: #3b82f6;
-            background: #eff6ff;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            margin-left: 0.5rem;
-        }
-
-        .lead {
-            font-size: 1.25rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .course-image {
-            text-align: center;
-            margin: 2rem 0;
-        }
-
-        .course-image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .course-data {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-left: 4px solid #3b82f6;
-            border-radius: 8px;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-
-        .course-data h2 {
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-        }
-
-        .course-specs {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .course-specs th {
-            background: #e9ecef;
-            padding: 1rem;
-            text-align: left;
-            font-weight: bold;
-            border: 1px solid #dee2e6;
-            width: 30%;
-        }
-
-        .course-specs td {
-            padding: 1rem;
-            border: 1px solid #dee2e6;
-            background: #ffffff;
-        }
-
-        .content {
-            margin: 2rem 0;
-        }
-
-        .content p {
-            color: #1a1a1a;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-        }
-
-        .distance-explanations {
-            margin: 3rem 0;
-        }
-
-        .distance-item {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .distance-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .distance-item h3 {
-            color: #1a1a1a;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #3b82f6;
-            padding-bottom: 0.5rem;
-        }
-
-        .distance-item p {
-            color: #1a1a1a;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-        }
-
-        .distance-cta-button {
-            background: #3b82f6;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-
-        .distance-cta-button:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .distance-item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-top: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .section-nav {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 2rem;
-            margin: 3rem 0;
-        }
-
-        .section-nav h3 {
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-nav ul {
-            list-style: none;
-            padding: 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .section-nav li {
-            margin: 0;
-        }
-
-        .section-nav a {
-            display: block;
-            background: #ffffff;
-            color: #3b82f6;
-            padding: 1rem;
-            border-radius: 6px;
-            text-decoration: none;
-            border: 1px solid #e9ecef;
-            transition: all 0.2s ease;
-        }
-
-        .section-nav a:hover {
-            background: #3b82f6;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .page-header h1 {
-                font-size: 2rem;
-            }
-
-            .course-specs th {
-                width: 35%;
-                font-size: 0.9rem;
-            }
-
-            .course-specs td {
-                font-size: 0.9rem;
-            }
-
-            .distance-item {
-                padding: 1.5rem;
-            }
-
-            .distance-item h3 {
-                font-size: 1.3rem;
-            }
-
-            .section-nav ul {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </body>
 </html>

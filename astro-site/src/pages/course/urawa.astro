@@ -1,434 +1,224 @@
 ---
-import Layout from '../../layouts/BaseLayout.astro';
+const title = "浦和競馬場 - 日本最小の周回コースが生む独特の展開 | NANKANアナリティクス";
+const description = "浦和競馬場のコース攻略法を距離別に詳しく解説。日本最小周回コースの特性、枠順有利不利、800m・1400m・2000mの攻略ポイントを分析。";
 ---
 
-<Layout title="浦和競馬場コース攻略 | NANKANアナリティクス">
-  <main class="container mx-auto px-4 py-8">
-    <div class="header">
-      <nav>
-        <a href="/">トップページ</a> > 
-        <a href="/course/">コース攻略</a> > 
-        <span>浦和競馬場</span>
-      </nav>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="keywords" content="南関競馬,浦和競馬場,大井競馬場,川崎競馬場,船橋競馬場,コース解説,競馬予想,枠順,攻略法,地方競馬">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="南関競馬コース解説">
+    <meta name="language" content="ja">
+    <link rel="canonical" href="https://nankan-analytics.keiba.link/course/urawa/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nankan-analytics.keiba.link/course/urawa/">
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:site_name" content="NANKANアナリティクス">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://nankan-analytics.keiba.link/course/urawa/">
+    <meta property="twitter:title" content={title}>
+    <meta property="twitter:description" content={description}>
+    
+    <link rel="stylesheet" href="/styles/light.css">
+</head>
+
+<body>
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">ホーム</a> > <a href="/course/">コース攻略</a> > 浦和競馬場
+        </nav>
+
+        <header class="lesson-header">
+            <h1>浦和競馬場 - 日本最小の周回コースが生む独特の展開</h1>
+            <div class="last-updated">
+                <span class="updated-label">最終更新日：</span>
+                <time datetime="2025-08-20">2025年8月20日</time>
+            </div>
+            <p class="lead">日本最小周回コースの攻略法</p>
+        </header>
+
+        <main class="lesson-content">
+            <section class="intro">
+                <h2>浦和競馬場の基本情報</h2>
+                <p>浦和競馬場は左回りコースで、日本最小の周回距離（834m）が最大の特徴です。極端に内枠有利で、逃げ・先行馬が圧倒的に有利な展開となりやすいコースです。直線も220mと短いため、前に行った馬がそのまま粘り込むケースが多く見られます。</p>
+                <ul>
+                    <li><strong>1周距離：</strong>834m</li>
+                    <li><strong>コース形状：</strong>左回り</li>
+                    <li><strong>直線距離：</strong>300m（ゴールまで220m）</li>
+                    <li><strong>幅員：</strong>18m</li>
+                    <li><strong>フルゲート：</strong>12頭</li>
+                </ul>
+            </section>
+
+            <section class="venue-strategies">
+                <h2>浦和競馬場 距離別攻略法</h2>
+
+                <div class="distance-strategies">
+                    <div class="strategy-card">
+                        <h4>800m - スタート力と初速が勝敗を分ける極短距離戦</h4>
+                        <div class="strategy-details">
+                            <h5>🚀 基本戦略：内枠＋スタート力馬の単複勝負</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>向正面2コーナー出口付近からスタート</li>
+                                    <li>レース序盤からスピード全開</li>
+                                    <li>直線部分を長く使える</li>
+                                    <li>1番が勝率14.1%、2番は5.0%</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>内枠＋スタート力馬の単複</li>
+                                    <li>1番重視の単勝勝負</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>1400m - 位置取りと展開が勝敗を分ける主力コース</h4>
+                        <div class="strategy-details">
+                            <h5>⚖️ 基本戦略：中間枠重視の複勝・三連複</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>4コーナー付近の直線入口からスタート</li>
+                                    <li>外枠馬は内の動きを見ながら組み立て可能</li>
+                                    <li>4番の勝率12.9%、6番の勝率13.0%</li>
+                                    <li>後方からの差し脚も届きやすい</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>中間枠重視の複勝</li>
+                                    <li>位置取り重視の三連複</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>1500m - 展開の読みが重要な中距離戦</h4>
+                        <div class="strategy-details">
+                            <h5>🔍 基本戦略：展開読み重視の馬連・ワイド</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>3コーナー付近からのスタート</li>
+                                    <li>ペースが落ち着きやすい条件</li>
+                                    <li>先行馬有利だが差し馬にもチャンス</li>
+                                    <li>展開の読みが勝敗を左右</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>展開読み重視の馬連</li>
+                                    <li>先行・差し馬のワイド</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card special">
+                        <h4>1600m - 重賞限定の特別距離（施行機会少）</h4>
+                        <div class="strategy-details">
+                            <h5>⚠️ 基本戦略：重賞レース限定攻略</h5>
+                            <div class="tactics">
+                                <h6>重要な注意点：</h6>
+                                <ul>
+                                    <li>2020年12月以降、重賞以外では施行なし</li>
+                                    <li>近年重賞も1500mに距離短縮される傾向</li>
+                                    <li>実施される場合は特別な準備が必要</li>
+                                    <li>過去データが限定的</li>
+                                </ul>
+                            </div>
+                            <div class="warning">
+                                <h6>施行状況：</h6>
+                                <p>現在は重賞競走でも使用が限定的。実施前に必ず開催情報を確認してください。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card special">
+                        <h4>1900m - 廃止された特別距離（2019-2020年限定）</h4>
+                        <div class="strategy-details">
+                            <h5>📚 歴史的参考：埼玉新聞栄冠賞専用距離</h5>
+                            <div class="tactics">
+                                <h6>過去の特徴：</h6>
+                                <ul>
+                                    <li>2019年以降は埼玉新聞栄冠賞のみで使用</li>
+                                    <li>2021年より2000mに距離変更で完全廃止</li>
+                                    <li>中長距離の特殊な距離設定</li>
+                                    <li>限定的なデータしか存在しない</li>
+                                </ul>
+                            </div>
+                            <div class="warning">
+                                <h6>現在の状況：</h6>
+                                <p>2021年以降は施行されていません。歴史的な参考データとしてのみ価値があります。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <h4>2000m - 総合力が試されるスタミナ勝負の舞台</h4>
+                        <div class="strategy-details">
+                            <h5>💪 基本戦略：実力重視の馬連・三連複</h5>
+                            <div class="tactics">
+                                <h6>コースの特徴：</h6>
+                                <ul>
+                                    <li>800mと同じ位置からスタート</li>
+                                    <li>枠順の有利不利は比較的小さい</li>
+                                    <li>計6回のコーナーを通過</li>
+                                    <li>馬自身の総合力が問われる</li>
+                                </ul>
+                            </div>
+                            <div class="investment-plan">
+                                <h6>推奨買い方：</h6>
+                                <ul>
+                                    <li>実力重視の馬連</li>
+                                    <li>スタミナ実力馬中心</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="related-content">
+                <h2>他の南関競馬場も学ぶ</h2>
+                <div class="related-links">
+                    <div class="related-link-card">
+                        <h4>大井競馬場攻略</h4>
+                        <p>長い直線が特徴的な右回りコース</p>
+                        <a href="/course/ooi/" class="related-link">大井攻略ガイド →</a>
+                    </div>
+                    <div class="related-link-card">
+                        <h4>船橋競馬場攻略</h4>
+                        <p>スパイラルカーブが特徴的な左回りコース</p>
+                        <a href="/course/funabashi/" class="related-link">船橋攻略ガイド →</a>
+                    </div>
+                    <div class="related-link-card">
+                        <h4>川崎競馬場攻略</h4>
+                        <p>900m特別距離を含む小回り左回りコース</p>
+                        <a href="/course/kawasaki/" class="related-link">川崎攻略ガイド →</a>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
-    <section class="hero">
-      <h1>浦和競馬場コース攻略ガイド</h1>
-      <p class="hero-description">AI・機械学習で勝つ南関競馬の次世代予想プラットフォーム</p>
-    </section>
-
-    <section class="racecourse-info">
-      <div class="info-card">
-        <h2>🏁 浦和競馬場の基本情報</h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <strong>1周距離:</strong> 834m
-          </div>
-          <div class="info-item">
-            <strong>コース形状:</strong> 左回り
-          </div>
-          <div class="info-item">
-            <strong>直線距離:</strong> 300m（ゴールまで220m）
-          </div>
-          <div class="info-item">
-            <strong>高低差:</strong> 平坦コース
-          </div>
-        </div>
-      </div>
-
-      <div class="course-features">
-        <h3>🔍 コースの特徴</h3>
-        <ul>
-          <li><strong>短い直線:</strong> ゴール前の直線が220mと短く、位置取りが重要</li>
-          <li><strong>平坦コース:</strong> 高低差がなく、実力通りの結果が出やすい</li>
-          <li><strong>左回り:</strong> 左回りコースで、内枠有利の傾向</li>
-          <li><strong>小回りコース:</strong> 834mと短い1周距離でコーナーワークが重要</li>
-        </ul>
-      </div>
-
-      <div class="statistics-summary">
-        <h3>📊 馬番別成績データ</h3>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-label">1番</span>
-            <span class="stat-value">勝率 14.1%</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">2番</span>
-            <span class="stat-value">勝率 5.0%</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">3番</span>
-            <span class="stat-value">勝率 11.3%</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">4番</span>
-            <span class="stat-value">勝率 8.0%</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">5番</span>
-            <span class="stat-value">勝率 12.0%</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">6番</span>
-            <span class="stat-value">勝率 15.3%</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="distance-explanations">
-      
-      <div class="distance-item urawa-800m">
-        <div class="distance-content">
-          <h3 class="distance-title">浦和800m攻略法</h3>
-          <img src="/images/urawa-800m.jpg" alt="浦和競馬場800mコース図" class="course-image">
-          <p class="distance-description">
-            スタート地点は向正面2コーナー出口付近に位置し、レース序盤からスピード全開となる短距離戦。直線部分を長く使えるため、発馬直後の位置取り争いは極めて激しく、わずかな出遅れが命取りになります。特に内枠で出足が鈍ると、外の馬に進路を奪われやすく、最後の直線は約220mと短いため挽回はほぼ不可能。スタートダッシュと初速の速さが勝敗を大きく左右する、まさにスプリント戦の典型的な舞台です。
-          </p>
-          <p class="distance-description">
-            このコースでは「スタート勝負の極短距離戦」という表現が最も適切で、発馬の巧拙がそのまま着順に直結します。内枠の1番が勝率14.1%と高い数値を示す一方で、2番は5.0%と低迷。これは内枠からのスムーズなスタートが有利に働く一方で、わずかな出遅れが致命傷になることを意味しています。6番の勝率が15.3%と最も高いのは、外から内をこじ開ける馬の強さが評価されている証拠でもあります。
-          </p>
-          <div class="cta-section">
-            <a href="/course/urawa/800m/" class="cta-button">浦和800m詳細攻略ガイドを見る</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="distance-item urawa-1400m">
-        <div class="distance-content">
-          <h3 class="distance-title">浦和1400m攻略法</h3>
-          <img src="/images/urawa-1400m.jpg" alt="浦和競馬場1400mコース図" class="course-image">
-          <p class="distance-description">
-            スタート地点は4コーナー付近の直線入口。序盤から直線部分を使ってポジション争いができるため、外枠馬には内の動きを見ながらレースを組み立てられる利点があります。一方、内枠馬はスタートダッシュが極めて重要で、出遅れれば包まれる危険性が高まります。全体の流れは速くなりやすく、後方からの差し脚も届きやすい条件。交流重賞から一般戦まで幅広く組まれる浦和競馬場の主力距離であり、枠順と展開予測が予想のカギを握ります。
-          </p>
-          <p class="distance-description">
-            「位置取りと展開が勝敗を分ける主力コース」として、1400mは浦和競馬場で最も重要な距離設定です。4番の勝率12.9%、6番の勝率13.0%と中間的な枠順が好成績を収めているのは、スタート後の位置取りで融通が利くことが要因。1番人気の勝率が36.7%と比較的低いのは、能力上位馬でも枠順や展開で苦戦することがあるためで、予想の醍醐味が詰まった距離といえます。
-          </p>
-          <div class="cta-section">
-            <a href="/course/urawa/1400m/" class="cta-button">浦和1400m詳細攻略ガイドを見る</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="distance-item urawa-2000m">
-        <div class="distance-content">
-          <h3 class="distance-title">浦和2000m攻略法</h3>
-          <img src="/images/urawa-2000m.jpg" alt="浦和競馬場2000mコース図" class="course-image">
-          <p class="distance-description">
-            スタート地点は800mと同じ位置で、最初のコーナーまで余裕があるため、枠順の有利不利は比較的小さいコースです。レース中に計6回のコーナーを通過するため、コーナーワークの巧拙が勝敗を分ける大きなポイントとなります。
-          </p>
-          <p class="distance-description">
-            ただし、2000mという長距離では位置取りや器用さ以上に「馬自身の総合力」が明確に問われるのが特徴。末脚勝負に偏ることは少なく、実力差がそのまま結果に直結しやすい傾向があります。特に後方一気の差し切り決着が少ない点は、スタミナと持続力に優れたタイプが優勢となる証拠といえるでしょう。「総合力が試されるスタミナ勝負の舞台」として、真の実力馬が勝利を収めやすい条件設定です。
-          </p>
-          <div class="cta-section">
-            <a href="/course/urawa/2000m/" class="cta-button">浦和2000m詳細攻略ガイドを見る</a>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <section class="newsletter-signup">
-      <div class="newsletter-card">
-        <h3>🚀 AI競馬予想の最新情報をお届け</h3>
-        <p>機械学習による競馬予想手法、最新のAI分析結果、限定データを無料でお届けします。</p>
-        <form class="newsletter-form" action="#" method="post">
-          <input type="email" placeholder="メールアドレスを入力" required>
-          <button type="submit">無料で登録</button>
-        </form>
-        <p class="newsletter-note">※配信はいつでも停止できます</p>
-      </div>
-    </section>
-
-  </main>
-</Layout>
-
-<style>
-  :root {
-    --primary-color: #3b82f6;
-    --secondary-color: #8b5cf6;
-    --success-color: #10b981;
-    --text-color: #1f2937;
-    --text-light: #6b7280;
-    --bg-light: #f9fafb;
-    --bg-white: #ffffff;
-    --border-color: #e5e7eb;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.7;
-    color: var(--text-color);
-    background-color: var(--bg-light);
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .header nav {
-    margin-bottom: 2rem;
-    padding: 1rem 0;
-    font-size: 0.9rem;
-    color: var(--text-light);
-  }
-
-  .header nav a {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-
-  .header nav a:hover {
-    text-decoration: underline;
-  }
-
-  .hero {
-    text-align: center;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    padding: 4rem 2rem;
-    margin-bottom: 3rem;
-    border-radius: 1rem;
-  }
-
-  .hero h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-  }
-
-  .hero-description {
-    font-size: 1.2rem;
-    opacity: 0.9;
-  }
-
-  .racecourse-info {
-    display: grid;
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-
-  .info-card, .course-features, .statistics-summary {
-    background: var(--bg-white);
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-
-  .info-card h2, .course-features h3, .statistics-summary h3 {
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
-    font-size: 1.5rem;
-  }
-
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-
-  .info-item {
-    padding: 1rem;
-    background: var(--bg-light);
-    border-radius: 0.5rem;
-  }
-
-  .course-features ul {
-    list-style: none;
-  }
-
-  .course-features li {
-    margin-bottom: 0.8rem;
-    padding-left: 1.5rem;
-    position: relative;
-  }
-
-  .course-features li::before {
-    content: "✓";
-    position: absolute;
-    left: 0;
-    color: var(--success-color);
-    font-weight: bold;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1rem;
-  }
-
-  .stat-item {
-    text-align: center;
-    padding: 1rem;
-    background: var(--bg-light);
-    border-radius: 0.5rem;
-  }
-
-  .stat-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: var(--primary-color);
-  }
-
-  .stat-value {
-    font-size: 0.9rem;
-    color: var(--text-light);
-  }
-
-  .distance-explanations {
-    margin-bottom: 3rem;
-  }
-
-  .distance-item {
-    background: var(--bg-white);
-    margin-bottom: 3rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-
-  .distance-content {
-    padding: 2rem;
-  }
-
-  .distance-title {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
-    font-weight: 600;
-  }
-
-  .course-image {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(45deg, #f3f4f6, #e5e7eb);
-    border-radius: 0.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-light);
-    font-size: 0.9rem;
-  }
-
-  .distance-description {
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
-    line-height: 1.8;
-  }
-
-  .cta-section {
-    text-align: center;
-    margin-top: 2rem;
-  }
-
-  .cta-button {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    padding: 1rem 2rem;
-    text-decoration: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-  }
-
-  .newsletter-signup {
-    margin-top: 4rem;
-  }
-
-  .newsletter-card {
-    background: var(--bg-white);
-    padding: 3rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-
-  .newsletter-card h3 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-  }
-
-  .newsletter-card p {
-    margin-bottom: 2rem;
-    color: var(--text-light);
-  }
-
-  .newsletter-form {
-    display: flex;
-    gap: 1rem;
-    max-width: 400px;
-    margin: 0 auto 1rem;
-  }
-
-  .newsletter-form input {
-    flex: 1;
-    padding: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 0.5rem;
-    font-size: 1rem;
-  }
-
-  .newsletter-form input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-  }
-
-  .newsletter-form button {
-    padding: 1rem 2rem;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .newsletter-form button:hover {
-    background: #2563eb;
-  }
-
-  .newsletter-note {
-    font-size: 0.8rem;
-    color: var(--text-light);
-  }
-
-  @media (max-width: 768px) {
-    .hero h1 {
-      font-size: 2rem;
-    }
-
-    .hero-description {
-      font-size: 1rem;
-    }
-
-    .newsletter-form {
-      flex-direction: column;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .info-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
+</body>
+</html>
