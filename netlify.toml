@@ -1,12 +1,8 @@
 [build]
   base = "astro-site"
-  publish = "dist"
+  publish = "astro-site/dist"
   command = "npm run build"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 404
 
 [build.environment]
   NODE_VERSION = "22"
