@@ -1,0 +1,271 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const categories = [...new Set(allPosts.map(post => post.data.category))];
+---
+
+<BaseLayout 
+  title="ブログ | NANKANアナリティクス"
+  description="AI・機械学習を活用した競馬予想手法について解説。Python実装からモデル構築まで、データサイエンスの視点で競馬を攻略します。"
+>
+  <main class="blog-index">
+    <header class="page-header">
+      <h1>⚡ AI競馬予想ブログ</h1>
+      <p>機械学習・データサイエンスで南関競馬を科学的に攻略</p>
+    </header>
+
+    <div class="blog-container">
+      <!-- カテゴリーフィルター -->
+      <aside class="sidebar">
+        <div class="category-filter">
+          <h3>📚 カテゴリー</h3>
+          <ul class="category-list">
+            <li><a href="/blog" class="category-link active">すべて</a></li>
+            {categories.map(category => (
+              <li>
+                <a href={`/blog/category/${category.toLowerCase().replace(/\s+/g, '-')}`} class="category-link">
+                  {category}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+
+      <!-- 記事一覧 -->
+      <section class="posts-grid">
+        {sortedPosts.map((post) => (
+          <article class="post-card">
+            {post.data.heroImage && (
+              <img 
+                src={post.data.heroImage} 
+                alt={post.data.title}
+                class="post-image"
+              />
+            )}
+            <div class="post-content">
+              <div class="post-meta">
+                <span class="category-badge">{post.data.category}</span>
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString('ja-JP', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+              
+              <h2 class="post-title">
+                <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+              </h2>
+              
+              <p class="post-description">{post.data.description}</p>
+              
+              {post.data.tags && (
+                <div class="post-tags">
+                  {post.data.tags.slice(0, 3).map(tag => (
+                    <span class="tag">#{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+.blog-index {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  color: #94a3b8;
+}
+
+.blog-container {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 3rem;
+}
+
+.sidebar {
+  background: #1e293b;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+.category-filter h3 {
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+}
+
+.category-list li {
+  margin-bottom: 0.5rem;
+}
+
+.category-link {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.category-link:hover,
+.category-link.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.post-card {
+  background: #1e293b;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.post-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.post-content {
+  padding: 1.5rem;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.category-badge {
+  background: #3b82f6;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.post-content time {
+  color: #94a3b8;
+}
+
+.post-title {
+  margin-bottom: 1rem;
+}
+
+.post-title a {
+  color: #f1f5f9;
+  text-decoration: none;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.post-title a:hover {
+  color: #3b82f6;
+}
+
+.post-description {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.post-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: #0f172a;
+  color: #8b5cf6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  border: 1px solid #374151;
+}
+
+@media (max-width: 968px) {
+  .blog-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: static;
+    order: 2;
+  }
+  
+  .posts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .post-content {
+    padding: 1rem;
+  }
+}
+</style>
