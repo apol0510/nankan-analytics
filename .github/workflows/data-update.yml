@@ -3,7 +3,7 @@ name: Race Results Update
 on:
   push:
     paths:
-      - 'src/data/raceResults.json'
+      - 'astro-site/src/data/raceResults.json'
     branches: [ main ]
 
 jobs:
@@ -18,13 +18,13 @@ jobs:
       id: race-data
       run: |
         # Extract current results from JSON
-        DATE=$(cat src/data/raceResults.json | jq -r '.currentResults.date')
-        TRACK=$(cat src/data/raceResults.json | jq -r '.currentResults.track')
-        HITS=$(cat src/data/raceResults.json | jq -r '.currentResults.hits')
-        TOTAL_RACES=$(cat src/data/raceResults.json | jq -r '.currentResults.totalRaces')
-        HIT_RATE=$(cat src/data/raceResults.json | jq -r '.currentResults.hitRate')
-        PAYOUT=$(cat src/data/raceResults.json | jq -r '.currentResults.payout')
-        RETURN_RATE=$(cat src/data/raceResults.json | jq -r '.currentResults.returnRate')
+        DATE=$(cat astro-site/src/data/raceResults.json | jq -r '.currentResults.date')
+        TRACK=$(cat astro-site/src/data/raceResults.json | jq -r '.currentResults.track')
+        HITS=$(cat astro-site/src/data/raceResults.json | jq -r '.currentResults.hits')
+        TOTAL_RACES=$(cat astro-site/src/data/raceResults.json | jq -r '.currentResults.totalRaces')
+        HIT_RATE=$(cat astro-site/src/data/raceResults.json | jq -r '.currentResults.hitRate')
+        PAYOUT=$(cat astro-site/src/data/raceResults.json | jq -r '.currentResults.payout')
+        RETURN_RATE=$(cat astro-site/src/data/raceResults.json | jq -r '.currentResults.returnRate')
         
         echo "date=$DATE" >> $GITHUB_OUTPUT
         echo "track=$TRACK" >> $GITHUB_OUTPUT
