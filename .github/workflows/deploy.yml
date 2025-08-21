@@ -46,19 +46,3 @@ jobs:
         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
       timeout-minutes: 10
       
-    - name: Comment deployment status
-      uses: actions/github-script@v7
-      if: always()
-      with:
-        script: |
-          const status = '${{ job.status }}';
-          const message = status === 'success' 
-            ? '🚀 デプロイ成功！サイトが自動更新されました。'
-            : '❌ デプロイ失敗。ログを確認してください。';
-          
-          github.rest.repos.createCommitComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            commit_sha: context.sha,
-            body: message
-          });
