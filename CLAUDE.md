@@ -210,14 +210,6 @@ export default defineConfig({
 });
 ```
 
-### 設定ファイル（参考：旧Hugo設定）
-```yaml
-# 以下は旧Hugo設定（現在未使用）
-baseURL: 'https://nankan-analytics.keiba.link'
-languageCode: 'ja'
-title: 'NANKANアナリティクス'
-theme: 'hugo-theme-stack'
-```
 
 ## 運営・更新方針
 
@@ -246,7 +238,7 @@ theme: 'hugo-theme-stack'
 ## 開発優先順位
 
 ### Phase 1: 基盤構築
-1. ~~Hugo + Stack環境構築~~ → **Astro環境構築完了**
+1. **Astro環境構築完了**
 2. 基本設定・カスタマイズ
 3. メルマガ連携設定
 4. SEO基本設定
@@ -280,25 +272,25 @@ theme: 'hugo-theme-stack'
 **解決手順**:
 1. **実行中サーバーの確認**:
    ```bash
-   ps aux | grep -E "(hugo|server|http\.server)"
+   ps aux | grep -E "(astro|server|http\.server)"
    ```
 
 2. **不要なサーバーの停止**:
    ```bash
    pkill -f "python.*http.server"
-   pkill -f "hugo server"
+   pkill -f "astro dev"
    ```
 
 3. **ポート使用状況の確認**:
    ```bash
    lsof -i tcp | grep LISTEN
-   netstat -an | grep :1313
+   netstat -an | grep :4321
    ```
 
 4. **正しいディレクトリでのサーバー起動**:
    ```bash
-   cd /Users/apolon/Desktop/WorkSpace/nankan-analytics
-   hugo server --port 1313 --buildDrafts --bind 127.0.0.1
+   cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
+   npm run dev
    ```
 
 ### ブラウザキャッシュ問題の対処法
@@ -313,17 +305,16 @@ theme: 'hugo-theme-stack'
 
 2. **プライベートモードでの確認**:
    ```bash
-   open -a Firefox --new --args --private-window http://localhost:1313/
+   open -a Firefox --new --args --private-window http://localhost:4321/
    ```
 
-3. **URL の確認**: アドレスバーで `http://localhost:1313/` を確認
+3. **URL の確認**: アドレスバーで `http://localhost:4321/` を確認
 
 ### 開発時のベストプラクティス
 
-1. **作業開始時の手順（Astro版）**:
+1. **作業開始時の手順**:
    ```bash
    # 既存サーバーの停止
-   pkill -f "hugo server"
    pkill -f "python.*http.server"
    pkill -f "astro dev"
    
@@ -355,9 +346,9 @@ theme: 'hugo-theme-stack'
 
 ### 注意事項
 
-- **Hugo完全廃止**: Hugoは使用しない（Astroに完全移行済み）
+- **Astro専用**: AstroをメインのSSGとして使用（Hugo完全廃止済み）
 - **単一サーバー原則**: 同時に複数のAstroサーバーを起動しない
-- **ポート管理**: 4321番ポートはAstro専用、1313番ポートは使用しない
+- **ポート管理**: 4321番ポートはAstro専用
 - **プロジェクト分離**: 他のプロジェクト（nankan-inteli, nankan-courese等）と混在させない
 - **キャッシュ管理**: ブラウザキャッシュは定期的にクリアする
 - **ディレクトリ注意**: astro-site ディレクトリ内で作業すること

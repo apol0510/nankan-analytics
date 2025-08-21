@@ -5,15 +5,17 @@ AI・機械学習で南関競馬を攻略する技術ブログサイトです。
 ## サイト概要
 
 - **URL**: https://nankan-analytics.keiba.link
-- **テーマ**: Hugo Stack テーマ
+- **フレームワーク**: Astro 静的サイトジェネレーター
 - **コンセプト**: 「AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム」
 - **ターゲット**: IT系エンジニア + 競馬ファンのクロスオーバー層
 
 ## 技術スタック
 
-- **静的サイトジェネレーター**: Hugo v0.148+
-- **テーマ**: [Stack](https://github.com/CaiJimmy/hugo-theme-stack)
-- **フロントエンド**: HTML5, CSS3, JavaScript (ES6+)
+- **静的サイトジェネレーター**: Astro v4+
+- **スタイリング**: Tailwind CSS
+- **フロントエンド**: TypeScript, HTML5, CSS3
+- **コンテンツ管理**: Astro Content Collections
+- **MDX**: 拡張マークダウンサポート
 - **デプロイ**: GitHub + Netlify 自動デプロイ
 - **フォーム処理**: Netlify Forms
 - **アナリティクス**: Google Analytics 4
@@ -21,32 +23,33 @@ AI・機械学習で南関競馬を攻略する技術ブログサイトです。
 ## ディレクトリ構成
 
 ```
-nankan-analytics/
-├── config.yaml              # Hugo設定ファイル
-├── content/                  # コンテンツディレクトリ
-│   ├── _index.md            # ホームページ
-│   ├── machine-learning/    # 機械学習カテゴリ (5記事)
-│   ├── deep-learning/       # 深層学習カテゴリ (3記事)  
-│   ├── data-science/        # データサイエンスカテゴリ (4記事)
-│   ├── tools/               # 実装・ツールカテゴリ (3記事)
-│   └── page/               # 固定ページ
-│       ├── about/          # About ページ
-│       ├── tools/          # ツール・資料ページ
-│       ├── contact/        # お問い合わせページ
-│       ├── privacy/        # プライバシーポリシー
-│       ├── search/         # 検索ページ
-│       └── archives/       # アーカイブページ
-├── layouts/                 # カスタムレイアウト
-│   └── partials/
-│       └── head/
-│           └── custom.html  # カスタムヘッダー
-├── static/                  # 静的ファイル
-│   ├── css/
-│   │   └── custom.css      # カスタムCSS
-│   └── js/
-│       └── newsletter.js   # メルマガ登録JS
-└── themes/
-    └── hugo-theme-stack/   # Stackテーマ (submodule)
+nankan-analytics/astro-site/
+├── astro.config.mjs         # Astro設定ファイル
+├── package.json             # 依存関係とスクリプト
+├── tsconfig.json            # TypeScript設定
+├── src/
+│   ├── content/             # Astro Content Collections
+│   │   ├── config.ts        # コンテンツスキーマ定義
+│   │   └── blog/            # ブログ記事
+│   │       ├── *.md         # マークダウン記事
+│   │       └── *.mdx        # MDX記事
+│   ├── layouts/             # レイアウトコンポーネント
+│   │   ├── BaseLayout.astro # ベースレイアウト
+│   │   └── BlogPost.astro   # ブログ記事レイアウト
+│   ├── pages/               # ページルーティング
+│   │   ├── index.astro      # ホームページ
+│   │   ├── blog.astro       # ブログ一覧
+│   │   ├── blog/[...slug].astro # 動的ブログルーティング
+│   │   ├── course/          # コース攻略ページ
+│   │   ├── beginner/        # 初心者ガイド
+│   │   └── technology.astro # AI技術ページ
+│   ├── components/          # 再利用可能コンポーネント
+│   └── styles/              # グローバルスタイル
+├── public/                  # 静的アセット
+│   ├── favicon.svg
+│   ├── img/
+│   └── styles/
+└── dist/                    # ビルド出力ディレクトリ
 ```
 
 ## コンテンツ概要
@@ -111,22 +114,22 @@ nankan-analytics/
 ```bash
 # リポジトリクローン
 git clone [repository-url]
-cd nankan-analytics
+cd nankan-analytics/astro-site
 
-# サブモジュール初期化
-git submodule update --init --recursive
+# 依存関係インストール
+npm install
 
 # 開発サーバー起動
-hugo server --buildDrafts
+npm run dev
 ```
 
 ### ビルド
 ```bash
 # 本番ビルド
-hugo --minify
+npm run build
 
-# 下書きも含むビルド
-hugo --buildDrafts
+# プレビュー
+npm run preview
 ```
 
 ### デプロイ
