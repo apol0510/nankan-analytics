@@ -7,10 +7,10 @@ const blogCollection = defineCollection({
     description: z.string(),
     pubDate: z.date(),
     tags: z.array(z.string()).optional(),
-    category: z.string(),
-    author: z.string().default('NANKANアナリティクス'),
+    category: z.string().optional().default('機械学習'),
+    author: z.string().optional().default('NANKANアナリティクス'),
     heroImage: z.string().optional(),
-    featured: z.boolean().default(false),
+    featured: z.boolean().optional().default(false),
   }),
 });
 

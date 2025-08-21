@@ -55,7 +55,7 @@ const formattedDate = pubDate.toLocaleDateString('ja-JP', {
 
 <style>
 .blog-post {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -117,6 +117,478 @@ const formattedDate = pubDate.toLocaleDateString('ja-JP', {
   color: #e2e8f0;
 }
 
+/* カードスタイル強化 */
+.post-content :global(h1) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  margin: 2.5rem 0;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.post-content :global(h1::before) {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+  border-radius: 16px;
+  z-index: -1;
+  animation: borderGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes borderGlow {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.post-content :global(h2) {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #f1f5f9;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  margin: 2.5rem 0 1.5rem 0;
+  border-left: 5px solid #3b82f6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.post-content :global(h2::before) {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #60a5fa;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.post-content :global(h3) {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: #f1f5f9;
+  margin: 2rem 0 1rem 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-content :global(h4) {
+  color: #3b82f6;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* テーブルのカード化 */
+.post-content :global(table) {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  margin: 2rem 0;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.post-content :global(thead) {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.post-content :global(thead th) {
+  color: white;
+  padding: 1rem;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+}
+
+.post-content :global(thead th::after) {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.post-content :global(tbody td) {
+  padding: 0.875rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  color: #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.post-content :global(tbody tr:hover td) {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.post-content :global(tbody tr:last-child td) {
+  border-bottom: none;
+}
+
+/* 引用とアラートボックス */
+.post-content :global(blockquote) {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border-left: 4px solid #60a5fa;
+  color: #dbeafe;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+
+/* リストのスタイリング */
+.post-content :global(ul) {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.post-content :global(ul li) {
+  margin-bottom: 0.75rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.post-content :global(ul li::before) {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+/* チェックリストのスタイリング */
+.post-content :global(ul li input[type="checkbox"]) {
+  margin-right: 0.75rem;
+  transform: scale(1.2);
+  accent-color: #3b82f6;
+}
+
+.post-content :global(ul li:has(input[type="checkbox"])) {
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  margin-bottom: 0.5rem;
+}
+
+.post-content :global(ul li:has(input[type="checkbox"])::before) {
+  display: none;
+}
+
+/* 強調テキストのスタイリング */
+.post-content :global(strong) {
+  color: #fbbf24;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* blockquote内の強調テキスト */
+.post-content :global(blockquote strong) {
+  color: #fbbf24;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.post-content :global(em) {
+  color: #a78bfa;
+  font-style: italic;
+}
+
+/* コードブロックの強化 */
+.post-content :global(pre) {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 2rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.post-content :global(pre::before) {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  border-radius: 12px 12px 0 0;
+}
+
+.post-content :global(code) {
+  background: rgba(30, 41, 59, 0.8);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #a78bfa;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+}
+
+/* 特別なセクション用のスタイル */
+.post-content :global(.info-card) {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border: 2px solid #60a5fa;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+  color: #dbeafe;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+}
+
+.post-content :global(.warning-card) {
+  background: linear-gradient(135deg, #92400e 0%, #b45309 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+  color: #fef3c7;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.2);
+}
+
+.post-content :global(.success-card) {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  border: 2px solid #34d399;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+  color: #d1fae5;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+}
+
+/* データハイライト */
+.post-content :global(.highlight-number) {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: inline-block;
+  margin: 0 0.25rem;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* アニメーション効果 */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes slideInFromLeft {
+  0% { transform: translateX(-30px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+.post-content :global(h2),
+.post-content :global(h3) {
+  animation: slideInFromLeft 0.6s ease-out;
+}
+
+/* 関連記事セクションのスタイリング */
+.post-content :global(hr) {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #3b82f6 20%, #8b5cf6 50%, #ec4899 80%, transparent 100%);
+  margin: 3rem 0;
+  border-radius: 1px;
+}
+
+/* 関連記事の見出し */
+.post-content :global(.related-articles-header) {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #f1f5f9;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  margin: 2rem 0 1rem 0;
+  border-left: 5px solid #8b5cf6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.post-content :global(.related-articles-header::before) {
+  content: '🔗';
+  font-size: 1.5rem;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"])) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li) {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 16px;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li::before) {
+  display: none;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li:hover) {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(59, 130, 246, 0.3);
+  border-color: #60a5fa;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li:hover::after) {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  border-radius: 16px 16px 0 0;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li a) {
+  display: block;
+  padding: 2rem;
+  color: #f1f5f9;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li a:hover) {
+  color: #93c5fd;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li a::after) {
+  content: '→';
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  color: #60a5fa;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.post-content :global(ul:has(li > a[href^="/blog/"]) li:hover a::after) {
+  opacity: 1;
+  right: 1.5rem;
+}
+
+/* 記事執筆者情報のスタイリング */
+.post-content :global(p:has(strong:contains("執筆者"))) {
+  background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.post-content :global(p:has(strong:contains("執筆者"))::before) {
+  content: '📝';
+  font-size: 1.5rem;
+}
+
+/* 次回予告のスタイリング */
+.post-content :global(p:has(strong:contains("次回予告"))) {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.post-content :global(p:has(strong:contains("次回予告"))::before) {
+  content: '🎉';
+  font-size: 1.5rem;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+  .post-content :global(h1) {
+    padding: 1.5rem 1rem;
+    font-size: 1.8rem;
+  }
+  
+  .post-content :global(h2) {
+    padding: 1rem 1.5rem;
+    font-size: 1.5rem;
+  }
+  
+  .post-content :global(table) {
+    font-size: 0.8rem;
+  }
+  
+  .post-content :global(thead th),
+  .post-content :global(tbody td) {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .post-content :global(ul:has(li > a[href^="/blog/"])) {
+    grid-template-columns: 1fr;
+  }
+  
+  .post-content :global(ul:has(li > a[href^="/blog/"]) li a) {
+    padding: 1.5rem;
+    font-size: 1rem;
+  }
+}
+
 .post-content :global(h2) {
   font-size: 1.8rem;
   margin: 2.5rem 0 1rem 0;
@@ -133,6 +605,8 @@ const formattedDate = pubDate.toLocaleDateString('ja-JP', {
 
 .post-content :global(p) {
   margin-bottom: 1.5rem;
+  color: #e2e8f0;
+  line-height: 1.8;
 }
 
 .post-content :global(pre) {
