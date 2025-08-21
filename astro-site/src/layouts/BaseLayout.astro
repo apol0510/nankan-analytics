@@ -162,12 +162,141 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
         /* Footer */
         .footer {
-            background: rgba(15, 23, 42, 0.95);
-            border-top: 1px solid var(--border-color);
-            padding: 40px 0;
-            margin-top: 60px;
-            text-align: center;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 1));
+            border-top: 2px solid var(--accent-color);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+            color: var(--body-text-color);
+            position: relative;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-color), #8b5cf6, var(--accent-color));
+            animation: gradient-animation 3s linear infinite;
+        }
+        
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-section {
+            text-align: left;
+        }
+        
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--body-text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-icon {
+            font-size: 1.2rem;
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
             color: var(--accent-text-color);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 12px;
+        }
+        
+        .footer-links a::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+            padding-left: 18px;
+        }
+        
+        .footer-links a:hover::before {
+            opacity: 1;
+        }
+        
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .footer-tagline {
+            font-size: 0.95rem;
+            color: var(--accent-text-color);
+            margin-bottom: 8px;
+        }
+        
+        .footer-copyright {
+            font-size: 0.85rem;
+            color: var(--accent-text-color);
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .footer-section {
+                text-align: center;
+            }
+            
+            .footer-title {
+                justify-content: center;
+            }
         }
 
         /* Responsive */
@@ -219,8 +348,68 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 NANKANアナリティクス. All rights reserved.</p>
-            <p>AI技術による科学的競馬投資プラットフォーム</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">🎯</span>
+                        コース攻略
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="/course/ooi">大井競馬場</a></li>
+                        <li><a href="/course/kawasaki">川崎競馬場</a></li>
+                        <li><a href="/course/funabashi">船橋競馬場</a></li>
+                        <li><a href="/course/urawa">浦和競馬場</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">📚</span>
+                        初心者ガイド
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="/beginner">南関競馬入門</a></li>
+                        <li><a href="/beginner/lesson-01">Lesson 1: 基本を学ぶ</a></li>
+                        <li><a href="/beginner/lesson-02">Lesson 2: 馬券の種類</a></li>
+                        <li><a href="/beginner/lesson-03">Lesson 3: 予想の基本</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">🤖</span>
+                        AI技術
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="/technology">技術解説</a></li>
+                        <li><a href="/free-prediction">無料予想</a></li>
+                        <li><a href="/premium">有料予想</a></li>
+                        <li><a href="#results">実績</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">📊</span>
+                        データ分析
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="#predictions">本日の予想</a></li>
+                        <li><a href="#reports">分析レポート</a></li>
+                        <li><a href="#stats">統計データ</a></li>
+                        <li><a href="#contact">お問い合わせ</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-logo">
+                    <span class="logo-icon">🤖</span>
+                    NANKANアナリティクス
+                </div>
+                <p class="footer-tagline">AI技術による科学的競馬投資プラットフォーム</p>
+                <p class="footer-copyright">&copy; 2025 NANKANアナリティクス. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
