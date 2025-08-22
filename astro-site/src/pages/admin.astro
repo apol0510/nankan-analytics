@@ -269,7 +269,7 @@ AI分析理由
                 </div>
                 <div class="form-group">
                     <label class="form-label">特徴量重要度</label>
-                    <textarea class="form-input" id="previewFeatures" style="height: 80px; resize: vertical;" placeholder="特徴量重要度: 近走安定性(0.95)、能力上位性(0.88)、展開利(0.82)">特徴量重要度: 近走安定性(0.95)、能力上位性(0.88)、展開利(0.82)</textarea>
+                    <textarea class="form-input" id="previewFeatures" style="height: 80px; resize: vertical;" placeholder="特徴量重要度: 安定性(0.95)、能力上位性(0.88)、展開利(0.82)">特徴量重要度: 安定性(0.95)、能力上位性(0.88)、展開利(0.82)</textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">リスク分析</label>
@@ -293,7 +293,10 @@ AI分析理由
                     <h4 style="color: #10b981; margin-bottom: 15px;">◎ 本命馬の特徴量重要度</h4>
                     <div style="display: grid; gap: 15px;">
                         <div>
-                            <label class="form-label">近走安定性</label>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <label class="form-label" style="margin-bottom: 0; min-width: 100px;">特徴量1:</label>
+                                <input type="text" id="mainFeature1Label" value="安定性" placeholder="例: 安定性, 血統評価" style="padding: 5px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white; flex: 1;">
+                            </div>
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <input type="range" id="mainFeature1" min="0" max="100" value="95" style="flex: 1;">
                                 <input type="number" id="mainFeature1Val" min="0" max="1" step="0.01" value="0.95" style="width: 80px; padding: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
@@ -303,7 +306,10 @@ AI分析理由
                             </div>
                         </div>
                         <div>
-                            <label class="form-label">能力上位性</label>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <label class="form-label" style="margin-bottom: 0; min-width: 100px;">特徴量2:</label>
+                                <input type="text" id="mainFeature2Label" value="能力上位性" placeholder="例: 能力上位性, 調教内容" style="padding: 5px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white; flex: 1;">
+                            </div>
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <input type="range" id="mainFeature2" min="0" max="100" value="88" style="flex: 1;">
                                 <input type="number" id="mainFeature2Val" min="0" max="1" step="0.01" value="0.88" style="width: 80px; padding: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
@@ -313,7 +319,10 @@ AI分析理由
                             </div>
                         </div>
                         <div>
-                            <label class="form-label">展開利</label>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <label class="form-label" style="margin-bottom: 0; min-width: 100px;">特徴量3:</label>
+                                <input type="text" id="mainFeature3Label" value="展開利" placeholder="例: 展開利, 馬体評価" style="padding: 5px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white; flex: 1;">
+                            </div>
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <input type="range" id="mainFeature3" min="0" max="100" value="82" style="flex: 1;">
                                 <input type="number" id="mainFeature3Val" min="0" max="1" step="0.01" value="0.82" style="width: 80px; padding: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
@@ -350,7 +359,10 @@ AI分析理由
                             </div>
                         </div>
                         <div>
-                            <label class="form-label">枠順優位</label>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <label class="form-label" style="margin-bottom: 0; min-width: 100px;">特徴量3:</label>
+                                <input type="text" id="subFeature3Label" value="枠順優位" placeholder="例: 枠順優位, 馬体評価" style="padding: 5px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white; flex: 1;">
+                            </div>
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <input type="range" id="subFeature3" min="0" max="100" value="79" style="flex: 1;">
                                 <input type="number" id="subFeature3Val" min="0" max="1" step="0.01" value="0.79" style="width: 80px; padding: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
@@ -844,9 +856,9 @@ AI分析理由
                         { icon: "◎", text: "過去5走偏差値: 62.3" }
                     ],
                     importance: [
-                        { label: "近走安定性", value: parseFloat(document.getElementById('mainFeature1Val').value) || 0.95 },
-                        { label: "能力上位性", value: parseFloat(document.getElementById('mainFeature2Val').value) || 0.88 },
-                        { label: "展開利", value: parseFloat(document.getElementById('mainFeature3Val').value) || 0.82 }
+                        { label: document.getElementById('mainFeature1Label').value || "安定性", value: parseFloat(document.getElementById('mainFeature1Val').value) || 0.95 },
+                        { label: document.getElementById('mainFeature2Label').value || "能力上位性", value: parseFloat(document.getElementById('mainFeature2Val').value) || 0.88 },
+                        { label: document.getElementById('mainFeature3Label').value || "展開利", value: parseFloat(document.getElementById('mainFeature3Val').value) || 0.82 }
                     ]
                 },
                 sub: parsedPredictionData && parsedPredictionData.subHorse ? {
@@ -861,9 +873,9 @@ AI分析理由
                         { icon: "○", text: "持続力評価: B" }
                     ],
                     importance: [
-                        { label: "先行力", value: parseFloat(document.getElementById('subFeature1Val').value) || 0.96 },
-                        { label: "スピード指数", value: parseFloat(document.getElementById('subFeature2Val').value) || 0.85 },
-                        { label: "枠順優位", value: parseFloat(document.getElementById('subFeature3Val').value) || 0.79 }
+                        { label: document.getElementById('subFeature1Label').value || "先行力", value: parseFloat(document.getElementById('subFeature1Val').value) || 0.96 },
+                        { label: document.getElementById('subFeature2Label').value || "スピード指数", value: parseFloat(document.getElementById('subFeature2Val').value) || 0.85 },
+                        { label: document.getElementById('subFeature3Label').value || "枠順優位", value: parseFloat(document.getElementById('subFeature3Val').value) || 0.79 }
                     ]
                 } : {
                     number: mainHorseNumber === 11 ? 6 : 11,
@@ -877,9 +889,9 @@ AI分析理由
                         { icon: "○", text: "持続力評価: B" }
                     ],
                     importance: [
-                        { label: "先行力", value: parseFloat(document.getElementById('subFeature1Val').value) || 0.96 },
-                        { label: "スピード指数", value: parseFloat(document.getElementById('subFeature2Val').value) || 0.85 },
-                        { label: "枠順優位", value: parseFloat(document.getElementById('subFeature3Val').value) || 0.79 }
+                        { label: document.getElementById('subFeature1Label').value || "先行力", value: parseFloat(document.getElementById('subFeature1Val').value) || 0.96 },
+                        { label: document.getElementById('subFeature2Label').value || "スピード指数", value: parseFloat(document.getElementById('subFeature2Val').value) || 0.85 },
+                        { label: document.getElementById('subFeature3Label').value || "枠順優位", value: parseFloat(document.getElementById('subFeature3Val').value) || 0.79 }
                     ]
                 },
                 dark: parsedPredictionData && parsedPredictionData.darkHorse ? {
