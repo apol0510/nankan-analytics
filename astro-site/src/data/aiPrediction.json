@@ -5,25 +5,25 @@
     "track": "レース情報未検出",
     "raceNumber": "2R",
     "raceName": "レース情報未検出",
-    "confidence": "90.1",
-    "abilityIndex": "84.6",
+    "confidence": "92.4",
+    "abilityIndex": "80.7",
     "recommendation": "A+",
-    "expectedReturn": "161"
+    "expectedReturn": "132"
   },
   "horses": {
     "main": {
       "number": 8,
       "name": "アンジュルナ",
       "type": "本命",
-      "confidence": "90.1",
+      "confidence": "92.4",
       "factors": [
         {
           "icon": "◎",
-          "text": "能力指数: 84.6 (1位)"
+          "text": "能力指数: 80.7 (1位)"
         },
         {
           "icon": "◎",
-          "text": "安定性スコア: 90.1%"
+          "text": "安定性スコア: 92.4%"
         },
         {
           "icon": "◎",
@@ -45,7 +45,7 @@
         },
         {
           "label": "展開利",
-          "value": 0.82
+          "value": 0.83
         }
       ]
     },
@@ -53,15 +53,15 @@
       "number": 1,
       "name": "アムールピスケス",
       "type": "対抗",
-      "confidence": "88.9",
+      "confidence": "84.0",
       "factors": [
         {
           "icon": "○",
-          "text": "スピード指数: 75.0"
+          "text": "スピード指数: 83.9"
         },
         {
           "icon": "○",
-          "text": "先行力: 94.7%"
+          "text": "先行力: 83.0%"
         },
         {
           "icon": "○",
@@ -71,17 +71,31 @@
           "icon": "○",
           "text": "持続力評価: B"
         }
+      ],
+      "importance": [
+        {
+          "label": "先行力",
+          "value": 0.96
+        },
+        {
+          "label": "スピード指数",
+          "value": 0.85
+        },
+        {
+          "label": "枠順優位",
+          "value": 0.79
+        }
       ]
     },
     "dark": {
       "number": 5,
       "name": "ロードレイジング",
       "type": "単穴",
-      "confidence": "72.5",
+      "confidence": "75.5",
       "factors": [
         {
           "icon": "▲",
-          "text": "爆発力指数: 85.1"
+          "text": "爆発力指数: 88.8"
         },
         {
           "icon": "▲",
@@ -176,7 +190,7 @@
     }
   },
   "analysis": {
-    "raceExpected": "XGBoostモデル: ◎8アンジュルナの安定性を最高評価（スコア90.1）",
+    "raceExpected": "XGBoostモデル: ◎8アンジュルナの安定性を最高評価（スコア92.4）",
     "keyIndicators": {
       "accuracy": "87.3",
       "similarRaces": "42件",
@@ -185,8 +199,8 @@
     }
   },
   "preview": {
-    "summary": "推奨投資戦略: アンジュルナを中心とした馬連・3連複、期待値+24.1%",
-    "features": "特徴量重要度: 近走成績(0.98)、血統適性(0.71)、騎手実績(0.78)",
+    "summary": "推奨投資戦略: アンジュルナを中心とした馬連・3連複、期待値+21.4%",
+    "features": "特徴量重要度: 近走成績(0.97)、血統適性(0.77)、騎手実績(0.68)",
     "riskAnalysis": "低リスク、安定収益型"
   },
   "allHorses": [
@@ -194,12 +208,12 @@
       "number": 8,
       "name": "アンジュルナ",
       "mark": "◎",
-      "confidence": "90.1",
+      "confidence": "92.4",
       "type": "本命",
       "factors": [
         {
           "icon": "◎",
-          "text": "信頼度: 90.1%"
+          "text": "信頼度: 92.4%"
         },
         {
           "icon": "◎",
@@ -207,7 +221,21 @@
         },
         {
           "icon": "◎",
-          "text": "展開評価: 1番手想定"
+          "text": "展開評価: 3番手想定"
+        }
+      ],
+      "importance": [
+        {
+          "label": "近走安定性",
+          "value": 0.95
+        },
+        {
+          "label": "能力上位性",
+          "value": 0.88
+        },
+        {
+          "label": "展開利",
+          "value": 0.83
         }
       ]
     },
@@ -215,12 +243,12 @@
       "number": 1,
       "name": "アムールピスケス",
       "mark": "◯",
-      "confidence": "88.9",
+      "confidence": "84.0",
       "type": "対抗",
       "factors": [
         {
           "icon": "◯",
-          "text": "信頼度: 88.9%"
+          "text": "信頼度: 84.0%"
         },
         {
           "icon": "◯",
@@ -228,7 +256,21 @@
         },
         {
           "icon": "◯",
-          "text": "展開評価: 1番手想定"
+          "text": "展開評価: 3番手想定"
+        }
+      ],
+      "importance": [
+        {
+          "label": "先行力",
+          "value": 0.96
+        },
+        {
+          "label": "スピード指数",
+          "value": 0.85
+        },
+        {
+          "label": "枠順優位",
+          "value": 0.79
         }
       ]
     },
@@ -236,12 +278,12 @@
       "number": 5,
       "name": "ロードレイジング",
       "mark": "▲",
-      "confidence": "72.5",
+      "confidence": "75.5",
       "type": "単穴",
       "factors": [
         {
           "icon": "▲",
-          "text": "信頼度: 72.5%"
+          "text": "信頼度: 75.5%"
         },
         {
           "icon": "▲",
@@ -249,7 +291,7 @@
         },
         {
           "icon": "▲",
-          "text": "展開評価: 3番手想定"
+          "text": "展開評価: 1番手想定"
         }
       ]
     },
@@ -257,12 +299,12 @@
       "number": 9,
       "name": "ネイビーシンデレラ",
       "mark": "△",
-      "confidence": "66.1",
+      "confidence": "60.2",
       "type": "連下",
       "factors": [
         {
           "icon": "△",
-          "text": "信頼度: 66.1%"
+          "text": "信頼度: 60.2%"
         },
         {
           "icon": "△",
@@ -270,7 +312,7 @@
         },
         {
           "icon": "△",
-          "text": "展開評価: 1番手想定"
+          "text": "展開評価: 3番手想定"
         }
       ]
     },
@@ -278,12 +320,12 @@
       "number": 2,
       "name": "キンチャン",
       "mark": "△",
-      "confidence": "61.3",
+      "confidence": "66.8",
       "type": "連下",
       "factors": [
         {
           "icon": "△",
-          "text": "信頼度: 61.3%"
+          "text": "信頼度: 66.8%"
         },
         {
           "icon": "△",
@@ -291,7 +333,7 @@
         },
         {
           "icon": "△",
-          "text": "展開評価: 3番手想定"
+          "text": "展開評価: 1番手想定"
         }
       ]
     },
@@ -299,12 +341,12 @@
       "number": 3,
       "name": "トムコチャンタチ",
       "mark": "△",
-      "confidence": "67.9",
+      "confidence": "64.6",
       "type": "連下",
       "factors": [
         {
           "icon": "△",
-          "text": "信頼度: 67.9%"
+          "text": "信頼度: 64.6%"
         },
         {
           "icon": "△",
@@ -312,7 +354,7 @@
         },
         {
           "icon": "△",
-          "text": "展開評価: 2番手想定"
+          "text": "展開評価: 1番手想定"
         }
       ]
     },
@@ -320,12 +362,54 @@
       "number": 4,
       "name": "ミーコノアタマ",
       "mark": "×",
-      "confidence": "55.8",
+      "confidence": "54.0",
       "type": "押さえ",
       "factors": [
         {
           "icon": "×",
-          "text": "信頼度: 55.8%"
+          "text": "信頼度: 54.0%"
+        },
+        {
+          "icon": "×",
+          "text": "補完適性: C級"
+        },
+        {
+          "icon": "×",
+          "text": "展開評価: 2番手想定"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "name": "ポポノショクヨク",
+      "mark": "×",
+      "confidence": "56.3",
+      "type": "押さえ",
+      "factors": [
+        {
+          "icon": "×",
+          "text": "信頼度: 56.3%"
+        },
+        {
+          "icon": "×",
+          "text": "補完適性: C級"
+        },
+        {
+          "icon": "×",
+          "text": "展開評価: 2番手想定"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "name": "メルコチャン",
+      "mark": "×",
+      "confidence": "52.3",
+      "type": "押さえ",
+      "factors": [
+        {
+          "icon": "×",
+          "text": "信頼度: 52.3%"
         },
         {
           "icon": "×",
@@ -336,50 +420,8 @@
           "text": "展開評価: 3番手想定"
         }
       ]
-    },
-    {
-      "number": 6,
-      "name": "ポポノショクヨク",
-      "mark": "×",
-      "confidence": "56.9",
-      "type": "押さえ",
-      "factors": [
-        {
-          "icon": "×",
-          "text": "信頼度: 56.9%"
-        },
-        {
-          "icon": "×",
-          "text": "補完適性: C級"
-        },
-        {
-          "icon": "×",
-          "text": "展開評価: 1番手想定"
-        }
-      ]
-    },
-    {
-      "number": 7,
-      "name": "メルコチャン",
-      "mark": "×",
-      "confidence": "55.2",
-      "type": "押さえ",
-      "factors": [
-        {
-          "icon": "×",
-          "text": "信頼度: 55.2%"
-        },
-        {
-          "icon": "×",
-          "text": "補完適性: C級"
-        },
-        {
-          "icon": "×",
-          "text": "展開評価: 2番手想定"
-        }
-      ]
     }
   ],
   "totalHorses": 9,
-  "lastUpdated": "2025-08-22T13:01:03.263Z"
+  "lastUpdated": "2025-08-22T14:30:30.919Z"
 }
