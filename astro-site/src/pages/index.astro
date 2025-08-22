@@ -1,9 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import raceResults from '../data/raceResults.json';
+import predictionData from '../data/aiPrediction.json';
 
 // データ取得
 const { currentResults, weeklyResults, predictions } = raceResults;
+const { raceInfo, preview } = predictionData;
 ---
 
 <BaseLayout title="NANKANアナリティクス | AI競馬予想で投資効率を最大化">
@@ -592,29 +594,29 @@ const { currentResults, weeklyResults, predictions } = raceResults;
                 <div class="prediction-cards">
                     <div class="prediction-card">
                         <div class="race-info">
-                            <span class="race-title">大井11R 東京記念</span>
-                            <span class="confidence-score">信頼度 94%</span>
+                            <span class="race-title">{raceInfo.title}</span>
+                            <span class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo.confidence))}%</span>
                         </div>
                         <div class="prediction-summary">
-                            推奨投資戦略: 3連複中心、期待値+15.7%
+                            {preview.summary}
                         </div>
                         <div class="blur-overlay">
-                            <span class="premium-badge">詳細な買い目は有料版で</span>
+                            <span class="premium-badge">詳細な買い目は<a href="/free-prediction/" style="color: inherit; text-decoration: underline;">こちら</a></span>
                         </div>
                     </div>
                     
                     <div class="prediction-card">
                         <div class="race-info">
-                            <span class="race-title">船橋10R かしわ記念</span>
-                            <span class="confidence-score">信頼度 89%</span>
+                            <span class="race-title">{raceInfo.title}</span>
+                            <span class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo.confidence))}%</span>
                         </div>
                         <div class="prediction-summary">
-                            特徴量重要度: 距離適性(0.31)、調教師成績(0.24)、血統評価(0.18)
+                            {preview.features}
                             <br><br>
-                            リスク分析: 低リスク、安定収益型
+                            リスク分析: {preview.riskAnalysis}
                         </div>
                         <div class="blur-overlay">
-                            <span class="premium-badge">詳細な買い目は有料版で</span>
+                            <span class="premium-badge">詳細な買い目は<a href="/free-prediction/" style="color: inherit; text-decoration: underline;">こちら</a></span>
                         </div>
                     </div>
                 </div>

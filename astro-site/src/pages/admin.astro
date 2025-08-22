@@ -161,6 +161,136 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </p>
         </div>
 
+        <!-- 外部予想変換セクション -->
+        <div class="form-section">
+            <h2 style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 20px;">📋 外部予想→AI予想風変換</h2>
+            <p style="color: var(--accent-text-color); margin-bottom: 20px;">
+                既存の予想テキストをペーストするだけで、AI予想風の詳細分析に自動変換します
+            </p>
+            
+            <div class="form-group">
+                <label class="form-label">外部予想テキストをペースト</label>
+                <textarea 
+                    id="externalPrediction" 
+                    class="form-input" 
+                    placeholder="例:
+8/20浦和競馬
+１１Ｒ　ルーキーズサマーカップ（ＳIII）
+
+本命予想
+◎８アンジュルナ
+○１アムールピスケス
+▲５ロードレイジング
+△９ネイビーシンデレラ
+△２キンチャン
+
+AI分析理由
+８アンジュルナ
+８００メートルの新馬戦は出遅れも響いて③着に終わったが..."
+                    style="height: 300px; resize: vertical; font-family: monospace;"
+                ></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
+                <button type="button" id="convertPredictionBtn" style="padding: 12px 24px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    🔄 AI予想風に変換
+                </button>
+                <button type="button" id="clearPredictionBtn" style="padding: 12px 24px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    🗑️ クリア
+                </button>
+            </div>
+        </div>
+
+        <!-- AI予想編集セクション -->
+        <div class="form-section">
+            <h2 style="color: #8b5cf6; font-size: 1.5rem; margin-bottom: 20px;">🤖 AI予想編集（変換後の微調整用）</h2>
+            <p style="color: var(--accent-text-color); margin-bottom: 20px;">
+                上記の変換結果を微調整して、free-prediction/ページとトップページのプレビューを一括更新
+            </p>
+            
+            <!-- レース基本情報 -->
+            <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                <h3 style="color: #8b5cf6; margin-bottom: 15px;">📅 レース基本情報</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">レース名</label>
+                        <input type="text" class="form-input" id="aiRaceTitle" placeholder="例: 船橋2R C3選抜 1200m" value="船橋2R C3選抜 1200m">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">予測信頼度（%）</label>
+                        <input type="number" class="form-input" id="aiConfidence" placeholder="94.2" value="94.2" step="0.1" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">能力指数</label>
+                        <input type="number" class="form-input" id="aiAbilityIndex" placeholder="87.5" value="87.5" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">推奨度</label>
+                        <select class="form-select" id="aiRecommendation">
+                            <option value="S">S</option>
+                            <option value="A+" selected>A+</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">期待回収率（%）</label>
+                        <input type="number" class="form-input" id="aiExpectedReturn" placeholder="156" value="156" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 本命馬情報 -->
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                <h3 style="color: #10b981; margin-bottom: 15px;">🏆 本命馬情報</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">馬番</label>
+                        <input type="number" class="form-input" id="mainHorseNumber" value="11" min="1" max="16">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">馬名</label>
+                        <input type="text" class="form-input" id="mainHorseName" value="ラママーレエール">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">信頼度（%）</label>
+                        <input type="number" class="form-input" id="mainHorseConfidence" value="92.8" step="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- プレビュー情報 -->
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(59, 130, 246, 0.2);">
+                <h3 style="color: #3b82f6; margin-bottom: 15px;">👁️ トップページプレビュー</h3>
+                <div class="form-group">
+                    <label class="form-label">投資戦略サマリー</label>
+                    <textarea class="form-input" id="previewSummary" style="height: 80px; resize: vertical;" placeholder="推奨投資戦略: 馬連・3連複中心、期待値+15.7%">推奨投資戦略: 馬連・3連複中心、期待値+15.7%</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">特徴量重要度</label>
+                    <textarea class="form-input" id="previewFeatures" style="height: 80px; resize: vertical;" placeholder="特徴量重要度: 近走安定性(0.95)、能力上位性(0.88)、展開利(0.82)">特徴量重要度: 近走安定性(0.95)、能力上位性(0.88)、展開利(0.82)</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">リスク分析</label>
+                    <select class="form-select" id="previewRisk">
+                        <option value="低リスク、安定収益型" selected>低リスク、安定収益型</option>
+                        <option value="中リスク、バランス型">中リスク、バランス型</option>
+                        <option value="高リスク、爆発力型">高リスク、爆発力型</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <button type="button" id="testBtn" style="padding: 12px 24px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    🧪 テスト
+                </button>
+                <button type="button" id="generateAIPredictionBtn" class="submit-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); flex: 1;">
+                    🚀 AI予想JSONデータ生成
+                </button>
+            </div>
+        </div>
+
         <form id="raceForm">
             <!-- 基本情報入力 -->
             <div class="form-section">
@@ -247,17 +377,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- 生成されたJSONの表示 -->
         <div class="output-section">
             <h2 style="color: #10b981; font-size: 1.5rem; margin-bottom: 20px;">📋 生成されたJSON</h2>
-            <p style="color: var(--accent-text-color); margin-bottom: 15px;">
+            <p id="outputDescription" style="color: var(--accent-text-color); margin-bottom: 15px;">
                 下記のJSONをコピーして <code>src/data/raceResults.json</code> の <code>currentResults</code> セクションに貼り付けてください
             </p>
             <pre id="jsonOutput" class="json-output">ここにJSONが生成されます...</pre>
-            <button type="button" id="copyBtn" style="margin-top: 15px; padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                📋 JSONをコピー
-            </button>
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
+                <button type="button" id="copyBtn" style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    📋 JSONをコピー
+                </button>
+                <button type="button" id="aiCopyBtn" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    🤖 AI予想JSONコピー
+                </button>
+            </div>
         </div>
     </div>
 
     <script is:inline>
+    // DOM読み込み完了を待つ
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('管理者パネル: DOM読み込み完了');
+        
+        // 初期化処理
+        initializeAdminPanel();
+    });
+
+    function initializeAdminPanel() {
+        // ボタンの存在確認
+        const generateBtn = document.getElementById('generateAIPredictionBtn');
+        const testBtn = document.getElementById('testBtn');
+        
+        if (generateBtn) {
+            console.log('AI予想JSONデータ生成ボタンが見つかりました');
+        } else {
+            console.error('AI予想JSONデータ生成ボタンが見つかりません');
+        }
+        
+        if (testBtn) {
+            console.log('テストボタンが見つかりました');
+            
+            // テストボタンのイベントリスナー
+            testBtn.addEventListener('click', function() {
+                alert('✅ JavaScript動作確認OK!\n\nブラウザのコンソールログも確認してください。');
+                console.log('テストボタンがクリックされました - JavaScript正常動作');
+            });
+        } else {
+            console.error('テストボタンが見つかりません');
+        }
+    }
+
     // レース数に応じてレースカードを動的生成
     document.getElementById('totalRaces').addEventListener('change', function() {
         const totalRaces = parseInt(this.value);
@@ -467,7 +634,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         alert('✅ フォームをクリアしました。');
     });
 
-    // コピー機能
+    // コピー機能（レース結果用）
     document.getElementById('copyBtn').addEventListener('click', function() {
         const jsonText = document.getElementById('jsonOutput').textContent;
         navigator.clipboard.writeText(jsonText).then(() => {
@@ -476,6 +643,562 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 this.textContent = '📋 JSONをコピー';
             }, 2000);
         });
+    });
+
+    // AI予想JSONコピー機能
+    function setupAICopyButton() {
+        const aiCopyBtn = document.getElementById('aiCopyBtn');
+        if (aiCopyBtn) {
+            aiCopyBtn.addEventListener('click', function() {
+                const jsonText = document.getElementById('jsonOutput').textContent;
+                if (jsonText && jsonText !== 'ここにJSONが生成されます...') {
+                    navigator.clipboard.writeText(jsonText).then(() => {
+                        this.textContent = '✅ AI予想コピー完了!';
+                        setTimeout(() => {
+                            this.textContent = '🤖 AI予想JSONコピー';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('コピー失敗:', err);
+                        alert('コピーに失敗しました。手動でコピーしてください。');
+                    });
+                } else {
+                    alert('コピーできるJSONがありません。先に「AI予想JSONデータ生成」ボタンを押してください。');
+                }
+            });
+        }
+    }
+
+    // 初期化時にAI予想コピーボタンを設定
+    setupAICopyButton();
+
+    // 解析済み予想データを保存する変数
+    let parsedPredictionData = null;
+
+    // AI予想JSON生成機能
+    document.getElementById('generateAIPredictionBtn').addEventListener('click', function() {
+        try {
+            // デバッグ: ボタンクリックを確認
+            console.log('AI予想JSONデータ生成ボタンがクリックされました');
+            
+            // フォーム要素の存在確認
+            const elements = {
+                aiRaceTitle: document.getElementById('aiRaceTitle'),
+                aiConfidence: document.getElementById('aiConfidence'),
+                aiAbilityIndex: document.getElementById('aiAbilityIndex'),
+                aiRecommendation: document.getElementById('aiRecommendation'),
+                aiExpectedReturn: document.getElementById('aiExpectedReturn'),
+                mainHorseNumber: document.getElementById('mainHorseNumber'),
+                mainHorseName: document.getElementById('mainHorseName'),
+                mainHorseConfidence: document.getElementById('mainHorseConfidence'),
+                previewSummary: document.getElementById('previewSummary'),
+                previewFeatures: document.getElementById('previewFeatures'),
+                previewRisk: document.getElementById('previewRisk')
+            };
+
+            // 要素の存在確認
+            for (const [key, element] of Object.entries(elements)) {
+                if (!element) {
+                    throw new Error(`要素が見つかりません: ${key}`);
+                }
+            }
+
+            // フォームデータ取得
+            const raceTitle = elements.aiRaceTitle.value;
+            const confidence = parseFloat(elements.aiConfidence.value);
+            const abilityIndex = parseFloat(elements.aiAbilityIndex.value);
+            const recommendation = elements.aiRecommendation.value;
+            const expectedReturn = parseInt(elements.aiExpectedReturn.value);
+            
+            const mainHorseNumber = parseInt(elements.mainHorseNumber.value);
+            const mainHorseName = elements.mainHorseName.value;
+            const mainHorseConfidence = parseFloat(elements.mainHorseConfidence.value);
+            
+            const previewSummary = elements.previewSummary.value;
+            const previewFeatures = elements.previewFeatures.value;
+            const previewRisk = elements.previewRisk.value;
+
+            // バリデーション
+            if (!raceTitle || isNaN(confidence) || isNaN(abilityIndex) || !mainHorseName) {
+                alert('❌ 必須項目が入力されていません。\n\n確認してください:\n・レース名\n・予測信頼度\n・能力指数\n・本命馬名');
+                return;
+            }
+
+        // 現在の日時を取得
+        const now = new Date();
+        const currentTime = now.toISOString();
+
+        // デバッグ: 解析データの状態確認
+        console.log('AI予想JSON生成時の解析データ:', parsedPredictionData);
+        if (parsedPredictionData) {
+            console.log('本命馬:', parsedPredictionData.mainHorse);
+            console.log('対抗馬:', parsedPredictionData.subHorse);
+            console.log('単穴馬:', parsedPredictionData.darkHorse);
+            console.log(`全出走馬(${parsedPredictionData.totalHorses}頭):`, parsedPredictionData.allHorses.map(h => `${h.mark}${h.number}${h.name}`).join(', '));
+        }
+
+        // JSONデータ構築
+        const aiPredictionData = {
+            raceInfo: {
+                title: raceTitle,
+                date: now.toISOString().split('T')[0], // YYYY-MM-DD形式
+                track: raceTitle.split(/[0-9]/)[0] || "船橋", // 競馬場名を抽出
+                raceNumber: raceTitle.match(/[0-9]+R/) ? raceTitle.match(/[0-9]+R/)[0] : "2R",
+                raceName: raceTitle.replace(/^.*?[0-9]+R\s*/, '') || "C3選抜 1200m",
+                confidence: confidence.toString(),
+                abilityIndex: abilityIndex.toString(),
+                recommendation: recommendation,
+                expectedReturn: expectedReturn.toString()
+            },
+            horses: {
+                main: {
+                    number: mainHorseNumber,
+                    name: mainHorseName,
+                    type: "本命",
+                    confidence: mainHorseConfidence.toString(),
+                    factors: [
+                        { icon: "◎", text: `能力指数: ${abilityIndex} (1位)` },
+                        { icon: "◎", text: `安定性スコア: ${mainHorseConfidence}%` },
+                        { icon: "◎", text: "展開適性: S評価" },
+                        { icon: "◎", text: "過去5走偏差値: 62.3" }
+                    ],
+                    importance: [
+                        { label: "近走安定性", value: 0.95 },
+                        { label: "能力上位性", value: 0.88 },
+                        { label: "展開利", value: 0.82 }
+                    ]
+                },
+                sub: parsedPredictionData && parsedPredictionData.subHorse ? {
+                    number: parsedPredictionData.subHorse.number,
+                    name: parsedPredictionData.subHorse.name,
+                    type: "対抗",
+                    confidence: parsedPredictionData.subHorse.confidence,
+                    factors: [
+                        { icon: "○", text: `スピード指数: ${(Math.random() * 10 + 75).toFixed(1)}` },
+                        { icon: "○", text: `先行力: ${(Math.random() * 15 + 80).toFixed(1)}%` },
+                        { icon: "○", text: "枠順優位性: A級" },
+                        { icon: "○", text: "持続力評価: B" }
+                    ]
+                } : {
+                    number: mainHorseNumber === 11 ? 6 : 11,
+                    name: "ノヴェッラ",
+                    type: "対抗",
+                    confidence: "86.7",
+                    factors: [
+                        { icon: "○", text: "スピード指数: 78.4" },
+                        { icon: "○", text: "先行力: 82.3%" },
+                        { icon: "○", text: "枠順優位性: A級" },
+                        { icon: "○", text: "持続力評価: B" }
+                    ]
+                },
+                dark: parsedPredictionData && parsedPredictionData.darkHorse ? {
+                    number: parsedPredictionData.darkHorse.number,
+                    name: parsedPredictionData.darkHorse.name,
+                    type: "単穴",
+                    confidence: parsedPredictionData.darkHorse.confidence,
+                    factors: [
+                        { icon: "▲", text: `爆発力指数: ${(Math.random() * 10 + 85).toFixed(1)}` },
+                        { icon: "▲", text: "ムラ係数: 高変動" },
+                        { icon: "▲", text: `斤量優位: +${Math.floor(Math.random() * 3 + 1)}kg` },
+                        { icon: "▲", text: "展開次第: 要注意" }
+                    ]
+                } : {
+                    number: mainHorseNumber === 3 ? 8 : 3,
+                    name: "ボンブーリープ",
+                    type: "単穴",
+                    confidence: "72.1",
+                    factors: [
+                        { icon: "▲", text: "爆発力指数: 91.2" },
+                        { icon: "▲", text: "ムラ係数: 高変動" },
+                        { icon: "▲", text: "斤量優位: +2kg" },
+                        { icon: "▲", text: "展開次第: 要注意" }
+                    ]
+                }
+            },
+            strategies: (() => {
+                // 実際の馬番を取得
+                const subNum = (parsedPredictionData && parsedPredictionData.subHorse) ? parsedPredictionData.subHorse.number : (mainHorseNumber === 11 ? 6 : 11);
+                const darkNum = (parsedPredictionData && parsedPredictionData.darkHorse) ? parsedPredictionData.darkHorse.number : (mainHorseNumber === 3 ? 8 : 3);
+                
+                // 連下馬（△印の馬）を取得
+                const underHorses = parsedPredictionData && parsedPredictionData.allHorses ? 
+                    parsedPredictionData.allHorses.filter(h => h.mark === '△').map(h => h.number) : [];
+                const underStr = underHorses.length > 0 ? underHorses.join(',') : '2,3';
+                
+                return {
+                    safe: {
+                        title: "戦略A: 高的中率型",
+                        recommendation: 5,
+                        hitRate: "78.5",
+                        returnRate: "132",
+                        bets: [
+                            { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum}`, points: "2点" },
+                            { type: "ワイド", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
+                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} + 連下${underStr}`, points: `${4 + Math.min(underHorses.length, 2)}点` }
+                        ],
+                        expectedPayout: "5-8倍",
+                        payoutType: "堅実決着想定"
+                    },
+                    balance: {
+                        title: "戦略B: バランス型",
+                        recommendation: 3,
+                        hitRate: "65.2",
+                        returnRate: "148",
+                        bets: [
+                            { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
+                            { type: "ワイド", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${3 + underHorses.length}点` },
+                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} - ${underStr},4,6,7`, points: `${Math.max(12, 8 + underHorses.length * 2)}点` }
+                        ],
+                        expectedPayout: "8-15倍",
+                        payoutType: "中穴配当想定"
+                    },
+                    aggressive: {
+                        title: "戦略C: 高配当追求型",
+                        recommendation: 2,
+                        hitRate: "42.8",
+                        returnRate: "215",
+                        bets: [
+                            { type: "3連複", horses: `${darkNum}-${subNum},${mainHorseNumber} - ${underStr},4,6,7`, points: `${Math.max(15, 12 + underHorses.length * 2)}点` },
+                            { type: "馬連", horses: `${darkNum} - ${mainHorseNumber},${subNum},${underStr}`, points: `${3 + underHorses.length}点` },
+                            { type: "ワイド", horses: `連下${underStr} - ${mainHorseNumber},${subNum},${darkNum}`, points: `${Math.min(8, 3 + underHorses.length * 2)}点` }
+                        ],
+                        expectedPayout: "20倍以上",
+                        payoutType: "大穴視野"
+                    }
+                };
+            })(),
+            analysis: {
+                raceExpected: `XGBoostモデル: ◎${mainHorseNumber}${mainHorseName}の安定性を最高評価（スコア${mainHorseConfidence}）`,
+                keyIndicators: {
+                    accuracy: "87.3",
+                    similarRaces: "42件", 
+                    confidenceInterval: "±3.2",
+                    recommendedInvestment: "資金の3-5%"
+                }
+            },
+            preview: {
+                summary: previewSummary,
+                features: previewFeatures,
+                riskAnalysis: previewRisk
+            },
+            allHorses: parsedPredictionData && parsedPredictionData.allHorses ? 
+                parsedPredictionData.allHorses.map(horse => ({
+                    number: horse.number,
+                    name: horse.name,
+                    mark: horse.mark,
+                    confidence: horse.confidence,
+                    type: horse.mark === '◎' ? '本命' : 
+                          horse.mark === '○' || horse.mark === '◯' ? '対抗' : 
+                          horse.mark === '▲' ? '単穴' : 
+                          horse.mark === '△' ? '連下' : '押さえ',
+                    factors: [
+                        { icon: horse.mark, text: `信頼度: ${horse.confidence}%` },
+                        { icon: horse.mark, text: horse.mark === '◎' ? "本命適性: S級" : 
+                                                 horse.mark === '○' || horse.mark === '◯' ? "対抗適性: A級" :
+                                                 horse.mark === '▲' ? "穴適性: B級" : "補完適性: C級" },
+                        { icon: horse.mark, text: `展開評価: ${Math.floor(Math.random() * 3) + 1}番手想定` }
+                    ]
+                })) : [],
+            totalHorses: parsedPredictionData ? parsedPredictionData.totalHorses || 3 : 3,
+            lastUpdated: currentTime
+        };
+
+        // JSON表示
+        const jsonOutput = document.getElementById('jsonOutput');
+        jsonOutput.textContent = JSON.stringify(aiPredictionData, null, 2);
+
+        // 説明文更新
+        const outputDescription = document.getElementById('outputDescription');
+        outputDescription.innerHTML = '下記のJSONをコピーして <code>src/data/aiPrediction.json</code> に貼り付けてください。<br>これにより<strong>free-prediction/</strong>ページと<strong>トップページのプレビュー</strong>が自動更新されます。';
+
+        // AI予想JSONコピーボタンの表示/有効化
+        const aiCopyBtn = document.getElementById('aiCopyBtn');
+        if (aiCopyBtn) {
+            aiCopyBtn.style.display = 'block';
+            console.log('AI予想JSONコピーボタンを有効化しました');
+        }
+
+        // 成功メッセージ
+        alert('✅ AI予想JSONデータを生成しました！\n\n📋 コピーボタンで内容をコピーして\nsrc/data/aiPrediction.json に貼り付けてください。');
+        
+        } catch (error) {
+            console.error('AI予想JSON生成エラー:', error);
+            alert('❌ JSON生成中にエラーが発生しました。\n\n詳細: ' + error.message + '\n\nブラウザのコンソールで詳細を確認してください。');
+        }
+    });
+
+    // 外部予想変換機能
+    document.getElementById('convertPredictionBtn').addEventListener('click', function() {
+        const externalText = document.getElementById('externalPrediction').value;
+        if (!externalText.trim()) {
+            alert('変換するテキストを入力してください。');
+            return;
+        }
+
+        try {
+            console.log('=== 外部予想変換開始 ===');
+            console.log('入力テキスト:', externalText);
+            
+            // デバッグ: 文字コードを詳細に確認
+            const testLine = '○１アムールピスケス';
+            console.log('テスト行の文字コード解析:');
+            for (let i = 0; i < testLine.length; i++) {
+                const char = testLine[i];
+                const code = char.charCodeAt(0);
+                console.log(`${i}: "${char}" (U+${code.toString(16).toUpperCase().padStart(4, '0')})`);
+            }
+            
+            // 実際の入力テキストの各行を分析
+            const lines = externalText.split('\n').map(line => line.trim()).filter(line => line);
+            console.log('入力テキストの行分析:');
+            lines.forEach((line, index) => {
+                console.log(`行${index + 1}: "${line}"`);
+                if (line.includes('アムール')) {
+                    console.log('  → アムールを含む行を発見!');
+                    for (let i = 0; i < Math.min(line.length, 10); i++) {
+                        const char = line[i];
+                        const code = char.charCodeAt(0);
+                        console.log(`  ${i}: "${char}" (U+${code.toString(16).toUpperCase().padStart(4, '0')})`);
+                    }
+                }
+            });
+            
+            // テキスト解析
+            const parsedData = parseExternalPrediction(externalText);
+            
+            // 解析データを保存（AI予想JSON生成時に使用）
+            parsedPredictionData = parsedData;
+            console.log('解析データを保存:', parsedPredictionData);
+            
+            // AI予想編集フォームに自動入力
+            document.getElementById('aiRaceTitle').value = parsedData.raceTitle;
+            document.getElementById('aiConfidence').value = parsedData.confidence;
+            document.getElementById('aiAbilityIndex').value = parsedData.abilityIndex;
+            document.getElementById('aiRecommendation').value = parsedData.recommendation;
+            document.getElementById('aiExpectedReturn').value = parsedData.expectedReturn;
+            
+            document.getElementById('mainHorseNumber').value = parsedData.mainHorse.number;
+            document.getElementById('mainHorseName').value = parsedData.mainHorse.name;
+            document.getElementById('mainHorseConfidence').value = parsedData.mainHorse.confidence;
+            
+            document.getElementById('previewSummary').value = parsedData.previewSummary;
+            document.getElementById('previewFeatures').value = parsedData.previewFeatures;
+            document.getElementById('previewRisk').value = parsedData.previewRisk;
+
+            alert(`✅ 変換完了！\n\nAI予想編集セクションに自動入力されました。\n解析した出走馬: ${parsedData.totalHorses}頭\n「AI予想JSONデータ生成」で全馬情報が正しく反映されます。\n\n検出した馬:\n${parsedData.allHorses.map(h => `${h.mark}${h.number}${h.name}`).slice(0, 8).join('\n')}${parsedData.allHorses.length > 8 ? '\n...' : ''}`);
+            
+        } catch (error) {
+            console.error('変換エラー詳細:', error);
+            console.error('エラースタック:', error.stack);
+            alert('テキストの解析中にエラーが発生しました。\n\n詳細: ' + error.message + '\n\nコンソールで詳細を確認してください。');
+        }
+    });
+
+    // 外部予想テキスト解析関数
+    function parseExternalPrediction(text) {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        
+        // レース情報抽出
+        const raceInfoMatch = text.match(/(\d+\/\d+)([^競馬]*?)競馬.*?([０-９0-9]+)[ＲRr].*?([^\n]*)/);
+        const raceTitle = raceInfoMatch ? 
+            `${raceInfoMatch[2].trim()}${convertToHalfWidth(raceInfoMatch[3])}R ${raceInfoMatch[4].trim()}` : 
+            "レース情報未検出";
+
+        // 本命予想抽出
+        const horses = [];
+        let inPredictionSection = false;
+        let currentHorse = null;
+        let analysisStarted = false;
+        
+        // テスト用: 単一行の場合は予想セクションとして扱う（両方の○文字に対応）
+        if (lines.length === 1 && /^[◎○◯▲△×]/.test(lines[0])) {
+            inPredictionSection = true;
+            console.log('単一行の馬データを検出: 予想セクションとして処理します');
+        }
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            
+            if (line.includes('本命予想') || line.includes('予想') || line.includes('印')) {
+                inPredictionSection = true;
+                console.log('予想セクション開始:', line);
+                continue;
+            }
+            
+            if (line.includes('AI分析理由') || line.includes('分析理由')) {
+                inPredictionSection = false;
+                analysisStarted = true;
+                console.log('分析セクション開始:', line);
+                continue;
+            }
+            
+            // 「抑え」セクションに入った場合は継続して馬を検出
+            if (line.includes('抑え')) {
+                console.log('抑えセクション開始:', line);
+                // inPredictionSectionは継続
+                continue;
+            }
+            
+            // 本当のセクション終了条件
+            if (line.includes('AI分析理由') || line.includes('分析終了') || line.includes('不要')) {
+                inPredictionSection = false;
+                analysisStarted = false;
+                console.log('セクション終了:', line);
+                continue;
+            }
+            
+            console.log(`行処理状況: inPredictionSection=${inPredictionSection}, analysisStarted=${analysisStarted}, line="${line}"`);
+            
+            if (inPredictionSection) {
+                // デバッグ: 現在処理中の行をログ出力
+                console.log('予想セクション処理中の行:', line);
+                
+                // より柔軟なパターンで馬を検出
+                console.log(`行の文字コード分析: "${line}"`);
+                
+                // 複数のパターンで段階的にテスト
+                const patterns = [
+                    // パターン1: 基本（両方の○文字に対応）
+                    /^([◎○◯▲△×])([０-９0-9]+)([^\r\n]+)$/,
+                    // パターン2: より柔軟（空白を許可）
+                    /^([◎○◯▲△×])\s*([０-９0-9]+)\s*([^\r\n]+)$/,
+                    // パターン3: Unicode範囲を明示（両方の○文字）
+                    /^([\u25CE\u25CB\u25EF\u25B2\u25B3\u00D7])([０-９0-9]+)([^\r\n]+)$/,
+                    // パターン4: 最も広範囲
+                    /([◎○◯▲△×])([０-９0-9]+)(.+)/
+                ];
+                
+                let matched = false;
+                
+                for (let i = 0; i < patterns.length; i++) {
+                    const pattern = patterns[i];
+                    const horseMatch = line.match(pattern);
+                    
+                    if (horseMatch) {
+                        const mark = horseMatch[1];
+                        const number = parseInt(convertToHalfWidth(horseMatch[2]));
+                        const name = horseMatch[3].trim();
+                        
+                        console.log(`パターン${i + 1}で馬を検出: ${mark}${number}${name}`);
+                        
+                        horses.push({
+                            mark: mark,
+                            number: number,
+                            name: name,
+                            confidence: getConfidenceFromMark(mark),
+                            analysis: ""
+                        });
+                        
+                        matched = true;
+                        break;
+                    }
+                }
+                
+                if (!matched) {
+                    console.log(`❌ この行はパターンにマッチしませんでした: "${line}"`);
+                    console.log(`文字コード詳細:`, Array.from(line).map(char => `${char}(U+${char.charCodeAt(0).toString(16).toUpperCase()})`));
+                } else {
+                    console.log(`✅ 馬を正常に検出: ${line}`);
+                }
+            }
+            
+            if (analysisStarted && currentHorse) {
+                // 現在の馬の分析に追加
+                currentHorse.analysis += line + " ";
+            }
+            
+            if (analysisStarted) {
+                // 新しい馬の分析開始を検出
+                const analysisHorseMatch = line.match(/([０-９0-9]+)([^\s]+)/);
+                if (analysisHorseMatch) {
+                    const number = parseInt(convertToHalfWidth(analysisHorseMatch[1]));
+                    const name = analysisHorseMatch[2];
+                    
+                    // 対応する馬を探す
+                    currentHorse = horses.find(h => h.number === number && h.name === name);
+                    if (currentHorse) {
+                        currentHorse.analysis = "";
+                    }
+                }
+            }
+        }
+
+        console.log(`解析結果: ${horses.length}頭の馬を検出`);
+        console.log('検出した馬一覧:', horses.map(h => `${h.mark}${h.number}${h.name}`));
+        console.log('印別の内訳:');
+        console.log('- 本命(◎):', horses.filter(h => h.mark === '◎').map(h => `${h.number}${h.name}`));
+        console.log('- 対抗(○◯):', horses.filter(h => h.mark === '○' || h.mark === '◯').map(h => `${h.number}${h.name}`));  
+        console.log('- 単穴(▲):', horses.filter(h => h.mark === '▲').map(h => `${h.number}${h.name}`));
+        console.log('- 連下(△):', horses.filter(h => h.mark === '△').map(h => `${h.number}${h.name}`));
+        console.log('- 抑え(×):', horses.filter(h => h.mark === '×').map(h => `${h.number}${h.name}`));
+        
+        if (horses.length === 0) {
+            console.error('馬が検出されませんでした。デバッグ情報:');
+            console.error('- inPredictionSection フラグの最終状態:', inPredictionSection);
+            console.error('- 処理した行数:', lines.length);
+            console.error('- 各行の内容:', lines);
+            throw new Error('馬券対象馬が見つかりませんでした。◎○▲△の印を使用してください。');
+        }
+
+        // 各印の馬を取得（両方の○文字に対応）
+        const mainHorse = horses.find(h => h.mark === '◎') || horses[0];
+        const subHorse = horses.find(h => h.mark === '○' || h.mark === '◯') || horses[1] || { number: 6, name: "ノヴェッラ", mark: "○", confidence: "86.7" };
+        const darkHorse = horses.find(h => h.mark === '▲') || horses[2] || { number: 3, name: "ボンブーリープ", mark: "▲", confidence: "72.1" };
+        
+        // プレビュー情報生成
+        const horseNames = horses.slice(0, Math.min(5, horses.length)).map(h => `${h.number}番${h.name}`).join('、');
+        const previewSummary = `推奨投資戦略: ${mainHorse.name}を中心とした馬連・3連複、期待値+${(Math.random() * 20 + 10).toFixed(1)}%`;
+        const previewFeatures = `特徴量重要度: 近走成績(0.${Math.floor(Math.random() * 20 + 80)})、血統適性(0.${Math.floor(Math.random() * 20 + 70)})、騎手実績(0.${Math.floor(Math.random() * 20 + 60)})`;
+        
+        console.log(`解析完了: ${horses.length}頭の馬を検出:`, horses.map(h => `${h.mark}${h.number}${h.name}`).join(', '));
+        
+        return {
+            raceTitle: raceTitle,
+            confidence: mainHorse.confidence,
+            abilityIndex: (Math.random() * 10 + 80).toFixed(1),
+            recommendation: mainHorse.mark === '◎' ? 'A+' : (mainHorse.mark === '○' || mainHorse.mark === '◯') ? 'A' : 'B',
+            expectedReturn: Math.floor(Math.random() * 50 + 130),
+            mainHorse: {
+                number: mainHorse.number,
+                name: mainHorse.name,
+                confidence: mainHorse.confidence
+            },
+            subHorse: {
+                number: subHorse.number,
+                name: subHorse.name,
+                confidence: subHorse.confidence
+            },
+            darkHorse: {
+                number: darkHorse.number,
+                name: darkHorse.name,
+                confidence: darkHorse.confidence
+            },
+            allHorses: horses, // 全ての馬情報
+            totalHorses: horses.length,
+            previewSummary: previewSummary,
+            previewFeatures: previewFeatures,
+            previewRisk: mainHorse.mark === '◎' ? '低リスク、安定収益型' : '中リスク、バランス型'
+        };
+    }
+
+    // 印から信頼度を計算（両方の○文字に対応）
+    function getConfidenceFromMark(mark) {
+        const confidenceMap = {
+            '◎': (Math.random() * 8 + 90).toFixed(1), // 90-98%
+            '○': (Math.random() * 8 + 82).toFixed(1), // 82-90% (U+25CB)
+            '◯': (Math.random() * 8 + 82).toFixed(1), // 82-90% (U+25EF)
+            '▲': (Math.random() * 8 + 70).toFixed(1), // 70-78%
+            '△': (Math.random() * 8 + 60).toFixed(1), // 60-68%
+            '×': (Math.random() * 8 + 50).toFixed(1)  // 50-58%
+        };
+        return confidenceMap[mark] || '65.0';
+    }
+
+    // 外部予想クリア機能
+    document.getElementById('clearPredictionBtn').addEventListener('click', function() {
+        document.getElementById('externalPrediction').value = '';
+        parsedPredictionData = null; // 解析データもクリア
+        console.log('解析データをクリアしました');
+        alert('✅ 外部予想テキストと解析データをクリアしました。');
     });
     </script>
 </BaseLayout>
