@@ -115,17 +115,18 @@
   "strategies": {
     "safe": {
       "title": "戦略A: 高的中率型",
-      "recommendation": 5,
+      "recommendation": 4,
       "hitRate": "78.5",
       "returnRate": "132",
+      "riskLevel": "low",
       "bets": [
         {
-          "type": "馬連",
-          "horses": "5 - 7,3",
-          "points": "2点"
+          "type": "馬単",
+          "horses": "5 → 7,3,8,2,1",
+          "points": "5点"
         },
         {
-          "type": "ワイド",
+          "type": "馬連",
           "horses": "5 - 7,3,8,2,1",
           "points": "5点"
         },
@@ -143,21 +144,22 @@
       "recommendation": 3,
       "hitRate": "65.2",
       "returnRate": "148",
+      "riskLevel": "medium",
       "bets": [
         {
-          "type": "馬連",
-          "horses": "5 - 7,3,8,2,1",
-          "points": "5点"
+          "type": "馬単",
+          "horses": "5 → 7,3,8,2,1（抑え10,11,13）",
+          "points": "8点"
         },
         {
-          "type": "ワイド",
-          "horses": "5 - 7,3,8,2,1",
-          "points": "6点"
+          "type": "馬連",
+          "horses": "5 - 7,3,8,2,1,10,11",
+          "points": "7点"
         },
         {
           "type": "3連複",
-          "horses": "5-7,3 - 8,2,1,4,6,7",
-          "points": "14点"
+          "horses": "5-7,3 - 8,2,1,10,11,13",
+          "points": "12点"
         }
       ],
       "expectedPayout": "8-15倍",
@@ -168,21 +170,22 @@
       "recommendation": 2,
       "hitRate": "42.8",
       "returnRate": "215",
+      "riskLevel": "high",
       "bets": [
         {
-          "type": "3連複",
-          "horses": "3-7,5 - 8,2,1,4,6,7",
-          "points": "18点"
+          "type": "馬単",
+          "horses": "3,8,2 → 5,7,1,10,11（大穴狙い）",
+          "points": "15点"
         },
         {
           "type": "馬連",
-          "horses": "3 - 5,7,8,2,1",
-          "points": "6点"
+          "horses": "3,8,2 - 5,7,1,10,11,13",
+          "points": "18点"
         },
         {
-          "type": "ワイド",
-          "horses": "連下8,2,1 - 5,7,3",
-          "points": "8点"
+          "type": "3連複",
+          "horses": "穴軸3,8,2 - 5,7 - 1,10,11,13,4,6",
+          "points": "24点"
         }
       ],
       "expectedPayout": "20倍以上",

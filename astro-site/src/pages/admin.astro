@@ -618,7 +618,19 @@ AI分析理由
         }
 
         const hitRate = ((hits / totalRaces) * 100).toFixed(1) + '%';
-        const returnRate = totalPayout > 0 ? ((totalPayout / (totalRaces * 100)) * 100).toFixed(1) + '%' : '0%';
+        const returnRate = totalPayout > 0 ? ((totalPayout / (totalRaces * 1000)) * 100).toFixed(1) + '%' : '0%';
+        
+        // 高額配当の検証アラート
+        const highPayouts = races.filter(r => r.payout > 10000);
+        if (highPayouts.length > 0) {
+            const highPayoutList = highPayouts.map(r => `${r.race}: ${r.payout.toLocaleString()}円`).join('\n');
+            const confirmHighPayout = confirm(`⚠️ 高額配当を検出しました:\n${highPayoutList}\n\n配当金額は正しいですか？\n\n「OK」= 正しい配当\n「キャンセル」= 修正が必要`);
+            
+            if (!confirmHighPayout) {
+                alert('❌ データ生成をキャンセルしました。配当金額を確認して再入力してください。');
+                return;
+            }
+        }
 
         // JSONオブジェクト生成
         const jsonData = {
@@ -670,6 +682,11 @@ AI分析理由
                     
                     const payout = payoutMatch ? parseInt(payoutMatch[1].replace(/[,.]/g, '')) : 0;
                     
+                    // 高額配当の事前チェック（一括ペースト時）
+                    if (payout > 50000) {
+                        console.warn(`⚠️ 非常に高額な配当を検出: ${raceNum}R ${payout.toLocaleString()}円`);
+                    }
+                    
                     raceResults.push({
                         race: parseInt(raceNum),
                         status: isHit ? 'hit' : 'miss',
@@ -704,7 +721,13 @@ AI分析理由
                     }
                 });
 
-                alert(`解析完了！${raceResults.length}レースのデータを読み込みました。`);
+                // 解析結果の統計情報を表示
+                const totalHits = raceResults.filter(r => r.status === 'hit').length;
+                const totalPayout = raceResults.reduce((sum, r) => sum + r.payout, 0);
+                const hitRate = ((totalHits / raceResults.length) * 100).toFixed(1);
+                const returnRate = totalPayout > 0 ? ((totalPayout / (raceResults.length * 1000)) * 100).toFixed(1) : 0;
+                
+                alert(`✅ 解析完了！\n\n📊 統計情報:\n・読み込みレース数: ${raceResults.length}\n・的中数: ${totalHits}レース\n・的中率: ${hitRate}%\n・総配当: ${totalPayout.toLocaleString()}円\n・回収率: ${returnRate}%\n\n${returnRate > 1000 ? '⚠️ 回収率が1000%超です。配当金額を確認してください。' : '✅ 統計値は正常範囲内です。'}`);
             }, 100);
 
         } catch (error) {
@@ -956,13 +979,14 @@ AI分析理由
                 return {
                     safe: {
                         title: "戦略A: 高的中率型",
-                        recommendation: 5,
+                        recommendation: 4,
                         hitRate: "78.5",
                         returnRate: "132",
+                        riskLevel: "low", // 低リスク = 30%
                         bets: [
-                            { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum}`, points: "2点" },
-                            { type: "ワイド", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
-                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} + 連下${underStr}`, points: `${4 + Math.min(underHorses.length, 2)}点` }
+                            { type: "馬単", horses: `${mainHorseNumber} → ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
+                            { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
+                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} + 連下${underStr}`, points: `${Math.max(6, 4 + underHorses.length)}点` }
                         ],
                         expectedPayout: "5-8倍",
                         payoutType: "堅実決着想定"
@@ -972,10 +996,11 @@ AI分析理由
                         recommendation: 3,
                         hitRate: "65.2",
                         returnRate: "148",
+                        riskLevel: "medium", // 中リスク = 60%
                         bets: [
-                            { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
-                            { type: "ワイド", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${3 + underHorses.length}点` },
-                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} - ${underStr},4,6,7`, points: `${Math.max(12, 8 + underHorses.length * 2)}点` }
+                            { type: "馬単", horses: `${mainHorseNumber} → ${subNum},${darkNum},${underStr}（抑え10,11,13）`, points: `${5 + underHorses.length}点` },
+                            { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr},10,11`, points: `${4 + underHorses.length}点` },
+                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} - ${underStr},10,11,13`, points: `${Math.max(12, 8 + underHorses.length * 2)}点` }
                         ],
                         expectedPayout: "8-15倍",
                         payoutType: "中穴配当想定"
@@ -985,10 +1010,11 @@ AI分析理由
                         recommendation: 2,
                         hitRate: "42.8",
                         returnRate: "215",
+                        riskLevel: "high", // 高リスク = 100%
                         bets: [
-                            { type: "3連複", horses: `${darkNum}-${subNum},${mainHorseNumber} - ${underStr},4,6,7`, points: `${Math.max(15, 12 + underHorses.length * 2)}点` },
-                            { type: "馬連", horses: `${darkNum} - ${mainHorseNumber},${subNum},${underStr}`, points: `${3 + underHorses.length}点` },
-                            { type: "ワイド", horses: `連下${underStr} - ${mainHorseNumber},${subNum},${darkNum}`, points: `${Math.min(8, 3 + underHorses.length * 2)}点` }
+                            { type: "馬単", horses: `${darkNum},${underStr} → ${mainHorseNumber},${subNum},10,11（大穴狙い）`, points: `${Math.max(15, 10 + underHorses.length * 2)}点` },
+                            { type: "馬連", horses: `${darkNum},${underStr} - ${mainHorseNumber},${subNum},10,11,13`, points: `${Math.max(18, 12 + underHorses.length * 3)}点` },
+                            { type: "3連複", horses: `穴軸${darkNum},${underStr} - ${mainHorseNumber},${subNum} - 10,11,13,4,6`, points: `${Math.max(24, 18 + underHorses.length * 3)}点` }
                         ],
                         expectedPayout: "20倍以上",
                         payoutType: "大穴視野"
@@ -1045,8 +1071,26 @@ AI分析理由
             console.log('AI予想JSONコピーボタンを有効化しました');
         }
 
+        // データ整合性チェック
+        const validationErrors = [];
+        
+        // 戦略リスクレベルのチェック
+        if (!aiPredictionData.strategies.safe.riskLevel) validationErrors.push('戦略A のリスクレベルが未設定');
+        if (!aiPredictionData.strategies.balance.riskLevel) validationErrors.push('戦略B のリスクレベルが未設定');
+        if (!aiPredictionData.strategies.aggressive.riskLevel) validationErrors.push('戦略C のリスクレベルが未設定');
+        
+        // 馬データの整合性チェック
+        if (!aiPredictionData.horses.main.number) validationErrors.push('本命馬の馬番が未設定');
+        if (!aiPredictionData.horses.sub.number) validationErrors.push('対抗馬の馬番が未設定');
+        if (!aiPredictionData.horses.dark.number) validationErrors.push('単穴馬の馬番が未設定');
+        
+        if (validationErrors.length > 0) {
+            alert('⚠️ データ整合性エラー:\n' + validationErrors.join('\n') + '\n\n修正してから再生成してください。');
+            return;
+        }
+
         // 成功メッセージ
-        alert('✅ AI予想JSONデータを生成しました！\n\n📋 コピーボタンで内容をコピーして\nsrc/data/aiPrediction.json に貼り付けてください。');
+        alert('✅ AI予想JSONデータを生成しました！\n\n📋 リスクバー表示も正常に設定済み\n\nコピーボタンで内容をコピーして\nsrc/data/aiPrediction.json に貼り付けてください。');
         
         } catch (error) {
             console.error('AI予想JSON生成エラー:', error);

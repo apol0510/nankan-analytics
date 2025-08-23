@@ -275,7 +275,7 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                 </div>
                 <div class="risk-indicator">
                     <span style="color: #64748b; font-size: 0.85rem;">リスク:</span>
-                    <div class="risk-bar active" style="width: 30%;"></div>
+                    <div class="risk-bar active risk-low" style="width: 30%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
@@ -302,7 +302,7 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                 </div>
                 <div class="risk-indicator">
                     <span style="color: #64748b; font-size: 0.85rem;">リスク:</span>
-                    <div class="risk-bar active" style="width: 60%;"></div>
+                    <div class="risk-bar active risk-medium" style="width: 60%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
@@ -337,7 +337,7 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                 </div>
                 <div class="risk-indicator">
                     <span style="color: #64748b; font-size: 0.85rem;">リスク:</span>
-                    <div class="risk-bar active"></div>
+                    <div class="risk-bar active risk-high" style="width: 100%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
@@ -745,8 +745,19 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
         background: rgba(255, 255, 255, 0.1);
         border-radius: 4px;
     }
+    .risk-bar.active.risk-low {
+        background: #10b981; /* 緑色 - 低リスク */
+    }
+    .risk-bar.active.risk-medium {
+        background: #f59e0b; /* オレンジ色 - 中リスク */
+    }
+    .risk-bar.active.risk-high {
+        background: #ef4444; /* 赤色 - 高リスク */
+    }
+    
+    /* 旧スタイル（フォールバック） */
     .risk-bar.active {
-        background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+        background: #64748b;
     }
     .expected-return {
         background: rgba(16, 185, 129, 0.1);
