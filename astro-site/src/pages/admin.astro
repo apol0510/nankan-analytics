@@ -894,7 +894,7 @@ AI分析理由
                     factors: [
                         { icon: "○", text: `スピード指数: ${(Math.random() * 10 + 75).toFixed(1)}` },
                         { icon: "○", text: `先行力: ${(Math.random() * 15 + 80).toFixed(1)}%` },
-                        { icon: "○", text: "枠順優位性: A級" },
+                        { icon: "○", text: "枠順優位性: B級" },
                         { icon: "○", text: "持続力評価: B" }
                     ],
                     importance: [
@@ -910,7 +910,7 @@ AI分析理由
                     factors: [
                         { icon: "○", text: "スピード指数: 78.4" },
                         { icon: "○", text: "先行力: 82.3%" },
-                        { icon: "○", text: "枠順優位性: A級" },
+                        { icon: "○", text: "枠順優位性: B級" },
                         { icon: "○", text: "持続力評価: B" }
                     ],
                     importance: [
@@ -1021,9 +1021,9 @@ AI分析理由
                           horse.mark === '△' ? '連下' : '押さえ',
                     factors: [
                         { icon: horse.mark, text: `信頼度: ${horse.confidence}%` },
-                        { icon: horse.mark, text: horse.mark === '◎' ? "本命適性: S級" : 
-                                                 horse.mark === '○' || horse.mark === '◯' ? "対抗適性: A級" :
-                                                 horse.mark === '▲' ? "穴適性: B級" : "補完適性: C級" },
+                        { icon: horse.mark, text: horse.mark === '◎' ? "本命適性: A級" : 
+                                                 horse.mark === '○' || horse.mark === '◯' ? "対抗適性: B級" :
+                                                 horse.mark === '▲' ? "穴適性: C級" : "補完適性: C級" },
                         { icon: horse.mark, text: `展開評価: ${Math.floor(Math.random() * 3) + 1}番手想定` }
                     ]
                 })) : [],
