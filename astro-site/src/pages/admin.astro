@@ -265,7 +265,7 @@ AI分析理由
                 <h3 style="color: #3b82f6; margin-bottom: 15px;">👁️ トップページプレビュー</h3>
                 <div class="form-group">
                     <label class="form-label">投資戦略サマリー</label>
-                    <textarea class="form-input" id="previewSummary" style="height: 80px; resize: vertical;" placeholder="推奨投資戦略: 馬連・3連複中心、期待値+15.7%">推奨投資戦略: 馬連・3連複中心、期待値+15.7%</textarea>
+                    <textarea class="form-input" id="previewSummary" style="height: 80px; resize: vertical;" placeholder="推奨投資戦略: 馬単中心、期待値+15.7%">推奨投資戦略: 馬単中心、期待値+15.7%</textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">特徴量重要度</label>
@@ -1333,7 +1333,7 @@ AI分析理由
         
         // プレビュー情報生成
         const horseNames = horses.slice(0, Math.min(5, horses.length)).map(h => `${h.number}番${h.name}`).join('、');
-        const previewSummary = `推奨投資戦略: ${mainHorse.name}を中心とした馬連・3連複、期待値+${(Math.random() * 20 + 10).toFixed(1)}%`;
+        const previewSummary = `推奨投資戦略: ${mainHorse.name}、${subHorse.name}を中心とした馬単、期待値+${(Math.random() * 20 + 10).toFixed(1)}%`;
         const previewFeatures = `特徴量重要度: 近走成績(0.${Math.floor(Math.random() * 20 + 80)})、血統適性(0.${Math.floor(Math.random() * 20 + 70)})、騎手実績(0.${Math.floor(Math.random() * 20 + 60)})`;
         
         console.log(`解析完了: ${horses.length}頭の馬を検出:`, horses.map(h => `${h.mark}${h.number}${h.name}`).join(', '));
