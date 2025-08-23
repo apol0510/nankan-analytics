@@ -115,7 +115,7 @@
   "strategies": {
     "safe": {
       "title": "戦略A: 高的中率型",
-      "recommendation": 5,
+      "recommendation": 4,
       "hitRate": "78.5",
       "returnRate": "132",
       "bets": [
@@ -125,9 +125,9 @@
           "points": "2点"
         },
         {
-          "type": "ワイド",
-          "horses": "8 - 1,5,9,2,3",
-          "points": "5点"
+          "type": "馬単",
+          "horses": "8 → 1,5",
+          "points": "2点"
         },
         {
           "type": "3連複",
@@ -150,9 +150,9 @@
           "points": "5点"
         },
         {
-          "type": "ワイド",
-          "horses": "8 - 1,5,9,2,3",
-          "points": "6点"
+          "type": "馬単",
+          "horses": "8 → 1,5,9",
+          "points": "3点"
         },
         {
           "type": "3連複",
@@ -180,9 +180,9 @@
           "points": "6点"
         },
         {
-          "type": "ワイド",
-          "horses": "9,2,3 - 8,1,5",
-          "points": "8点"
+          "type": "馬単",
+          "horses": "5 → 1,8,9",
+          "points": "3点"
         }
       ],
       "expectedPayout": "20倍以上",
