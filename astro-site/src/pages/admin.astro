@@ -1023,13 +1023,7 @@ AI分析理由
                         { icon: horse.mark, text: `信頼度: ${horse.confidence}%` },
                         { icon: horse.mark, text: horse.mark === '◎' ? "本命適性: A級" : 
                                                  horse.mark === '○' || horse.mark === '◯' ? "対抗適性: B級" :
-                                                 horse.mark === '▲' ? "穴適性: C級" : "補完適性: C級" },
-                        { icon: horse.mark, text: (() => {
-                            const position = Math.floor(Math.random() * 3) + 1;
-                            return position === 1 ? "ポジション分析: 逃げ有利" :
-                                   position === 2 ? "ポジション分析: 先行有利" :
-                                   "ポジション分析: 中団好位";
-                        })() }
+                                                 horse.mark === '▲' ? "穴適性: C級" : "補完適性: C級" }
                     ]
                 })) : [],
             totalHorses: parsedPredictionData ? parsedPredictionData.totalHorses || 3 : 3,
