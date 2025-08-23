@@ -2,19 +2,28 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16',
-});
+// 環境変数チェック
+const stripeSecretKey = import.meta.env.STRIPE_SECRET_KEY;
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
-const supabase = createClient(
-  import.meta.env.PUBLIC_SUPABASE_URL,
-  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-);
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
+  apiVersion: '2023-10-16',
+}) : null;
+
+const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(
+  supabaseUrl,
+  supabaseAnonKey
+) : null;
 
 // Webhook署名検証用のシークレット（Stripe管理画面から取得）
 const webhookSecret = import.meta.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST({ request }) {
+  if (!stripe || !supabase) {
+    return new Response('Configuration error', { status: 500 });
+  }
+
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 
@@ -22,7 +31,7 @@ export async function POST({ request }) {
 
   try {
     // Webhook署名を検証
-    if (webhookSecret) {
+    if (webhookSecret && stripe) {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } else {
       // 開発環境では署名検証をスキップ

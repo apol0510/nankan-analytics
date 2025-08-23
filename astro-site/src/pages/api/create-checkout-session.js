@@ -1,12 +1,27 @@
 // Stripe Checkout セッション作成API
 import Stripe from 'stripe';
 
-const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY, {
+// 環境変数チェック
+const stripeSecretKey = import.meta.env.STRIPE_SECRET_KEY;
+if (!stripeSecretKey) {
+  console.warn('STRIPE_SECRET_KEY is not set');
+}
+
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2023-10-16',
-});
+}) : null;
 
 export async function POST({ request }) {
   try {
+    if (!stripe) {
+      return new Response(JSON.stringify({
+        error: 'Stripe configuration error'
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const { priceId, userId, customerEmail } = await request.json();
 
     // バリデーション
