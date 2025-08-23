@@ -476,7 +476,86 @@ AI分析理由
 
         <!-- 生成されたJSONの表示 -->
         <div class="output-section">
-            <h2 style="color: #10b981; font-size: 1.5rem; margin-bottom: 20px;">📋 生成されたJSON</h2>
+            <h2 style="color: #10b981; font-size: 1.5rem; margin-bottom: 20px;">📋 テンプレート選択</h2>
+        <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(139, 92, 246, 0.2);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <button onclick="loadTemplate('16horses')" class="template-btn" style="padding: 15px; background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 8px; color: #10b981; cursor: pointer; font-weight: 600;">
+                    🏇 16頭フル出走
+                    <div style="font-size: 0.8rem; font-weight: 400; color: #94a3b8; margin-top: 5px;">抑え馬まで幅広くカバー</div>
+                </button>
+                <button onclick="loadTemplate('12horses')" class="template-btn" style="padding: 15px; background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 8px; color: #f59e0b; cursor: pointer; font-weight: 600;">
+                    🎯 12頭標準
+                    <div style="font-size: 0.8rem; font-weight: 400; color: #94a3b8; margin-top: 5px;">バランス重視</div>
+                </button>
+                <button onclick="loadTemplate('8horses')" class="template-btn" style="padding: 15px; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600;">
+                    ⚡ 少頭数(8頭以下)
+                    <div style="font-size: 0.8rem; font-weight: 400; color: #94a3b8; margin-top: 5px;">的中率重視</div>
+                </button>
+                <button onclick="createCustomTemplate()" class="template-btn" style="padding: 15px; background: rgba(59, 130, 246, 0.1); border: 2px solid #3b82f6; border-radius: 8px; color: #3b82f6; cursor: pointer; font-weight: 600;">
+                    ⚙️ カスタム作成
+                    <div style="font-size: 0.8rem; font-weight: 400; color: #94a3b8; margin-top: 5px;">独自設定を保存</div>
+                </button>
+            </div>
+            <div id="selectedTemplate" style="color: #94a3b8; text-align: center; font-size: 0.9rem;">📝 テンプレートを選択すると、最適な買い目設定が自動適用されます</div>
+        </div>
+
+        <h2 style="color: #10b981; font-size: 1.5rem; margin-bottom: 20px;">👁️ リアルタイムプレビュー</h2>
+        <div id="previewSection" style="background: rgba(59, 130, 246, 0.1); padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 1px solid rgba(59, 130, 246, 0.2);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <!-- 戦略A プレビュー -->
+                <div class="strategy-preview" style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 8px; border-left: 4px solid #10b981;">
+                    <h3 style="color: #10b981; margin-bottom: 15px;">🎯 戦略A: 高的中率型</h3>
+                    <div id="previewStrategyA" style="color: #e2e8f0; line-height: 1.6;">
+                        <div>推奨度: <span id="previewRatingA">★★★★☆</span></div>
+                        <div>リスク: <span id="previewRiskA" style="display: inline-block; width: 60px; height: 8px; background: #10b981; border-radius: 4px;"></span></div>
+                        <div style="margin-top: 10px;">
+                            <div id="previewBetsA"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 戦略B プレビュー -->
+                <div class="strategy-preview" style="background: rgba(245, 158, 11, 0.1); padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                    <h3 style="color: #f59e0b; margin-bottom: 15px;">⚖️ 戦略B: バランス型</h3>
+                    <div id="previewStrategyB" style="color: #e2e8f0; line-height: 1.6;">
+                        <div>推奨度: <span id="previewRatingB">★★★☆☆</span></div>
+                        <div>リスク: <span id="previewRiskB" style="display: inline-block; width: 100px; height: 8px; background: #f59e0b; border-radius: 4px;"></span></div>
+                        <div style="margin-top: 10px;">
+                            <div id="previewBetsB"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 戦略C プレビュー -->
+                <div class="strategy-preview" style="background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: 8px; border-left: 4px solid #ef4444;">
+                    <h3 style="color: #ef4444; margin-bottom: 15px;">🚀 戦略C: 高配当追求型</h3>
+                    <div id="previewStrategyC" style="color: #e2e8f0; line-height: 1.6;">
+                        <div>推奨度: <span id="previewRatingC">★★☆☆☆</span></div>
+                        <div>リスク: <span id="previewRiskC" style="display: inline-block; width: 120px; height: 8px; background: #ef4444; border-radius: 4px;"></span></div>
+                        <div style="margin-top: 10px;">
+                            <div id="previewBetsC"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="applyPreviewBtn" onclick="applyPreviewData()" style="padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1.1rem;">
+                    ✅ この内容で確定・適用
+                </button>
+                <button id="backupBtn" onclick="createBackup()" style="padding: 12px 24px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-left: 15px;">
+                    💾 現在のデータをバックアップ
+                </button>
+                <button id="restoreBtn" onclick="showRestoreOptions()" style="padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-left: 15px;">
+                    🔄 バックアップから復元
+                </button>
+            </div>
+            
+            <!-- バックアップ状態表示 -->
+            <div id="backupStatus" style="text-align: center; margin-top: 15px; color: #94a3b8; font-size: 0.9rem;"></div>
+        </div>
+
+        <h2 style="color: #10b981; font-size: 1.5rem; margin-bottom: 20px;">📋 生成されたJSON</h2>
             <p id="outputDescription" style="color: var(--accent-text-color); margin-bottom: 15px;">
                 下記のJSONをコピーして <code>src/data/raceResults.json</code> の <code>currentResults</code> セクションに貼り付けてください
             </p>
@@ -986,7 +1065,7 @@ AI分析理由
                         bets: [
                             { type: "馬単", horses: `${mainHorseNumber} → ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
                             { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr}`, points: `${2 + underHorses.length}点` },
-                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} + 連下${underStr}`, points: `${Math.max(6, 4 + underHorses.length)}点` }
+                            { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} - ${underStr}`, points: `${Math.max(6, 4 + underHorses.length)}点` }
                         ],
                         expectedPayout: "5-8倍",
                         payoutType: "堅実決着想定"
@@ -998,7 +1077,7 @@ AI分析理由
                         returnRate: "148",
                         riskLevel: "medium", // 中リスク = 60%
                         bets: [
-                            { type: "馬単", horses: `${mainHorseNumber} → ${subNum},${darkNum},${underStr}（抑え10,11,13）`, points: `${5 + underHorses.length}点` },
+                            { type: "馬単", horses: `${mainHorseNumber} → ${subNum},${darkNum},${underStr},10,11,13`, points: `${5 + underHorses.length}点` },
                             { type: "馬連", horses: `${mainHorseNumber} - ${subNum},${darkNum},${underStr},10,11`, points: `${4 + underHorses.length}点` },
                             { type: "3連複", horses: `${mainHorseNumber}-${subNum},${darkNum} - ${underStr},10,11,13`, points: `${Math.max(12, 8 + underHorses.length * 2)}点` }
                         ],
@@ -1012,9 +1091,9 @@ AI分析理由
                         returnRate: "215",
                         riskLevel: "high", // 高リスク = 100%
                         bets: [
-                            { type: "馬単", horses: `${darkNum},${underStr} → ${mainHorseNumber},${subNum},10,11（大穴狙い）`, points: `${Math.max(15, 10 + underHorses.length * 2)}点` },
+                            { type: "馬単", horses: `${darkNum},${underStr} → ${mainHorseNumber},${subNum},10,11`, points: `${Math.max(15, 10 + underHorses.length * 2)}点` },
                             { type: "馬連", horses: `${darkNum},${underStr} - ${mainHorseNumber},${subNum},10,11,13`, points: `${Math.max(18, 12 + underHorses.length * 3)}点` },
-                            { type: "3連複", horses: `穴軸${darkNum},${underStr} - ${mainHorseNumber},${subNum} - 10,11,13,4,6`, points: `${Math.max(24, 18 + underHorses.length * 3)}点` }
+                            { type: "3連複", horses: `${darkNum},${underStr} - ${mainHorseNumber},${subNum} - 10,11,13,4,6`, points: `${Math.max(24, 18 + underHorses.length * 3)}点` }
                         ],
                         expectedPayout: "20倍以上",
                         payoutType: "大穴視野"
@@ -1071,6 +1150,28 @@ AI分析理由
             console.log('AI予想JSONコピーボタンを有効化しました');
         }
 
+        // 買い目フォーマット自動クリーニング
+        const cleanBetString = (str) => {
+            return str
+                .replace(/\s*\+\s*連下/g, ' - ')
+                .replace(/（[^）]*）/g, '')  // 括弧内の説明文を削除
+                .replace(/\s*抑え\s*/g, ',')
+                .replace(/\s*大穴狙い\s*/g, '')
+                .replace(/\s*穴軸\s*/g, '')
+                .replace(/連下/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        };
+
+        // 全戦略の買い目を自動クリーニング
+        ['safe', 'balance', 'aggressive'].forEach(strategyKey => {
+            if (aiPredictionData.strategies[strategyKey]?.bets) {
+                aiPredictionData.strategies[strategyKey].bets.forEach(bet => {
+                    bet.horses = cleanBetString(bet.horses);
+                });
+            }
+        });
+
         // データ整合性チェック
         const validationErrors = [];
         
@@ -1078,6 +1179,18 @@ AI分析理由
         if (!aiPredictionData.strategies.safe.riskLevel) validationErrors.push('戦略A のリスクレベルが未設定');
         if (!aiPredictionData.strategies.balance.riskLevel) validationErrors.push('戦略B のリスクレベルが未設定');
         if (!aiPredictionData.strategies.aggressive.riskLevel) validationErrors.push('戦略C のリスクレベルが未設定');
+        
+        // 買い目フォーマットのチェック
+        ['safe', 'balance', 'aggressive'].forEach(strategyKey => {
+            const strategy = aiPredictionData.strategies[strategyKey];
+            if (strategy?.bets) {
+                strategy.bets.forEach((bet, index) => {
+                    if (bet.horses.includes('連下') || bet.horses.includes('抑え') || bet.horses.includes('大穴') || bet.horses.includes('穴軸')) {
+                        validationErrors.push(`${strategyKey}戦略の${index + 1}番目の買い目に説明文が含まれています`);
+                    }
+                });
+            }
+        });
         
         // 馬データの整合性チェック
         if (!aiPredictionData.horses.main.number) validationErrors.push('本命馬の馬番が未設定');
@@ -1090,7 +1203,7 @@ AI分析理由
         }
 
         // 成功メッセージ
-        alert('✅ AI予想JSONデータを生成しました！\n\n📋 リスクバー表示も正常に設定済み\n\nコピーボタンで内容をコピーして\nsrc/data/aiPrediction.json に貼り付けてください。');
+        alert('✅ AI予想JSONデータを生成しました！\n\n🔧 自動処理完了:\n・リスクバー表示設定済み\n・買い目フォーマット自動クリーニング済み\n・説明文（連下、抑え、大穴狙い等）削除済み\n\n💡 古いデータの影響を防ぐため:\n・ブラウザキャッシュをクリアしてください\n・貼り付け後はページをリロードしてください\n\n📋 コピーボタンで内容をコピーして\nsrc/data/aiPrediction.json に貼り付けてください。');
         
         } catch (error) {
             console.error('AI予想JSON生成エラー:', error);
@@ -1493,5 +1606,210 @@ AI分析理由
         console.log('解析データをクリアしました');
         alert('✅ 外部予想テキストと解析データをクリアしました。');
     });
+
+    // === リアルタイムプレビュー機能 ===
+    let currentPreviewData = null;
+
+    function updatePreview() {
+        try {
+            const mainHorse = document.getElementById('aiMainHorse')?.value || '5';
+            const subHorse = document.getElementById('aiSubHorse')?.value || '7';
+            const darkHorse = document.getElementById('aiDarkHorse')?.value || '3';
+            
+            const previewData = {
+                strategies: {
+                    safe: {
+                        title: "戦略A: 高的中率型",
+                        recommendation: 4,
+                        riskLevel: "low",
+                        bets: [
+                            { type: "馬単", horses: `${mainHorse} → ${subHorse},${darkHorse},8,2,1`, points: "5点" },
+                            { type: "馬連", horses: `${mainHorse} - ${subHorse},${darkHorse},8,2,1`, points: "5点" },
+                            { type: "3連複", horses: `${mainHorse}-${subHorse},${darkHorse} - 8,2,1`, points: "6点" }
+                        ]
+                    },
+                    balance: {
+                        title: "戦略B: バランス型", 
+                        recommendation: 3,
+                        riskLevel: "medium",
+                        bets: [
+                            { type: "馬単", horses: `${mainHorse} → ${subHorse},${darkHorse},8,2,1,10,11,13`, points: "8点" },
+                            { type: "馬連", horses: `${mainHorse} - ${subHorse},${darkHorse},8,2,1,10,11`, points: "7点" },
+                            { type: "3連複", horses: `${mainHorse}-${subHorse},${darkHorse} - 8,2,1,10,11,13`, points: "12点" }
+                        ]
+                    },
+                    aggressive: {
+                        title: "戦略C: 高配当追求型",
+                        recommendation: 2, 
+                        riskLevel: "high",
+                        bets: [
+                            { type: "馬単", horses: `${darkHorse},8,2 → ${mainHorse},${subHorse},1,10,11`, points: "15点" },
+                            { type: "馬連", horses: `${darkHorse},8,2 - ${mainHorse},${subHorse},1,10,11,13`, points: "18点" },
+                            { type: "3連複", horses: `${darkHorse},8,2 - ${mainHorse},${subHorse} - 1,10,11,13,4,6`, points: "24点" }
+                        ]
+                    }
+                }
+            };
+
+            currentPreviewData = previewData;
+            renderPreview(previewData);
+        } catch (error) {
+            console.error('プレビュー更新エラー:', error);
+        }
+    }
+
+    function renderPreview(data) {
+        const elements = {
+            A: { rating: document.getElementById('previewRatingA'), bets: document.getElementById('previewBetsA') },
+            B: { rating: document.getElementById('previewRatingB'), bets: document.getElementById('previewBetsB') },
+            C: { rating: document.getElementById('previewRatingC'), bets: document.getElementById('previewBetsC') }
+        };
+
+        ['safe', 'balance', 'aggressive'].forEach((key, index) => {
+            const strategy = data.strategies[key];
+            const letter = ['A', 'B', 'C'][index];
+            const rating = '★'.repeat(strategy.recommendation) + '☆'.repeat(5-strategy.recommendation);
+            
+            if (elements[letter].rating) elements[letter].rating.textContent = rating;
+            if (elements[letter].bets) {
+                elements[letter].bets.innerHTML = strategy.bets.map(bet => 
+                    `<div style="margin-bottom: 5px; font-size: 0.9rem;"><strong>${bet.type}</strong>: ${bet.horses} (${bet.points})</div>`
+                ).join('');
+            }
+        });
+    }
+
+    function applyPreviewData() {
+        if (!currentPreviewData) {
+            alert('❌ プレビューデータがありません。');
+            return;
+        }
+        document.getElementById('generateAIPredictionBtn').click();
+    }
+
+    // 初期化
+    setTimeout(() => {
+        updatePreview();
+        updateBackupStatus();
+        ['aiMainHorse', 'aiSubHorse', 'aiDarkHorse'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', updatePreview);
+                element.addEventListener('change', updatePreview);
+            }
+        });
+    }, 1000);
+
+    // === 自動バックアップシステム ===
+    function createBackup() {
+        try {
+            const currentData = {
+                timestamp: new Date().toISOString(),
+                raceResults: JSON.parse(localStorage.getItem('currentRaceResults') || '{}'),
+                aiPrediction: JSON.parse(localStorage.getItem('currentAIPrediction') || '{}'),
+                formData: {
+                    raceDate: document.getElementById('aiRaceDate')?.value,
+                    raceName: document.getElementById('aiRaceName')?.value,
+                    mainHorse: document.getElementById('aiMainHorse')?.value,
+                    subHorse: document.getElementById('aiSubHorse')?.value,
+                    darkHorse: document.getElementById('aiDarkHorse')?.value
+                }
+            };
+
+            const backupKey = `backup_${Date.now()}`;
+            const backups = JSON.parse(localStorage.getItem('dataBackups') || '[]');
+            
+            backups.unshift({ key: backupKey, data: currentData, description: `${new Date().toLocaleString()} の自動バックアップ` });
+            
+            // 最大10個のバックアップを保持
+            if (backups.length > 10) backups.splice(10);
+            
+            localStorage.setItem('dataBackups', JSON.stringify(backups));
+            localStorage.setItem(backupKey, JSON.stringify(currentData));
+            
+            updateBackupStatus();
+            alert('✅ バックアップを作成しました！\n\n📅 ' + new Date().toLocaleString());
+        } catch (error) {
+            console.error('バックアップエラー:', error);
+            alert('❌ バックアップの作成に失敗しました。');
+        }
+    }
+
+    function updateBackupStatus() {
+        const backups = JSON.parse(localStorage.getItem('dataBackups') || '[]');
+        const statusDiv = document.getElementById('backupStatus');
+        
+        if (backups.length > 0) {
+            const latest = backups[0];
+            statusDiv.innerHTML = `💾 最新バックアップ: ${new Date(latest.data.timestamp).toLocaleString()} (全${backups.length}件)`;
+        } else {
+            statusDiv.innerHTML = '📝 バックアップなし - 作業前にバックアップを作成することをお勧めします';
+        }
+    }
+
+    function showRestoreOptions() {
+        const backups = JSON.parse(localStorage.getItem('dataBackups') || '[]');
+        
+        if (backups.length === 0) {
+            alert('📝 利用可能なバックアップがありません。');
+            return;
+        }
+
+        const options = backups.map((backup, index) => 
+            `${index + 1}. ${new Date(backup.data.timestamp).toLocaleString()}`
+        ).join('\n');
+
+        const choice = prompt(`🔄 復元するバックアップを選択してください:\n\n${options}\n\n番号を入力 (1-${backups.length}), キャンセルは空欄:`);
+        
+        if (choice && !isNaN(choice)) {
+            const index = parseInt(choice) - 1;
+            if (index >= 0 && index < backups.length) {
+                restoreFromBackup(backups[index]);
+            } else {
+                alert('❌ 無効な番号です。');
+            }
+        }
+    }
+
+    function restoreFromBackup(backup) {
+        const confirm = window.confirm(`⚠️ バックアップから復元しますか？\n\n📅 ${new Date(backup.data.timestamp).toLocaleString()}\n\n現在のデータは失われます。`);
+        
+        if (confirm) {
+            try {
+                const data = backup.data;
+                
+                // フォームデータの復元
+                if (data.formData) {
+                    Object.entries(data.formData).forEach(([key, value]) => {
+                        const element = document.getElementById(key === 'raceDate' ? 'aiRaceDate' : 
+                                                              key === 'raceName' ? 'aiRaceName' :
+                                                              key === 'mainHorse' ? 'aiMainHorse' :
+                                                              key === 'subHorse' ? 'aiSubHorse' :
+                                                              key === 'darkHorse' ? 'aiDarkHorse' : key);
+                        if (element && value) element.value = value;
+                    });
+                }
+
+                // プレビューの更新
+                updatePreview();
+                
+                alert('✅ バックアップから復元しました！\n\n📅 ' + new Date(data.timestamp).toLocaleString());
+            } catch (error) {
+                console.error('復元エラー:', error);
+                alert('❌ 復元に失敗しました。');
+            }
+        }
+    }
+
+    // 自動バックアップ（重要な操作前）
+    function autoBackup(operation) {
+        const backups = JSON.parse(localStorage.getItem('dataBackups') || '[]');
+        const lastBackup = backups[0];
+        
+        // 30分以内のバックアップがない場合のみ自動作成
+        if (!lastBackup || (Date.now() - new Date(lastBackup.data.timestamp).getTime() > 30 * 60 * 1000)) {
+            createBackup();
+        }
+    }
     </script>
 </BaseLayout>
