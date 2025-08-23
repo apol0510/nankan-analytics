@@ -101,10 +101,10 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                     </div>
                     
                     {/* 対抗馬の特徴量重要度を表示 */}
-                    {horse.importance && (
+                    {horses.sub && horses.sub.importance && (
                         <div class="feature-importance">
                             <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horse.importance.map(item => (
+                            {horses.sub.importance.map(item => (
                                 <div class="importance-bar">
                                     <span class="importance-label">{item.label}</span>
                                     <div class="importance-value">

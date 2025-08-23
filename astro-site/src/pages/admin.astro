@@ -339,7 +339,10 @@ AI分析理由
                     <h4 style="color: #3b82f6; margin-bottom: 15px;">○ 対抗馬の特徴量重要度</h4>
                     <div style="display: grid; gap: 15px;">
                         <div>
-                            <label class="form-label">先行力</label>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <label class="form-label" style="margin-bottom: 0; min-width: 100px;">特徴量1:</label>
+                                <input type="text" id="subFeature1Label" value="先行力" placeholder="例: 先行力, スピード指数" style="padding: 5px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white; flex: 1;">
+                            </div>
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <input type="range" id="subFeature1" min="0" max="100" value="96" style="flex: 1;">
                                 <input type="number" id="subFeature1Val" min="0" max="1" step="0.01" value="0.96" style="width: 80px; padding: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
@@ -349,7 +352,10 @@ AI分析理由
                             </div>
                         </div>
                         <div>
-                            <label class="form-label">スピード指数</label>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <label class="form-label" style="margin-bottom: 0; min-width: 100px;">特徴量2:</label>
+                                <input type="text" id="subFeature2Label" value="スピード指数" placeholder="例: スピード指数, 調教内容" style="padding: 5px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white; flex: 1;">
+                            </div>
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <input type="range" id="subFeature2" min="0" max="100" value="85" style="flex: 1;">
                                 <input type="number" id="subFeature2Val" min="0" max="1" step="0.01" value="0.85" style="width: 80px; padding: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
@@ -830,14 +836,33 @@ AI分析理由
             console.log(`全出走馬(${parsedPredictionData.totalHorses}頭):`, parsedPredictionData.allHorses.map(h => `${h.mark}${h.number}${h.name}`).join(', '));
         }
 
+        // 日付を取得（外部予想変換からのデータがあれば使用）
+        const aiRaceTitleElement = document.getElementById('aiRaceTitle');
+        const storedRaceDate = aiRaceTitleElement.dataset.raceDate;
+        const storedTrackName = aiRaceTitleElement.dataset.trackName || raceTitle.split(/[0-9]/)[0] || "船橋";
+        const storedRaceNumber = aiRaceTitleElement.dataset.raceNumber || (raceTitle.match(/[0-9]+R/) ? raceTitle.match(/[0-9]+R/)[0] : "2R");
+        const storedRaceName = aiRaceTitleElement.dataset.raceName || raceTitle.replace(/^.*?[0-9]+R\s*/, '') || "C3選抜 1200m";
+        
+        // 日付をYYYY-MM-DD形式に変換
+        let formattedDate = now.toISOString().split('T')[0]; // デフォルトは今日
+        if (storedRaceDate) {
+            const dateParts = storedRaceDate.split('/');
+            if (dateParts.length === 2) {
+                const currentYear = now.getFullYear();
+                const month = dateParts[0].padStart(2, '0');
+                const day = dateParts[1].padStart(2, '0');
+                formattedDate = `${currentYear}-${month}-${day}`;
+            }
+        }
+        
         // JSONデータ構築
         const aiPredictionData = {
             raceInfo: {
                 title: raceTitle,
-                date: now.toISOString().split('T')[0], // YYYY-MM-DD形式
-                track: raceTitle.split(/[0-9]/)[0] || "船橋", // 競馬場名を抽出
-                raceNumber: raceTitle.match(/[0-9]+R/) ? raceTitle.match(/[0-9]+R/)[0] : "2R",
-                raceName: raceTitle.replace(/^.*?[0-9]+R\s*/, '') || "C3選抜 1200m",
+                date: formattedDate, // 実際のレース日付を使用
+                track: storedTrackName,
+                raceNumber: storedRaceNumber,
+                raceName: storedRaceName,
                 confidence: confidence.toString(),
                 abilityIndex: abilityIndex.toString(),
                 recommendation: recommendation,
@@ -1080,6 +1105,14 @@ AI分析理由
             document.getElementById('aiRecommendation').value = parsedData.recommendation;
             document.getElementById('aiExpectedReturn').value = parsedData.expectedReturn;
             
+            // レース日付を保存（JSON生成時に使用）
+            if (parsedData.raceDate) {
+                document.getElementById('aiRaceTitle').dataset.raceDate = parsedData.raceDate;
+                document.getElementById('aiRaceTitle').dataset.trackName = parsedData.trackName;
+                document.getElementById('aiRaceTitle').dataset.raceNumber = parsedData.raceNumber;
+                document.getElementById('aiRaceTitle').dataset.raceName = parsedData.raceName;
+            }
+            
             document.getElementById('mainHorseNumber').value = parsedData.mainHorse.number;
             document.getElementById('mainHorseName').value = parsedData.mainHorse.name;
             document.getElementById('mainHorseConfidence').value = parsedData.mainHorse.confidence;
@@ -1101,11 +1134,62 @@ AI分析理由
     function parseExternalPrediction(text) {
         const lines = text.split('\n').map(line => line.trim()).filter(line => line);
         
-        // レース情報抽出
-        const raceInfoMatch = text.match(/(\d+\/\d+)([^競馬]*?)競馬.*?([０-９0-9]+)[ＲRr].*?([^\n]*)/);
-        const raceTitle = raceInfoMatch ? 
-            `${raceInfoMatch[2].trim()}${convertToHalfWidth(raceInfoMatch[3])}R ${raceInfoMatch[4].trim()}` : 
+        // レース情報抽出を段階的に実行
+        console.log('レース情報抽出開始');
+        console.log('入力テキスト（先頭200文字）:', text.substring(0, 200));
+        
+        // 日付抽出
+        const dateMatch = text.match(/(\d+\/\d+)/);
+        const raceDate = dateMatch ? dateMatch[1] : null;
+        console.log('日付抽出結果:', raceDate);
+        
+        // 競馬場抽出（複数パターンで試行）
+        const trackPatterns = [
+            /(\d+\/\d+)([^競馬\n]*?)競馬/,
+            /([浦和|川崎|大井|船橋])競馬/,
+            /(\d+\/\d+)\s*([^\n]*?)競馬/
+        ];
+        
+        let trackName = 'レース情報未検出';
+        let trackMatch = null;
+        
+        for (const pattern of trackPatterns) {
+            trackMatch = text.match(pattern);
+            if (trackMatch) {
+                trackName = trackMatch.length > 2 ? trackMatch[2].trim() + '競馬' : trackMatch[1] + '競馬';
+                console.log('競馬場抽出成功:', trackName, 'パターン:', pattern);
+                break;
+            }
+        }
+        console.log('競馬場抽出結果:', trackName);
+        
+        // レース番号とレース名抽出
+        const racePatterns = [
+            /([０-９0-9１-９]+)[ＲRr]\s*([^\n]*?)(?:（|$)/,
+            /([０-９0-9１-９]+)[ＲRr]\s*([^\n]*)/,
+            /([０-９0-9１-９]+)[ＲRr]/
+        ];
+        
+        let raceNumber = '2R';
+        let raceName = 'レース情報未検出';
+        let raceMatch = null;
+        
+        for (const pattern of racePatterns) {
+            raceMatch = text.match(pattern);
+            if (raceMatch) {
+                raceNumber = convertToHalfWidth(raceMatch[1]) + 'R';
+                raceName = raceMatch.length > 2 ? raceMatch[2].trim() : 'レース情報未検出';
+                console.log('レース情報抽出成功:', raceNumber, raceName, 'パターン:', pattern);
+                break;
+            }
+        }
+        console.log('レース番号:', raceNumber, 'レース名:', raceName);
+        
+        // タイトル生成
+        const raceTitle = (trackName !== 'レース情報未検出') ? 
+            `${trackName.replace('競馬', '')}${raceNumber} ${raceName}` : 
             "レース情報未検出";
+        console.log('生成されたレースタイトル:', raceTitle);
 
         // 本命予想抽出
         const horses = [];
@@ -1257,6 +1341,10 @@ AI分析理由
         
         return {
             raceTitle: raceTitle,
+            raceDate: raceDate,
+            trackName: trackName,
+            raceNumber: raceNumber,
+            raceName: raceName,
             confidence: mainHorse.confidence,
             abilityIndex: (Math.random() * 10 + 80).toFixed(1),
             recommendation: mainHorse.mark === '◎' ? 'A+' : (mainHorse.mark === '○' || mainHorse.mark === '◯') ? 'A' : 'B',

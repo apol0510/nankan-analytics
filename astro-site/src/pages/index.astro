@@ -6,6 +6,18 @@ import predictionData from '../data/aiPrediction.json';
 // データ取得
 const { currentResults, weeklyResults, predictions } = raceResults;
 const { raceInfo, preview } = predictionData;
+
+// 日付フォーマット変換
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${month}月${day}日`;
+}
+
+// レース情報の整形
+const formattedDate = formatDate(raceInfo.date);
+const raceTitle = `${formattedDate} ${raceInfo.track !== 'レース情報未検出' ? raceInfo.track : ''} ${raceInfo.raceNumber}${raceInfo.raceName !== 'レース情報未検出' ? ' ' + raceInfo.raceName : ''}`;
 ---
 
 <BaseLayout title="NANKANアナリティクス | AI競馬予想で投資効率を最大化">
@@ -594,23 +606,12 @@ const { raceInfo, preview } = predictionData;
                 <div class="prediction-cards">
                     <div class="prediction-card">
                         <div class="race-info">
-                            <span class="race-title">{raceInfo.title}</span>
+                            <span class="race-title">{raceTitle}</span>
                             <span class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo.confidence))}%</span>
                         </div>
                         <div class="prediction-summary">
                             {preview.summary}
-                        </div>
-                        <div class="blur-overlay">
-                            <span class="premium-badge">詳細な買い目は<a href="/free-prediction/" style="color: inherit; text-decoration: underline;">こちら</a></span>
-                        </div>
-                    </div>
-                    
-                    <div class="prediction-card">
-                        <div class="race-info">
-                            <span class="race-title">{raceInfo.title}</span>
-                            <span class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo.confidence))}%</span>
-                        </div>
-                        <div class="prediction-summary">
+                            <br><br>
                             {preview.features}
                             <br><br>
                             リスク分析: {preview.riskAnalysis}
