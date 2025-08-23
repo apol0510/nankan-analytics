@@ -1024,7 +1024,7 @@ AI分析理由
                         { icon: horse.mark, text: horse.mark === '◎' ? "本命適性: A級" : 
                                                  horse.mark === '○' || horse.mark === '◯' ? "対抗適性: B級" :
                                                  horse.mark === '▲' ? "穴適性: C級" : "補完適性: C級" },
-                        { icon: horse.mark, text: `展開評価: ${Math.floor(Math.random() * 3) + 1}番手想定` }
+                        { icon: horse.mark, text: `AI展開予測: ${Math.floor(Math.random() * 3) + 1}番手最適` }
                     ]
                 })) : [],
             totalHorses: parsedPredictionData ? parsedPredictionData.totalHorses || 3 : 3,
