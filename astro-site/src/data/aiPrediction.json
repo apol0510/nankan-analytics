@@ -1,29 +1,29 @@
 {
   "raceInfo": {
-    "title": "浦和11R ルーキーズサマーカップ",
-    "date": "2025-08-20",
-    "track": "浦和競馬",
+    "title": "川崎11R やまなみ五湖「丹沢湖」賞",
+    "date": "2025-08-22",
+    "track": "川崎競馬",
     "raceNumber": "11R",
-    "raceName": "ルーキーズサマーカップ",
-    "confidence": "91.9",
-    "abilityIndex": "86.8",
+    "raceName": "やまなみ五湖「丹沢湖」賞",
+    "confidence": "97.5",
+    "abilityIndex": "86.5",
     "recommendation": "A+",
-    "expectedReturn": "153"
+    "expectedReturn": "145"
   },
   "horses": {
     "main": {
-      "number": 8,
-      "name": "アンジュルナ",
+      "number": 5,
+      "name": "フォースゲイト",
       "type": "本命",
-      "confidence": "91.9",
+      "confidence": "97.5",
       "factors": [
         {
           "icon": "◎",
-          "text": "能力指数: 86.8 (1位)"
+          "text": "能力指数: 86.5 (1位)"
         },
         {
           "icon": "◎",
-          "text": "安定性スコア: 91.9%"
+          "text": "安定性スコア: 97.5%"
         },
         {
           "icon": "◎",
@@ -37,7 +37,7 @@
       "importance": [
         {
           "label": "安定性",
-          "value": 0.94
+          "value": 0.95
         },
         {
           "label": "能力上位性",
@@ -50,22 +50,22 @@
       ]
     },
     "sub": {
-      "number": 1,
-      "name": "アムールピスケス",
+      "number": 7,
+      "name": "オリコウデレガンス",
       "type": "対抗",
-      "confidence": "86.7",
+      "confidence": "83.4",
       "factors": [
         {
           "icon": "○",
-          "text": "スピード指数: 76.2"
+          "text": "スピード指数: 83.2"
         },
         {
           "icon": "○",
-          "text": "先行力: 89.3%"
+          "text": "先行力: 86.3%"
         },
         {
           "icon": "○",
-          "text": "枠順優位性: A級"
+          "text": "枠順優位性: B級"
         },
         {
           "icon": "○",
@@ -83,19 +83,19 @@
         },
         {
           "label": "枠順優位",
-          "value": 0.78
+          "value": 0.79
         }
       ]
     },
     "dark": {
-      "number": 5,
-      "name": "ロードレイジング",
+      "number": 3,
+      "name": "ドリームジャパン",
       "type": "単穴",
-      "confidence": "70.8",
+      "confidence": "73.0",
       "factors": [
         {
           "icon": "▲",
-          "text": "爆発力指数: 89.6"
+          "text": "爆発力指数: 87.5"
         },
         {
           "icon": "▲",
@@ -103,7 +103,7 @@
         },
         {
           "icon": "▲",
-          "text": "斤量優位: +1kg"
+          "text": "斤量優位: +2kg"
         },
         {
           "icon": "▲",
@@ -115,23 +115,23 @@
   "strategies": {
     "safe": {
       "title": "戦略A: 高的中率型",
-      "recommendation": 4,
+      "recommendation": 5,
       "hitRate": "78.5",
       "returnRate": "132",
       "bets": [
         {
           "type": "馬連",
-          "horses": "8 - 1,5",
+          "horses": "5 - 7,3",
           "points": "2点"
         },
         {
-          "type": "馬単",
-          "horses": "8 → 1,5",
-          "points": "2点"
+          "type": "ワイド",
+          "horses": "5 - 7,3,8,2,1",
+          "points": "5点"
         },
         {
           "type": "3連複",
-          "horses": "8-1,5 + 9,2,3",
+          "horses": "5-7,3 + 連下8,2,1",
           "points": "6点"
         }
       ],
@@ -146,17 +146,17 @@
       "bets": [
         {
           "type": "馬連",
-          "horses": "8 - 1,5,9,2,3",
+          "horses": "5 - 7,3,8,2,1",
           "points": "5点"
         },
         {
-          "type": "馬単",
-          "horses": "8 → 1,5,9",
-          "points": "3点"
+          "type": "ワイド",
+          "horses": "5 - 7,3,8,2,1",
+          "points": "6点"
         },
         {
           "type": "3連複",
-          "horses": "8-1,5 - 9,2,3,4,6,7",
+          "horses": "5-7,3 - 8,2,1,4,6,7",
           "points": "14点"
         }
       ],
@@ -171,18 +171,18 @@
       "bets": [
         {
           "type": "3連複",
-          "horses": "5-1,8 - 9,2,3,4,6,7",
+          "horses": "3-7,5 - 8,2,1,4,6,7",
           "points": "18点"
         },
         {
           "type": "馬連",
-          "horses": "5 - 8,1,9,2,3",
+          "horses": "3 - 5,7,8,2,1",
           "points": "6点"
         },
         {
-          "type": "馬単",
-          "horses": "5 → 1,8,9",
-          "points": "3点"
+          "type": "ワイド",
+          "horses": "連下8,2,1 - 5,7,3",
+          "points": "8点"
         }
       ],
       "expectedPayout": "20倍以上",
@@ -190,7 +190,7 @@
     }
   },
   "analysis": {
-    "raceExpected": "XGBoostモデル: ◎8アンジュルナの安定性を最高評価（スコア91.9）",
+    "raceExpected": "XGBoostモデル: ◎5フォースゲイトの安定性を最高評価（スコア97.5）",
     "keyIndicators": {
       "accuracy": "87.3",
       "similarRaces": "42件",
@@ -199,21 +199,21 @@
     }
   },
   "preview": {
-    "summary": "推奨投資戦略: アンジュルナ、アムールピスケスを中心とした馬単、期待値+18.9%",
-    "features": "特徴量重要度: 近走成績(0.91)、血統適性(0.70)、騎手実績(0.67)",
+    "summary": "推奨投資戦略: フォースゲイト、オリコウデレガンスを中心とした馬単、期待値+24.7%",
+    "features": "特徴量重要度: 近走成績(0.95)、血統適性(0.71)、騎手実績(0.71)",
     "riskAnalysis": "低リスク、安定収益型"
   },
   "allHorses": [
     {
-      "number": 8,
-      "name": "アンジュルナ",
+      "number": 5,
+      "name": "フォースゲイト",
       "mark": "◎",
-      "confidence": "91.9",
+      "confidence": "97.5",
       "type": "本命",
       "factors": [
         {
           "icon": "◎",
-          "text": "信頼度: 91.9%"
+          "text": "信頼度: 97.5%"
         },
         {
           "icon": "◎",
@@ -222,15 +222,15 @@
       ]
     },
     {
-      "number": 1,
-      "name": "アムールピスケス",
+      "number": 7,
+      "name": "オリコウデレガンス",
       "mark": "◯",
-      "confidence": "86.7",
+      "confidence": "83.4",
       "type": "対抗",
       "factors": [
         {
           "icon": "◯",
-          "text": "信頼度: 86.7%"
+          "text": "信頼度: 83.4%"
         },
         {
           "icon": "◯",
@@ -239,15 +239,15 @@
       ]
     },
     {
-      "number": 5,
-      "name": "ロードレイジング",
+      "number": 3,
+      "name": "ドリームジャパン",
       "mark": "▲",
-      "confidence": "70.8",
+      "confidence": "73.0",
       "type": "単穴",
       "factors": [
         {
           "icon": "▲",
-          "text": "信頼度: 70.8%"
+          "text": "信頼度: 73.0%"
         },
         {
           "icon": "▲",
@@ -256,15 +256,15 @@
       ]
     },
     {
-      "number": 9,
-      "name": "ネイビーシンデレラ",
+      "number": 8,
+      "name": "モネ",
       "mark": "△",
-      "confidence": "64.6",
+      "confidence": "64.0",
       "type": "連下",
       "factors": [
         {
           "icon": "△",
-          "text": "信頼度: 64.6%"
+          "text": "信頼度: 64.0%"
         },
         {
           "icon": "△",
@@ -276,12 +276,12 @@
       "number": 2,
       "name": "キンチャン",
       "mark": "△",
-      "confidence": "63.6",
+      "confidence": "62.1",
       "type": "連下",
       "factors": [
         {
           "icon": "△",
-          "text": "信頼度: 63.6%"
+          "text": "信頼度: 62.1%"
         },
         {
           "icon": "△",
@@ -290,15 +290,15 @@
       ]
     },
     {
-      "number": 3,
+      "number": 1,
       "name": "トムコチャンタチ",
       "mark": "△",
-      "confidence": "65.8",
+      "confidence": "60.9",
       "type": "連下",
       "factors": [
         {
           "icon": "△",
-          "text": "信頼度: 65.8%"
+          "text": "信頼度: 60.9%"
         },
         {
           "icon": "△",
@@ -310,12 +310,12 @@
       "number": 4,
       "name": "ミーコノアタマ",
       "mark": "×",
-      "confidence": "56.9",
+      "confidence": "50.3",
       "type": "押さえ",
       "factors": [
         {
           "icon": "×",
-          "text": "信頼度: 56.9%"
+          "text": "信頼度: 50.3%"
         },
         {
           "icon": "×",
@@ -327,12 +327,12 @@
       "number": 6,
       "name": "ポポノショクヨク",
       "mark": "×",
-      "confidence": "50.1",
+      "confidence": "56.4",
       "type": "押さえ",
       "factors": [
         {
           "icon": "×",
-          "text": "信頼度: 50.1%"
+          "text": "信頼度: 56.4%"
         },
         {
           "icon": "×",
@@ -341,15 +341,15 @@
       ]
     },
     {
-      "number": 7,
+      "number": 9,
       "name": "メルコチャン",
       "mark": "×",
-      "confidence": "51.0",
+      "confidence": "57.2",
       "type": "押さえ",
       "factors": [
         {
           "icon": "×",
-          "text": "信頼度: 51.0%"
+          "text": "信頼度: 57.2%"
         },
         {
           "icon": "×",
@@ -359,5 +359,5 @@
     }
   ],
   "totalHorses": 9,
-  "lastUpdated": "2025-08-23T01:15:47.223Z"
+  "lastUpdated": "2025-08-23T09:12:03.419Z"
 }

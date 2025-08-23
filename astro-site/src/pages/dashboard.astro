@@ -1,0 +1,460 @@
+---
+// 会員ダッシュボード
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダッシュボード | NANKANアナリティクス</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 16px 0;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            color: #3b82f6;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            color: #cbd5e1;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 40px;
+        }
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #f1f5f9;
+        }
+
+        .dashboard-subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        .subscription-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.1);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .prediction-preview {
+            margin-top: 20px;
+        }
+
+        .race-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .race-item:last-child {
+            border-bottom: none;
+        }
+
+        .race-info h4 {
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .race-info p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .confidence-badge {
+            background: rgba(34, 197, 94, 0.1);
+            color: #86efac;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .loading-state {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: #94a3b8;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #475569;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/" class="logo">🤖 NANKANアナリティクス</a>
+            <div class="nav-right">
+                <div class="user-info">
+                    <span id="user-email">ロード中...</span>
+                </div>
+                <button id="logout-btn" class="btn btn-outline">ログアウト</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">ダッシュボード</h1>
+            <p class="dashboard-subtitle">AI予想と会員限定コンテンツへアクセス</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- 会員ステータスカード -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">会員ステータス</h3>
+                    <span class="card-icon">👤</span>
+                </div>
+                <div id="subscription-info">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        読み込み中...
+                    </div>
+                </div>
+            </div>
+
+            <!-- 今日の予想カード -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">本日のAI予想</h3>
+                    <span class="card-icon">🏇</span>
+                </div>
+                <div id="today-predictions">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        読み込み中...
+                    </div>
+                </div>
+            </div>
+
+            <!-- クイックアクションカード -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">クイックアクション</h3>
+                    <span class="card-icon">⚡</span>
+                </div>
+                <div class="quick-actions">
+                    <a href="/premium-predictions" class="action-btn">
+                        有料予想を見る
+                    </a>
+                    <a href="/account" class="action-btn">
+                        アカウント管理
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 未会員向けアップグレード案内 -->
+        <div id="upgrade-section" class="card" style="display: none;">
+            <div class="card-header">
+                <h3 class="card-title">🔥 プレミアム会員になって、すべての機能をアンロック！</h3>
+            </div>
+            <p style="color: #94a3b8; margin-bottom: 20px;">
+                AIによる高精度予想、過去データ無制限アクセス、特別レポートなど、すべての機能をご利用いただけます。
+            </p>
+            <div class="quick-actions">
+                <a href="/pricing" class="action-btn">
+                    料金プランを見る
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, profiles } from '/src/lib/supabase.js';
+        import { PRICING_PLANS } from '/src/lib/stripe.js';
+
+        let currentUser = null;
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            if (currentUser) {
+                await loadUserProfile();
+                await loadTodayPredictions();
+            }
+        });
+
+        // 認証チェック
+        async function checkAuth() {
+            try {
+                const { data: { user }, error } = await auth.getUser();
+                
+                if (error || !user) {
+                    // 未認証の場合はログインページへリダイレクト
+                    window.location.href = '/auth/login?redirect=' + encodeURIComponent(window.location.pathname);
+                    return;
+                }
+                
+                currentUser = user;
+                document.getElementById('user-email').textContent = user.email;
+            } catch (error) {
+                console.error('Auth check error:', error);
+                window.location.href = '/auth/login';
+            }
+        }
+
+        // ユーザープロフィール読み込み
+        async function loadUserProfile() {
+            const subscriptionInfo = document.getElementById('subscription-info');
+            const upgradeSection = document.getElementById('upgrade-section');
+            
+            try {
+                const { data: profile, error } = await profiles.getProfile(currentUser.id);
+                
+                if (error) {
+                    throw error;
+                }
+
+                const isActive = profile?.subscription_status === 'active';
+                const planName = profile?.subscription_plan || 'なし';
+                
+                subscriptionInfo.innerHTML = `
+                    <div class="subscription-status ${isActive ? 'status-active' : 'status-inactive'}">
+                        <span>${isActive ? '✓' : '⚠'}</span>
+                        ${isActive ? 'アクティブ' : '未契約'}
+                    </div>
+                    <p style="color: #94a3b8; margin-top: 12px;">
+                        プラン: ${getPlanDisplayName(planName)}
+                    </p>
+                    ${profile?.subscription_end_date ? `
+                        <p style="color: #94a3b8; font-size: 14px;">
+                            次回更新: ${new Date(profile.subscription_end_date).toLocaleDateString('ja-JP')}
+                        </p>
+                    ` : ''}
+                `;
+
+                // 未会員の場合はアップグレード案内を表示
+                if (!isActive) {
+                    upgradeSection.style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('Profile loading error:', error);
+                subscriptionInfo.innerHTML = `
+                    <p style="color: #fca5a5;">プロフィール情報の取得に失敗しました</p>
+                `;
+            }
+        }
+
+        // 今日の予想読み込み（デモデータ）
+        async function loadTodayPredictions() {
+            const todayPredictions = document.getElementById('today-predictions');
+            
+            // 実際の実装では、Supabaseから今日の予想データを取得
+            setTimeout(() => {
+                todayPredictions.innerHTML = `
+                    <div class="prediction-preview">
+                        <div class="race-item">
+                            <div class="race-info">
+                                <h4>大井11R 羽田盃</h4>
+                                <p>推奨: アンジュルナ、アムールピスケス</p>
+                            </div>
+                            <div class="confidence-badge">信頼度: 91%</div>
+                        </div>
+                        <div class="race-item">
+                            <div class="race-info">
+                                <h4>川崎10R 霜月特別</h4>
+                                <p>推奨: ノヴェッラ、ボンブーリープ</p>
+                            </div>
+                            <div class="confidence-badge">信頼度: 87%</div>
+                        </div>
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        // プラン表示名取得
+        function getPlanDisplayName(planKey) {
+            if (!planKey || planKey === 'なし') return '未契約';
+            
+            const plan = Object.values(PRICING_PLANS).find(p => p.stripePriceId.includes(planKey));
+            return plan ? plan.name : planKey;
+        }
+
+        // ログアウト処理
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                const { error } = await auth.signOut();
+                if (error) throw error;
+                
+                window.location.href = '/auth/login?message=' + encodeURIComponent('ログアウトしました');
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('ログアウトに失敗しました');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -4,7 +4,7 @@ import raceResults from '../data/raceResults.json';
 import predictionData from '../data/aiPrediction.json';
 
 // データ取得
-const { currentResults, weeklyResults, predictions } = raceResults;
+const currentResults = raceResults; // raceResults.json contains the current results directly
 const { raceInfo, preview } = predictionData;
 
 // 日付フォーマット変換
@@ -16,8 +16,8 @@ function formatDate(dateStr) {
 }
 
 // レース情報の整形
-const formattedDate = formatDate(raceInfo.date);
-const raceTitle = `${formattedDate} ${raceInfo.track !== 'レース情報未検出' ? raceInfo.track : ''} ${raceInfo.raceNumber}${raceInfo.raceName !== 'レース情報未検出' ? ' ' + raceInfo.raceName : ''}`;
+const formattedDate = raceInfo?.date ? formatDate(raceInfo.date) : '日付未設定';
+const raceTitle = `${formattedDate} ${raceInfo?.track !== 'レース情報未検出' && raceInfo?.track ? raceInfo.track : ''} ${raceInfo?.raceNumber || ''}${raceInfo?.raceName !== 'レース情報未検出' && raceInfo?.raceName ? ' ' + raceInfo.raceName : ''}`;
 ---
 
 <BaseLayout title="NANKANアナリティクス | AI競馬予想で投資効率を最大化">
@@ -96,7 +96,7 @@ const raceTitle = `${formattedDate} ${raceInfo.track !== 'レース情報未検�
                 <div class="container" style="max-width: 1200px; margin: 0 auto;">
                     <div style="text-align: center; margin-bottom: 40px;">
                         <h2 style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px;">
-                            🏆 {currentResults.date} {currentResults.track} 予想結果
+                            🏆 {currentResults?.date || '最新'} {currentResults?.track || ''} 予想結果
                         </h2>
                         <p style="color: var(--accent-text-color); font-size: 1.1rem;">
                             完全透明性 - 全レース結果を公開
@@ -107,16 +107,16 @@ const raceTitle = `${formattedDate} ${raceInfo.track !== 'レース情報未検�
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
                         <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%); border: 2px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 25px; text-align: center;">
                             <div style="font-size: 3rem; font-weight: 800; color: #10b981; margin-bottom: 10px;">
-                                {currentResults.hits}/{currentResults.totalRaces}
+                                {currentResults?.hits || 0}/{currentResults?.totalRaces || 0}
                             </div>
                             <div style="color: var(--body-text-color); font-weight: 600;">
-                                的中率 {currentResults.hitRate}
+                                的中率 {currentResults?.hitRate || '0%'}
                             </div>
                         </div>
                         
                         <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 25px; text-align: center;">
                             <div style="font-size: 3rem; font-weight: 800; color: #3b82f6; margin-bottom: 10px;">
-                                ¥{currentResults.payout.toLocaleString()}
+                                ¥{currentResults?.payout?.toLocaleString() || '0'}
                             </div>
                             <div style="color: var(--body-text-color); font-weight: 600;">
                                 総配当金額
@@ -125,7 +125,7 @@ const raceTitle = `${formattedDate} ${raceInfo.track !== 'レース情報未検�
                         
                         <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 25px; text-align: center;">
                             <div style="font-size: 3rem; font-weight: 800; color: #8b5cf6; margin-bottom: 10px;">
-                                {currentResults.returnRate}
+                                {currentResults?.returnRate || '0%'}
                             </div>
                             <div style="color: var(--body-text-color); font-weight: 600;">
                                 回収率
@@ -136,7 +136,7 @@ const raceTitle = `${formattedDate} ${raceInfo.track !== 'レース情報未検�
                     <!-- コンパクトな的中一覧 -->
                     <div style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 30px; border: 1px solid rgba(148, 163, 184, 0.1);">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto;">
-                            {currentResults.races.map((race) => (
+                            {currentResults?.races?.map((race) => (
                                 <div style={`display: flex; flex-direction: column; align-items: center; padding: 15px 10px; ${race.status === 'hit' 
                                     ? 'background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.3);' 
                                     : 'background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);'} border-radius: 12px;`}>
@@ -607,14 +607,14 @@ const raceTitle = `${formattedDate} ${raceInfo.track !== 'レース情報未検�
                     <div class="prediction-card">
                         <div class="race-info">
                             <span class="race-title">{raceTitle}</span>
-                            <span class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo.confidence))}%</span>
+                            <span class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo?.confidence || '0'))}%</span>
                         </div>
                         <div class="prediction-summary">
-                            {preview.summary}
+                            {preview?.summary || 'AI予想データの準備中です'}
                             <br><br>
-                            {preview.features}
+                            {preview?.features || ''}
                             <br><br>
-                            リスク分析: {preview.riskAnalysis}
+                            リスク分析: {preview?.riskAnalysis || '分析中'}
                         </div>
                         <div class="blur-overlay">
                             <span class="premium-badge"><a href="/free-prediction/" style="color: inherit; text-decoration: underline;">無料予想はこちら</a></span>

@@ -1,0 +1,294 @@
+---
+// ログインページ
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン | NANKANアナリティクス</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #3b82f6;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-links a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 8px;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #475569;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo">
+            <h1>🤖 NANKANアナリティクス</h1>
+            <p>AI・機械学習で勝つ競馬予想</p>
+        </div>
+
+        <div id="message-container"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label class="form-label" for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">パスワード</label>
+                <input type="password" id="password" name="password" class="form-input" required>
+            </div>
+
+            <button type="submit" class="btn" id="login-btn">
+                ログイン
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <span style="margin-left: 10px;">処理中...</span>
+            </div>
+        </form>
+
+        <div class="auth-links">
+            <a href="/auth/signup">新規登録</a>
+            |
+            <a href="/auth/forgot-password">パスワードを忘れた方</a>
+        </div>
+
+        <div class="auth-links" style="margin-top: 30px;">
+            <a href="/" style="color: #94a3b8;">← トップページに戻る</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from '/src/lib/supabase.js';
+
+        const form = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const loading = document.getElementById('loading');
+        const messageContainer = document.getElementById('message-container');
+
+        // URLパラメータからメッセージを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
+        if (message) {
+            showMessage(decodeURIComponent(message), 'success');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showMessage('メールアドレスとパスワードを入力してください。', 'error');
+                return;
+            }
+
+            setLoading(true);
+            clearMessages();
+
+            try {
+                const { data, error } = await auth.signIn(email, password);
+
+                if (error) {
+                    throw error;
+                }
+
+                if (data?.user) {
+                    showMessage('ログインしています...', 'success');
+                    
+                    // リダイレクト処理
+                    const redirectTo = urlParams.get('redirect') || '/dashboard';
+                    setTimeout(() => {
+                        window.location.href = redirectTo;
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = 'ログインに失敗しました。';
+                
+                if (error.message === 'Invalid login credentials') {
+                    errorMessage = 'メールアドレスまたはパスワードが間違っています。';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMessage = 'メールアドレスが確認されていません。受信メールを確認してください。';
+                }
+                
+                showMessage(errorMessage, 'error');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loginBtn.disabled = true;
+                loginBtn.style.display = 'none';
+                loading.style.display = 'flex';
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        }
+
+        function showMessage(message, type = 'error') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+            messageContainer.appendChild(messageDiv);
+        }
+
+        function clearMessages() {
+            messageContainer.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
