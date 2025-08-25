@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import predictionData from '../data/aiPrediction.json';
 import allRacesData from '../data/allRacesPrediction.json';
 
-const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses } = predictionData;
+// メインレース（11R）のデータを取得
+const mainRace = allRacesData.races.find(race => race.isMainRace === true);
+const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses } = mainRace;
 const race12R = allRacesData.races.find(r => r.raceNumber === '12R');
 console.log('race12R:', race12R);
 ---

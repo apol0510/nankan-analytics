@@ -6,8 +6,8 @@
     {
       "raceNumber": "12R",
       "raceName": "やまなみ五湖「丹沢湖」賞",
-      "tier": "standard",
-      "isMainRace": false,
+      "tier": "free",
+      "isMainRace": true,
       "displayOrder": 1,
       "raceInfo": {
         "title": "川崎12R やまなみ五湖「丹沢湖」賞",
@@ -44,8 +44,8 @@
     {
       "raceNumber": "11R", 
       "raceName": "霜月特別",
-      "tier": "free",
-      "isMainRace": true,
+      "tier": "standard",
+      "isMainRace": false,
       "displayOrder": 2,
       "raceInfo": {
         "title": "川崎11R やまなみ五湖「丹沢湖」賞",
@@ -63,14 +63,7 @@
           "number": 5,
           "name": "フォースゲイト",
           "type": "本命",
-          "confidence": "97.5",
-          "importance": [
-            {"label": "能力指数", "value": 0.89},
-            {"label": "安定性", "value": 0.85},
-            {"label": "展開適性", "value": 0.92},
-            {"label": "騎手相性", "value": 0.78},
-            {"label": "血統評価", "value": 0.71}
-          ]
+          "confidence": "97.5"
         },
         "sub1": {
           "number": 3,
@@ -83,90 +76,6 @@
           "name": "ワイルドキング",
           "type": "単穴",
           "confidence": "71.8"
-        }
-      },
-      "strategies": {
-        "safe": {
-          "title": "的中率重視型",
-          "recommendation": 4,
-          "hitRate": "72.3",
-          "returnRate": "98.2",
-          "expectedPayout": "1,240円",
-          "payoutType": "馬単",
-          "bets": [
-            {"type": "馬単", "horses": "5→3", "points": "100円"},
-            {"type": "馬連", "horses": "5-3", "points": "100円"}
-          ]
-        },
-        "balance": {
-          "title": "バランス型",
-          "recommendation": 3,
-          "hitRate": "45.8",
-          "returnRate": "128.4",
-          "expectedPayout": "3,580円",
-          "payoutType": "三連複",
-          "bets": [
-            {"type": "三連複", "horses": "5-3-7", "points": "100円"},
-            {"type": "馬単", "horses": "5→3", "points": "100円"}
-          ]
-        },
-        "aggressive": {
-          "title": "高配当追求型",
-          "recommendation": 2,
-          "hitRate": "28.1",
-          "returnRate": "185.7",
-          "expectedPayout": "12,850円",
-          "payoutType": "三連単",
-          "bets": [
-            {"type": "三連単", "horses": "5→3→7", "points": "100円"},
-            {"type": "三連単", "horses": "5→7→3", "points": "100円"}
-          ]
-        }
-      },
-      "allHorses": [
-        {
-          "number": 5,
-          "name": "フォースゲイト",
-          "mark": "◎",
-          "confidence": "97.5",
-          "factors": [
-            {"icon": "★", "text": "能力指数: 89.8 (1位)"},
-            {"icon": "★", "text": "安定性スコア: 88.8%"},
-            {"icon": "★", "text": "展開適性: S評価"},
-            {"icon": "★", "text": "過去5走偏差値: 60.9"}
-          ]
-        },
-        {
-          "number": 3,
-          "name": "ストレンジャー",
-          "mark": "○",
-          "confidence": "82.1",
-          "factors": [
-            {"icon": "★", "text": "上がり3F: 34.2秒"},
-            {"icon": "★", "text": "前走評価: A+"},
-            {"icon": "★", "text": "騎手相性: 92%"},
-            {"icon": "★", "text": "距離適性: 完全適合"}
-          ]
-        },
-        {
-          "number": 7,
-          "name": "ワイルドキング",
-          "mark": "▲",
-          "confidence": "71.8",
-          "factors": [
-            {"icon": "★", "text": "血統評価: A"},
-            {"icon": "★", "text": "馬場適性: 良"},
-            {"icon": "★", "text": "調教評価: B+"},
-            {"icon": "★", "text": "オッズ妙味: 高"}
-          ]
-        }
-      ],
-      "analysis": {
-        "keyIndicators": {
-          "accuracy": "91.2",
-          "similarRaces": "127戦",
-          "confidenceInterval": "95.2",
-          "recommendedInvestment": "5,000円"
         }
       }
     },
@@ -439,7 +348,7 @@
   ],
   "planAccess": {
     "free": {
-      "races": ["11R"],
+      "races": ["12R"],
       "description": "メインレースのみ"
     },
     "standard": {

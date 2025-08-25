@@ -1,8 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import predictionData from '../data/aiPrediction.json';
+import allRacesData from '../data/allRacesPrediction.json';
 
-const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses } = predictionData;
+// メインレース（11R）を取得
+const mainRace = allRacesData.races.find(race => race.isMainRace === true);
+
+if (!mainRace) {
+    throw new Error('メインレースが見つかりません。allRacesPrediction.jsonのデータを確認してください。');
+}
+
+const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses } = mainRace;
 ---
 
 <BaseLayout title={`AI予想分析 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想を無料で提供中。`}>
