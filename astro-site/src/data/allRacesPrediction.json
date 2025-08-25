@@ -7,7 +7,7 @@
       "raceNumber": "12R",
       "raceName": "やまなみ五湖「丹沢湖」賞",
       "tier": "free",
-      "isMainRace": true,
+      "isMainRace": false,
       "displayOrder": 1,
       "raceInfo": {
         "title": "川崎12R やまなみ五湖「丹沢湖」賞",
@@ -43,9 +43,9 @@
     },
     {
       "raceNumber": "11R", 
-      "raceName": "霜月特別",
+      "raceName": "やまなみ五湖「丹沢湖」賞",
       "tier": "standard",
-      "isMainRace": false,
+      "isMainRace": true,
       "displayOrder": 2,
       "raceInfo": {
         "title": "川崎11R やまなみ五湖「丹沢湖」賞",
@@ -63,21 +63,120 @@
           "number": 5,
           "name": "フォースゲイト",
           "type": "本命",
-          "confidence": "97.5"
+          "confidence": "97.5",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 86.5 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 97.5%"},
+            {"icon": "★", "text": "展開適性: S評価"},
+            {"icon": "★", "text": "過去5走偏差値: 62.3"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.95},
+            {"label": "能力上位性", "value": 0.88},
+            {"label": "展開利", "value": 0.82}
+          ]
         },
-        "sub1": {
-          "number": 3,
-          "name": "ストレンジャー",
-          "type": "対抗",
-          "confidence": "82.1"
-        },
-        "sub2": {
+        "sub": {
           "number": 7,
-          "name": "ワイルドキング",
+          "name": "オリコウデレガンス",
+          "type": "対抗",
+          "confidence": "83.4",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 83.2"},
+            {"icon": "★", "text": "先行力: 86.3%"},
+            {"icon": "★", "text": "枠順優位性: B級"},
+            {"icon": "★", "text": "持続力評価: B"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.96},
+            {"label": "スピード指数", "value": 0.85},
+            {"label": "枠順優位", "value": 0.79}
+          ]
+        },
+        "dark": {
+          "number": 3,
+          "name": "ドリームジャパン",
           "type": "単穴",
-          "confidence": "71.8"
+          "confidence": "73.0",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 87.5"},
+            {"icon": "★", "text": "ムラ係数: 高変動"},
+            {"icon": "★", "text": "斤量優位: +2kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "78.5",
+          "returnRate": "132",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "5 → 7,3,8,2,1", "points": "5点"},
+            {"type": "馬連", "horses": "5 - 7,3,8,2,1", "points": "5点"},
+            {"type": "3連複", "horses": "5-7,3 - 8,2,1", "points": "6点"}
+          ],
+          "expectedPayout": "5-8倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "65.2",
+          "returnRate": "148",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "5 → 7,3,8,2,1,10,11,13", "points": "8点"},
+            {"type": "馬連", "horses": "5 - 7,3,8,2,1,10,11", "points": "7点"},
+            {"type": "3連複", "horses": "5-7,3 - 8,2,1,10,11,13", "points": "12点"}
+          ],
+          "expectedPayout": "8-15倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "42.8",
+          "returnRate": "215",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "3,8,2 → 5,7,1,10,11", "points": "15点"},
+            {"type": "馬連", "horses": "3,8,2 - 5,7,1,10,11,13", "points": "18点"},
+            {"type": "3連複", "horses": "3,8,2 - 5,7 - 1,10,11,13,4,6", "points": "24点"}
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎5フォースゲイトの安定性を最高評価（スコア97.5）",
+        "keyIndicators": {
+          "accuracy": "87.3",
+          "similarRaces": "42件",
+          "confidenceInterval": "±3.2",
+          "recommendedInvestment": "資金の3-5%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: フォースゲイト、オリコウデレガンスを中心とした馬単、期待値+24.7%",
+        "features": "特徴量重要度: 近走成績(0.95)、血統適性(0.71)、騎手実績(0.71)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {"number": 5, "name": "フォースゲイト", "mark": "◎", "confidence": "97.5", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 97.5%"}, {"icon": "★", "text": "本命適性: A級"}]},
+        {"number": 7, "name": "オリコウデレガンス", "mark": "◯", "confidence": "83.4", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 83.4%"}, {"icon": "★", "text": "対抗適性: B級"}]},
+        {"number": 3, "name": "ドリームジャパン", "mark": "▲", "confidence": "73.0", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 73.0%"}, {"icon": "★", "text": "穴適性: C級"}]},
+        {"number": 8, "name": "モネ", "mark": "△", "confidence": "64.0", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 64.0%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 2, "name": "キンチャン", "mark": "△", "confidence": "62.1", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 62.1%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 1, "name": "トムコチャンタチ", "mark": "△", "confidence": "60.9", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 60.9%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 4, "name": "ミーコノアタマ", "mark": "×", "confidence": "50.3", "type": "押さえ", "factors": [{"icon": "★", "text": "信頼度: 50.3%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 6, "name": "ポポノショクヨク", "mark": "×", "confidence": "56.4", "type": "押さえ", "factors": [{"icon": "★", "text": "信頼度: 56.4%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 9, "name": "メルコチャン", "mark": "×", "confidence": "57.2", "type": "押さえ", "factors": [{"icon": "★", "text": "信頼度: 57.2%"}, {"icon": "★", "text": "補完適性: C級"}]}
+      ],
+      "totalHorses": 9,
+      "lastUpdated": "2025-08-23T09:12:03.419Z"
     },
     {
       "raceNumber": "10R",
@@ -133,9 +232,118 @@
           "number": 4,
           "name": "ゴールデンウィング",
           "type": "本命",
-          "confidence": "84.7"
+          "confidence": "84.7",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 72.3 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 84.7%"},
+            {"icon": "★", "text": "展開適性: A評価"},
+            {"icon": "★", "text": "過去5走偏差値: 58.1"}
+          ],
+          "importance": [
+            {"label": "能力上位性", "value": 0.92},
+            {"label": "展開利", "value": 0.85},
+            {"label": "安定性", "value": 0.78}
+          ]
+        },
+        "sub": {
+          "number": 2,
+          "name": "シルバーアロー",
+          "type": "対抗",
+          "confidence": "76.2",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 69.8"},
+            {"icon": "★", "text": "先行力: 82.1%"},
+            {"icon": "★", "text": "枠順優位性: A級"},
+            {"icon": "★", "text": "持続力評価: B+"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.89},
+            {"label": "枠順優位", "value": 0.81},
+            {"label": "スピード指数", "value": 0.74}
+          ]
+        },
+        "dark": {
+          "number": 7,
+          "name": "ダークホース",
+          "type": "単穴",
+          "confidence": "68.4",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 78.2"},
+            {"icon": "★", "text": "ムラ係数: 中変動"},
+            {"icon": "★", "text": "斤量優位: +1kg"},
+            {"icon": "★", "text": "展開次第: 注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "72.1",
+          "returnRate": "125",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "4 → 2,7,1,5", "points": "4点"},
+            {"type": "馬連", "horses": "4 - 2,7,1,5", "points": "4点"},
+            {"type": "3連複", "horses": "4-2,7 - 1,5,3", "points": "6点"}
+          ],
+          "expectedPayout": "4-7倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "58.6",
+          "returnRate": "142",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "4 → 2,7,1,5,3,6", "points": "6点"},
+            {"type": "馬連", "horses": "4 - 2,7,1,5,3", "points": "5点"},
+            {"type": "3連複", "horses": "4-2,7 - 1,5,3,6,8", "points": "10点"}
+          ],
+          "expectedPayout": "7-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "38.9",
+          "returnRate": "198",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "7,2,1 → 4,5,3,6", "points": "12点"},
+            {"type": "馬連", "horses": "7,2,1 - 4,5,3,6,8", "points": "15点"},
+            {"type": "3連複", "horses": "7,2,1 - 4,5 - 3,6,8,9", "points": "20点"}
+          ],
+          "expectedPayout": "15倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎4ゴールデンウィングの能力上位性を評価（スコア84.7）",
+        "keyIndicators": {
+          "accuracy": "81.2",
+          "similarRaces": "38件",
+          "confidenceInterval": "±4.1",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: ゴールデンウィング、シルバーアローを中心とした馬単、期待値+18.3%",
+        "features": "特徴量重要度: 能力上位性(0.92)、展開利(0.85)、安定性(0.78)",
+        "riskAnalysis": "中リスク、バランス型"
+      },
+      "allHorses": [
+        {"number": 4, "name": "ゴールデンウィング", "mark": "◎", "confidence": "84.7", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 84.7%"}, {"icon": "★", "text": "本命適性: A級"}]},
+        {"number": 2, "name": "シルバーアロー", "mark": "◯", "confidence": "76.2", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 76.2%"}, {"icon": "★", "text": "対抗適性: A級"}]},
+        {"number": 7, "name": "ダークホース", "mark": "▲", "confidence": "68.4", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 68.4%"}, {"icon": "★", "text": "穴適性: B級"}]},
+        {"number": 1, "name": "スピードキング", "mark": "△", "confidence": "61.9", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 61.9%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 5, "name": "ラッキーチャンス", "mark": "△", "confidence": "59.7", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 59.7%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 3, "name": "トップランナー", "mark": "×", "confidence": "54.3", "type": "押さえ", "factors": [{"icon": "★", "text": "信頼度: 54.3%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 6, "name": "ファイナルラップ", "mark": "×", "confidence": "52.1", "type": "押さえ", "factors": [{"icon": "★", "text": "信頼度: 52.1%"}, {"icon": "★", "text": "補完適性: C級"}]}
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "8R",
@@ -159,9 +367,117 @@
           "number": 1,
           "name": "ブレイブハート",
           "type": "本命",
-          "confidence": "79.1"
+          "confidence": "79.1",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 68.2 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 79.1%"},
+            {"icon": "★", "text": "展開適性: B+評価"},
+            {"icon": "★", "text": "過去5走偏差値: 55.4"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.88},
+            {"label": "能力上位性", "value": 0.82},
+            {"label": "展開利", "value": 0.75}
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "クイックシルバー",
+          "type": "対抗",
+          "confidence": "71.3",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 65.1"},
+            {"icon": "★", "text": "先行力: 78.9%"},
+            {"icon": "★", "text": "枠順優位性: B級"},
+            {"icon": "★", "text": "持続力評価: B"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.84},
+            {"label": "スピード指数", "value": 0.77},
+            {"label": "枠順優位", "value": 0.69}
+          ]
+        },
+        "dark": {
+          "number": 4,
+          "name": "ワイルドカード",
+          "type": "単穴",
+          "confidence": "63.7",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 72.1"},
+            {"icon": "★", "text": "ムラ係数: 高変動"},
+            {"icon": "★", "text": "斤量優位: +1.5kg"},
+            {"icon": "★", "text": "展開次第: 要警戒"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 3,
+          "hitRate": "68.4",
+          "returnRate": "118",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "1 → 6,4,3,7", "points": "4点"},
+            {"type": "馬連", "horses": "1 - 6,4,3,7", "points": "4点"},
+            {"type": "3連複", "horses": "1-6,4 - 3,7,2", "points": "6点"}
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "54.7",
+          "returnRate": "135",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "1 → 6,4,3,7,2,5", "points": "6点"},
+            {"type": "馬連", "horses": "1 - 6,4,3,7,2", "points": "5点"},
+            {"type": "3連複", "horses": "1-6,4 - 3,7,2,5,8", "points": "10点"}
+          ],
+          "expectedPayout": "6-11倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "35.2",
+          "returnRate": "189",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "4,6,3 → 1,7,2,5", "points": "12点"},
+            {"type": "馬連", "horses": "4,6,3 - 1,7,2,5,8", "points": "15点"},
+            {"type": "3連複", "horses": "4,6,3 - 1,7 - 2,5,8,9", "points": "18点"}
+          ],
+          "expectedPayout": "12倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎1ブレイブハートの安定性を重視（スコア79.1）",
+        "keyIndicators": {
+          "accuracy": "77.8",
+          "similarRaces": "34件",
+          "confidenceInterval": "±4.7",
+          "recommendedInvestment": "資金の2-3%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: ブレイブハート、クイックシルバーを中心とした馬単、期待値+15.2%",
+        "features": "特徴量重要度: 安定性(0.88)、能力上位性(0.82)、展開利(0.75)",
+        "riskAnalysis": "中リスク、安定志向型"
+      },
+      "allHorses": [
+        {"number": 1, "name": "ブレイブハート", "mark": "◎", "confidence": "79.1", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 79.1%"}, {"icon": "★", "text": "本命適性: A級"}]},
+        {"number": 6, "name": "クイックシルバー", "mark": "◯", "confidence": "71.3", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 71.3%"}, {"icon": "★", "text": "対抗適性: B級"}]},
+        {"number": 4, "name": "ワイルドカード", "mark": "▲", "confidence": "63.7", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 63.7%"}, {"icon": "★", "text": "穴適性: B級"}]},
+        {"number": 3, "name": "ステディラン", "mark": "△", "confidence": "58.2", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 58.2%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 7, "name": "パワフルラッシュ", "mark": "△", "confidence": "56.8", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 56.8%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 2, "name": "スマートステップ", "mark": "×", "confidence": "51.4", "type": "押さえ", "factors": [{"icon": "★", "text": "信頼度: 51.4%"}, {"icon": "★", "text": "補完適性: C級"}]}
+      ],
+      "totalHorses": 6,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "7R",
@@ -185,9 +501,116 @@
           "number": 8,
           "name": "ライトニング",
           "type": "本命",
-          "confidence": "76.8"
+          "confidence": "76.8",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 65.1 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 76.8%"},
+            {"icon": "★", "text": "展開適性: B評価"},
+            {"icon": "★", "text": "過去5走偏差値: 52.7"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.85},
+            {"label": "能力上位性", "value": 0.79},
+            {"label": "展開利", "value": 0.72}
+          ]
+        },
+        "sub": {
+          "number": 3,
+          "name": "スパークルスター",
+          "type": "対抗",
+          "confidence": "68.9",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 62.3"},
+            {"icon": "★", "text": "先行力: 74.2%"},
+            {"icon": "★", "text": "枠順優位性: C級"},
+            {"icon": "★", "text": "持続力評価: B-"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.81},
+            {"label": "スピード指数", "value": 0.74},
+            {"label": "持続力", "value": 0.66}
+          ]
+        },
+        "dark": {
+          "number": 5,
+          "name": "ミステリーショット",
+          "type": "単穴",
+          "confidence": "59.4",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 68.7"},
+            {"icon": "★", "text": "ムラ係数: 高変動"},
+            {"icon": "★", "text": "斤量優位: +2kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 3,
+          "hitRate": "65.7",
+          "returnRate": "115",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "8 → 3,5,1,2", "points": "4点"},
+            {"type": "馬連", "horses": "8 - 3,5,1,2", "points": "4点"},
+            {"type": "3連複", "horses": "8-3,5 - 1,2,6", "points": "6点"}
+          ],
+          "expectedPayout": "3-5倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "51.3",
+          "returnRate": "132",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "8 → 3,5,1,2,6,4", "points": "6点"},
+            {"type": "馬連", "horses": "8 - 3,5,1,2,6", "points": "5点"},
+            {"type": "3連複", "horses": "8-3,5 - 1,2,6,4,7", "points": "10点"}
+          ],
+          "expectedPayout": "5-10倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "32.8",
+          "returnRate": "175",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "5,3,1 → 8,2,6,4", "points": "12点"},
+            {"type": "馬連", "horses": "5,3,1 - 8,2,6,4,7", "points": "15点"},
+            {"type": "3連複", "horses": "5,3,1 - 8,2 - 6,4,7,9", "points": "18点"}
+          ],
+          "expectedPayout": "10倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8ライトニングの安定性を評価（スコア76.8）",
+        "keyIndicators": {
+          "accuracy": "74.6",
+          "similarRaces": "31件",
+          "confidenceInterval": "±5.2",
+          "recommendedInvestment": "資金の1-3%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: ライトニング、スパークルスターを中心とした馬単、期待値+12.8%",
+        "features": "特徴量重要度: 安定性(0.85)、能力上位性(0.79)、展開利(0.72)",
+        "riskAnalysis": "中リスク、安定志向型"
+      },
+      "allHorses": [
+        {"number": 8, "name": "ライトニング", "mark": "◎", "confidence": "76.8", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 76.8%"}, {"icon": "★", "text": "本命適性: A級"}]},
+        {"number": 3, "name": "スパークルスター", "mark": "◯", "confidence": "68.9", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 68.9%"}, {"icon": "★", "text": "対抗適性: B級"}]},
+        {"number": 5, "name": "ミステリーショット", "mark": "▲", "confidence": "59.4", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 59.4%"}, {"icon": "★", "text": "穴適性: C級"}]},
+        {"number": 1, "name": "ファストラン", "mark": "△", "confidence": "55.1", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 55.1%"}, {"icon": "★", "text": "補完適性: C級"}]},
+        {"number": 2, "name": "シャイニングスター", "mark": "△", "confidence": "53.7", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 53.7%"}, {"icon": "★", "text": "補完適性: C級"}]}
+      ],
+      "totalHorses": 5,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "6R",
@@ -211,9 +634,115 @@
           "number": 3,
           "name": "シルバーウィンド",
           "type": "本命",
-          "confidence": "73.2"
+          "confidence": "73.2",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 62.7 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 73.2%"},
+            {"icon": "★", "text": "展開適性: B-評価"},
+            {"icon": "★", "text": "過去5走偏差値: 49.8"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.82},
+            {"label": "能力上位性", "value": 0.76},
+            {"label": "展開利", "value": 0.69}
+          ]
+        },
+        "sub": {
+          "number": 7,
+          "name": "ブレイズギャロップ",
+          "type": "対抗",
+          "confidence": "65.8",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 59.4"},
+            {"icon": "★", "text": "先行力: 71.6%"},
+            {"icon": "★", "text": "枠順優位性: C級"},
+            {"icon": "★", "text": "持続力評価: C+"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.78},
+            {"label": "スピード指数", "value": 0.71},
+            {"label": "持続力", "value": 0.63}
+          ]
+        },
+        "dark": {
+          "number": 1,
+          "name": "アンダードッグ",
+          "type": "単穴",
+          "confidence": "56.2",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 64.3"},
+            {"icon": "★", "text": "ムラ係数: 高変動"},
+            {"icon": "★", "text": "斤量優位: +1kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 2,
+          "hitRate": "62.4",
+          "returnRate": "110",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "3 → 7,1,4,5", "points": "4点"},
+            {"type": "馬連", "horses": "3 - 7,1,4,5", "points": "4点"},
+            {"type": "3連複", "horses": "3-7,1 - 4,5,2", "points": "6点"}
+          ],
+          "expectedPayout": "2-4倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "48.1",
+          "returnRate": "127",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "3 → 7,1,4,5,2,6", "points": "6点"},
+            {"type": "馬連", "horses": "3 - 7,1,4,5,2", "points": "5点"},
+            {"type": "3連複", "horses": "3-7,1 - 4,5,2,6,8", "points": "10点"}
+          ],
+          "expectedPayout": "4-9倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 1,
+          "hitRate": "29.7",
+          "returnRate": "162",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "1,7,4 → 3,5,2,6", "points": "12点"},
+            {"type": "馬連", "horses": "1,7,4 - 3,5,2,6,8", "points": "15点"},
+            {"type": "3連複", "horses": "1,7,4 - 3,5 - 2,6,8,9", "points": "18点"}
+          ],
+          "expectedPayout": "8倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎3シルバーウィンドの安定性を評価（スコア73.2）",
+        "keyIndicators": {
+          "accuracy": "71.3",
+          "similarRaces": "28件",
+          "confidenceInterval": "±5.8",
+          "recommendedInvestment": "資金の1-2%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: シルバーウィンド、ブレイズギャロップを中心とした馬単、期待値+10.1%",
+        "features": "特徴量重要度: 安定性(0.82)、能力上位性(0.76)、展開利(0.69)",
+        "riskAnalysis": "低リスク、安定志向型"
+      },
+      "allHorses": [
+        {"number": 3, "name": "シルバーウィンド", "mark": "◎", "confidence": "73.2", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 73.2%"}, {"icon": "★", "text": "本命適性: A級"}]},
+        {"number": 7, "name": "ブレイズギャロップ", "mark": "◯", "confidence": "65.8", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 65.8%"}, {"icon": "★", "text": "対抗適性: B級"}]},
+        {"number": 1, "name": "アンダードッグ", "mark": "▲", "confidence": "56.2", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 56.2%"}, {"icon": "★", "text": "穴適性: C級"}]},
+        {"number": 4, "name": "サンダーストーム", "mark": "△", "confidence": "52.6", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 52.6%"}, {"icon": "★", "text": "補完適性: C級"}]}
+      ],
+      "totalHorses": 4,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "5R",
@@ -237,9 +766,115 @@
           "number": 5,
           "name": "ドリームチェイサー",
           "type": "本命",
-          "confidence": "71.5"
+          "confidence": "71.5",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 59.4 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 71.5%"},
+            {"icon": "★", "text": "展開適性: C+評価"},
+            {"icon": "★", "text": "過去5走偏差値: 46.2"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.79},
+            {"label": "能力上位性", "value": 0.73},
+            {"label": "成長期待", "value": 0.66}
+          ]
+        },
+        "sub": {
+          "number": 2,
+          "name": "ヤングファイター",
+          "type": "対抗",
+          "confidence": "63.7",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 56.1"},
+            {"icon": "★", "text": "先行力: 68.4%"},
+            {"icon": "★", "text": "枠順優位性: D級"},
+            {"icon": "★", "text": "持続力評価: C"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.75},
+            {"label": "成長期待", "value": 0.68},
+            {"label": "スピード指数", "value": 0.61}
+          ]
+        },
+        "dark": {
+          "number": 8,
+          "name": "ルーキーチャンス",
+          "type": "単穴",
+          "confidence": "54.9",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 61.3"},
+            {"icon": "★", "text": "ムラ係数: 高変動"},
+            {"icon": "★", "text": "斤量優位: +0.5kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 2,
+          "hitRate": "59.8",
+          "returnRate": "105",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "5 → 2,8,1,3", "points": "4点"},
+            {"type": "馬連", "horses": "5 - 2,8,1,3", "points": "4点"},
+            {"type": "3連複", "horses": "5-2,8 - 1,3,6", "points": "6点"}
+          ],
+          "expectedPayout": "2-3倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 2,
+          "hitRate": "44.9",
+          "returnRate": "122",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "5 → 2,8,1,3,6,4", "points": "6点"},
+            {"type": "馬連", "horses": "5 - 2,8,1,3,6", "points": "5点"},
+            {"type": "3連複", "horses": "5-2,8 - 1,3,6,4,7", "points": "10点"}
+          ],
+          "expectedPayout": "3-8倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 1,
+          "hitRate": "27.4",
+          "returnRate": "155",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "8,2,1 → 5,3,6,4", "points": "12点"},
+            {"type": "馬連", "horses": "8,2,1 - 5,3,6,4,7", "points": "15点"},
+            {"type": "3連複", "horses": "8,2,1 - 5,3 - 6,4,7,9", "points": "18点"}
+          ],
+          "expectedPayout": "7倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎5ドリームチェイサーの安定性を評価（スコア71.5）",
+        "keyIndicators": {
+          "accuracy": "68.4",
+          "similarRaces": "25件",
+          "confidenceInterval": "±6.2",
+          "recommendedInvestment": "資金の1%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: ドリームチェイサー、ヤングファイターを中心とした馬単、期待値+8.2%",
+        "features": "特徴量重要度: 安定性(0.79)、能力上位性(0.73)、成長期待(0.66)",
+        "riskAnalysis": "低リスク、小配当稳定型"
+      },
+      "allHorses": [
+        {"number": 5, "name": "ドリームチェイサー", "mark": "◎", "confidence": "71.5", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 71.5%"}, {"icon": "★", "text": "本命適性: B級"}]},
+        {"number": 2, "name": "ヤングファイター", "mark": "◯", "confidence": "63.7", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 63.7%"}, {"icon": "★", "text": "対抗適性: C級"}]},
+        {"number": 8, "name": "ルーキーチャンス", "mark": "▲", "confidence": "54.9", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 54.9%"}, {"icon": "★", "text": "穴適性: D級"}]},
+        {"number": 1, "name": "フレッシュスタート", "mark": "△", "confidence": "50.3", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 50.3%"}, {"icon": "★", "text": "補完適性: D級"}]}
+      ],
+      "totalHorses": 4,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "4R",
@@ -263,9 +898,115 @@
           "number": 2,
           "name": "ファイアーボール",
           "type": "本命",
-          "confidence": "69.8"
+          "confidence": "69.8",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 56.9 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 69.8%"},
+            {"icon": "★", "text": "展開適性: C+評価"},
+            {"icon": "★", "text": "過去5走偏差値: 43.6"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.76},
+            {"label": "能力上位性", "value": 0.70},
+            {"label": "成長期待", "value": 0.63}
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "ファイターズスピリット",
+          "type": "対抗",
+          "confidence": "61.4",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 53.7"},
+            {"icon": "★", "text": "先行力: 65.1%"},
+            {"icon": "★", "text": "枠順優位性: D級"},
+            {"icon": "★", "text": "持続力評価: C-"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.72},
+            {"label": "成長期待", "value": 0.65},
+            {"label": "スピード指数", "value": 0.58}
+          ]
+        },
+        "dark": {
+          "number": 4,
+          "name": "サプライズアタック",
+          "type": "単穴",
+          "confidence": "52.7",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 58.2"},
+            {"icon": "★", "text": "ムラ係数: 高変動"},
+            {"icon": "★", "text": "斤量優位: +1kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 2,
+          "hitRate": "57.3",
+          "returnRate": "102",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "2 → 6,4,1,3", "points": "4点"},
+            {"type": "馬連", "horses": "2 - 6,4,1,3", "points": "4点"},
+            {"type": "3連複", "horses": "2-6,4 - 1,3,5", "points": "6点"}
+          ],
+          "expectedPayout": "2-3倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 2,
+          "hitRate": "42.6",
+          "returnRate": "119",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "2 → 6,4,1,3,5,7", "points": "6点"},
+            {"type": "馬連", "horses": "2 - 6,4,1,3,5", "points": "5点"},
+            {"type": "3連複", "horses": "2-6,4 - 1,3,5,7,8", "points": "10点"}
+          ],
+          "expectedPayout": "3-7倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 1,
+          "hitRate": "25.8",
+          "returnRate": "148",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "4,6,1 → 2,3,5,7", "points": "12点"},
+            {"type": "馬連", "horses": "4,6,1 - 2,3,5,7,8", "points": "15点"},
+            {"type": "3連複", "horses": "4,6,1 - 2,3 - 5,7,8,9", "points": "18点"}
+          ],
+          "expectedPayout": "6倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎2ファイアーボールの安定性を評価（スコア69.8）",
+        "keyIndicators": {
+          "accuracy": "65.7",
+          "similarRaces": "22件",
+          "confidenceInterval": "±6.8",
+          "recommendedInvestment": "資金の0.5-1%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: ファイアーボール、ファイターズスピリットを中心とした馬単、期待値+6.4%",
+        "features": "特徴量重要度: 安定性(0.76)、能力上位性(0.70)、成長期待(0.63)",
+        "riskAnalysis": "低リスク、小配当稳定型"
+      },
+      "allHorses": [
+        {"number": 2, "name": "ファイアーボール", "mark": "◎", "confidence": "69.8", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 69.8%"}, {"icon": "★", "text": "本命適性: B級"}]},
+        {"number": 6, "name": "ファイターズスピリット", "mark": "◯", "confidence": "61.4", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 61.4%"}, {"icon": "★", "text": "対抗適性: C級"}]},
+        {"number": 4, "name": "サプライズアタック", "mark": "▲", "confidence": "52.7", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 52.7%"}, {"icon": "★", "text": "穴適性: D級"}]},
+        {"number": 1, "name": "グリーンフラッシュ", "mark": "△", "confidence": "48.9", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 48.9%"}, {"icon": "★", "text": "補完適性: D級"}]}
+      ],
+      "totalHorses": 4,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "3R",
@@ -289,9 +1030,115 @@
           "number": 7,
           "name": "スピードスター",
           "type": "本命",
-          "confidence": "67.3"
+          "confidence": "67.3",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 54.2 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 67.3%"},
+            {"icon": "★", "text": "展開適性: C評価"},
+            {"icon": "★", "text": "過去5走偏差値: 41.7"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.73},
+            {"label": "能力上位性", "value": 0.67},
+            {"label": "成長期待", "value": 0.60}
+          ]
+        },
+        "sub": {
+          "number": 3,
+          "name": "フレッシュスタート",
+          "type": "対抗",
+          "confidence": "59.1",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 51.3"},
+            {"icon": "★", "text": "先行力: 62.8%"},
+            {"icon": "★", "text": "枠順優位性: D級"},
+            {"icon": "★", "text": "持続力評価: D+"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.69},
+            {"label": "成長期待", "value": 0.62},
+            {"label": "スピード指数", "value": 0.55}
+          ]
+        },
+        "dark": {
+          "number": 5,
+          "name": "ワイルドホープ",
+          "type": "単穴",
+          "confidence": "50.4",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 55.8"},
+            {"icon": "★", "text": "ムラ係数: 極高変動"},
+            {"icon": "★", "text": "斤量優位: +0.5kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 1,
+          "hitRate": "54.7",
+          "returnRate": "98",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "7 → 3,5,1,2", "points": "4点"},
+            {"type": "馬連", "horses": "7 - 3,5,1,2", "points": "4点"},
+            {"type": "3連複", "horses": "7-3,5 - 1,2,4", "points": "6点"}
+          ],
+          "expectedPayout": "2-3倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 1,
+          "hitRate": "40.2",
+          "returnRate": "115",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "7 → 3,5,1,2,4,6", "points": "6点"},
+            {"type": "馬連", "horses": "7 - 3,5,1,2,4", "points": "5点"},
+            {"type": "3連複", "horses": "7-3,5 - 1,2,4,6,8", "points": "10点"}
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 1,
+          "hitRate": "23.6",
+          "returnRate": "139",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "5,3,1 → 7,2,4,6", "points": "12点"},
+            {"type": "馬連", "horses": "5,3,1 - 7,2,4,6,8", "points": "15点"},
+            {"type": "3連複", "horses": "5,3,1 - 7,2 - 4,6,8,9", "points": "18点"}
+          ],
+          "expectedPayout": "5倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎7スピードスターの安定性を評価（スコア67.3）",
+        "keyIndicators": {
+          "accuracy": "62.8",
+          "similarRaces": "19件",
+          "confidenceInterval": "±7.4",
+          "recommendedInvestment": "資金の0.5%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: スピードスター、フレッシュスタートを中心とした馬単、期待値+4.7%",
+        "features": "特徴量重要度: 安定性(0.73)、能力上位性(0.67)、成長期待(0.60)",
+        "riskAnalysis": "低リスク、小配当型"
+      },
+      "allHorses": [
+        {"number": 7, "name": "スピードスター", "mark": "◎", "confidence": "67.3", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 67.3%"}, {"icon": "★", "text": "本命適性: C級"}]},
+        {"number": 3, "name": "フレッシュスタート", "mark": "◯", "confidence": "59.1", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 59.1%"}, {"icon": "★", "text": "対抗適性: D級"}]},
+        {"number": 5, "name": "ワイルドホープ", "mark": "▲", "confidence": "50.4", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 50.4%"}, {"icon": "★", "text": "穴適性: D級"}]},
+        {"number": 1, "name": "マジックモーメント", "mark": "△", "confidence": "46.8", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 46.8%"}, {"icon": "★", "text": "補完適性: D級"}]}
+      ],
+      "totalHorses": 4,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "2R",
@@ -315,9 +1162,115 @@
           "number": 4,
           "name": "ロケットマン",
           "type": "本命",
-          "confidence": "65.1"
+          "confidence": "65.1",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 51.8 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 65.1%"},
+            {"icon": "★", "text": "展開適性: C評価"},
+            {"icon": "★", "text": "過去5走偏差値: 39.4"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.70},
+            {"label": "能力上位性", "value": 0.64},
+            {"label": "成長期待", "value": 0.57}
+          ]
+        },
+        "sub": {
+          "number": 1,
+          "name": "ファイナルチャンス",
+          "type": "対抗",
+          "confidence": "56.9",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 48.7"},
+            {"icon": "★", "text": "先行力: 60.3%"},
+            {"icon": "★", "text": "枠順優位性: D級"},
+            {"icon": "★", "text": "持続力評価: D"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.66},
+            {"label": "成長期待", "value": 0.59},
+            {"label": "スピード指数", "value": 0.52}
+          ]
+        },
+        "dark": {
+          "number": 6,
+          "name": "サプライズショット",
+          "type": "単穴",
+          "confidence": "48.2",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 53.1"},
+            {"icon": "★", "text": "ムラ係数: 極高変動"},
+            {"icon": "★", "text": "斤量優位: 0kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 1,
+          "hitRate": "52.1",
+          "returnRate": "94",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "4 → 1,6,2,3", "points": "4点"},
+            {"type": "馬連", "horses": "4 - 1,6,2,3", "points": "4点"},
+            {"type": "3連複", "horses": "4-1,6 - 2,3,5", "points": "6点"}
+          ],
+          "expectedPayout": "2倍以下",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 1,
+          "hitRate": "37.8",
+          "returnRate": "111",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "4 → 1,6,2,3,5,7", "points": "6点"},
+            {"type": "馬連", "horses": "4 - 1,6,2,3,5", "points": "5点"},
+            {"type": "3連複", "horses": "4-1,6 - 2,3,5,7,8", "points": "10点"}
+          ],
+          "expectedPayout": "3-5倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 1,
+          "hitRate": "21.9",
+          "returnRate": "132",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "6,1,2 → 4,3,5,7", "points": "12点"},
+            {"type": "馬連", "horses": "6,1,2 - 4,3,5,7,8", "points": "15点"},
+            {"type": "3連複", "horses": "6,1,2 - 4,3 - 5,7,8,9", "points": "18点"}
+          ],
+          "expectedPayout": "4倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎4ロケットマンの安定性を評価（スコア65.1）",
+        "keyIndicators": {
+          "accuracy": "59.7",
+          "similarRaces": "16件",
+          "confidenceInterval": "±8.1",
+          "recommendedInvestment": "資金の0.5%以下"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: ロケットマン、ファイナルチャンスを中心とした馬単、期待値+2.8%",
+        "features": "特徴量重要度: 安定性(0.70)、能力上位性(0.64)、成長期待(0.57)",
+        "riskAnalysis": "低リスク、小配当型"
+      },
+      "allHorses": [
+        {"number": 4, "name": "ロケットマン", "mark": "◎", "confidence": "65.1", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 65.1%"}, {"icon": "★", "text": "本命適性: C級"}]},
+        {"number": 1, "name": "ファイナルチャンス", "mark": "◯", "confidence": "56.9", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 56.9%"}, {"icon": "★", "text": "対抗適性: D級"}]},
+        {"number": 6, "name": "サプライズショット", "mark": "▲", "confidence": "48.2", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 48.2%"}, {"icon": "★", "text": "穴適性: D級"}]},
+        {"number": 2, "name": "マジカルスター", "mark": "△", "confidence": "44.6", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 44.6%"}, {"icon": "★", "text": "補完適性: D級"}]}
+      ],
+      "totalHorses": 4,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     },
     {
       "raceNumber": "1R",
@@ -341,9 +1294,115 @@
           "number": 6,
           "name": "ニューホープ",
           "type": "本命",
-          "confidence": "62.7"
+          "confidence": "62.7",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 48.9 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 62.7%"},
+            {"icon": "★", "text": "展開適性: C-評価"},
+            {"icon": "★", "text": "過去5走偏差値: 37.2"}
+          ],
+          "importance": [
+            {"label": "安定性", "value": 0.67},
+            {"label": "能力上位性", "value": 0.61},
+            {"label": "成長期待", "value": 0.54}
+          ]
+        },
+        "sub": {
+          "number": 2,
+          "name": "ディープチャレンジ",
+          "type": "対抗",
+          "confidence": "54.3",
+          "factors": [
+            {"icon": "★", "text": "スピード指数: 46.1"},
+            {"icon": "★", "text": "先行力: 57.8%"},
+            {"icon": "★", "text": "枠順優位性: D級"},
+            {"icon": "★", "text": "持続力評価: D"}
+          ],
+          "importance": [
+            {"label": "先行力", "value": 0.63},
+            {"label": "成長期待", "value": 0.56},
+            {"label": "スピード指数", "value": 0.49}
+          ]
+        },
+        "dark": {
+          "number": 4,
+          "name": "ラストチャンス",
+          "type": "単穴",
+          "confidence": "45.6",
+          "factors": [
+            {"icon": "★", "text": "爆発力指数: 50.4"},
+            {"icon": "★", "text": "ムラ係数: 極高変動"},
+            {"icon": "★", "text": "斤量優位: -1kg"},
+            {"icon": "★", "text": "展開次第: 要注意"}
+          ]
         }
-      }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 1,
+          "hitRate": "49.4",
+          "returnRate": "91",
+          "riskLevel": "low",
+          "bets": [
+            {"type": "馬単", "horses": "6 → 2,4,1,3", "points": "4点"},
+            {"type": "馬連", "horses": "6 - 2,4,1,3", "points": "4点"},
+            {"type": "3連複", "horses": "6-2,4 - 1,3,5", "points": "6点"}
+          ],
+          "expectedPayout": "2倍以下",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 1,
+          "hitRate": "35.2",
+          "returnRate": "107",
+          "riskLevel": "medium",
+          "bets": [
+            {"type": "馬単", "horses": "6 → 2,4,1,3,5,7", "points": "6点"},
+            {"type": "馬連", "horses": "6 - 2,4,1,3,5", "points": "5点"},
+            {"type": "3連複", "horses": "6-2,4 - 1,3,5,7,8", "points": "10点"}
+          ],
+          "expectedPayout": "2-4倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 1,
+          "hitRate": "19.7",
+          "returnRate": "125",
+          "riskLevel": "high",
+          "bets": [
+            {"type": "馬単", "horses": "4,2,1 → 6,3,5,7", "points": "12点"},
+            {"type": "馬連", "horses": "4,2,1 - 6,3,5,7,8", "points": "15点"},
+            {"type": "3連複", "horses": "4,2,1 - 6,3 - 5,7,8,9", "points": "18点"}
+          ],
+          "expectedPayout": "3倍以上",
+          "payoutType": "大穴視野"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎6ニューホープの安定性を評価（スコア62.7）",
+        "keyIndicators": {
+          "accuracy": "56.3",
+          "similarRaces": "13件",
+          "confidenceInterval": "±8.9",
+          "recommendedInvestment": "資金の0.5%以下"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: ニューホープ、ディープチャレンジを中心とした馬単、期待値+1.2%",
+        "features": "特徴量重要度: 安定性(0.67)、能力上位性(0.61)、成長期待(0.54)",
+        "riskAnalysis": "低リスク、小配当型"
+      },
+      "allHorses": [
+        {"number": 6, "name": "ニューホープ", "mark": "◎", "confidence": "62.7", "type": "本命", "factors": [{"icon": "★", "text": "信頼度: 62.7%"}, {"icon": "★", "text": "本命適性: C級"}]},
+        {"number": 2, "name": "ディープチャレンジ", "mark": "◯", "confidence": "54.3", "type": "対抗", "factors": [{"icon": "★", "text": "信頼度: 54.3%"}, {"icon": "★", "text": "対抗適性: D級"}]},
+        {"number": 4, "name": "ラストチャンス", "mark": "▲", "confidence": "45.6", "type": "単穴", "factors": [{"icon": "★", "text": "信頼度: 45.6%"}, {"icon": "★", "text": "穴適性: D級"}]},
+        {"number": 1, "name": "スタートアップ", "mark": "△", "confidence": "42.1", "type": "連下", "factors": [{"icon": "★", "text": "信頼度: 42.1%"}, {"icon": "★", "text": "補完適性: D級"}]}
+      ],
+      "totalHorses": 4,
+      "lastUpdated": "2025-08-25T10:15:00.000Z"
     }
   ],
   "planAccess": {
