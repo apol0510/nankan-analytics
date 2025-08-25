@@ -192,13 +192,92 @@
           "number": 2,
           "name": "サンダーボルト",
           "type": "本命",
-          "confidence": "89.2"
+          "confidence": "89.2",
+          "importance": [
+            {"label": "能力指数", "value": 0.86},
+            {"label": "安定性", "value": 0.82},
+            {"label": "展開適性", "value": 0.88},
+            {"label": "騎手相性", "value": 0.74},
+            {"label": "血統評価", "value": 0.69}
+          ]
         },
         "sub1": {
           "number": 6,
           "name": "ミラクルスター",
           "type": "対抗",
           "confidence": "76.4"
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "的中率重視型",
+          "recommendation": 3,
+          "hitRate": "68.5",
+          "returnRate": "105.8",
+          "expectedPayout": "1,580円",
+          "payoutType": "馬単",
+          "bets": [
+            {"type": "馬単", "horses": "2→6", "points": "100円"},
+            {"type": "馬連", "horses": "2-6", "points": "100円"}
+          ]
+        },
+        "balance": {
+          "title": "バランス型",
+          "recommendation": 2,
+          "hitRate": "42.3",
+          "returnRate": "138.6",
+          "expectedPayout": "4,200円",
+          "payoutType": "三連複",
+          "bets": [
+            {"type": "三連複", "horses": "2-6-4", "points": "100円"},
+            {"type": "馬単", "horses": "2→6", "points": "100円"}
+          ]
+        },
+        "aggressive": {
+          "title": "高配当追求型",
+          "recommendation": 2,
+          "hitRate": "24.7",
+          "returnRate": "195.2",
+          "expectedPayout": "15,800円",
+          "payoutType": "三連単",
+          "bets": [
+            {"type": "三連単", "horses": "2→6→4", "points": "100円"},
+            {"type": "三連単", "horses": "6→2→4", "points": "100円"}
+          ]
+        }
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "サンダーボルト",
+          "mark": "◎",
+          "confidence": "89.2",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 86.1 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 82.3%"},
+            {"icon": "★", "text": "展開適性: A評価"},
+            {"icon": "★", "text": "過去5走偏差値: 58.7"}
+          ]
+        },
+        {
+          "number": 6,
+          "name": "ミラクルスター",
+          "mark": "○",
+          "confidence": "76.4",
+          "factors": [
+            {"icon": "★", "text": "上がり3F: 35.1秒"},
+            {"icon": "★", "text": "前走評価: A-"},
+            {"icon": "★", "text": "騎手相性: 87%"},
+            {"icon": "★", "text": "距離適性: 適合"}
+          ]
+        }
+      ],
+      "analysis": {
+        "keyIndicators": {
+          "accuracy": "87.8",
+          "similarRaces": "98戦",
+          "confidenceInterval": "93.5",
+          "recommendedInvestment": "3,000円"
         }
       }
     },
@@ -224,7 +303,92 @@
           "number": 4,
           "name": "ゴールデンウィング",
           "type": "本命",
-          "confidence": "84.7"
+          "confidence": "84.7",
+          "importance": [
+            {"label": "能力指数", "value": 0.83},
+            {"label": "安定性", "value": 0.78},
+            {"label": "展開適性", "value": 0.85},
+            {"label": "騎手相性", "value": 0.71},
+            {"label": "血統評価", "value": 0.66}
+          ]
+        },
+        "sub": {
+          "number": 7,
+          "name": "スピードマスター",
+          "type": "対抗",
+          "confidence": "71.2"
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "的中率重視型",
+          "recommendation": 3,
+          "hitRate": "64.1",
+          "returnRate": "118.3",
+          "expectedPayout": "2,150円",
+          "payoutType": "馬単",
+          "bets": [
+            {"type": "馬単", "horses": "4→7", "points": "100円"},
+            {"type": "馬連", "horses": "4-7", "points": "100円"}
+          ]
+        },
+        "balance": {
+          "title": "バランス型",
+          "recommendation": 2,
+          "hitRate": "38.6",
+          "returnRate": "154.7",
+          "expectedPayout": "6,800円",
+          "payoutType": "三連複",
+          "bets": [
+            {"type": "三連複", "horses": "4-7-2", "points": "100円"},
+            {"type": "馬単", "horses": "4→7", "points": "100円"}
+          ]
+        },
+        "aggressive": {
+          "title": "高配当追求型",
+          "recommendation": 2,
+          "hitRate": "21.8",
+          "returnRate": "245.1",
+          "expectedPayout": "22,400円",
+          "payoutType": "三連単",
+          "bets": [
+            {"type": "三連単", "horses": "4→7→2", "points": "100円"},
+            {"type": "三連単", "horses": "7→4→2", "points": "100円"}
+          ]
+        }
+      },
+      "allHorses": [
+        {
+          "number": 4,
+          "name": "ゴールデンウィング",
+          "mark": "◎",
+          "confidence": "84.7",
+          "factors": [
+            {"icon": "★", "text": "能力指数: 83.2 (1位)"},
+            {"icon": "★", "text": "安定性スコア: 78.1%"},
+            {"icon": "★", "text": "展開適性: B+評価"},
+            {"icon": "★", "text": "過去5走偏差値: 56.3"}
+          ]
+        },
+        {
+          "number": 7,
+          "name": "スピードマスター",
+          "mark": "○",
+          "confidence": "71.2",
+          "factors": [
+            {"icon": "★", "text": "上がり3F: 36.2秒"},
+            {"icon": "★", "text": "前走評価: B+"},
+            {"icon": "★", "text": "騎手相性: 81%"},
+            {"icon": "★", "text": "距離適性: やや適合"}
+          ]
+        }
+      ],
+      "analysis": {
+        "keyIndicators": {
+          "accuracy": "82.4",
+          "similarRaces": "76戦",
+          "confidenceInterval": "89.1",
+          "recommendedInvestment": "2,500円"
         }
       }
     },
