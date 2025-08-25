@@ -294,26 +294,28 @@
             
             <div class="form-group">
                 <label class="form-label">全レース予想テキストを貼り付け（1R〜12R）</label>
-                <textarea id="external_prediction" class="form-textarea" rows="12" 
+                <textarea id="external_prediction" class="form-textarea" rows="18" 
                     placeholder="例:
-8/24川崎1R サラ系3歳
-◎２フレッシュスタート
-○５ヤングファイター
-▲３ルーキーチャンス
+8/24川崎1R 1,400m（11頭）発走時刻14:45 ツクツクボウシ賞 ２歳(四)
+◎２フレッシュスタート（本命 1頭固定）
+○５ヤングファイター（対抗 1頭固定）
+▲３ルーキーチャンス（単穴 最大2頭まで）
+▲７スピードキング
+△４ダークホース（連下 最大4頭まで）
+△６アウトサイダー
+×１ロングショット（押さえ 最大6頭まで・高配当狙い用）
+×８ミラクルラン
 
-8/24川崎2R サラ系3歳
+8/24川崎2R 1,200m（10頭）発走時刻15:20 サラ系3歳
 ◎４ロケットマン
 ○１ファイナルチャンス
 ▲６サプライズショット
 
-8/24川崎3R サラ系3歳
-◎７スピードスター
-○３フレッシュスタート
-▲５ワイルドホープ
-
 ...（以下12Rまで同様に）
 
-※各レースごとに空行を入れ、印と馬番・馬名を含むテキストを貼り付けてください"></textarea>
+※レース情報: 距離・頭数・発走時刻・賞名・条件を自動抽出
+※印の対応: ◎1頭、○1頭、▲最大2頭、△最大4頭、×最大6頭
+※×印は戦略Cの高配当狙いで活用されます"></textarea>
             </div>
             
             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
@@ -369,8 +371,8 @@
                     <button class="btn btn-secondary" onclick="editRace('8R')" style="justify-content: center;">8R編集 (premium)</button>
                     <button class="btn btn-secondary" onclick="editRace('9R')" style="justify-content: center;">9R編集 (premium)</button>
                     <button class="btn btn-secondary" onclick="editRace('10R')" style="justify-content: center;">10R編集 (standard)</button>
-                    <button class="btn btn-secondary" onclick="editRace('11R')" style="justify-content: center;">11R編集 (standard)</button>
-                    <button class="btn btn-secondary" onclick="editRace('12R')" style="justify-content: center;">12R編集 (free)</button>
+                    <button class="btn btn-secondary" onclick="editRace('11R')" style="justify-content: center; background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%); border: 2px solid rgba(16, 185, 129, 0.5);">11R編集 (メイン・free)</button>
+                    <button class="btn btn-secondary" onclick="editRace('12R')" style="justify-content: center;">12R編集 (standard)</button>
                 </div>
             </div>
             
@@ -593,8 +595,9 @@
                     sampleData.races.push({
                         raceNumber: `${i}R`,
                         raceName: "サラ系3歳以上",
-                        tier: i <= 9 ? "premium" : (i <= 11 ? "standard" : "free"),
-                        isMainRace: i === 11,
+                        // 【警告】11Rがfree（メイン）、12Rはstandard！
+                        tier: i === 11 ? "free" : (i <= 9 ? "premium" : "standard"),
+                        isMainRace: i === 11, // ← 11Rのみtrue！
                         raceInfo: {
                             confidence: (Math.random() * 30 + 60).toFixed(1),
                             abilityIndex: (Math.random() * 40 + 40).toFixed(1),
@@ -614,6 +617,9 @@
                 allRacesData = sampleData;
                 updateRaceStatus();
                 logAllRaces('✅ サンプルデータ読み込み完了');
+                
+                // データ検証
+                validateRaceConfiguration(allRacesData);
                 showAlert('サンプルデータを表示しました。実際のデータは allRacesPrediction.json から読み込んでください。', 'success');
                 
             } catch (error) {
@@ -885,8 +891,8 @@
                     races: races,
                     planAccess: {
                         free: {
-                            races: ["12R"],
-                            description: "メインレースのみ"
+                            races: ["11R"],
+                            description: "メインレースのみ（最終レースの1つ前）"
                         },
                         standard: {
                             races: ["10R", "11R", "12R"],
@@ -967,10 +973,14 @@
 
         // レースデータ生成（統一関数）
         function generateRaceData(raceData, allRacesData) {
+            // 【最重要警告】11Rがメインレース（free）、12Rは標準（standard）！
+            // 絶対に12Rをfreeにしないこと！最終レースの1つ前がメイン！
             const tierMapping = {
                 1: 'premium', 2: 'premium', 3: 'premium', 4: 'premium', 5: 'premium', 
                 6: 'premium', 7: 'premium', 8: 'premium', 9: 'premium',
-                10: 'standard', 11: 'standard', 12: 'free'
+                10: 'standard', 
+                11: 'free',     // ← ★★★ メインレース（無料）はここ！
+                12: 'standard'  // ← 最終レースだが無料ではない！
             };
 
             return {
@@ -992,7 +1002,14 @@
                                   raceData.confidence > 80 ? "B+" : 
                                   raceData.confidence > 75 ? "B" : 
                                   raceData.confidence > 70 ? "C+" : "C",
-                    expectedReturn: (70 + Math.random() * 80).toFixed(0)
+                    expectedReturn: (70 + Math.random() * 80).toFixed(0),
+                    // 新規追加：レース詳細情報
+                    distance: raceData.raceDistance ? raceData.raceDistance + 'm' : '',
+                    horseCount: raceData.horseCount || 0,
+                    startTime: raceData.startTime || '',
+                    raceCondition: raceData.raceCondition || '',
+                    // 表示用統合文字列
+                    raceDetails: `${allRacesData.track || '川崎'}${raceData.raceNumber}R ${raceData.raceDistance ? raceData.raceDistance + 'm' : ''} ${raceData.horseCount ? '（' + raceData.horseCount + '頭）' : ''} ${raceData.startTime ? '発走時刻' + raceData.startTime : ''} ${raceData.raceName || 'サラ系'} ${raceData.raceCondition || ''}`
                 },
                 horses: generateHorsesDataForRace(raceData),
                 strategies: generateStrategiesForRace(raceData),
@@ -1008,7 +1025,7 @@
             const horses = {};
             const mainHorse = raceData.horses.find(h => h.mark === '◎');
             const subHorse = raceData.horses.find(h => h.mark === '○' || h.mark === '◯');
-            const darkHorse = raceData.horses.find(h => h.mark === '▲');
+            const darkHorses = raceData.horses.filter(h => h.mark === '▲'); // 複数頭対応
 
             if (mainHorse) {
                 horses.main = {
@@ -1050,10 +1067,11 @@
                 };
             }
 
-            if (darkHorse) {
-                horses.dark = {
-                    number: darkHorse.number,
-                    name: darkHorse.name,
+            // ▲印（単穴）最大2頭まで処理
+            if (darkHorses.length > 0) {
+                horses.sub1 = {
+                    number: darkHorses[0].number,
+                    name: darkHorses[0].name,
                     type: "単穴",
                     confidence: (65 + Math.random() * 10).toFixed(1),
                     factors: [
@@ -1063,6 +1081,21 @@
                         {icon: "★", text: "展開次第: 要注意"}
                     ]
                 };
+                
+                if (darkHorses.length > 1) {
+                    horses.sub2 = {
+                        number: darkHorses[1].number,
+                        name: darkHorses[1].name,
+                        type: "単穴2",
+                        confidence: (60 + Math.random() * 10).toFixed(1),
+                        factors: [
+                            {icon: "★", text: `爆発力指数: ${(75 + Math.random() * 15).toFixed(1)}`},
+                            {icon: "★", text: "穴馬適性: B+"},
+                            {icon: "★", text: "変動率: 高"},
+                            {icon: "★", text: "期待値: 中"}
+                        ]
+                    };
+                }
             }
 
             return horses;
@@ -1073,11 +1106,13 @@
             const subHorses = raceData.horses.filter(h => h.mark === '○' || h.mark === '◯');
             const darkHorses = raceData.horses.filter(h => h.mark === '▲');
             const underHorses = raceData.horses.filter(h => h.mark === '△');
+            const pressHorses = raceData.horses.filter(h => h.mark === '×'); // ×印（押さえ）追加
             
             const main = mainHorses[0]?.number || 1;
             const subs = subHorses.map(h => h.number);
             const darks = darkHorses.map(h => h.number);
             const unders = underHorses.map(h => h.number);
+            const press = pressHorses.map(h => h.number); // ×印の馬番配列
 
             return {
                 safe: {
@@ -1111,16 +1146,22 @@
                 aggressive: {
                     title: "戦略C: 高配当追求型",
                     recommendation: raceData.confidence > 70 ? 2 : 1,
-                    hitRate: (30 + Math.random() * 20).toFixed(1),
-                    returnRate: (200 + Math.random() * 150).toFixed(0),
+                    hitRate: (25 + Math.random() * 20).toFixed(1),
+                    returnRate: (250 + Math.random() * 200).toFixed(0),
                     riskLevel: "high",
-                    bets: [
+                    bets: press.length > 0 ? [
+                        // ×印がある場合：×印を使った高配当狙い
+                        { type: "3連単", horses: `${press.slice(0,2).join(',')}→${main}→${[...subs, ...darks, ...unders].join(',')}`, points: `${Math.min(12, press.length * 4)}点` },
+                        { type: "馬単", horses: `${press.join(',')}→${main},${subs[0] || darks[0] || 2}`, points: `${Math.min(8, press.length * 2)}点` },
+                        { type: "3連複", horses: `${press[0] || 3}-${main}-${[...darks, ...unders].join(',')}`, points: "6点" }
+                    ] : [
+                        // ×印がない場合：従来の高配当戦略
                         { type: "3連単", horses: `${main}→${[...subs, ...darks].slice(0, 2).join(',')}→${[...darks, ...unders].join(',')}`, points: "12点" },
                         { type: "3連単", horses: `${subs[0] || darks[0] || 2}→${main}→${[...darks, ...unders].join(',')}`, points: "8点" },
                         { type: "馬単", horses: `${darks[0] || 3}→${main},${subs[0] || 2}`, points: "2点" }
                     ],
-                    expectedPayout: "12倍以上",
-                    payoutType: "大穴視野"
+                    expectedPayout: press.length > 0 ? "20倍以上" : "12倍以上",
+                    payoutType: press.length > 0 ? "大穴・万馬券狙い" : "大穴視野"
                 }
             };
         }
@@ -1159,8 +1200,12 @@
                 type: horse.mark === '◎' ? '本命' : 
                       horse.mark === '○' || horse.mark === '◯' ? '対抗' : 
                       horse.mark === '▲' ? '単穴' : 
-                      horse.mark === '△' ? '連下' : '押さえ',
-                factors: [{icon: "★", text: `信頼度: ${(50 + Math.random() * 40).toFixed(1)}%`}, {icon: "★", text: "適性評価: B級"}]
+                      horse.mark === '△' ? '連下' : 
+                      horse.mark === '×' ? '押さえ' : 'その他',
+                factors: [
+                    {icon: "★", text: `信頼度: ${(50 + Math.random() * 40).toFixed(1)}%`}, 
+                    {icon: "★", text: horse.mark === '×' ? "大穴適性: 高変動" : "適性評価: B級"}
+                ]
             }));
         }
 
@@ -1174,7 +1219,11 @@
                 raceNumber: null,
                 raceName: null,
                 raceDistance: null,
-                confidence: 85
+                confidence: 85,
+                // 新規追加項目
+                horseCount: 0,
+                startTime: '',
+                raceCondition: ''
             };
 
             // 日付と競馬場情報を抽出
@@ -1193,13 +1242,54 @@
                 result.raceNumber = parseInt(headerMatch[3].replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)));
             }
 
-            // レース名を抽出
-            const raceNameMatch = text.match(/\d+[ＲRr]\s+([^\n◎○▲△×☆★]+)/i);
-            if (raceNameMatch) {
-                result.raceName = raceNameMatch[1].trim();
+            // レース名と詳細情報を抽出（複数パターン対応）
+            // パターン1: 川崎1R 1,400m（11頭）発走時刻14:45 ツクツクボウシ賞 ２歳(四)
+            const detailedPattern1 = text.match(/(\w+)(\d+)[ＲRr]\s*([,\d]+)m[^\d]*（(\d+)頭）[^\d]*(\d{1,2}[:：]\d{2})[^\n]*?([^\s\d]+賞?)[^\n]*?([^\n]*)/);
+            
+            // パターン2: 川崎1R ツクツクボウシ賞 1,400m（11頭）２歳(四) 14:45
+            const detailedPattern2 = text.match(/(\w+)(\d+)[ＲRr]\s*([^\s\d]+賞?)[^\d]*([,\d]+)m[^\d]*（(\d+)頭）[^\n]*?([^\d]*?)(\d{1,2}[:：]\d{2})/);
+            
+            // パターン3: 距離のみ抽出 1400m または 1,400m
+            const distancePattern = text.match(/(\d{1,2}[,]?\d{3})m/);
+            
+            // パターン4: 頭数のみ抽出 （11頭）
+            const horseCountPattern = text.match(/（(\d+)頭）/);
+            
+            // パターン5: 発走時刻のみ抽出 14:45
+            const startTimePattern = text.match(/(\d{1,2}[:：]\d{2})/);
+
+            if (detailedPattern1) {
+                result.raceDistance = detailedPattern1[3] || '';
+                result.horseCount = parseInt(detailedPattern1[4]) || 0;
+                result.startTime = detailedPattern1[5] || '';
+                result.raceName = detailedPattern1[6] || '';
+                result.raceCondition = detailedPattern1[7] || '';
+            } else if (detailedPattern2) {
+                result.raceName = detailedPattern2[3] || '';
+                result.raceDistance = detailedPattern2[4] || '';
+                result.horseCount = parseInt(detailedPattern2[5]) || 0;
+                result.raceCondition = detailedPattern2[6] || '';
+                result.startTime = detailedPattern2[7] || '';
+            } else {
+                // フォールバック：シンプルなレース名抽出
+                const raceNameMatch = text.match(/\d+[ＲRr]\s+([^\n◎○▲△×☆★]+)/i);
+                if (raceNameMatch) {
+                    result.raceName = raceNameMatch[1].trim();
+                }
+                
+                // 個別に詳細情報を抽出
+                if (distancePattern) {
+                    result.raceDistance = distancePattern[1];
+                }
+                if (horseCountPattern) {
+                    result.horseCount = parseInt(horseCountPattern[1]);
+                }
+                if (startTimePattern) {
+                    result.startTime = startTimePattern[1];
+                }
             }
 
-            // 馬情報を抽出（複数パターンに対応）
+            // 馬情報を抽出（複数パターンに対応、×印も含む）
             const horsePatterns = [
                 /([◎○◯▲△×☆★])\s*([０-９0-9]+)\s*(.+?)(?=[\n◎○◯▲△×☆★]|$)/g,
                 /([◎○◯▲△×☆★])([０-９0-9]+)(.+?)(?=[\n◎○◯▲△×☆★]|$)/g,
@@ -1226,6 +1316,21 @@
                     if (result.horses.length > 0) break;
                 }
             }
+            
+            // 印の頭数制限を適用
+            // ◎:1頭、○:1頭、▲:最大2頭、△:最大4頭、×:最大6頭
+            const limitedHorses = [];
+            const counts = { '◎': 0, '○': 0, '◯': 0, '▲': 0, '△': 0, '×': 0 };
+            const limits = { '◎': 1, '○': 1, '◯': 1, '▲': 2, '△': 4, '×': 6 };
+            
+            result.horses.forEach(horse => {
+                const mark = horse.mark === '◯' ? '○' : horse.mark; // ◯を○に統一
+                if (counts[mark] !== undefined && counts[mark] < (limits[mark] || 99)) {
+                    limitedHorses.push(horse);
+                    counts[mark]++;
+                }
+            });
+            result.horses = limitedHorses;
 
             // 信頼度を印の分布から計算
             const mainCount = result.horses.filter(h => h.mark === '◎').length;
@@ -1443,7 +1548,7 @@
             const tierMap = {
                 '1R': 'premium', '2R': 'premium', '3R': 'premium', '4R': 'premium', '5R': 'premium',
                 '6R': 'premium', '7R': 'premium', '8R': 'premium', '9R': 'premium',
-                '10R': 'standard', '11R': 'standard', '12R': 'free'
+                '10R': 'standard', '11R': 'メイン・free', '12R': 'standard'
             };
             title.textContent = `編集中: ${raceNumber} (${tierMap[raceNumber] || 'unknown'})`;
             
@@ -1529,8 +1634,8 @@
                 const raceData = {
                     raceNumber: currentEditingRace,
                     raceName: document.getElementById('edit-race-name').value,
-                    tier: currentEditingRace.match(/[1-9]R/) ? 'premium' : 
-                          currentEditingRace.match(/1[0-1]R/) ? 'standard' : 'free',
+                    tier: currentEditingRace === '11R' ? 'free' :
+                          currentEditingRace.match(/[1-9]R/) ? 'premium' : 'standard',
                     isMainRace: currentEditingRace === '11R',
                     displayOrder: parseInt(currentEditingRace.replace('R', '')),
                     raceInfo: {
@@ -1643,10 +1748,65 @@
             showAlert('JSONファイルをダウンロードしました', 'success');
         }
 
+        // ===== レース設定検証関数 =====
+        function validateRaceConfiguration(data) {
+            const errors = [];
+            
+            // 11Rがメインレースかチェック
+            const race11 = data.races?.find(r => r.raceNumber === '11R');
+            if (race11) {
+                if (race11.tier !== 'free') {
+                    errors.push('❌ エラー: 11Rがfreeではありません（現在: ' + race11.tier + '）');
+                }
+                if (!race11.isMainRace) {
+                    errors.push('❌ エラー: 11RのisMainRaceがtrueではありません');
+                }
+            }
+            
+            // 12Rが誤ってfreeになっていないかチェック
+            const race12 = data.races?.find(r => r.raceNumber === '12R');
+            if (race12) {
+                if (race12.tier === 'free') {
+                    errors.push('❌ 重大エラー: 12Rが無料設定になっています！12Rはstandardです！');
+                }
+                if (race12.isMainRace) {
+                    errors.push('❌ 重大エラー: 12Rがメインレースになっています！11Rがメインです！');
+                }
+            }
+            
+            // planAccessのチェック
+            if (data.planAccess?.free?.races) {
+                if (data.planAccess.free.races.includes('12R')) {
+                    errors.push('❌ エラー: planAccess.free.racesに12Rが含まれています');
+                }
+                if (!data.planAccess.free.races.includes('11R')) {
+                    errors.push('❌ エラー: planAccess.free.racesに11Rが含まれていません');
+                }
+            }
+            
+            if (errors.length > 0) {
+                console.error('レース設定検証エラー:');
+                errors.forEach(err => {
+                    console.error(err);
+                    logAllRaces(err);
+                });
+                showAlert('レース設定に問題があります。ログを確認してください。', 'error');
+                return false;
+            }
+            
+            console.log('✅ レース設定検証: 正常');
+            return true;
+        }
+
         // ===== 初期化 =====
         document.addEventListener('DOMContentLoaded', function() {
             logAllRaces('🚀 システム初期化完了');
             updateImportanceBars();
+            
+            // 初期データをチェック（もしあれば）
+            if (allRacesData) {
+                validateRaceConfiguration(allRacesData);
+            }
         });
     </script>
 </body>

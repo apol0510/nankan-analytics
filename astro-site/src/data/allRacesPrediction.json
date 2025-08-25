@@ -6,7 +6,7 @@
     {
       "raceNumber": "12R",
       "raceName": "やまなみ五湖「丹沢湖」賞",
-      "tier": "free",
+      "tier": "standard",
       "isMainRace": false,
       "displayOrder": 1,
       "raceInfo": {
@@ -44,7 +44,7 @@
     {
       "raceNumber": "11R", 
       "raceName": "やまなみ五湖「丹沢湖」賞",
-      "tier": "standard",
+      "tier": "free",
       "isMainRace": true,
       "displayOrder": 2,
       "raceInfo": {
@@ -1407,8 +1407,8 @@
   ],
   "planAccess": {
     "free": {
-      "races": ["12R"],
-      "description": "メインレースのみ"
+      "races": ["11R"],
+      "description": "メインレースのみ（最終レースの1つ前）"
     },
     "standard": {
       "races": ["10R", "11R", "12R"],
