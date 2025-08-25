@@ -984,16 +984,16 @@
             };
 
             return {
-                raceNumber: raceData.raceNumber + 'R',
+                raceNumber: (raceData.raceNumber || 1) + 'R',
                 raceName: raceData.raceName || `サラ系${raceData.raceNumber <= 5 ? '3歳' : '3歳以上'}`,
                 tier: tierMapping[raceData.raceNumber] || 'premium',
                 isMainRace: false, // 後で設定
                 displayOrder: raceData.raceNumber,
                 raceInfo: {
-                    title: `${allRacesData.track.replace('競馬', '')}${raceData.raceNumber}R ${raceData.raceName || 'サラ系'}`,
+                    title: `${allRacesData.track.replace('競馬', '')}${raceData.raceNumber || 1}R ${raceData.raceName || 'サラ系'}`,
                     date: allRacesData.raceDate,
                     track: allRacesData.track,
-                    raceNumber: raceData.raceNumber + 'R',
+                    raceNumber: (raceData.raceNumber || 1) + 'R',
                     raceName: raceData.raceName || `サラ系${raceData.raceNumber <= 5 ? '3歳' : '3歳以上'}`,
                     confidence: raceData.confidence.toFixed(1),
                     abilityIndex: (50 + Math.random() * 40).toFixed(1),
@@ -1240,6 +1240,18 @@
                 else if (trackText.includes('浦和')) result.trackName = '浦和';
 
                 result.raceNumber = parseInt(headerMatch[3].replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)));
+            } else {
+                // フォールバック: レース番号のみを抽出
+                const raceNumMatch = text.match(/([1-9]|1[0-2])[ＲRr]/i);
+                if (raceNumMatch) {
+                    result.raceNumber = parseInt(raceNumMatch[1]);
+                    result.trackName = '川崎競馬'; // デフォルト
+                } else {
+                    console.warn('レース番号が解析できません:', text.substring(0, 100));
+                    // 暫定値として1Rを設定（後で一括変換で適切な番号を設定）
+                    result.raceNumber = 1;
+                    result.trackName = '川崎競馬';
+                }
             }
 
             // レース名と詳細情報を抽出（複数パターン対応）
@@ -1722,9 +1734,36 @@
         // ===== その他のユーティリティ関数 =====
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
+            const text = element.value || element.textContent;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showAlert('📋 JSONデータをクリップボードにコピーしました', 'success');
+                }).catch((err) => {
+                    console.error('Clipboard copy failed:', err);
+                    // フォールバック: 古い方法を試行
+                    fallbackCopyTextToClipboard(element, text);
+                });
+            } else {
+                // フォールバック: 古い方法
+                fallbackCopyTextToClipboard(element, text);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(element, text) {
             element.select();
-            document.execCommand('copy');
-            showAlert('クリップボードにコピーしました', 'success');
+            element.setSelectionRange(0, 99999); // モバイル用
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showAlert('📋 JSONデータをクリップボードにコピーしました', 'success');
+                } else {
+                    showAlert('❌ コピーに失敗しました。手動で選択してコピーしてください', 'error');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                showAlert('❌ コピーに失敗しました。手動で選択してコピーしてください', 'error');
+            }
         }
 
         function downloadJson() {
