@@ -46,6 +46,17 @@ console.log('race12R:', race12R);
             <span class="premium-status-text">スタンダード会員限定コンテンツ</span>
         </div>
 
+        <!-- プレミアムアップグレード誘導バナー -->
+        <div class="upgrade-banner">
+            <div class="upgrade-content">
+                <div class="upgrade-text">
+                    <span class="upgrade-icon">👑</span>
+                    <span class="upgrade-message">全12レース完全分析 + 特別戦略で収益最大化</span>
+                </div>
+                <a href="/pricing" class="upgrade-btn-small">プレミアム</a>
+            </div>
+        </div>
+
         <!-- 10R詳細分析アコーディオン -->
         <div class="race-10r-accordion">
             <div class="race-accordion-header" onclick="toggleRace10R()">
@@ -1130,7 +1141,7 @@ console.log('race12R:', race12R);
                     <span>前日夜配信</span>
                 </div>
             </div>
-            <a href="/premium" class="upsell-button">プレミアムにアップグレード</a>
+            <a href="/pricing" class="upsell-button">プレミアムにアップグレード</a>
         </div>
     </div>
 </BaseLayout>
@@ -1950,6 +1961,86 @@ console.log('race12R:', race12R);
     .upsell-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+    }
+
+    /* アップグレードバナー */
+    .upgrade-banner {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        border: 2px solid rgba(245, 158, 11, 0.3);
+        border-radius: 12px;
+        padding: 16px;
+        margin: 20px 0;
+        animation: pulse-border 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-border {
+        0%, 100% { 
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.1);
+        }
+        50% { 
+            border-color: rgba(245, 158, 11, 0.6);
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        }
+    }
+
+    .upgrade-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .upgrade-text {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .upgrade-icon {
+        font-size: 1.5em;
+        filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));
+    }
+
+    .upgrade-message {
+        color: #f1f5f9;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .upgrade-btn-small {
+        background: linear-gradient(135deg, #f59e0b 0%, #8b5cf6 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .upgrade-btn-small:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .upgrade-content {
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .upgrade-message {
+            font-size: 1rem;
+        }
+
+        .upgrade-btn-small {
+            width: 100%;
+            padding: 12px 20px;
+        }
     }
 </style>
 
