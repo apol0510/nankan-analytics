@@ -1,5 +1,6 @@
 ---
 // 簡略化された管理者用予想入力ページ
+import { getRaceTier, isMainRace, getRaceDisplayName, getMainRaceNumber } from '../../lib/race-config.js';
 ---
 
 <!DOCTYPE html>
@@ -360,19 +361,8 @@
                 <p style="color: #94a3b8; margin-bottom: 15px; font-size: 0.9rem;">
                     個別レース調整が必要な場合は、該当レースボタンをクリックして詳細編集を開始
                 </p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                    <button class="btn btn-secondary" onclick="editRace('1R')" style="justify-content: center;">1R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('2R')" style="justify-content: center;">2R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('3R')" style="justify-content: center;">3R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('4R')" style="justify-content: center;">4R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('5R')" style="justify-content: center;">5R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('6R')" style="justify-content: center;">6R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('7R')" style="justify-content: center;">7R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('8R')" style="justify-content: center;">8R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('9R')" style="justify-content: center;">9R編集 (premium)</button>
-                    <button class="btn btn-secondary" onclick="editRace('10R')" style="justify-content: center;">10R編集 (standard)</button>
-                    <button class="btn btn-secondary" onclick="editRace('11R')" style="justify-content: center; background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%); border: 2px solid rgba(16, 185, 129, 0.5);">11R編集 (メイン・free)</button>
-                    <button class="btn btn-secondary" onclick="editRace('12R')" style="justify-content: center;">12R編集 (standard)</button>
+                <div id="raceEditButtons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                    <!-- ボタンは動的に生成 -->
                 </div>
             </div>
             
@@ -556,8 +546,63 @@
         // ===== グローバル変数 =====
         let allRacesData = null;
         let currentEditingRace = null;
+        
+        // レース設定（race-config.jsと同じ定義）
+        const RACE_TIERS = {
+            1: 'premium', 2: 'premium', 3: 'premium',
+            4: 'premium', 5: 'premium', 6: 'premium',
+            7: 'premium', 8: 'premium', 9: 'premium',
+            10: 'standard',
+            11: 'free',     // メインレース
+            12: 'standard'
+        };
+        
+        // race-config.js互換の関数
+        function getRaceTier(raceNumber) {
+            return RACE_TIERS[raceNumber] || 'premium';
+        }
+        
+        function isMainRace(raceNumber) {
+            return raceNumber === 11;
+        }
+        
+        function getRaceDisplayName(raceNumber) {
+            const tier = getRaceTier(raceNumber);
+            const isMain = isMainRace(raceNumber);
+            
+            if (isMain) {
+                return `${raceNumber}R編集 (メイン・free)`;
+            } else if (tier === 'standard') {
+                return `${raceNumber}R編集 (standard)`;
+            } else {
+                return `${raceNumber}R編集 (premium)`;
+            }
+        }
         let parsedPredictionData = null;
 
+        // レース編集ボタンを動的生成
+        function generateRaceEditButtons() {
+            const container = document.getElementById('raceEditButtons');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            for (let i = 1; i <= 12; i++) {
+                const button = document.createElement('button');
+                button.className = 'btn btn-secondary';
+                button.textContent = getRaceDisplayName(i);
+                button.style.justifyContent = 'center';
+                
+                // メインレース（11R）は特別なスタイル
+                if (isMainRace(i)) {
+                    button.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%)';
+                    button.style.border = '2px solid rgba(16, 185, 129, 0.5)';
+                }
+                
+                button.onclick = () => editRace(`${i}R`);
+                container.appendChild(button);
+            }
+        }
+        
         // ===== ユーティリティ関数 =====
         function showAlert(message, type = 'success') {
             const alert = document.getElementById('alert');
@@ -595,9 +640,9 @@
                     sampleData.races.push({
                         raceNumber: `${i}R`,
                         raceName: "サラ系3歳以上",
-                        // 【警告】11Rがfree（メイン）、12Rはstandard！
-                        tier: i === 11 ? "free" : (i <= 9 ? "premium" : "standard"),
-                        isMainRace: i === 11, // ← 11Rのみtrue！
+                        // race-config.jsから一元管理された設定を使用
+                        tier: getRaceTier(i),
+                        isMainRace: isMainRace(i),
                         raceInfo: {
                             confidence: (Math.random() * 30 + 60).toFixed(1),
                             abilityIndex: (Math.random() * 40 + 40).toFixed(1),
@@ -973,20 +1018,13 @@
 
         // レースデータ生成（統一関数）
         function generateRaceData(raceData, allRacesData) {
-            // 【最重要警告】11Rがメインレース（free）、12Rは標準（standard）！
-            // 絶対に12Rをfreeにしないこと！最終レースの1つ前がメイン！
-            const tierMapping = {
-                1: 'premium', 2: 'premium', 3: 'premium', 4: 'premium', 5: 'premium', 
-                6: 'premium', 7: 'premium', 8: 'premium', 9: 'premium',
-                10: 'standard', 
-                11: 'free',     // ← ★★★ メインレース（無料）はここ！
-                12: 'standard'  // ← 最終レースだが無料ではない！
-            };
-
+            // race-config.jsから一元管理された設定を使用
+            const raceNum = raceData.raceNumber || 1;
+            
             return {
-                raceNumber: (raceData.raceNumber || 1) + 'R',
-                raceName: raceData.raceName || `サラ系${raceData.raceNumber <= 5 ? '3歳' : '3歳以上'}`,
-                tier: tierMapping[raceData.raceNumber] || 'premium',
+                raceNumber: raceNum + 'R',
+                raceName: raceData.raceName || `サラ系${raceNum <= 5 ? '3歳' : '3歳以上'}`,
+                tier: getRaceTier(raceNum),
                 isMainRace: false, // 後で設定
                 displayOrder: raceData.raceNumber,
                 raceInfo: {
@@ -1646,9 +1684,8 @@
                 const raceData = {
                     raceNumber: currentEditingRace,
                     raceName: document.getElementById('edit-race-name').value,
-                    tier: currentEditingRace === '11R' ? 'free' :
-                          currentEditingRace.match(/[1-9]R/) ? 'premium' : 'standard',
-                    isMainRace: currentEditingRace === '11R',
+                    tier: getRaceTier(parseInt(currentEditingRace.replace('R', ''))),
+                    isMainRace: isMainRace(parseInt(currentEditingRace.replace('R', ''))),
                     displayOrder: parseInt(currentEditingRace.replace('R', '')),
                     raceInfo: {
                         title: `川崎${currentEditingRace} ${document.getElementById('edit-race-name').value}`,
@@ -1841,6 +1878,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             logAllRaces('🚀 システム初期化完了');
             updateImportanceBars();
+            generateRaceEditButtons(); // レース編集ボタンを動的生成
             
             // 初期データをチェック（もしあれば）
             if (allRacesData) {
