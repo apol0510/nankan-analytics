@@ -28,7 +28,8 @@
     .user-info {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
+        flex-wrap: nowrap;
     }
 
     .user-info.hidden {
@@ -75,37 +76,50 @@
     }
 
     .dashboard-btn {
-        padding: 6px 14px;
-        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-        color: white;
-        border: none;
+        padding: 6px 12px;
+        background: rgba(59, 130, 246, 0.08);
+        color: var(--body-text-color, #e2e8f0);
+        border: 1px solid rgba(59, 130, 246, 0.15);
         border-radius: 6px;
         font-size: 13px;
         text-decoration: none;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
     }
 
     .dashboard-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.3);
+        color: var(--accent-color, #3b82f6);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
     }
 
     .logout-btn {
-        padding: 6px 14px;
-        background: transparent;
+        padding: 6px 12px;
+        background: rgba(148, 163, 184, 0.08);
         color: #94a3b8;
-        border: 1px solid rgba(148, 163, 184, 0.3);
+        border: 1px solid rgba(148, 163, 184, 0.15);
         border-radius: 6px;
         font-size: 13px;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        font-weight: 500;
     }
 
     .logout-btn:hover {
-        background: rgba(148, 163, 184, 0.1);
+        background: rgba(148, 163, 184, 0.15);
+        border-color: rgba(148, 163, 184, 0.3);
         color: #e2e8f0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(148, 163, 184, 0.2);
     }
 
     .guest-info {
@@ -147,38 +161,39 @@
     }
 
     /* Mobile responsive styles */
-    @media (max-width: 768px) {
-        .user-status {
-            display: flex; /* モバイルでも表示 */
-        }
-    }
-    
-    @media (max-width: 480px) {
+    @media (max-width: 900px) {
         .user-info {
             gap: 8px;
         }
         
-        .user-email {
-            display: none; /* 極小画面では非表示 */
-        }
-        
-        .guest-info {
-            gap: 6px;
-        }
-        
-        .login-btn, .signup-btn {
-            padding: 4px 12px;
-            font-size: 13px;
-        }
-    }
-
-    @media (max-width: 768px) {
         .user-email {
             display: none;
         }
         
         .plan-name {
             display: none;
+        }
+        
+        .dashboard-btn, .logout-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .user-status {
+            display: none; /* モバイルメニューに統合 */
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .guest-info {
+            gap: 6px;
+        }
+        
+        .login-btn, .signup-btn {
+            padding: 4px 10px;
+            font-size: 12px;
         }
     }
 </style>
