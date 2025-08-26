@@ -340,28 +340,35 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             
             <div class="form-group">
                 <label class="form-label">全レース予想テキストを貼り付け（1R〜12R）</label>
-                <textarea id="external_prediction" class="form-textarea" rows="18" 
-                    placeholder="例:
-8/24川崎1R 1,400m（11頭）発走時刻14:45 ツクツクボウシ賞 ２歳(四)
-◎２フレッシュスタート（本命 1頭固定）
-○５ヤングファイター（対抗 1頭固定）
-▲３ルーキーチャンス（単穴 最大2頭まで）
-▲７スピードキング
-△４ダークホース（連下 最大4頭まで）
-△６アウトサイダー
-×１ロングショット（押さえ 最大6頭まで・高配当狙い用）
-×８ミラクルラン
+                <textarea id="external_prediction" class="form-textarea" rows="20" 
+                    placeholder="以下の形式で1R〜12R全レースを一度に貼り付けてください:
 
-8/24川崎2R 1,200m（10頭）発走時刻15:20 サラ系3歳
-◎４ロケットマン
-○１ファイナルチャンス
-▲６サプライズショット
+8/26川崎1R 1400m（11頭）発走時刻14:45 2歳新馬
+◎8キチョウ
+○6マイボンド
+▲2トゥルービューティ
+▲7カルカンサン
 
-...（以下12Rまで同様に）
+8/26川崎2R 1200m（10頭）発走時刻15:20 3歳未勝利
+◎5ブライトスター
+○3ノーブルパワー
+▲1アーリーバード
 
-※レース情報: 距離・頭数・発走時刻・賞名・条件を自動抽出
-※印の対応: ◎1頭、○1頭、▲最大2頭、△最大4頭、×最大6頭
-※×印は戦略Cの高配当狙いで活用されます"></textarea>
+8/26川崎3R 1500m（12頭）発走時刻16:00 3歳1勝クラス
+◎7スピードアップ
+○2チャレンジャー
+▲9フューチャーレース
+△4ダークホース
+
+8/26川崎4R 1600m（14頭）発走時刻16:40 サラ系3歳以上
+◎12ウイニングショット
+○6ファイティングスピリット
+
+...（5R〜12R まで同様に続ける）
+
+【重要】各レース行の形式:
+月/日＋競馬場名＋レース番号＋距離＋頭数＋発走時刻＋レース名
+例: 8/26川崎1R 1400m（11頭）発走時刻14:45 2歳新馬"></textarea>
             </div>
             
             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
@@ -580,9 +587,21 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             <h2 class="section-title">📄 生成JSON</h2>
             <textarea id="json-output" class="form-textarea" rows="20" readonly 
                 style="font-family: 'Monaco', 'Menlo', monospace; font-size: 12px; background: rgba(15, 23, 42, 0.8);"></textarea>
-            <div style="margin-top: 12px; display: flex; gap: 12px;">
+            <div style="margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap;">
                 <button class="btn btn-primary" onclick="copyToClipboard('json-output')">📋 JSONをコピー</button>
                 <button class="btn btn-secondary" onclick="downloadJson()">💾 JSONファイルダウンロード</button>
+            </div>
+            <div style="margin-top: 15px; padding: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px;">
+                <p style="color: #f59e0b; font-size: 0.9rem; margin-bottom: 8px;"><strong>📝 保存手順:</strong></p>
+                <ol style="color: #e2e8f0; font-size: 0.85rem; margin-left: 20px; line-height: 1.4;">
+                    <li>「JSONファイルダウンロード」ボタンでファイルを保存</li>
+                    <li>ダウンロードした「allRacesPrediction.json」を<strong>src/data/</strong>フォルダに配置</li>
+                    <li>既存のallRacesPrediction.jsonファイルを上書き</li>
+                    <li>フロントエンド（メインサイト）を再読み込みして変更を確認</li>
+                </ol>
+                <p style="color: #94a3b8; font-size: 0.8rem; margin-top: 8px;">
+                    ⚠️ レース名の変更は管理画面でのみ行い、フロントエンドに反映するには上記手順が必要です。
+                </p>
             </div>
         </div>
     </div>
@@ -622,6 +641,26 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             } else {
                 return `${raceNumber}R編集 (premium)`;
             }
+        }
+        
+        // デフォルトレース名生成関数
+        function getDefaultRaceName(raceNumber) {
+            const raceNames = {
+                1: '2歳新馬',
+                2: '3歳未勝利',
+                3: '3歳1勝クラス',
+                4: 'サラ系3歳以上',
+                5: '3歳以上1勝クラス',
+                6: 'サラ系3歳以上',
+                7: '3歳以上2勝クラス',
+                8: 'オープン',
+                9: '重賞',
+                10: '特別戦',
+                11: 'メインレース', // 11Rはメインレース
+                12: 'サラ系3歳以上'
+            };
+            
+            return raceNames[raceNumber] || 'サラ系3歳以上';
         }
         let parsedPredictionData = null;
 
@@ -846,7 +885,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 for (let i = 1; i <= 12; i++) {
                     sampleData.races.push({
                         raceNumber: `${i}R`,
-                        raceName: "サラ系3歳以上",
+                        raceName: getDefaultRaceName(i),
                         // race-config.jsから一元管理された設定を使用
                         tier: getRaceTier(i),
                         isMainRace: isMainRace(i),
@@ -1237,7 +1276,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             
             return {
                 raceNumber: raceNum + 'R',
-                raceName: raceData.raceName || `サラ系${raceNum <= 5 ? '3歳' : '3歳以上'}`,
+                raceName: raceData.raceName || getDefaultRaceName(raceNum),
                 tier: getRaceTier(raceNum),
                 isMainRace: false, // 後で設定
                 displayOrder: raceData.raceNumber,
@@ -1246,7 +1285,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     date: allRacesData.raceDate,
                     track: allRacesData.track,
                     raceNumber: (raceData.raceNumber || 1) + 'R',
-                    raceName: raceData.raceName || `サラ系${raceData.raceNumber <= 5 ? '3歳' : '3歳以上'}`,
+                    raceName: raceData.raceName || getDefaultRaceName(raceData.raceNumber || raceNum),
                     confidence: raceData.confidence.toFixed(1),
                     abilityIndex: (50 + Math.random() * 40).toFixed(1),
                     recommendation: raceData.confidence > 90 ? "A+" : 
@@ -2035,7 +2074,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showAlert('JSONファイルをダウンロードしました', 'success');
+            showAlert('JSONファイルをダウンロードしました。このファイルをsrc/data/allRacesPrediction.jsonに保存してください', 'success');
         }
 
         // ===== レース設定検証関数 =====
@@ -2086,6 +2125,342 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             
             console.log('✅ レース設定検証: 正常');
             return true;
+        }
+
+        // ===== 個別レース編集機能 =====
+        window.editRace = function(raceNumber) {
+            if (!allRacesData || !allRacesData.races) {
+                showAlert('先にデータを読み込んでください', 'error');
+                return;
+            }
+
+            const race = allRacesData.races.find(r => r.raceNumber === raceNumber + 'R');
+            if (!race) {
+                showAlert(`${raceNumber}Rのデータが見つかりません`, 'error');
+                return;
+            }
+
+            currentEditingRace = race;
+            
+            // 編集フォームに値を設定
+            document.getElementById('edit-race-name').value = race.raceName || '';
+            document.getElementById('edit-confidence').value = race.raceInfo?.confidence || '';
+            document.getElementById('edit-ability-index').value = race.raceInfo?.abilityIndex || '';
+            document.getElementById('edit-recommendation').value = race.raceInfo?.recommendation || 'A';
+            document.getElementById('edit-expected-return').value = race.raceInfo?.expectedReturn || '';
+            
+            // 馬情報設定
+            if (race.horses?.main) {
+                document.getElementById('edit-main-number').value = race.horses.main.number || '';
+                document.getElementById('edit-main-name').value = race.horses.main.name || '';
+                document.getElementById('edit-main-confidence').value = race.horses.main.confidence || '';
+            }
+            
+            if (race.horses?.sub) {
+                document.getElementById('edit-sub1-number').value = race.horses.sub.number || '';
+                document.getElementById('edit-sub1-name').value = race.horses.sub.name || '';
+                document.getElementById('edit-sub1-confidence').value = race.horses.sub.confidence || '';
+            }
+            
+            if (race.horses?.sub1) {
+                document.getElementById('edit-sub2-number').value = race.horses.sub1.number || '';
+                document.getElementById('edit-sub2-name').value = race.horses.sub1.name || '';
+                document.getElementById('edit-sub2-confidence').value = race.horses.sub1.confidence || '';
+            }
+            
+            // 編集セクションを表示
+            document.getElementById('race-edit-section').style.display = 'block';
+            document.getElementById('race-edit-title').textContent = `編集中: ${raceNumber}R ${race.raceName || ''}`;
+            
+            // 編集セクションまでスクロール
+            document.getElementById('race-edit-section').scrollIntoView({ behavior: 'smooth' });
+            
+            logAllRaces(`📝 ${raceNumber}R の編集を開始`);
+        };
+
+        window.saveRaceEdit = function() {
+            if (!currentEditingRace) {
+                showAlert('編集中のレースがありません', 'error');
+                return;
+            }
+
+            try {
+                // フォームから値を取得して更新
+                currentEditingRace.raceName = document.getElementById('edit-race-name').value || currentEditingRace.raceName;
+                
+                if (!currentEditingRace.raceInfo) {
+                    currentEditingRace.raceInfo = {};
+                }
+                
+                currentEditingRace.raceInfo.confidence = document.getElementById('edit-confidence').value || currentEditingRace.raceInfo.confidence;
+                currentEditingRace.raceInfo.abilityIndex = document.getElementById('edit-ability-index').value || currentEditingRace.raceInfo.abilityIndex;
+                currentEditingRace.raceInfo.recommendation = document.getElementById('edit-recommendation').value || currentEditingRace.raceInfo.recommendation;
+                currentEditingRace.raceInfo.expectedReturn = document.getElementById('edit-expected-return').value || currentEditingRace.raceInfo.expectedReturn;
+                
+                // レース名の更新をraceInfoのtitleとraceNameにも反映
+                currentEditingRace.raceInfo.raceName = currentEditingRace.raceName;
+                currentEditingRace.raceInfo.title = `${allRacesData.track.replace('競馬', '')}${currentEditingRace.raceNumber} ${currentEditingRace.raceName}`;
+                
+                // 馬情報更新
+                if (currentEditingRace.horses?.main) {
+                    const mainNumber = document.getElementById('edit-main-number').value;
+                    const mainName = document.getElementById('edit-main-name').value;
+                    const mainConf = document.getElementById('edit-main-confidence').value;
+                    
+                    if (mainNumber) currentEditingRace.horses.main.number = parseInt(mainNumber);
+                    if (mainName) currentEditingRace.horses.main.name = mainName;
+                    if (mainConf) currentEditingRace.horses.main.confidence = mainConf;
+                }
+                
+                if (currentEditingRace.horses?.sub) {
+                    const subNumber = document.getElementById('edit-sub1-number').value;
+                    const subName = document.getElementById('edit-sub1-name').value;
+                    const subConf = document.getElementById('edit-sub1-confidence').value;
+                    
+                    if (subNumber) currentEditingRace.horses.sub.number = parseInt(subNumber);
+                    if (subName) currentEditingRace.horses.sub.name = subName;
+                    if (subConf) currentEditingRace.horses.sub.confidence = subConf;
+                }
+                
+                if (currentEditingRace.horses?.sub1) {
+                    const sub2Number = document.getElementById('edit-sub2-number').value;
+                    const sub2Name = document.getElementById('edit-sub2-name').value;
+                    const sub2Conf = document.getElementById('edit-sub2-confidence').value;
+                    
+                    if (sub2Number) currentEditingRace.horses.sub1.number = parseInt(sub2Number);
+                    if (sub2Name) currentEditingRace.horses.sub1.name = sub2Name;
+                    if (sub2Conf) currentEditingRace.horses.sub1.confidence = sub2Conf;
+                }
+                
+                // lastUpdatedを更新
+                currentEditingRace.lastUpdated = new Date().toISOString();
+                
+                logAllRaces(`✅ ${currentEditingRace.raceNumber} の変更を保存しました`);
+                showAlert(`${currentEditingRace.raceNumber} ${currentEditingRace.raceName} の変更を保存しました`, 'success');
+                
+                // 編集セクションを非表示
+                document.getElementById('race-edit-section').style.display = 'none';
+                currentEditingRace = null;
+                
+                // レースボタンを更新
+                updateRaceStatus();
+                
+            } catch (error) {
+                handleError(error, 'レース保存');
+            }
+        };
+
+        window.cancelRaceEdit = function() {
+            document.getElementById('race-edit-section').style.display = 'none';
+            currentEditingRace = null;
+            logAllRaces('❌ レース編集をキャンセルしました');
+        };
+
+        window.resetRaceToDefault = function() {
+            if (!currentEditingRace) {
+                showAlert('編集中のレースがありません', 'error');
+                return;
+            }
+
+            const raceNumber = parseInt(currentEditingRace.raceNumber.replace('R', ''));
+            
+            // デフォルト値で上書き
+            currentEditingRace.raceName = getDefaultRaceName(raceNumber);
+            currentEditingRace.raceInfo.raceName = currentEditingRace.raceName;
+            currentEditingRace.raceInfo.title = `${allRacesData.track.replace('競馬', '')}${currentEditingRace.raceNumber} ${currentEditingRace.raceName}`;
+            
+            // フォームにデフォルト値を反映
+            document.getElementById('edit-race-name').value = currentEditingRace.raceName;
+            
+            logAllRaces(`🔄 ${currentEditingRace.raceNumber} をデフォルト値に戻しました`);
+            showAlert('レース情報をデフォルトに戻しました', 'warning');
+        };
+
+        // ===== 外部予想一括変換機能 =====
+        window.convertAllRaces = function() {
+            const inputText = document.getElementById('external_prediction').value.trim();
+            
+            if (!inputText) {
+                showAlert('外部予想データを入力してください', 'error');
+                return;
+            }
+
+            try {
+                showConversionProgress('🔄 外部予想データの解析を開始...');
+                
+                // 入力データを解析
+                const parsedData = parseAllRacesFromInput(inputText);
+                
+                if (!parsedData.races || parsedData.races.length === 0) {
+                    throw new Error('有効なレースデータが見つかりませんでした');
+                }
+
+                showConversionProgress(`📊 ${parsedData.races.length}レースのデータを検出しました`);
+                
+                // AI予想形式に変換
+                const allRacesData = convertToAIPredictionFormat(parsedData);
+                
+                // JSONを生成・表示
+                const jsonString = JSON.stringify(allRacesData, null, 2);
+                document.getElementById('json-output').value = jsonString;
+                document.getElementById('json-output-section').style.display = 'block';
+                
+                // グローバル変数にも保存
+                window.allRacesData = allRacesData;
+                
+                showConversionProgress(`✅ 完了！全${parsedData.races.length}レースのAI予想JSONを生成しました`);
+                showAlert(`外部予想を正常にAI予想形式に変換しました（${parsedData.races.length}レース）`, 'success');
+                
+                updateRaceStatus();
+                
+            } catch (error) {
+                console.error('変換エラー:', error);
+                showConversionProgress(`❌ エラー: ${error.message}`);
+                showAlert('変換中にエラーが発生しました: ' + error.message, 'error');
+            }
+        };
+
+        window.clearConversion = function() {
+            document.getElementById('external_prediction').value = '';
+            document.getElementById('conversion-progress').style.display = 'none';
+            document.getElementById('json-output-section').style.display = 'none';
+            showAlert('フォームをクリアしました', 'success');
+        };
+
+        function showConversionProgress(message) {
+            const progressDiv = document.getElementById('conversion-progress');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            if (progressDiv.style.display === 'none') {
+                progressDiv.style.display = 'block';
+                progressDiv.innerHTML = '';
+            }
+            
+            progressDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            progressDiv.scrollTop = progressDiv.scrollHeight;
+        }
+
+        // 外部予想データのパース（1〜12レース一括対応）
+        function parseAllRacesFromInput(inputText) {
+            const result = {
+                races: [],
+                raceDate: null,
+                track: null
+            };
+
+            // 行ごとに分割
+            const lines = inputText.split('\n').map(line => line.trim()).filter(line => line);
+            
+            let currentRace = null;
+            let globalDate = null;
+            let globalTrack = null;
+
+            for (const line of lines) {
+                // レース情報行の検出（例: "8/24川崎2R 1,200m（10頭）発走時刻15:20 サラ系3歳"）
+                const raceInfoMatch = line.match(/(\d+\/\d+)([^\d]*?)(\d+)R\s*([^\s]+)\s*[（(](\d+)頭[）)]\s*発走時刻(\d+:\d+)\s*(.+)/);
+                
+                if (raceInfoMatch) {
+                    // 前のレースを保存
+                    if (currentRace && currentRace.horses.length > 0) {
+                        result.races.push(currentRace);
+                    }
+                    
+                    // 新しいレースを開始
+                    const [, date, track, raceNum, distance, horseCount, startTime, raceName] = raceInfoMatch;
+                    
+                    if (!globalDate) globalDate = convertDateFormat(date);
+                    if (!globalTrack) globalTrack = extractTrackName(track);
+                    
+                    currentRace = {
+                        raceNumber: parseInt(raceNum),
+                        raceName: raceName.trim(),
+                        raceDate: globalDate,
+                        trackName: globalTrack,
+                        raceDistance: distance.replace(/[^\d]/g, ''),
+                        horseCount: parseInt(horseCount),
+                        startTime: startTime,
+                        horses: [],
+                        confidence: 75 + Math.random() * 20 // 基本の信頼度
+                    };
+                    
+                    showConversionProgress(`📝 ${raceNum}R ${raceName} を解析中...`);
+                    continue;
+                }
+
+                // 馬情報の検出（◎○▲△×）
+                const horseMatch = line.match(/^([◎○▲△×])(\d+)(.+)/);
+                
+                if (horseMatch && currentRace) {
+                    const [, mark, number, name] = horseMatch;
+                    currentRace.horses.push({
+                        mark: mark,
+                        number: parseInt(number),
+                        name: name.trim()
+                    });
+                }
+            }
+
+            // 最後のレースを保存
+            if (currentRace && currentRace.horses.length > 0) {
+                result.races.push(currentRace);
+            }
+
+            result.raceDate = globalDate || new Date().toISOString().split('T')[0];
+            result.track = globalTrack || '川崎競馬';
+
+            return result;
+        }
+
+        // 日付形式変換（8/24 → 2025-08-24）
+        function convertDateFormat(dateStr) {
+            const [month, day] = dateStr.split('/').map(num => parseInt(num));
+            const year = new Date().getFullYear();
+            
+            return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        }
+
+        // 競馬場名抽出
+        function extractTrackName(trackStr) {
+            const trackNames = {
+                '川崎': '川崎競馬',
+                '大井': '大井競馬', 
+                '船橋': '船橋競馬',
+                '浦和': '浦和競馬'
+            };
+            
+            for (const [key, value] of Object.entries(trackNames)) {
+                if (trackStr.includes(key)) {
+                    return value;
+                }
+            }
+            
+            return '川崎競馬'; // デフォルト
+        }
+
+        // AI予想形式への変換
+        function convertToAIPredictionFormat(parsedData) {
+            const result = {
+                raceDate: parsedData.raceDate,
+                track: parsedData.track,
+                totalRaces: parsedData.races.length,
+                races: parsedData.races.map(race => generateRaceData(race, parsedData)),
+                planAccess: {
+                    free: { races: ["11R"] },
+                    standard: { races: ["10R", "12R"] },
+                    premium: { races: ["1R", "2R", "3R", "4R", "5R", "6R", "7R", "8R", "9R"] }
+                },
+                lastUpdated: new Date().toISOString(),
+                dataVersion: "2.0",
+                generatedBy: "NANKANアナリティクス管理システム"
+            };
+
+            // メインレース設定
+            const mainRace = result.races.find(r => r.raceNumber === '11R');
+            if (mainRace) {
+                mainRace.isMainRace = true;
+            }
+
+            return result;
         }
 
         // ===== 初期化 =====
