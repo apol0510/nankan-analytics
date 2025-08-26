@@ -1,6 +1,7 @@
 // Stripe Webhook 処理
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import haihaiMail from '../../lib/haihai-mail.js';
 
 // 環境変数チェック
 const stripeSecretKey = import.meta.env.STRIPE_SECRET_KEY;
@@ -106,6 +107,13 @@ async function handleCheckoutCompleted(session) {
       planName = 'premium';
     }
 
+    // ユーザーのメールアドレスを取得
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('id', userId)
+      .single();
+
     // ユーザープロフィールを更新
     const { error } = await supabase
       .from('profiles')
@@ -122,6 +130,16 @@ async function handleCheckoutCompleted(session) {
 
     if (error) {
       throw error;
+    }
+
+    // 配配メールでグループを移動
+    if (profile?.email) {
+      try {
+        await haihaiMail.moveToGroup(profile.email, planName, 'free');
+        console.log(`配配メール: ${profile.email} を ${planName} グループに移動しました`);
+      } catch (mailError) {
+        console.warn('配配メールグループ移動エラー:', mailError);
+      }
     }
 
     console.log(`Subscription activated for user: ${userId}`);
@@ -188,6 +206,13 @@ async function handleSubscriptionUpdated(subscription) {
       subscriptionStatus = 'canceled';
     }
 
+    // 現在のプラン情報を取得
+    const { data: currentProfile } = await supabase
+      .from('profiles')
+      .select('email, subscription_plan')
+      .eq('stripe_subscription_id', subscription.id)
+      .single();
+
     const { error } = await supabase
       .from('profiles')
       .update({
@@ -202,6 +227,20 @@ async function handleSubscriptionUpdated(subscription) {
       throw error;
     }
 
+    // 配配メールでグループを移動（プランが変更された場合）
+    if (currentProfile?.email && currentProfile.subscription_plan !== planName) {
+      try {
+        if (subscriptionStatus === 'canceled') {
+          await haihaiMail.moveToGroup(currentProfile.email, 'free', currentProfile.subscription_plan);
+        } else {
+          await haihaiMail.moveToGroup(currentProfile.email, planName, currentProfile.subscription_plan);
+        }
+        console.log(`配配メール: ${currentProfile.email} を ${subscriptionStatus === 'canceled' ? 'free' : planName} グループに移動しました`);
+      } catch (mailError) {
+        console.warn('配配メールグループ移動エラー:', mailError);
+      }
+    }
+
     console.log(`Subscription updated for subscription: ${subscription.id}`);
   } catch (error) {
     console.error('Subscription update handling error:', error);
@@ -212,6 +251,13 @@ async function handleSubscriptionUpdated(subscription) {
 // サブスクリプション削除処理
 async function handleSubscriptionDeleted(subscription) {
   try {
+    // 現在のプラン情報を取得
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email, subscription_plan')
+      .eq('stripe_subscription_id', subscription.id)
+      .single();
+
     const { error } = await supabase
       .from('profiles')
       .update({
@@ -223,6 +269,16 @@ async function handleSubscriptionDeleted(subscription) {
 
     if (error) {
       throw error;
+    }
+
+    // 配配メールで無料グループに移動
+    if (profile?.email) {
+      try {
+        await haihaiMail.moveToGroup(profile.email, 'free', profile.subscription_plan);
+        console.log(`配配メール: ${profile.email} を free グループに移動しました`);
+      } catch (mailError) {
+        console.warn('配配メールグループ移動エラー:', mailError);
+      }
     }
 
     console.log(`Subscription canceled for subscription: ${subscription.id}`);

@@ -353,6 +353,33 @@
                 }
                 
                 if (data?.user) {
+                    // 配配メールにメンバーを追加
+                    try {
+                        const response = await fetch('/api/haihai-mail/add-member', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                plan: 'free',
+                                userData: {
+                                    display_name: displayName,
+                                    registration_source: 'signup_page',
+                                    user_id: data.user.id
+                                }
+                            })
+                        });
+
+                        if (response.ok) {
+                            console.log('配配メールにメンバーを追加しました:', email);
+                        } else {
+                            console.warn('配配メールへの追加に失敗しました:', await response.text());
+                        }
+                    } catch (mailError) {
+                        console.warn('配配メール連携エラー:', mailError);
+                    }
+
                     // 確認メールが必要かどうかをチェック
                     if (data.user.email_confirmed_at) {
                         // メールが既に確認済みの場合（稀なケース）
