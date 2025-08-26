@@ -231,7 +231,14 @@
         </div>
     </div>
 
+    <script src="/js/supabase.js"></script>
     <script type="module">
+        // Supabaseクライアントを使用
+        const { createClient } = supabase;
+        const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
+        const client = createClient(supabaseUrl, supabaseAnonKey);
+
         const form = document.getElementById('signup-form');
         const signupBtn = document.getElementById('signup-btn');
         const loading = document.getElementById('loading');
@@ -265,27 +272,31 @@
             clearMessages();
 
             try {
-                // サーバーAPIを呼び出し
-                const response = await fetch('/api/auth/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        displayName,
-                        email,
-                        password
-                    })
+                // Supabaseで直接ユーザー登録
+                const { data, error } = await client.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            display_name: displayName
+                        }
+                    }
                 });
 
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || '登録に失敗しました。');
+                if (error) {
+                    let errorMessage = '登録に失敗しました。';
+                    if (error.message.includes('User already registered')) {
+                        errorMessage = 'このメールアドレスは既に登録済みです。';
+                    } else if (error.message.includes('Password should be')) {
+                        errorMessage = 'パスワードは6文字以上で入力してください。';
+                    } else if (error.message.includes('Invalid email')) {
+                        errorMessage = '有効なメールアドレスを入力してください。';
+                    }
+                    throw new Error(errorMessage);
                 }
 
-                if (result.success) {
-                    showMessage(result.message, 'success');
+                if (data?.user) {
+                    showMessage('登録が完了しました！確認メールをお送りしましたので、メール内のリンクをクリックしてアカウントを有効化してください。', 'success');
                     
                     // フォームをクリア
                     form.reset();
@@ -294,6 +305,8 @@
                     setTimeout(() => {
                         window.location.href = '/auth/login?message=' + encodeURIComponent('メールアドレスの確認後、ログインしてください。');
                     }, 3000);
+                } else {
+                    throw new Error('予期しないエラーが発生しました。');
                 }
             } catch (error) {
                 console.error('Signup error:', error);
