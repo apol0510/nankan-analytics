@@ -285,22 +285,44 @@
                 });
 
                 if (error) {
+                    console.error('Signup error details:', error);
                     let errorMessage = '登録に失敗しました。';
-                    if (error.message.includes('User already registered') || error.message.includes('already been registered')) {
+                    
+                    // Supabaseのエラーメッセージパターンを幅広くキャッチ
+                    const errorStr = error.message?.toLowerCase() || '';
+                    
+                    if (errorStr.includes('already registered') || 
+                        errorStr.includes('already exists') ||
+                        errorStr.includes('duplicate') ||
+                        errorStr.includes('already been') ||
+                        error.code === '23505' || // PostgreSQL duplicate key error
+                        error.status === 400) { // 一般的な重複エラー
                         errorMessage = `
                             <strong>このメールアドレスは既に登録済みです</strong><br><br>
                             <strong>${email}</strong> は既にアカウントが作成されています。<br><br>
                             <a href="/auth/login" style="color: #3b82f6; text-decoration: underline;">ログインページ</a>からログインするか、
                             パスワードを忘れた場合は<a href="/auth/forgot-password" style="color: #3b82f6; text-decoration: underline;">こちら</a>からリセットしてください。
                         `;
-                    } else if (error.message.includes('Password should be')) {
+                    } else if (errorStr.includes('password')) {
                         errorMessage = 'パスワードは6文字以上で入力してください。';
-                    } else if (error.message.includes('Invalid email')) {
+                    } else if (errorStr.includes('invalid email')) {
                         errorMessage = '有効なメールアドレスを入力してください。';
                     }
                     throw new Error(errorMessage);
                 }
 
+                // Supabaseが既存ユーザーでも成功を返すことがあるので、追加チェック
+                if (data && !data.user) {
+                    // userがnullの場合は既に登録済み
+                    showMessage(`
+                        <strong>このメールアドレスは既に登録済みです</strong><br><br>
+                        <strong>${email}</strong> は既にアカウントが作成されています。<br><br>
+                        <a href="/auth/login" style="color: #3b82f6; text-decoration: underline;">ログインページ</a>からログインするか、
+                        パスワードを忘れた場合は<a href="/auth/forgot-password" style="color: #3b82f6; text-decoration: underline;">こちら</a>からリセットしてください。
+                    `, 'error');
+                    return;
+                }
+                
                 if (data?.user) {
                     // 確認メールが必要かどうかをチェック
                     if (data.user.email_confirmed_at) {
