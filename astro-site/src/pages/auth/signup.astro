@@ -284,6 +284,9 @@
                     }
                 });
 
+                // デバッグ: レスポンス内容を詳細に記録
+                console.log('Signup response:', { data, error });
+                
                 if (error) {
                     console.error('Signup error details:', error);
                     let errorMessage = '登録に失敗しました。';
@@ -311,16 +314,24 @@
                     throw new Error(errorMessage);
                 }
 
-                // Supabaseが既存ユーザーでも成功を返すことがあるので、追加チェック
-                if (data && !data.user) {
-                    // userがnullの場合は既に登録済み
-                    showMessage(`
-                        <strong>このメールアドレスは既に登録済みです</strong><br><br>
-                        <strong>${email}</strong> は既にアカウントが作成されています。<br><br>
-                        <a href="/auth/login" style="color: #3b82f6; text-decoration: underline;">ログインページ</a>からログインするか、
-                        パスワードを忘れた場合は<a href="/auth/forgot-password" style="color: #3b82f6; text-decoration: underline;">こちら</a>からリセットしてください。
-                    `, 'error');
-                    return;
+                // Supabaseは既存ユーザーでも成功を返すが、セッションやidentitiesがnullの場合がある
+                if (data) {
+                    // identitiesが空配列の場合は既に登録済み
+                    if (data.user && data.user.identities && data.user.identities.length === 0) {
+                        console.log('User already exists - identities is empty');
+                        showMessage(`
+                            <strong>このメールアドレスは既に登録済みです</strong><br><br>
+                            <strong>${email}</strong> は既にアカウントが作成されています。<br><br>
+                            <a href="/auth/login" style="color: #3b82f6; text-decoration: underline;">ログインページ</a>からログインするか、
+                            パスワードを忘れた場合は<a href="/auth/forgot-password" style="color: #3b82f6; text-decoration: underline;">こちら</a>からリセットしてください。
+                        `, 'error');
+                        return;
+                    }
+                    
+                    // sessionがnullでuserがある場合も既存ユーザーの可能性
+                    if (!data.session && data.user) {
+                        console.log('Possible existing user - session is null');
+                    }
                 }
                 
                 if (data?.user) {
