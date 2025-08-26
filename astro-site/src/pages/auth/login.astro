@@ -207,6 +207,13 @@
     </div>
 
     <script type="module">
+        // SupabaseをCDNから直接インポート
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+        
+        const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
+        const client = createClient(supabaseUrl, supabaseAnonKey);
+
         const form = document.getElementById('login-form');
         const loginBtn = document.getElementById('login-btn');
         const loading = document.getElementById('loading');
@@ -234,25 +241,25 @@
             clearMessages();
 
             try {
-                // サーバーAPIを呼び出し
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password
-                    })
+                // Supabaseで直接ログイン
+                const { data, error } = await client.auth.signInWithPassword({
+                    email,
+                    password
                 });
 
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'ログインに失敗しました。');
+                if (error) {
+                    let errorMessage = 'ログインに失敗しました。';
+                    if (error.message.includes('Invalid login credentials')) {
+                        errorMessage = 'メールアドレスまたはパスワードが正しくありません。';
+                    } else if (error.message.includes('Email not confirmed')) {
+                        errorMessage = 'メールアドレスの確認が完了していません。確認メールをご確認ください。';
+                    } else if (error.message.includes('Invalid email')) {
+                        errorMessage = '有効なメールアドレスを入力してください。';
+                    }
+                    throw new Error(errorMessage);
                 }
 
-                if (result.success) {
+                if (data?.user) {
                     showMessage('ログインしています...', 'success');
                     
                     // リダイレクト処理
@@ -260,6 +267,8 @@
                     setTimeout(() => {
                         window.location.href = redirectTo;
                     }, 1000);
+                } else {
+                    throw new Error('予期しないエラーが発生しました。');
                 }
             } catch (error) {
                 console.error('Login error:', error);
