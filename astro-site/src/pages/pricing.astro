@@ -366,7 +366,7 @@
 
     <script type="module">
         import { getStripe, createCheckoutSession, PRICING_PLANS } from '/src/lib/stripe.js';
-        import { auth } from '/src/lib/supabase.js';
+        import { auth } from '../lib/supabase-client.js';
 
         // 購読ボタンのイベントリスナー
         document.querySelectorAll('.subscribe-btn').forEach(btn => {

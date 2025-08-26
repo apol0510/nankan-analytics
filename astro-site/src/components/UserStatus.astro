@@ -185,7 +185,7 @@
 
 <script>
     import { getUserWithPlan, getPlanDisplayName, getPlanIcon } from '../lib/auth-utils.js';
-    import { supabase } from '../lib/supabase.js';
+    import { supabase } from '../lib/supabase-client.js';
 
     async function updateUserStatus() {
         const userInfo = document.getElementById('user-info');
