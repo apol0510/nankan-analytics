@@ -400,19 +400,19 @@
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量1:</label>
                     <input type="text" id="mainFeature1Label" value="安定性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="mainFeature1" class="slider" min="0" max="1" step="0.01" value="0.95" onchange="updateImportanceBars()">
-                    <span id="mainFeature1Value" style="min-width: 40px; font-size: 0.9rem;">0.95</span>
+                    <span id="mainFeature1Value" style="min-width: 40px; font-size: 0.9rem;">95%</span>
                 </div>
                 <div class="slider-container">
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量2:</label>
                     <input type="text" id="mainFeature2Label" value="能力上位性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="mainFeature2" class="slider" min="0" max="1" step="0.01" value="0.88" onchange="updateImportanceBars()">
-                    <span id="mainFeature2Value" style="min-width: 40px; font-size: 0.9rem;">0.88</span>
+                    <span id="mainFeature2Value" style="min-width: 40px; font-size: 0.9rem;">88%</span>
                 </div>
                 <div class="slider-container">
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量3:</label>
                     <input type="text" id="mainFeature3Label" value="展開利" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="mainFeature3" class="slider" min="0" max="1" step="0.01" value="0.82" onchange="updateImportanceBars()">
-                    <span id="mainFeature3Value" style="min-width: 40px; font-size: 0.9rem;">0.82</span>
+                    <span id="mainFeature3Value" style="min-width: 40px; font-size: 0.9rem;">82%</span>
                 </div>
             </div>
 
@@ -423,19 +423,19 @@
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量1:</label>
                     <input type="text" id="subFeature1Label" value="先行力" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="subFeature1" class="slider" min="0" max="1" step="0.01" value="0.96" onchange="updateImportanceBars()">
-                    <span id="subFeature1Value" style="min-width: 40px; font-size: 0.9rem;">0.96</span>
+                    <span id="subFeature1Value" style="min-width: 40px; font-size: 0.9rem;">96%</span>
                 </div>
                 <div class="slider-container">
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量2:</label>
                     <input type="text" id="subFeature2Label" value="スピード指数" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="subFeature2" class="slider" min="0" max="1" step="0.01" value="0.85" onchange="updateImportanceBars()">
-                    <span id="subFeature2Value" style="min-width: 40px; font-size: 0.9rem;">0.85</span>
+                    <span id="subFeature2Value" style="min-width: 40px; font-size: 0.9rem;">85%</span>
                 </div>
                 <div class="slider-container">
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量3:</label>
                     <input type="text" id="subFeature3Label" value="枠順優位" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="subFeature3" class="slider" min="0" max="1" step="0.01" value="0.79" onchange="updateImportanceBars()">
-                    <span id="subFeature3Value" style="min-width: 40px; font-size: 0.9rem;">0.79</span>
+                    <span id="subFeature3Value" style="min-width: 40px; font-size: 0.9rem;">79%</span>
                 </div>
             </div>
 
@@ -757,13 +757,13 @@
 
         // ===== 特徴量重要度バー編集機能 =====
         window.updateImportanceBars = function() {
-            // リアルタイム値更新
-            document.getElementById('mainFeature1Value').textContent = document.getElementById('mainFeature1').value;
-            document.getElementById('mainFeature2Value').textContent = document.getElementById('mainFeature2').value;
-            document.getElementById('mainFeature3Value').textContent = document.getElementById('mainFeature3').value;
-            document.getElementById('subFeature1Value').textContent = document.getElementById('subFeature1').value;
-            document.getElementById('subFeature2Value').textContent = document.getElementById('subFeature2').value;
-            document.getElementById('subFeature3Value').textContent = document.getElementById('subFeature3').value;
+            // リアルタイム値更新（パーセント表示）
+            document.getElementById('mainFeature1Value').textContent = Math.round(document.getElementById('mainFeature1').value * 100) + '%';
+            document.getElementById('mainFeature2Value').textContent = Math.round(document.getElementById('mainFeature2').value * 100) + '%';
+            document.getElementById('mainFeature3Value').textContent = Math.round(document.getElementById('mainFeature3').value * 100) + '%';
+            document.getElementById('subFeature1Value').textContent = Math.round(document.getElementById('subFeature1').value * 100) + '%';
+            document.getElementById('subFeature2Value').textContent = Math.round(document.getElementById('subFeature2').value * 100) + '%';
+            document.getElementById('subFeature3Value').textContent = Math.round(document.getElementById('subFeature3').value * 100) + '%';
         };
 
         window.applyImportanceToSelectedRace = function() {
