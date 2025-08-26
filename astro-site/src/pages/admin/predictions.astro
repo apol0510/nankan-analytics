@@ -272,6 +272,50 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             font-size: 12px;
             color: #94a3b8;
         }
+
+        /* エラーハンドリングアニメーション */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .alert {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .alert.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .alert.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .alert.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .alert.info {
+            border-left: 4px solid #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -584,7 +628,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         // データバリデーション関数（data-validator.jsの機能を利用）
         function validateAllRaces() {
             if (!allRacesData) {
-                showAlert('検証するデータがありません。先にデータを読み込んでください。', 'error');
+                handleError('検証するデータがありません。先にデータを読み込んでください。', 'データ検証');
                 return;
             }
             
@@ -594,7 +638,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             // 結果表示
             const alertBox = document.getElementById('alert');
             if (validation.valid) {
-                showAlert('✅ データ検証成功: すべてのデータが正常です', 'success');
+                showSuccess('データ検証成功: すべてのデータが正常です', 'データ検証');
             } else {
                 let message = '⚠️ データ検証で問題が見つかりました:\n\n';
                 
@@ -613,7 +657,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 if (confirm(message)) {
                     // 自動修正適用
                     allRacesData = validation.fixed || allRacesData;
-                    showAlert('データを自動修正しました', 'success');
+                    showSuccess('データを自動修正しました', 'データ検証');
                     
                     // JSONを再生成
                     const jsonOutput = document.getElementById('json-output');
@@ -704,15 +748,78 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         }
         
         // ===== ユーティリティ関数 =====
+        // ===== エラーハンドリング改善 =====
         function showAlert(message, type = 'success') {
             const alert = document.getElementById('alert');
-            alert.textContent = message;
-            alert.className = `alert ${type}`;
-            alert.style.display = 'block';
+            const typeConfig = {
+                success: { icon: '✅', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
+                error: { icon: '❌', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
+                warning: { icon: '⚠️', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.1)' },
+                info: { icon: '💡', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' }
+            };
             
+            const config = typeConfig[type] || typeConfig.info;
+            
+            alert.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">${config.icon}</span>
+                    <span>${message}</span>
+                </div>
+            `;
+            alert.className = `alert ${type}`;
+            alert.style.cssText = `
+                display: block;
+                background: ${config.bgColor};
+                color: ${config.color};
+                border: 1px solid ${config.color}33;
+                padding: 12px 16px;
+                border-radius: 8px;
+                margin: 12px 0;
+                backdrop-filter: blur(10px);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            // 自動消去
             setTimeout(() => {
-                alert.style.display = 'none';
+                if (alert.style.display !== 'none') {
+                    alert.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => alert.style.display = 'none', 300);
+                }
             }, 5000);
+        }
+        
+        // エラー処理の統一化
+        function handleError(error, context = '') {
+            console.error(`[${context}] エラー:`, error);
+            
+            let message = 'エラーが発生しました';
+            
+            if (typeof error === 'string') {
+                message = error;
+            } else if (error.message) {
+                // よくあるエラーをユーザーフレンドリーに変換
+                if (error.message.includes('fetch')) {
+                    message = 'サーバーに接続できません。ネットワーク接続を確認してください';
+                } else if (error.message.includes('JSON')) {
+                    message = 'データ形式に問題があります';
+                } else if (error.message.includes('timeout')) {
+                    message = '処理がタイムアウトしました。再試行してください';
+                } else {
+                    message = error.message;
+                }
+            }
+            
+            showAlert(`${context ? `[${context}] ` : ''}${message}`, 'error');
+        }
+        
+        // 成功メッセージの表示
+        function showSuccess(message, context = '') {
+            showAlert(`${context ? `[${context}] ` : ''}${message}`, 'success');
+        }
+        
+        // 警告メッセージの表示
+        function showWarning(message, context = '') {
+            showAlert(`${context ? `[${context}] ` : ''}${message}`, 'warning');
         }
 
         function logAllRaces(message) {
@@ -776,7 +883,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 
             } catch (error) {
                 logAllRaces(`❌ エラー: ${error.message}`);
-                showAlert(`データ読み込みエラー: ${error.message}`, 'error');
+                handleError(error, 'データ読み込み');
             }
         };
 
