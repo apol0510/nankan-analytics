@@ -296,15 +296,37 @@
                 }
 
                 if (data?.user) {
-                    showMessage('登録が完了しました！確認メールをお送りしましたので、メール内のリンクをクリックしてアカウントを有効化してください。', 'success');
-                    
-                    // フォームをクリア
-                    form.reset();
-                    
-                    // 3秒後にログインページへリダイレクト
-                    setTimeout(() => {
-                        window.location.href = '/auth/login?message=' + encodeURIComponent('メールアドレスの確認後、ログインしてください。');
-                    }, 3000);
+                    // 確認メールが必要かどうかをチェック
+                    if (data.user.email_confirmed_at) {
+                        // メールが既に確認済みの場合（稀なケース）
+                        showMessage('登録が完了しました！ログインページに移動します。', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/auth/login';
+                        }, 2000);
+                    } else {
+                        // メール確認が必要な場合（通常のケース）
+                        showMessage(`
+                            <strong>登録が完了しました！</strong><br><br>
+                            確認メールを <strong>${email}</strong> にお送りしました。<br>
+                            メール内のリンクをクリックして、アカウントを有効化してください。<br><br>
+                            <small>※ メールが届かない場合は、迷惑メールフォルダもご確認ください</small>
+                        `, 'success');
+                        
+                        // フォームをクリア
+                        form.reset();
+                        
+                        // 自動リダイレクトはしない
+                        // ユーザーが手動でログインページに移動できるようにボタンを表示
+                        setTimeout(() => {
+                            const loginButton = document.createElement('a');
+                            loginButton.href = '/auth/login';
+                            loginButton.textContent = 'ログインページへ';
+                            loginButton.className = 'btn';
+                            loginButton.style.marginTop = '20px';
+                            loginButton.style.display = 'block';
+                            messageContainer.appendChild(loginButton);
+                        }, 1000);
+                    }
                 } else {
                     throw new Error('予期しないエラーが発生しました。');
                 }
@@ -343,7 +365,7 @@
         function showMessage(message, type = 'error') {
             const messageDiv = document.createElement('div');
             messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
-            messageDiv.textContent = message;
+            messageDiv.innerHTML = message; // textContentからinnerHTMLに変更
             messageContainer.appendChild(messageDiv);
         }
 
