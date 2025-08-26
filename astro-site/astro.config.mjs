@@ -8,6 +8,7 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   site: 'https://nankan-analytics.keiba.link',
   base: '/',
+  output: 'server',
 
   // インテグレーション
   integrations: [

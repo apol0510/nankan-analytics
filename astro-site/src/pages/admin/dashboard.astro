@@ -1,0 +1,691 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="管理者ダッシュボード | NANKANアナリティクス" description="システム管理・統計・ユーザー管理">
+    <div class="admin-container">
+        <!-- 認証チェック -->
+        <div id="auth-loading" class="loading-section">
+            <div class="spinner"></div>
+            <p>認証情報を確認中...</p>
+        </div>
+
+        <div id="admin-content" class="hidden">
+            <!-- ヘッダー -->
+            <div class="admin-header">
+                <h1>🚀 管理者ダッシュボード</h1>
+                <p class="subtitle">システム運用・ユーザー管理・統計情報</p>
+            </div>
+
+            <!-- クイック統計 -->
+            <div class="stats-grid">
+                <div class="stat-card users">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-users">-</div>
+                        <div class="stat-label">総ユーザー数</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card revenue">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="monthly-revenue">¥-</div>
+                        <div class="stat-label">月間収益</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card predictions">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="hit-rate">-%</div>
+                        <div class="stat-label">的中率</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card emails">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="email-sent">-</div>
+                        <div class="stat-label">今月送信メール</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- メインコンテンツグリッド -->
+            <div class="admin-grid">
+                <!-- ユーザー管理セクション -->
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>👥 ユーザー管理</h2>
+                        <button class="refresh-btn" onclick="loadUserData()">🔄</button>
+                    </div>
+                    
+                    <div class="user-stats">
+                        <div class="plan-breakdown">
+                            <div class="plan-stat">
+                                <span class="plan-name">無料</span>
+                                <span class="plan-count" id="free-users">-</span>
+                            </div>
+                            <div class="plan-stat">
+                                <span class="plan-name">スタンダード</span>
+                                <span class="plan-count" id="standard-users">-</span>
+                            </div>
+                            <div class="plan-stat">
+                                <span class="plan-name">プレミアム</span>
+                                <span class="plan-count" id="premium-users">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-actions">
+                        <button class="action-btn" onclick="exportUsers()">
+                            📊 ユーザーデータエクスポート
+                        </button>
+                        <button class="action-btn" onclick="viewRecentUsers()">
+                            👤 最近の登録者を表示
+                        </button>
+                    </div>
+                </div>
+
+                <!-- メール配信管理 -->
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>📧 メール配信管理</h2>
+                    </div>
+                    
+                    <div class="email-controls">
+                        <div class="control-group">
+                            <label>配信対象</label>
+                            <select id="email-target" class="form-select">
+                                <option value="all">全ユーザー</option>
+                                <option value="free">無料会員</option>
+                                <option value="standard">スタンダード会員</option>
+                                <option value="premium">プレミアム会員</option>
+                            </select>
+                        </div>
+                        
+                        <div class="email-actions">
+                            <button class="action-btn primary" onclick="sendNewsletter()">
+                                📬 メルマガ即時配信
+                            </button>
+                            <button class="action-btn" onclick="previewNewsletter()">
+                                👁️ プレビュー
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="email-log" id="email-log">
+                        <div class="loading-small">配信履歴を読み込み中...</div>
+                    </div>
+                </div>
+
+                <!-- 予想データ管理 -->
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>🏇 予想データ管理</h2>
+                    </div>
+                    
+                    <div class="prediction-controls">
+                        <a href="/admin" class="action-btn">
+                            📝 予想データ入力
+                        </a>
+                        <a href="/admin/predictions" class="action-btn">
+                            📊 予想履歴管理
+                        </a>
+                        <button class="action-btn" onclick="generatePredictionReport()">
+                            📈 成績レポート生成
+                        </button>
+                    </div>
+                </div>
+
+                <!-- システム監視 -->
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>🔍 システム監視</h2>
+                    </div>
+                    
+                    <div class="system-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">サーバー状態</span>
+                            <span class="status-badge ok" id="server-status">正常</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">データベース</span>
+                            <span class="status-badge ok" id="db-status">接続OK</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Stripe</span>
+                            <span class="status-badge ok" id="stripe-status">正常</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">メール配信</span>
+                            <span class="status-badge ok" id="email-status">正常</span>
+                        </div>
+                    </div>
+                    
+                    <div class="system-actions">
+                        <button class="action-btn warning" onclick="clearCache()">
+                            🧹 キャッシュクリア
+                        </button>
+                        <button class="action-btn" onclick="runBackup()">
+                            💾 バックアップ実行
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 最新アクティビティ -->
+            <div class="activity-section">
+                <h2>📈 最新アクティビティ</h2>
+                <div class="activity-feed" id="activity-feed">
+                    <div class="loading-small">アクティビティを読み込み中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .admin-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .loading-section {
+        text-align: center;
+        padding: 80px 0;
+        color: #94a3b8;
+    }
+
+    .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(59, 130, 246, 0.2);
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 24px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .admin-header {
+        text-align: center;
+        margin-bottom: 48px;
+    }
+
+    .admin-header h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .subtitle {
+        font-size: 18px;
+        color: #94a3b8;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        margin-bottom: 48px;
+    }
+
+    .stat-card {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .stat-card.users { border-color: rgba(16, 185, 129, 0.3); }
+    .stat-card.revenue { border-color: rgba(245, 158, 11, 0.3); }
+    .stat-card.predictions { border-color: rgba(139, 92, 246, 0.3); }
+    .stat-card.emails { border-color: rgba(59, 130, 246, 0.3); }
+
+    .stat-icon {
+        font-size: 48px;
+        opacity: 0.8;
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: 700;
+        color: #f1f5f9;
+        line-height: 1;
+    }
+
+    .stat-label {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 24px;
+        margin-bottom: 48px;
+    }
+
+    .admin-section {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .section-header h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #f1f5f9;
+        margin: 0;
+    }
+
+    .refresh-btn {
+        background: transparent;
+        border: none;
+        color: #3b82f6;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .refresh-btn:hover {
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .plan-breakdown {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .plan-stat {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 8px;
+    }
+
+    .plan-name {
+        display: block;
+        color: #94a3b8;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .plan-count {
+        display: block;
+        color: #f1f5f9;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .user-actions, .email-actions, .prediction-controls, .system-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 10px 16px;
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
+
+    .action-btn:hover {
+        background: rgba(59, 130, 246, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .action-btn.primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+    }
+
+    .action-btn.warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 8px 12px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 6px;
+        color: #f1f5f9;
+        font-size: 14px;
+    }
+
+    .control-group {
+        margin-bottom: 16px;
+    }
+
+    .control-group label {
+        display: block;
+        color: #cbd5e1;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .system-stats {
+        margin-bottom: 20px;
+    }
+
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    .stat-item:last-child {
+        border-bottom: none;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-badge.ok {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+
+    .status-badge.warning {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+
+    .status-badge.error {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .activity-section {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 24px;
+    }
+
+    .activity-section h2 {
+        color: #f1f5f9;
+        margin-bottom: 20px;
+    }
+
+    .activity-feed {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        font-size: 20px;
+        opacity: 0.7;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-message {
+        color: #cbd5e1;
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .activity-time {
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .loading-small {
+        text-align: center;
+        color: #94a3b8;
+        padding: 20px 0;
+        font-size: 14px;
+    }
+
+    .email-log {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .admin-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .plan-breakdown {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
+
+<script>
+    import { supabase } from '../../lib/supabase.js';
+
+    let isAdmin = false;
+
+    // 管理者認証チェック
+    async function checkAdminAuth() {
+        const authLoading = document.getElementById('auth-loading');
+        const adminContent = document.getElementById('admin-content');
+
+        try {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            
+            if (error || !user) {
+                window.location.href = '/auth/login?redirect=' + encodeURIComponent('/admin/dashboard');
+                return;
+            }
+
+            // 管理者権限チェック（実際の実装では、profilesテーブルのrole確認）
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single();
+
+            if (profile?.role !== 'admin') {
+                alert('管理者権限が必要です');
+                window.location.href = '/';
+                return;
+            }
+
+            isAdmin = true;
+            authLoading.classList.add('hidden');
+            adminContent.classList.remove('hidden');
+            
+            // データ読み込み
+            await loadDashboardData();
+        } catch (error) {
+            console.error('Admin auth error:', error);
+            authLoading.innerHTML = '<p style="color: #ef4444;">認証エラーが発生しました</p>';
+        }
+    }
+
+    // ダッシュボードデータ読み込み
+    async function loadDashboardData() {
+        await Promise.all([
+            loadUserStats(),
+            loadRevenueData(),
+            loadEmailStats(),
+            loadSystemStatus(),
+            loadRecentActivity()
+        ]);
+    }
+
+    // ユーザー統計読み込み
+    async function loadUserStats() {
+        try {
+            const { data: profiles, error } = await supabase
+                .from('profiles')
+                .select('subscription_plan, subscription_status');
+
+            if (error) throw error;
+
+            const totalUsers = profiles.length;
+            const freeUsers = profiles.filter(p => !p.subscription_plan || p.subscription_plan === 'free').length;
+            const standardUsers = profiles.filter(p => p.subscription_plan === 'standard' && p.subscription_status === 'active').length;
+            const premiumUsers = profiles.filter(p => p.subscription_plan === 'premium' && p.subscription_status === 'active').length;
+
+            document.getElementById('total-users').textContent = totalUsers.toLocaleString();
+            document.getElementById('free-users').textContent = freeUsers;
+            document.getElementById('standard-users').textContent = standardUsers;
+            document.getElementById('premium-users').textContent = premiumUsers;
+        } catch (error) {
+            console.error('User stats error:', error);
+        }
+    }
+
+    // 収益データ読み込み（デモデータ）
+    async function loadRevenueData() {
+        // 実際の実装では、Stripeから売上データを取得
+        const standardUsers = parseInt(document.getElementById('standard-users').textContent) || 0;
+        const premiumUsers = parseInt(document.getElementById('premium-users').textContent) || 0;
+        
+        const monthlyRevenue = (standardUsers * 2980) + (premiumUsers * 5980);
+        document.getElementById('monthly-revenue').textContent = '¥' + monthlyRevenue.toLocaleString();
+    }
+
+    // 的中率データ読み込み（デモデータ）
+    function loadHitRateData() {
+        const hitRate = Math.floor(Math.random() * 10) + 85; // 85-95%
+        document.getElementById('hit-rate').textContent = hitRate + '%';
+    }
+
+    // メール統計読み込み（デモデータ）
+    async function loadEmailStats() {
+        // 実際の実装では、newsletter_logsから取得
+        const emailsSent = Math.floor(Math.random() * 1000) + 500;
+        document.getElementById('email-sent').textContent = emailsSent.toLocaleString();
+    }
+
+    // システムステータス確認
+    async function loadSystemStatus() {
+        try {
+            // データベース接続テスト
+            const { error: dbError } = await supabase.from('profiles').select('count', { count: 'exact', head: true });
+            document.getElementById('db-status').textContent = dbError ? 'エラー' : '接続OK';
+            document.getElementById('db-status').className = dbError ? 'status-badge error' : 'status-badge ok';
+
+            // その他のステータスはデモデータ
+            document.getElementById('server-status').textContent = '正常';
+            document.getElementById('stripe-status').textContent = '正常';
+            document.getElementById('email-status').textContent = '正常';
+        } catch (error) {
+            console.error('System status error:', error);
+        }
+    }
+
+    // 最新アクティビティ読み込み（デモデータ）
+    function loadRecentActivity() {
+        const activities = [
+            { icon: '👤', message: '新規ユーザー登録: user@example.com', time: '5分前' },
+            { icon: '💰', message: 'プレミアムプラン契約: premium@example.com', time: '15分前' },
+            { icon: '📧', message: 'メールマガジン配信完了: 1,234件', time: '30分前' },
+            { icon: '🏇', message: '予想データ更新: 川崎11R', time: '1時間前' },
+            { icon: '📊', message: 'バックアップ実行完了', time: '2時間前' }
+        ];
+
+        const activityHtml = activities.map(activity => `
+            <div class="activity-item">
+                <span class="activity-icon">${activity.icon}</span>
+                <div class="activity-content">
+                    <div class="activity-message">${activity.message}</div>
+                    <div class="activity-time">${activity.time}</div>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('activity-feed').innerHTML = activityHtml;
+    }
+
+    // 管理者アクション関数
+    window.loadUserData = loadUserStats;
+    window.exportUsers = () => alert('ユーザーデータエクスポート機能は準備中です');
+    window.viewRecentUsers = () => alert('最近の登録者表示機能は準備中です');
+    window.sendNewsletter = () => alert('メルマガ即時配信機能は準備中です');
+    window.previewNewsletter = () => alert('メルマガプレビュー機能は準備中です');
+    window.generatePredictionReport = () => alert('成績レポート生成機能は準備中です');
+    window.clearCache = () => alert('キャッシュクリア機能は準備中です');
+    window.runBackup = () => alert('バックアップ実行機能は準備中です');
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAdminAuth();
+        loadHitRateData();
+    });
+</script>

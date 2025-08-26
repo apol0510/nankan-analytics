@@ -11,6 +11,8 @@ const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2023-10-16',
 }) : null;
 
+export const prerender = false;
+
 export async function POST({ request }) {
   try {
     if (!stripe) {
@@ -22,7 +24,24 @@ export async function POST({ request }) {
       });
     }
 
-    const { priceId, userId, customerEmail } = await request.json();
+    // リクエストボディの安全な取得
+    let body;
+    try {
+      const text = await request.text();
+      if (!text.trim()) {
+        throw new Error('Empty request body');
+      }
+      body = JSON.parse(text);
+    } catch (parseError) {
+      return new Response(JSON.stringify({
+        error: 'リクエストボディが無効です'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const { priceId, userId, customerEmail } = body;
 
     // バリデーション
     if (!priceId || !userId || !customerEmail) {

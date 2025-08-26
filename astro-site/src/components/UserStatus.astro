@@ -1,0 +1,226 @@
+---
+// ユーザー認証状態とプラン表示コンポーネント
+---
+
+<div id="user-status-container" class="user-status">
+    <div id="user-info" class="user-info hidden">
+        <span class="plan-badge">
+            <span class="plan-icon"></span>
+            <span class="plan-name"></span>
+        </span>
+        <span class="user-email"></span>
+        <button id="logout-btn" class="logout-btn">ログアウト</button>
+    </div>
+    <div id="guest-info" class="guest-info">
+        <a href="/auth/login" class="login-btn">ログイン</a>
+        <a href="/auth/signup" class="signup-btn">新規登録</a>
+    </div>
+</div>
+
+<style>
+    .user-status {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .user-info.hidden {
+        display: none;
+    }
+
+    .plan-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .plan-badge.free {
+        background: rgba(148, 163, 184, 0.1);
+        border-color: rgba(148, 163, 184, 0.3);
+        color: #94a3b8;
+    }
+
+    .plan-badge.standard {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: #10b981;
+    }
+
+    .plan-badge.premium {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.3);
+        color: #f59e0b;
+    }
+
+    .plan-icon {
+        font-size: 14px;
+    }
+
+    .user-email {
+        color: #cbd5e1;
+        font-size: 14px;
+    }
+
+    .logout-btn {
+        padding: 6px 14px;
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+        background: rgba(148, 163, 184, 0.1);
+        color: #e2e8f0;
+    }
+
+    .guest-info {
+        display: flex;
+        gap: 10px;
+    }
+
+    .guest-info.hidden {
+        display: none;
+    }
+
+    .login-btn, .signup-btn {
+        padding: 6px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .login-btn {
+        color: #94a3b8;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .login-btn:hover {
+        background: rgba(148, 163, 184, 0.1);
+        color: #e2e8f0;
+    }
+
+    .signup-btn {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+    }
+
+    .signup-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 768px) {
+        .user-status {
+            display: none; /* UserStatusはデスクトップのみ表示 */
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .user-info {
+            gap: 8px;
+        }
+        
+        .user-email {
+            display: none; /* 極小画面では非表示 */
+        }
+        
+        .guest-info {
+            gap: 6px;
+        }
+        
+        .login-btn, .signup-btn {
+            padding: 4px 12px;
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .user-email {
+            display: none;
+        }
+        
+        .plan-name {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    import { getUserWithPlan, getPlanDisplayName, getPlanIcon } from '../lib/auth-utils.js';
+    import { supabase } from '../lib/supabase.js';
+
+    async function updateUserStatus() {
+        const userInfo = document.getElementById('user-info');
+        const guestInfo = document.getElementById('guest-info');
+        
+        try {
+            const { user, plan } = await getUserWithPlan();
+            
+            if (user) {
+                // ログイン済みの場合
+                userInfo.classList.remove('hidden');
+                guestInfo.classList.add('hidden');
+                
+                // プランバッジの更新
+                const planBadge = userInfo.querySelector('.plan-badge');
+                const planIcon = userInfo.querySelector('.plan-icon');
+                const planName = userInfo.querySelector('.plan-name');
+                const userEmail = userInfo.querySelector('.user-email');
+                
+                planBadge.className = `plan-badge ${plan}`;
+                planIcon.textContent = getPlanIcon(plan);
+                planName.textContent = getPlanDisplayName(plan);
+                userEmail.textContent = user.email;
+            } else {
+                // 未ログインの場合
+                userInfo.classList.add('hidden');
+                guestInfo.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Error updating user status:', error);
+        }
+    }
+
+    // ログアウト処理
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
+            
+            // トップページへリダイレクト
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('ログアウトに失敗しました');
+        }
+    });
+
+    // 初期表示とauth状態の監視
+    document.addEventListener('DOMContentLoaded', () => {
+        updateUserStatus();
+        
+        // 認証状態の変化を監視
+        supabase.auth.onAuthStateChange(() => {
+            updateUserStatus();
+        });
+    });
+</script>

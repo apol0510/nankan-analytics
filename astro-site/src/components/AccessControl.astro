@@ -1,0 +1,182 @@
+---
+// アクセス制御コンポーネント
+export interface Props {
+    requiredPlan: 'free' | 'standard' | 'premium';
+    showUpgrade?: boolean;
+}
+
+const { requiredPlan, showUpgrade = true } = Astro.props;
+---
+
+<div id="access-control" data-required-plan={requiredPlan}>
+    <!-- 読み込み中表示 -->
+    <div id="loading-state" class="access-loading">
+        <div class="spinner"></div>
+        <p>アクセス権限を確認中...</p>
+    </div>
+    
+    <!-- コンテンツ表示エリア -->
+    <div id="content-area" class="hidden">
+        <slot />
+    </div>
+    
+    <!-- アクセス拒否メッセージ -->
+    <div id="access-denied" class="access-denied hidden">
+        <div class="denied-icon">🔒</div>
+        <h2>このコンテンツをご覧いただくには会員登録が必要です</h2>
+        <p class="denied-message"></p>
+        
+        {showUpgrade && (
+            <div class="upgrade-options">
+                <a href="/pricing/" class="upgrade-btn primary">料金プランを見る</a>
+                <a href="/auth/login" class="upgrade-btn secondary">ログイン</a>
+            </div>
+        )}
+    </div>
+</div>
+
+<style>
+    .access-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: #94a3b8;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(59, 130, 246, 0.2);
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .access-denied {
+        text-align: center;
+        padding: 80px 20px;
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        margin: 40px auto;
+        max-width: 600px;
+    }
+
+    .denied-icon {
+        font-size: 64px;
+        margin-bottom: 24px;
+        filter: grayscale(0.5);
+        opacity: 0.8;
+    }
+
+    .access-denied h2 {
+        color: #f1f5f9;
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+    .denied-message {
+        color: #94a3b8;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 32px;
+    }
+
+    .upgrade-options {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .upgrade-btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-block;
+    }
+
+    .upgrade-btn.primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+    }
+
+    .upgrade-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .upgrade-btn.secondary {
+        background: transparent;
+        color: #3b82f6;
+        border: 2px solid rgba(59, 130, 246, 0.5);
+    }
+
+    .upgrade-btn.secondary:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: #3b82f6;
+    }
+</style>
+
+<script>
+    import { getUserWithPlan, canAccessContent, getPlanDisplayName } from '../lib/auth-utils.js';
+
+    async function checkAccess() {
+        const accessControl = document.getElementById('access-control');
+        const loadingState = document.getElementById('loading-state');
+        const contentArea = document.getElementById('content-area');
+        const accessDenied = document.getElementById('access-denied');
+        
+        const requiredPlan = accessControl.dataset.requiredPlan;
+        
+        try {
+            const { user, plan } = await getUserWithPlan();
+            
+            // アクセス権限チェック
+            if (canAccessContent(plan, requiredPlan)) {
+                // アクセス許可
+                loadingState.classList.add('hidden');
+                contentArea.classList.remove('hidden');
+            } else {
+                // アクセス拒否
+                loadingState.classList.add('hidden');
+                accessDenied.classList.remove('hidden');
+                
+                // メッセージをカスタマイズ
+                const deniedMessage = accessDenied.querySelector('.denied-message');
+                
+                if (!user) {
+                    deniedMessage.textContent = '無料予想は会員登録なしでもご覧いただけます。より詳細な予想をご希望の場合は、会員登録をお願いします。';
+                } else {
+                    const currentPlanName = getPlanDisplayName(plan);
+                    const requiredPlanName = getPlanDisplayName(requiredPlan);
+                    
+                    deniedMessage.textContent = `現在のプラン: ${currentPlanName}\nこのコンテンツには「${requiredPlanName}」以上のプランが必要です。`;
+                }
+            }
+        } catch (error) {
+            console.error('Access control error:', error);
+            loadingState.classList.add('hidden');
+            accessDenied.classList.remove('hidden');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAccess();
+    });
+</script>

@@ -1,137 +1,302 @@
-# NANKANアナリティクス - AI競馬予想プラットフォーム
+# NANKANアナリティクス 🏇⚡
 
 > AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム
 
-## 🚀 システム概要
+[![Astro](https://img.shields.io/badge/Astro-4.0-orange)](https://astro.build/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-green)](https://supabase.com/)
+[![Stripe](https://img.shields.io/badge/Stripe-Payment-blue)](https://stripe.com/)
+[![Netlify](https://img.shields.io/badge/Netlify-Deploy-00AD9F)](https://netlify.com/)
 
-### 技術スタック
-- **Frontend**: Astro v5.13.2 (Static Site Generator)
-- **Styling**: カスタムCSS with グラデーション・アニメーション
-- **Data**: JSON ベースのデータ管理
-- **Deploy**: GitHub Actions + Netlify
-- **CMS**: カスタム管理者パネル
+## 🚀 プロジェクト概要
 
-### 特徴
-- ⚡ **超高速**: Astro による最適化されたビルド
-- 📱 **レスポンシブ**: モバイルファースト設計
-- 🤖 **自動化**: GitHub Actions による CI/CD
-- 🛠️ **CMS**: 直感的な管理者パネル
-- 📊 **データ駆動**: JSON ベースの動的コンテンツ
+NANKANアナリティクスは、AI・機械学習技術を活用した革新的な競馬予想プラットフォームです。従来の感覚的な予想から科学的・統計的アプローチへの転換を支援し、データサイエンス手法を競馬予想に応用する方法論を提供します。
 
-## 📋 CMS自動化システム
+### ✨ 主な機能
 
-### 更新手順（3分で完了！）
-1. **管理者パネル**にアクセス: `http://localhost:4321/admin`
-2. **一括ペースト**でレース結果データを貼り付け
-3. **🔍 データ解析**ボタンをクリック
-4. **🚀 JSONデータ生成**ボタンをクリック
-5. **📋 JSONをコピー**して `src/data/raceResults.json` に貼り付け
-6. **Git push**で自動デプロイ完了
+- 🤖 **AI予想システム**: 機械学習モデルによる高精度な予想
+- 📊 **データ分析**: 統計的手法による科学的アプローチ  
+- 🎓 **教育コンテンツ**: Python・機械学習の実践的解説
+- 💳 **多段階会員制**: 無料・スタンダード・プレミアムプラン
+- 📧 **メール配信**: 最新予想・解説の自動配信
+- 🛡️ **セキュリティ**: 堅牢な認証・決済システム
 
-### サポートデータ形式
+## 🏗️ システム構成
+
 ```
-8/21川崎競馬予想結果
-１Ｒ 11-８馬単　　920円 的中！
-２Ｒ ２-１
-４Ｒ ５-７馬単　1.430円 的中！
+NANKANアナリティクス
+├── Frontend (Astro.js)
+│   ├── 静的サイト生成
+│   ├── コンポーネントベース開発  
+│   └── SEO最適化
+├── Backend (Supabase)
+│   ├── PostgreSQL データベース
+│   ├── 認証・ユーザー管理
+│   └── リアルタイム同期
+├── Payment (Stripe)
+│   ├── サブスクリプション管理
+│   ├── 決済処理
+│   └── カスタマーポータル
+├── Email (Resend)
+│   ├── 自動メール配信
+│   ├── ニュースレター
+│   └── 通知システム
+└── Deploy (Netlify)
+    ├── 自動デプロイ
+    ├── CDN配信
+    └── Edge Functions
 ```
 
-## 🔧 開発・運用
+## 🔧 技術スタック
 
-### ローカル開発
+### フロントエンド
+- **Astro 4.0**: 高速な静的サイトジェネレーター
+- **TypeScript**: 型安全な開発
+- **Tailwind CSS**: ユーティリティファーストCSS
+- **Alpine.js**: 軽量なJavaScriptフレームワーク
+
+### バックエンド
+- **Supabase**: Firebase代替のBaaS
+- **PostgreSQL**: リレーショナルデータベース
+- **Node.js**: サーバーサイドランタイム
+- **Astro API Routes**: サーバーレス関数
+
+### 決済・認証
+- **Stripe**: 決済処理・サブスクリプション
+- **Supabase Auth**: 認証システム
+- **JWT**: セッション管理
+
+### 外部サービス
+- **Resend**: メール配信
+- **Netlify**: ホスティング・デプロイ
+- **GitHub**: バージョン管理・CI/CD
+
+## 📦 セットアップ
+
+### 必要環境
+- Node.js 18+
+- npm 9+
+- Git
+
+### インストール
+
 ```bash
+# リポジトリクローン
+git clone https://github.com/your-username/nankan-analytics.git
+cd nankan-analytics
+
+# 依存関係インストール
+npm install
+
+# 環境変数設定
+cp .env.example .env
+# .envファイルを編集して各種APIキーを設定
+
 # 開発サーバー起動
 npm run dev
+```
 
-# ビルド
+### 環境変数設定
+
+`.env`ファイルに以下の設定が必要です：
+
+```bash
+# 基本設定
+PUBLIC_SITE_URL=https://nankan-analytics.keiba.link
+ADMIN_API_KEY=your-secure-admin-api-key
+
+# Supabase
+PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Stripe
+STRIPE_SECRET_KEY=sk_test_your-key
+PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your-key
+STRIPE_WEBHOOK_SECRET=whsec_your-secret
+
+# Email
+RESEND_API_KEY=re_your-api-key
+FROM_EMAIL=noreply@nankan-analytics.keiba.link
+```
+
+詳細は `.env.example` を参照してください。
+
+## 🚀 デプロイ
+
+### Netlifyデプロイ
+
+1. GitHubリポジトリをNetlifyに接続
+2. ビルド設定:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+3. 環境変数をNetlify管理画面で設定
+4. 自動デプロイが開始されます
+
+### 本番環境設定
+
+```bash
+# 本番ビルド
 npm run build
 
 # プレビュー
 npm run preview
 
 # 型チェック
-npm run typecheck
+npm run astro check
 ```
 
-### 自動デプロイ
-- **main ブランチプッシュ**: 自動ビルド・デプロイ
-- **raceResults.json 更新**: 成績サマリー自動生成
-- **手動デプロイ**: GitHub Actions から実行可能
+## 🛡️ セキュリティ
 
-### ディレクトリ構造
+### 認証フロー
+1. Supabaseによるメール認証
+2. JWTトークンによるセッション管理  
+3. 役割ベースのアクセス制御 (RBAC)
+
+### 決済セキュリティ
+1. Stripe Elements による安全な決済フォーム
+2. Webhook署名検証
+3. PCI DSS準拠
+
+### データ保護
+1. PostgreSQLのRow Level Security (RLS)
+2. 環境変数による秘匿情報管理
+3. HTTPS通信の強制
+
+## 📊 管理者機能
+
+### 管理画面アクセス
 ```
-astro-site/
-├── src/
-│   ├── pages/
-│   │   ├── index.astro          # メインページ
-│   │   └── admin.astro          # 管理者パネル
-│   ├── data/
-│   │   └── raceResults.json     # レース結果データ
-│   ├── layouts/
-│   │   └── BaseLayout.astro     # ベースレイアウト
-│   └── content/
-│       └── blog/                # ブログ記事
-├── .github/
-│   └── workflows/               # GitHub Actions
-└── package.json
+https://nankan-analytics.keiba.link/admin/dashboard
 ```
 
-## 📊 成果・効果
+### 主な機能
+- 📈 **ユーザー統計**: 会員数・収益分析
+- 💰 **収益管理**: サブスクリプション状況
+- 📧 **メール配信**: 一括配信・テンプレート管理
+- 🔍 **システム監視**: ヘルスチェック・エラー監視
+- 💾 **データバックアップ**: 自動バックアップ・復旧
 
-### 運用効率化
-- **更新時間**: 30分 → 3分（90%短縮）
-- **エラーリスク**: ほぼゼロ（自動計算・検証）
-- **操作性**: 直感的なUI、学習コスト無し
+### バックアップシステム
 
-### 技術的成果
-- **完全自動化**: データ解析からデプロイまで
-- **高精度**: ドット・カンマ区切り両対応の解析
-- **拡張性**: モジュラー設計で機能追加容易
+```bash
+# 日次バックアップ
+node scripts/auto-backup.js daily
 
-## 🎯 今後の展開
+# 週次バックアップ  
+node scripts/auto-backup.js weekly
 
-### Phase 4: 高度な自動化
-- [ ] **PWA化**: スマホアプリ風の体験
-- [ ] **Slack/Discord通知**: 的中時の自動通知
-- [ ] **Google Sheets連携**: ノーコード更新
-- [ ] **予想精度ダッシュボード**: グラフ化・分析
+# バックアップ履歴確認
+node scripts/auto-backup.js history
+```
 
-### コンテンツ展開
-- [ ] **機械学習記事**: 15本の技術記事制作
-- [ ] **メルマガ連携**: 自動配信システム
-- [ ] **SEO最適化**: 「競馬 AI」での検索上位
+### システム監視
 
-## 📈 目標・KPI
+```bash
+# ヘルスチェック実行
+node scripts/system-health.js
 
-### 3ヶ月目標
-- 月間オーガニック流入: 1,000セッション
-- メルマガ登録者: 200名
-- 主要キーワード20位以内: 10個
+# 結果をJSONで出力
+# health-check-results.json に保存されます
+```
 
-### 12ヶ月目標
-- 月間オーガニック流入: 15,000セッション
-- メルマガ登録者: 2,000名
-- 「競馬 AI」で1ページ目表示
+## 🔄 開発ワークフロー
+
+### ブランチ戦略
+```
+main        # 本番環境
+├── develop # 開発環境  
+└── feature/* # 機能開発
+```
+
+### コミット規約
+```
+feat: 新機能追加
+fix: バグ修正
+docs: ドキュメント更新
+style: コードフォーマット
+refactor: リファクタリング
+test: テスト追加・修正
+chore: その他の変更
+```
+
+## 📈 パフォーマンス
+
+### Lighthouse スコア目標
+- Performance: 95+
+- Accessibility: 100
+- Best Practices: 100
+- SEO: 100
+
+### 最適化施策
+- 🖼️ 画像最適化 (WebP, AVIF)
+- 📦 コード分割・遅延読み込み
+- 🗃️ Service Worker キャッシング
+- ⚡ Critical CSS インライン化
+
+## 🧪 テスト
+
+```bash
+# 単体テスト
+npm run test
+
+# E2Eテスト
+npm run test:e2e
+
+# 型チェック
+npm run type-check
+
+# リント
+npm run lint
+```
+
+## 📚 ドキュメント
+
+### API仕様
+- [API Documentation](docs/api.md)
+- [Database Schema](docs/database.md)
+- [Deployment Guide](docs/deployment.md)
+
+### 開発ガイド
+- [Component Guide](docs/components.md)  
+- [Style Guide](docs/styles.md)
+- [Testing Guide](docs/testing.md)
+
+## 🤝 コントリビューション
+
+### 開発参加手順
+1. Issues でタスク確認
+2. feature ブランチ作成
+3. 実装・テスト
+4. Pull Request 作成
+5. レビュー・マージ
+
+### コードスタイル
+- ESLint + Prettier による自動フォーマット
+- TypeScript strict mode
+- コンポーネント単位の開発
+
+## 📞 サポート
+
+### 連絡先
+- Email: support@nankan-analytics.keiba.link
+- GitHub Issues: [Issues](https://github.com/your-username/nankan-analytics/issues)
+
+### よくある質問
+詳細は [FAQ](docs/faq.md) を参照してください。
+
+## 📄 ライセンス
+
+このプロジェクトは [MIT License](LICENSE) の下で公開されています。
+
+## 🙏 謝辞
+
+- [Astro](https://astro.build/) - 優れた静的サイトジェネレーター
+- [Supabase](https://supabase.com/) - 使いやすいBaaS
+- [Stripe](https://stripe.com/) - 信頼できる決済システム
+- [Netlify](https://netlify.com/) - 高速なホスティング
 
 ---
 
-## 🛠️ 開発者向け情報
-
-### 環境要件
-- Node.js 18+
-- npm 9+
-- Git
-
-### 重要な設定
-- **GitHub Secrets**: `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`
-- **ブランチ戦略**: main ブランチ直接運用
-- **デプロイ**: Netlify 自動デプロイ
-
-### トラブルシューティング
-CLAUDE.md の「サーバー管理とトラブルシューティング」セクションを参照してください。
-
----
-
-**🤖 Generated with [Claude Code](https://claude.ai/code)**
-
-*NANKANアナリティクス - AIが導く、競馬予想の未来*
+> 🏇 **南関競馬をAIで攻略しよう！** ⚡
+> 
+> 機械学習の力で、従来の勘と経験を超える予想精度を目指します。

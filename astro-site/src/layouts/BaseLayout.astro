@@ -1,4 +1,6 @@
 ---
+import UserStatus from '../components/UserStatus.astro';
+
 export interface Props {
   title: string;
   description?: string;
@@ -122,10 +124,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
         }
 
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 30px;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-menu li.hidden {
+            display: none;
         }
 
         .nav-menu a {
@@ -133,26 +146,135 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
+            font-size: 0.95rem;
         }
 
         .nav-menu a:hover {
             color: var(--accent-color);
         }
 
-        .premium-button {
+        .pricing-link {
             background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%);
-            color: white;
-            padding: 8px 16px;
+            color: white !important;
+            padding: 6px 14px;
             border-radius: 6px;
-            text-decoration: none;
             font-weight: 600;
             font-size: 0.9rem;
             transition: transform 0.3s;
         }
 
-        .premium-button:hover {
+        .pricing-link:hover {
             transform: translateY(-2px);
         }
+
+        /* Mobile Menu */
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--body-text-color);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .mobile-menu-toggle:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        /* ハンバーガーアイコン */
+        .hamburger-lines {
+            width: 24px;
+            height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .hamburger-lines span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--body-text-color);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-menu {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        /* アクティブ時にメニュー表示 */
+        .mobile-nav-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            max-height: 600px;
+            padding: 20px 0;
+        }
+
+        .mobile-nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-nav-menu li {
+            margin: 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .mobile-nav-menu li:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav-menu a {
+            display: block;
+            padding: 15px 20px;
+            color: var(--body-text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .mobile-nav-menu a:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--accent-color);
+        }
+
+        .mobile-nav-menu .pricing-link {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%);
+            color: white !important;
+            margin: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .mobile-nav-menu .pricing-link:hover {
+            background: linear-gradient(135deg, #4f94ff 0%, #9d6cff 100%);
+        }
+
 
         /* Main Content */
         .main-content {
@@ -305,12 +427,38 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                 display: none;
             }
             
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
             .logo {
                 font-size: 20px;
             }
             
             .logo-icon {
                 font-size: 24px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .header-content {
+                padding: 12px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 18px;
+            }
+            
+            .logo-icon {
+                font-size: 20px;
+            }
+            
+            .container {
+                padding: 0 10px;
             }
         }
     </style>
@@ -324,18 +472,47 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                     <span class="logo-icon">🤖</span>
                     NANKANアナリティクス
                 </a>
-                <nav>
-                    <ul class="nav-menu">
-                        <li><a href="#predictions">本日の予想</a></li>
-                        <li><a href="#results">実績</a></li>
+                <nav class="nav-wrapper">
+                    <ul class="nav-menu" id="nav-menu">
+                        <li><a href="/">ホーム</a></li>
+                        <li><a href="/free-prediction/">無料予想</a></li>
+                        <li class="nav-standard hidden"><a href="/standard-predictions/">スタンダード</a></li>
+                        <li class="nav-premium hidden"><a href="/premium-predictions/">プレミアム</a></li>
                         <li><a href="/technology/">AI技術</a></li>
                         <li><a href="/blog/">ブログ</a></li>
-                        <li><a href="/free-prediction/">無料予想</a></li>
-                        <li><a href="/premium" class="premium-button">有料予想</a></li>
+                        <li><a href="/pricing/" class="pricing-link">料金プラン</a></li>
                     </ul>
+                    
+                    <UserStatus />
+                    
+                    <!-- Mobile Menu Toggle (Simple) -->
+                    <button class="mobile-menu-toggle" onclick="document.getElementById('mobile-nav-menu').classList.toggle('active')">
+                        <div class="hamburger-lines">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
                 </nav>
             </div>
         </div>
+        
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav-menu" id="mobile-nav-menu">
+            <div class="container">
+                <ul>
+                    <li><a href="/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">ホーム</a></li>
+                    <li><a href="/free-prediction/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">無料予想</a></li>
+                    <li class="mobile-nav-standard hidden"><a href="/standard-predictions/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">スタンダード</a></li>
+                    <li class="mobile-nav-premium hidden"><a href="/premium-predictions/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">プレミアム</a></li>
+                    <li><a href="/technology/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">AI技術</a></li>
+                    <li><a href="/blog/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">ブログ</a></li>
+                    <li><a href="/pricing/" class="pricing-link" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">料金プラン</a></li>
+                    <li><a href="/auth/login" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">ログイン</a></li>
+                    <li><a href="/dashboard" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')">ダッシュボード</a></li>
+                </ul>
+            </div>
+        </nav>
     </header>
 
     <!-- Main Content -->
@@ -414,6 +591,29 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </footer>
 
     <script>
+        // 認証機能は一時的に無効化（MIMEエラー回避）
+        // import { getUserWithPlan } from '../lib/auth-utils.js';
+        
+        // プラン別ナビゲーション表示（一時無効化）
+        // async function updateNavigation() {
+        //     const { user, plan } = await getUserWithPlan();
+        //     
+        //     const navStandard = document.querySelectorAll('.nav-standard');
+        //     const navPremium = document.querySelectorAll('.nav-premium');
+        //     
+        //     if (plan === 'standard' || plan === 'premium') {
+        //         navStandard.forEach(el => el.classList.remove('hidden'));
+        //     }
+        //     
+        //     if (plan === 'premium') {
+        //         navPremium.forEach(el => el.classList.remove('hidden'));
+        //     }
+        // }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // updateNavigation();
+        });
+        
         // スムーススクロール
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -451,43 +651,70 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                 observer.observe(el);
             });
 
-            // カウントアップアニメーション
+            // カウントアップアニメーション（改良版）
             function animateValue(element, start, end, duration, suffix = '') {
+                if (!element || !element.getAttribute) return;
+                
+                // 初期値をゼロに設定
+                element.innerHTML = '0' + suffix;
+                
                 let startTimestamp = null;
                 const step = (timestamp) => {
                     if (!startTimestamp) startTimestamp = timestamp;
                     const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                     
                     let current;
-                    if (end >= 1000) {
-                        current = Math.floor(progress * (end - start) + start);
-                        element.innerHTML = current.toLocaleString() + suffix;
-                    } else {
-                        current = (progress * (end - start) + start);
-                        element.innerHTML = current.toFixed(1) + suffix;
-                    }
-                    
-                    if (progress < 1) {
-                        window.requestAnimationFrame(step);
+                    try {
+                        if (end >= 1000) {
+                            current = Math.floor(progress * (end - start) + start);
+                            element.innerHTML = current.toLocaleString() + suffix;
+                        } else {
+                            current = (progress * (end - start) + start);
+                            element.innerHTML = current.toFixed(1) + suffix;
+                        }
+                        
+                        if (progress < 1) {
+                            window.requestAnimationFrame(step);
+                        }
+                    } catch (error) {
+                        console.error('カウントアップエラー:', error);
+                        element.innerHTML = end + suffix;
                     }
                 };
                 window.requestAnimationFrame(step);
             }
 
-            // Stats section のカウントアップを観察
+            // Stats section のカウントアップを観察（改良版）
             const statsObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
-                        const target = parseFloat(entry.target.getAttribute('data-target'));
-                        const suffix = entry.target.getAttribute('data-suffix') || '';
+                        const targetAttr = entry.target.getAttribute('data-target');
+                        const suffixAttr = entry.target.getAttribute('data-suffix') || '';
                         
-                        animateValue(entry.target, 0, target, 2000, suffix);
+                        if (!targetAttr) {
+                            console.warn('data-target属性が見つかりません:', entry.target);
+                            return;
+                        }
+                        
+                        const target = parseFloat(targetAttr);
+                        if (isNaN(target)) {
+                            console.warn('無効なdata-target値:', targetAttr);
+                            return;
+                        }
+                        
+                        console.log('カウントアップ開始:', target, suffixAttr);
+                        animateValue(entry.target, 0, target, 2000, suffixAttr);
                         entry.target.setAttribute('data-animated', 'true');
                     }
                 });
             }, { threshold: 0.3 });
 
-            document.querySelectorAll('.stats-number').forEach(el => {
+            // stats-number要素の監視開始
+            const statsElements = document.querySelectorAll('.stats-number');
+            console.log('stats-number要素を発見:', statsElements.length);
+            
+            statsElements.forEach(el => {
+                console.log('要素の監視開始:', el.getAttribute('data-target'));
                 statsObserver.observe(el);
             });
 

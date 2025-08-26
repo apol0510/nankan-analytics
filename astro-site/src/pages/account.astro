@@ -1,0 +1,624 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="アカウント管理 | NANKANアナリティクス" description="プラン変更、請求履歴、アカウント設定を管理">
+    <div class="account-container">
+        <!-- ページヘッダー -->
+        <div class="account-header">
+            <h1>アカウント管理</h1>
+            <p class="subtitle">プラン変更や請求情報の確認ができます</p>
+        </div>
+
+        <!-- 認証チェック -->
+        <div id="auth-loading" class="loading-section">
+            <div class="spinner"></div>
+            <p>認証情報を確認中...</p>
+        </div>
+
+        <div id="account-content" class="hidden">
+            <!-- サブスクリプション情報 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">👑</span>
+                    現在のプラン
+                </h2>
+                <div class="plan-info-card" id="plan-info">
+                    <div class="loading">プラン情報を読み込み中...</div>
+                </div>
+            </div>
+
+            <!-- プラン変更セクション -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">🔄</span>
+                    プラン変更
+                </h2>
+                <div class="plan-change-options">
+                    <div class="plan-option" data-plan="standard">
+                        <div class="plan-header">
+                            <span class="plan-icon">⭐</span>
+                            <div>
+                                <h3>スタンダード</h3>
+                                <p class="plan-price">¥2,980/月</p>
+                            </div>
+                        </div>
+                        <p class="plan-description">後半3レース予想・基本分析</p>
+                        <button class="change-plan-btn" data-plan="standard">
+                            このプランに変更
+                        </button>
+                    </div>
+                    
+                    <div class="plan-option" data-plan="premium">
+                        <div class="plan-header">
+                            <span class="plan-icon">👑</span>
+                            <div>
+                                <h3>プレミアム</h3>
+                                <p class="plan-price">¥5,980/月</p>
+                            </div>
+                        </div>
+                        <p class="plan-description">全12レース予想・詳細分析</p>
+                        <button class="change-plan-btn" data-plan="premium">
+                            このプランに変更
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 請求履歴 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">📄</span>
+                    請求履歴
+                </h2>
+                <div class="billing-history" id="billing-history">
+                    <div class="loading">請求履歴を読み込み中...</div>
+                </div>
+            </div>
+
+            <!-- サブスクリプション管理 -->
+            <div class="section danger-section">
+                <h2 class="section-title">
+                    <span class="section-icon">⚠️</span>
+                    サブスクリプション管理
+                </h2>
+                <div class="subscription-controls">
+                    <div class="control-item">
+                        <div>
+                            <h4>支払い方法の変更</h4>
+                            <p>クレジットカード情報を更新します</p>
+                        </div>
+                        <button class="control-btn secondary" id="update-payment">
+                            支払い方法を変更
+                        </button>
+                    </div>
+                    
+                    <div class="control-item">
+                        <div>
+                            <h4>サブスクリプションの停止</h4>
+                            <p class="warning-text">停止すると次回請求日からサービスが利用できなくなります</p>
+                        </div>
+                        <button class="control-btn danger" id="cancel-subscription">
+                            サブスクリプションを停止
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .account-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .account-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .account-header h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .subtitle {
+        font-size: 18px;
+        color: #94a3b8;
+    }
+
+    .loading-section {
+        text-align: center;
+        padding: 60px 0;
+        color: #94a3b8;
+    }
+
+    .loading-section .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(59, 130, 246, 0.2);
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .section {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 32px;
+        margin-bottom: 32px;
+    }
+
+    .section.danger-section {
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 24px;
+        font-weight: 600;
+        color: #f1f5f9;
+        margin-bottom: 24px;
+    }
+
+    .section-icon {
+        font-size: 28px;
+    }
+
+    .plan-info-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        padding: 24px;
+    }
+
+    .current-plan {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .current-plan-icon {
+        font-size: 48px;
+    }
+
+    .plan-details h3 {
+        font-size: 24px;
+        color: #f1f5f9;
+        margin-bottom: 8px;
+    }
+
+    .plan-status {
+        color: #10b981;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .plan-info {
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    .plan-change-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+    .plan-option {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        padding: 24px;
+        transition: all 0.3s;
+    }
+
+    .plan-option.current {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+    }
+
+    .plan-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 12px;
+    }
+
+    .plan-icon {
+        font-size: 32px;
+    }
+
+    .plan-option h3 {
+        font-size: 20px;
+        color: #f1f5f9;
+        margin-bottom: 4px;
+    }
+
+    .plan-price {
+        color: #3b82f6;
+        font-weight: 600;
+    }
+
+    .plan-description {
+        color: #94a3b8;
+        margin-bottom: 20px;
+    }
+
+    .change-plan-btn {
+        width: 100%;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .change-plan-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .change-plan-btn:disabled {
+        background: rgba(148, 163, 184, 0.3);
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .billing-history {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .invoice-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    .invoice-item:last-child {
+        border-bottom: none;
+    }
+
+    .invoice-info h4 {
+        color: #f1f5f9;
+        margin-bottom: 4px;
+    }
+
+    .invoice-date {
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    .invoice-amount {
+        font-size: 18px;
+        font-weight: 600;
+        color: #3b82f6;
+    }
+
+    .subscription-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .control-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 12px;
+    }
+
+    .control-item h4 {
+        color: #f1f5f9;
+        margin-bottom: 8px;
+    }
+
+    .control-item p {
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    .warning-text {
+        color: #fbbf24 !important;
+    }
+
+    .control-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .control-btn.secondary {
+        background: transparent;
+        color: #3b82f6;
+        border: 2px solid #3b82f6;
+    }
+
+    .control-btn.secondary:hover {
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .control-btn.danger {
+        background: #ef4444;
+        color: white;
+    }
+
+    .control-btn.danger:hover {
+        background: #dc2626;
+    }
+
+    .loading {
+        text-align: center;
+        color: #94a3b8;
+        padding: 40px 0;
+    }
+
+    @media (max-width: 768px) {
+        .control-item {
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+        }
+        
+        .control-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    import { getUserWithPlan, getPlanDisplayName, getPlanIcon } from '../lib/auth-utils.js';
+    import { auth, supabase } from '../lib/supabase.js';
+    import { PRICING_PLANS } from '../lib/stripe.js';
+
+    let currentUser = null;
+    let currentPlan = null;
+
+    // 認証チェックとデータ読み込み
+    async function initializePage() {
+        const authLoading = document.getElementById('auth-loading');
+        const accountContent = document.getElementById('account-content');
+
+        try {
+            const { user, plan } = await getUserWithPlan();
+            
+            if (!user) {
+                window.location.href = '/auth/login?redirect=' + encodeURIComponent('/account');
+                return;
+            }
+
+            currentUser = user;
+            currentPlan = plan;
+
+            authLoading.classList.add('hidden');
+            accountContent.classList.remove('hidden');
+
+            await Promise.all([
+                loadPlanInfo(),
+                loadBillingHistory(),
+                updatePlanOptions()
+            ]);
+        } catch (error) {
+            console.error('Page initialization error:', error);
+            authLoading.innerHTML = '<p style="color: #ef4444;">アカウント情報の読み込みに失敗しました</p>';
+        }
+    }
+
+    // プラン情報の表示
+    async function loadPlanInfo() {
+        const planInfoElement = document.getElementById('plan-info');
+        const planName = getPlanDisplayName(currentPlan);
+        const planIcon = getPlanIcon(currentPlan);
+
+        let statusText = 'アクティブ';
+        let statusColor = '#10b981';
+        
+        if (currentPlan === 'free') {
+            statusText = '無料プラン';
+            statusColor = '#94a3b8';
+        }
+
+        planInfoElement.innerHTML = `
+            <div class="current-plan">
+                <span class="current-plan-icon">${planIcon}</span>
+                <div class="plan-details">
+                    <h3>${planName}</h3>
+                    <p class="plan-status" style="color: ${statusColor};">${statusText}</p>
+                    <p class="plan-info">
+                        ${currentPlan === 'premium' ? '全12レース予想・詳細分析' : 
+                          currentPlan === 'standard' ? '後半3レース予想・基本分析' : 
+                          'メインレース（11R）予想のみ'}
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+
+    // プラン変更オプションの更新
+    function updatePlanOptions() {
+        const planOptions = document.querySelectorAll('.plan-option');
+        
+        planOptions.forEach(option => {
+            const planType = option.dataset.plan;
+            const button = option.querySelector('.change-plan-btn');
+            
+            if (planType === currentPlan) {
+                option.classList.add('current');
+                button.textContent = '現在のプラン';
+                button.disabled = true;
+            } else {
+                button.addEventListener('click', () => handlePlanChange(planType));
+            }
+        });
+    }
+
+    // 請求履歴の読み込み（デモデータ）
+    async function loadBillingHistory() {
+        const billingElement = document.getElementById('billing-history');
+        
+        // 実際の実装では、StripeのAPI経由で請求履歴を取得
+        setTimeout(() => {
+            if (currentPlan === 'free') {
+                billingElement.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 40px;">請求履歴はありません（無料プラン）</p>';
+            } else {
+                billingElement.innerHTML = `
+                    <div class="invoice-item">
+                        <div class="invoice-info">
+                            <h4>月額サブスクリプション</h4>
+                            <p class="invoice-date">2025年8月26日</p>
+                        </div>
+                        <div class="invoice-amount">¥${currentPlan === 'premium' ? '5,980' : '2,980'}</div>
+                    </div>
+                    <div class="invoice-item">
+                        <div class="invoice-info">
+                            <h4>月額サブスクリプション</h4>
+                            <p class="invoice-date">2025年7月26日</p>
+                        </div>
+                        <div class="invoice-amount">¥${currentPlan === 'premium' ? '5,980' : '2,980'}</div>
+                    </div>
+                `;
+            }
+        }, 1000);
+    }
+
+    // プラン変更処理
+    async function handlePlanChange(newPlan) {
+        if (!confirm(`${getPlanDisplayName(newPlan)}に変更しますか？`)) {
+            return;
+        }
+
+        try {
+            const planConfig = PRICING_PLANS[newPlan.toUpperCase()];
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    priceId: planConfig.stripePriceId,
+                    userId: currentUser.id,
+                    customerEmail: currentUser.email,
+                }),
+            });
+
+            const { id: sessionId, error } = await response.json();
+            
+            if (error) {
+                throw new Error(error);
+            }
+
+            // Stripe Checkoutにリダイレクト
+            const stripe = await window.Stripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+            await stripe.redirectToCheckout({ sessionId });
+        } catch (error) {
+            console.error('Plan change error:', error);
+            alert('プラン変更でエラーが発生しました: ' + error.message);
+        }
+    }
+
+    // カスタマーポータルへのリダイレクト
+    async function redirectToCustomerPortal() {
+        try {
+            // Stripeの顧客IDを取得（実際の実装では、プロフィールデータから取得）
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('stripe_customer_id')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (!profile?.stripe_customer_id) {
+                alert('顧客情報が見つかりません。サポートにお問い合わせください。');
+                return;
+            }
+
+            const response = await fetch('/api/create-customer-portal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customerId: profile.stripe_customer_id,
+                    returnUrl: window.location.href
+                }),
+            });
+
+            const { url, error } = await response.json();
+            
+            if (error) {
+                throw new Error(error);
+            }
+
+            // カスタマーポータルにリダイレクト
+            window.location.href = url;
+        } catch (error) {
+            console.error('Customer portal error:', error);
+            alert('カスタマーポータルの読み込みでエラーが発生しました: ' + error.message);
+        }
+    }
+
+    // サブスクリプション管理
+    document.getElementById('update-payment')?.addEventListener('click', () => {
+        if (currentPlan === 'free') {
+            window.location.href = '/pricing';
+        } else {
+            redirectToCustomerPortal();
+        }
+    });
+
+    document.getElementById('cancel-subscription')?.addEventListener('click', () => {
+        if (currentPlan === 'free') {
+            alert('現在無料プランをご利用中です。');
+            return;
+        }
+        
+        if (confirm('サブスクリプション管理画面に移動します。\nそちらで解約手続きを行えます。')) {
+            redirectToCustomerPortal();
+        }
+    });
+
+    // Stripeライブラリの読み込み
+    function loadStripe() {
+        if (!window.Stripe) {
+            const script = document.createElement('script');
+            script.src = 'https://js.stripe.com/v3/';
+            script.async = true;
+            document.head.appendChild(script);
+        }
+    }
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+        loadStripe();
+        initializePage();
+    });
+</script>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 
 // メインレース（11R）のデータを取得
@@ -10,7 +11,8 @@ console.log('race12R:', race12R);
 ---
 
 <BaseLayout title={`スタンダード予想 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬後半3レース（10R-12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
-    <div class="page-container">
+    <AccessControl requiredPlan="standard">
+        <div class="page-container">
         <!-- ヘッダーセクション -->
         <div class="header-section">
             <div class="ai-badge">
@@ -2156,4 +2158,5 @@ console.log('race12R:', race12R);
         }
     }
 </script>
+    </AccessControl>
 </BaseLayout>

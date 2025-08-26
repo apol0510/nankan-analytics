@@ -19,6 +19,8 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(
 // Webhook署名検証用のシークレット（Stripe管理画面から取得）
 const webhookSecret = import.meta.env.STRIPE_WEBHOOK_SECRET;
 
+export const prerender = false;
+
 export async function POST({ request }) {
   if (!stripe || !supabase) {
     return new Response('Configuration error', { status: 500 });
