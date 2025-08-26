@@ -315,7 +315,11 @@
                             <strong>登録が完了しました！</strong><br><br>
                             確認メールを <strong>${email}</strong> にお送りしました。<br>
                             メール内のリンクをクリックして、アカウントを有効化してください。<br><br>
-                            <small>※ メールが届かない場合は、迷惑メールフォルダもご確認ください</small>
+                            <strong>📧 メールが届かない場合：</strong><br>
+                            • 迷惑メールフォルダを確認<br>
+                            • プロモーション/ソーシャルタブを確認（Gmail）<br>
+                            • 数分待ってから下の「確認メール再送信」ボタンをお試しください<br><br>
+                            <small>※ 再送信は何度でも可能です</small>
                         `, 'success');
                         
                         // フォームをクリア
@@ -324,13 +328,61 @@
                         // 自動リダイレクトはしない
                         // ユーザーが手動でログインページに移動できるようにボタンを表示
                         setTimeout(() => {
+                            const buttonContainer = document.createElement('div');
+                            buttonContainer.style.marginTop = '20px';
+                            buttonContainer.style.display = 'flex';
+                            buttonContainer.style.gap = '10px';
+                            buttonContainer.style.flexWrap = 'wrap';
+                            
                             const loginButton = document.createElement('a');
                             loginButton.href = '/auth/login';
                             loginButton.textContent = 'ログインページへ';
                             loginButton.className = 'btn';
-                            loginButton.style.marginTop = '20px';
                             loginButton.style.display = 'block';
-                            messageContainer.appendChild(loginButton);
+                            loginButton.style.flex = '1';
+                            
+                            const resendButton = document.createElement('button');
+                            resendButton.textContent = '確認メール再送信';
+                            resendButton.className = 'btn';
+                            resendButton.style.background = 'rgba(16, 185, 129, 0.8)';
+                            resendButton.style.display = 'block';
+                            resendButton.style.flex = '1';
+                            resendButton.id = 'resend-confirmation-btn';
+                            
+                            buttonContainer.appendChild(loginButton);
+                            buttonContainer.appendChild(resendButton);
+                            messageContainer.appendChild(buttonContainer);
+                            
+                            // 再送信ボタンのイベントリスナー
+                            resendButton.addEventListener('click', async () => {
+                                try {
+                                    resendButton.disabled = true;
+                                    resendButton.textContent = '送信中...';
+                                    
+                                    const { error } = await client.auth.resend({
+                                        type: 'signup',
+                                        email: email
+                                    });
+                                    
+                                    if (error) throw error;
+                                    
+                                    resendButton.textContent = '送信完了！';
+                                    resendButton.style.background = 'rgba(16, 185, 129, 1)';
+                                    setTimeout(() => {
+                                        resendButton.textContent = '確認メール再送信';
+                                        resendButton.disabled = false;
+                                        resendButton.style.background = 'rgba(16, 185, 129, 0.8)';
+                                    }, 3000);
+                                } catch (error) {
+                                    resendButton.textContent = '再送信失敗';
+                                    resendButton.style.background = 'rgba(239, 68, 68, 0.8)';
+                                    setTimeout(() => {
+                                        resendButton.textContent = '確認メール再送信';
+                                        resendButton.disabled = false;
+                                        resendButton.style.background = 'rgba(16, 185, 129, 0.8)';
+                                    }, 3000);
+                                }
+                            });
                         }, 1000);
                     }
                 } else {
