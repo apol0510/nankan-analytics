@@ -1,0 +1,4432 @@
+{
+  "raceDate": "2025-08-26",
+  "track": "川崎競馬",
+  "totalRaces": 12,
+  "races": [
+    {
+      "raceNumber": "1R",
+      "raceName": "サラ系3歳",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 1,
+      "raceInfo": {
+        "title": "川崎1R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "1R",
+        "raceName": "サラ系3歳",
+        "confidence": "93.0",
+        "abilityIndex": "76.3",
+        "recommendation": "A+",
+        "expectedReturn": "93",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬1R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "88.5",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 89.4 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 89.5%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 57.1"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9287809401749517
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.8721674077974264
+            },
+            {
+              "label": "展開利",
+              "value": 0.8248390632391142
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "81.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 79.9"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 83.9%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.8712400008333407
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.8037397220560599
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7934003629182417
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "67.4",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 84.5"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "65.4",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 81.1"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "81.3",
+          "returnRate": "126",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "69.3",
+          "returnRate": "154",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "33.4",
+          "returnRate": "280",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア93.0）",
+        "keyIndicators": {
+          "accuracy": "79.5",
+          "similarRaces": "30件",
+          "confidenceInterval": "±5.8",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+23.5%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "64.4",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 57.7%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "77.0",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 54.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "55.8",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 80.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "68.9",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 59.0%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "89.0",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 63.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "60.5",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 52.6%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "62.4",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 56.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.462Z"
+    },
+    {
+      "raceNumber": "2R",
+      "raceName": "サラ系3歳",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 2,
+      "raceInfo": {
+        "title": "川崎2R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "2R",
+        "raceName": "サラ系3歳",
+        "confidence": "92.3",
+        "abilityIndex": "53.3",
+        "recommendation": "A+",
+        "expectedReturn": "123",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬2R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "93.7",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 87.2 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 90.7%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 58.4"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9549762413883802
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.889947762732136
+            },
+            {
+              "label": "展開利",
+              "value": 0.8422598509159329
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "75.2",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 81.1"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 88.2%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.9380929717499124
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.8397656372474156
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7665858111457039
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "73.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 85.3"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "61.7",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 83.8"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "80.9",
+          "returnRate": "117",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "69.8",
+          "returnRate": "159",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "44.3",
+          "returnRate": "393",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア92.3）",
+        "keyIndicators": {
+          "accuracy": "77.9",
+          "similarRaces": "36件",
+          "confidenceInterval": "±4.8",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+23.3%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "89.8",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 68.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "82.1",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 53.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "73.7",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 61.0%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "64.2",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 73.7%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "85.6",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 68.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "75.2",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 52.2%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "89.6",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 74.9%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.462Z"
+    },
+    {
+      "raceNumber": "3R",
+      "raceName": "サラ系3歳",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 3,
+      "raceInfo": {
+        "title": "川崎3R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "3R",
+        "raceName": "サラ系3歳",
+        "confidence": "92.1",
+        "abilityIndex": "84.3",
+        "recommendation": "A+",
+        "expectedReturn": "95",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬3R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "90.5",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 85.7 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 91.1%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 61.9"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9144865113747497
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.8807881545098815
+            },
+            {
+              "label": "展開利",
+              "value": 0.8340163422650527
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "76.8",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 82.3"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 95.0%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.8999013555553081
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.8062123678125193
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7188954561961792
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "74.9",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 87.8"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "64.7",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 87.5"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "75.8",
+          "returnRate": "139",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "55.9",
+          "returnRate": "173",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "42.3",
+          "returnRate": "371",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア92.1）",
+        "keyIndicators": {
+          "accuracy": "74.9",
+          "similarRaces": "28件",
+          "confidenceInterval": "±5.3",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+12.5%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "65.9",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 88.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "74.8",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 50.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "70.7",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 87.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "61.6",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 57.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "86.9",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 71.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "76.4",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 84.2%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "58.2",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 58.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.462Z"
+    },
+    {
+      "raceNumber": "4R",
+      "raceName": "サラ系3歳",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 4,
+      "raceInfo": {
+        "title": "川崎4R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "4R",
+        "raceName": "サラ系3歳",
+        "confidence": "94.7",
+        "abilityIndex": "67.6",
+        "recommendation": "A+",
+        "expectedReturn": "71",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬4R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "94.9",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 85.7 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 94.0%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 61.7"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9423605128994893
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.8950486253890793
+            },
+            {
+              "label": "展開利",
+              "value": 0.8200799899550437
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "82.6",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 84.3"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 95.7%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.9159350238304826
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.7680679134755612
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7737638262272062
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "67.9",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 83.2"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "60.2",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 81.9"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "74.6",
+          "returnRate": "116",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "61.0",
+          "returnRate": "170",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "31.8",
+          "returnRate": "273",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア94.7）",
+        "keyIndicators": {
+          "accuracy": "73.4",
+          "similarRaces": "28件",
+          "confidenceInterval": "±3.5",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+16.5%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "63.8",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 84.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "77.7",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 55.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "63.8",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 55.9%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "62.7",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 64.8%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "54.9",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 57.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "79.8",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 68.6%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "84.1",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 89.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.463Z"
+    },
+    {
+      "raceNumber": "5R",
+      "raceName": "サラ系3歳",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 5,
+      "raceInfo": {
+        "title": "川崎5R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "5R",
+        "raceName": "サラ系3歳",
+        "confidence": "92.8",
+        "abilityIndex": "75.3",
+        "recommendation": "A+",
+        "expectedReturn": "125",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬5R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "91.0",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 87.1 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 93.0%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 57.0"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9308278924772351
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.88303926677307
+            },
+            {
+              "label": "展開利",
+              "value": 0.84010900389395
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "81.6",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 80.1"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 89.8%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.9205328905428464
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.7823243664222703
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7556683231528597
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "74.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 93.9"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "66.6",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 78.8"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "83.9",
+          "returnRate": "125",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "62.8",
+          "returnRate": "141",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "37.6",
+          "returnRate": "299",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア92.8）",
+        "keyIndicators": {
+          "accuracy": "70.4",
+          "similarRaces": "22件",
+          "confidenceInterval": "±3.4",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+7.1%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "74.9",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 84.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "75.1",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 54.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "52.9",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 59.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "57.9",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 70.8%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "57.7",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 53.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "58.5",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 59.1%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "53.3",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 82.8%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.463Z"
+    },
+    {
+      "raceNumber": "6R",
+      "raceName": "サラ系3歳以上",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 6,
+      "raceInfo": {
+        "title": "川崎6R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "6R",
+        "raceName": "サラ系3歳以上",
+        "confidence": "93.0",
+        "abilityIndex": "73.1",
+        "recommendation": "A+",
+        "expectedReturn": "90",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬6R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "87.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 93.5 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 89.8%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 56.3"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9113133828303464
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.8558859069869885
+            },
+            {
+              "label": "展開利",
+              "value": 0.837629268630369
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "77.7",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 78.6"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 85.8%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.8960825730134612
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.8014351095421969
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7123789180952267
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "65.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 81.1"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "61.4",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 88.6"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "79.4",
+          "returnRate": "136",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "66.4",
+          "returnRate": "170",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "29.2",
+          "returnRate": "303",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア93.0）",
+        "keyIndicators": {
+          "accuracy": "89.7",
+          "similarRaces": "16件",
+          "confidenceInterval": "±3.2",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+8.8%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "83.7",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 66.7%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "63.4",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 58.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "80.4",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 72.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "81.6",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 69.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "63.0",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 74.7%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "78.9",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 71.6%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "62.9",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 58.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.463Z"
+    },
+    {
+      "raceNumber": "7R",
+      "raceName": "サラ系3歳以上",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 7,
+      "raceInfo": {
+        "title": "川崎7R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "7R",
+        "raceName": "サラ系3歳以上",
+        "confidence": "91.6",
+        "abilityIndex": "79.8",
+        "recommendation": "A+",
+        "expectedReturn": "98",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬7R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "90.8",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 91.1 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 90.3%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 62.9"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9572702815989047
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.878072101098743
+            },
+            {
+              "label": "展開利",
+              "value": 0.8016623427550054
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "75.5",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 83.5"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 92.5%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.9338417141482769
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.8259381729288285
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7808945877396238
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "70.4",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 94.7"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "69.8",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 77.3"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "73.5",
+          "returnRate": "123",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "61.1",
+          "returnRate": "151",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "27.4",
+          "returnRate": "412",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア91.6）",
+        "keyIndicators": {
+          "accuracy": "83.7",
+          "similarRaces": "22件",
+          "confidenceInterval": "±6.0",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+12.4%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "58.2",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 52.7%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "85.8",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 75.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "72.9",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 57.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "68.6",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 74.8%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "59.8",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 65.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "53.9",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 84.9%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "82.4",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 50.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.464Z"
+    },
+    {
+      "raceNumber": "8R",
+      "raceName": "サラ系3歳以上",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 8,
+      "raceInfo": {
+        "title": "川崎8R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "8R",
+        "raceName": "サラ系3歳以上",
+        "confidence": "93.1",
+        "abilityIndex": "59.6",
+        "recommendation": "A+",
+        "expectedReturn": "84",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬8R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "92.9",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 92.2 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 95.9%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 64.6"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9026812477418346
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.8517859317120461
+            },
+            {
+              "label": "展開利",
+              "value": 0.8167689445475441
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "76.6",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 76.0"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 95.7%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.919015732568222
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.7801510581755932
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7589654018844191
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "68.8",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 85.3"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "63.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 89.9"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "84.4",
+          "returnRate": "129",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "59.4",
+          "returnRate": "146",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "33.7",
+          "returnRate": "317",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア93.1）",
+        "keyIndicators": {
+          "accuracy": "73.0",
+          "similarRaces": "26件",
+          "confidenceInterval": "±7.9",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+16.9%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "67.9",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 68.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "70.1",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 77.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "71.6",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 53.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "85.6",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 54.8%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "89.7",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 82.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "86.7",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 65.4%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "67.4",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 67.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.464Z"
+    },
+    {
+      "raceNumber": "9R",
+      "raceName": "サラ系3歳以上",
+      "tier": "premium",
+      "isMainRace": false,
+      "displayOrder": 9,
+      "raceInfo": {
+        "title": "川崎9R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "9R",
+        "raceName": "サラ系3歳以上",
+        "confidence": "93.5",
+        "abilityIndex": "51.2",
+        "recommendation": "A+",
+        "expectedReturn": "112",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬9R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "88.2",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 93.2 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 97.3%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 63.8"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9764943311768873
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.8756307628403093
+            },
+            {
+              "label": "展開利",
+              "value": 0.842701808159065
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "84.5",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 82.8"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 93.9%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.9087019038912814
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.7894320872033365
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7741234816358418
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "73.0",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 88.1"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "66.1",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 75.7"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "74.3",
+          "returnRate": "121",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "69.1",
+          "returnRate": "152",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "27.1",
+          "returnRate": "449",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア93.5）",
+        "keyIndicators": {
+          "accuracy": "79.0",
+          "similarRaces": "35件",
+          "confidenceInterval": "±6.3",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+28.8%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "62.3",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 66.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "84.0",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 62.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "87.6",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 76.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "86.6",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 72.6%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "78.5",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 68.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "83.6",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 53.0%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "86.3",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 73.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.464Z"
+    },
+    {
+      "raceNumber": "10R",
+      "raceName": "サラ系3歳以上",
+      "tier": "standard",
+      "isMainRace": false,
+      "displayOrder": 10,
+      "raceInfo": {
+        "title": "川崎10R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "10R",
+        "raceName": "サラ系3歳以上",
+        "confidence": "89.1",
+        "abilityIndex": "69.0",
+        "recommendation": "A",
+        "expectedReturn": "126",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬10R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "93.0",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 86.3 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 96.3%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 60.5"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9697551298688964
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.8946745954458498
+            },
+            {
+              "label": "展開利",
+              "value": 0.7974365849371965
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "79.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 76.0"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 82.9%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.874397148594201
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.7628355392170904
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7678217136855211
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "74.2",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 81.6"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "61.5",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 78.4"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "71.6",
+          "returnRate": "137",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "69.0",
+          "returnRate": "175",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "29.6",
+          "returnRate": "280",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア89.1）",
+        "keyIndicators": {
+          "accuracy": "75.0",
+          "similarRaces": "15件",
+          "confidenceInterval": "±3.9",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+12.2%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "57.7",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 79.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "80.9",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 61.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "66.4",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 83.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "60.4",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 79.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "81.3",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 86.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "54.8",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 89.2%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "74.3",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 59.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.465Z"
+    },
+    {
+      "raceNumber": "11R",
+      "raceName": "サラ系3歳以上",
+      "tier": "free",
+      "isMainRace": true,
+      "displayOrder": 11,
+      "raceInfo": {
+        "title": "川崎11R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "11R",
+        "raceName": "サラ系3歳以上",
+        "confidence": "93.2",
+        "abilityIndex": "57.8",
+        "recommendation": "A+",
+        "expectedReturn": "74",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬11R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "89.0",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 90.8 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 89.9%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 61.6"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9043733365611749
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.9087595566621892
+            },
+            {
+              "label": "展開利",
+              "value": 0.7615000924345825
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "84.1",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 84.4"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 91.5%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.9049184068027829
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.7752974442001677
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7687081860235164
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "71.4",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 85.1"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "63.5",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 75.4"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "79.5",
+          "returnRate": "114",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "56.8",
+          "returnRate": "178",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "36.5",
+          "returnRate": "339",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア93.2）",
+        "keyIndicators": {
+          "accuracy": "74.9",
+          "similarRaces": "36件",
+          "confidenceInterval": "±5.0",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+9.8%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "84.5",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 57.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "63.4",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 81.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "67.8",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 65.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "57.5",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 88.8%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "81.3",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 86.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "82.0",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 66.4%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "82.2",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 88.4%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.465Z"
+    },
+    {
+      "raceNumber": "12R",
+      "raceName": "サラ系3歳以上",
+      "tier": "standard",
+      "isMainRace": false,
+      "displayOrder": 12,
+      "raceInfo": {
+        "title": "川崎12R サラ系",
+        "date": "2025-08-26",
+        "track": "川崎競馬",
+        "raceNumber": "12R",
+        "raceName": "サラ系3歳以上",
+        "confidence": "91.3",
+        "abilityIndex": "71.4",
+        "recommendation": "A+",
+        "expectedReturn": "84",
+        "distance": "1400m",
+        "horseCount": 11,
+        "startTime": "14:45",
+        "raceCondition": "",
+        "raceDetails": "川崎競馬12R 1400m （11頭） 発走時刻14:45 サラ系 "
+      },
+      "horses": {
+        "main": {
+          "number": 8,
+          "name": "キチョウ",
+          "type": "本命",
+          "confidence": "86.7",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "能力指数: 92.7 (1位)"
+            },
+            {
+              "icon": "★",
+              "text": "安定性スコア: 90.0%"
+            },
+            {
+              "icon": "★",
+              "text": "展開適性: S評価"
+            },
+            {
+              "icon": "★",
+              "text": "過去5走偏差値: 63.8"
+            }
+          ],
+          "importance": [
+            {
+              "label": "安定性",
+              "value": 0.9414906056924289
+            },
+            {
+              "label": "能力上位性",
+              "value": 0.9236614852088229
+            },
+            {
+              "label": "展開利",
+              "value": 0.7874612115594148
+            }
+          ]
+        },
+        "sub": {
+          "number": 6,
+          "name": "マイボンド",
+          "type": "対抗",
+          "confidence": "80.3",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "スピード指数: 81.1"
+            },
+            {
+              "icon": "★",
+              "text": "先行力: 83.1%"
+            },
+            {
+              "icon": "★",
+              "text": "枠順優位性: A級"
+            },
+            {
+              "icon": "★",
+              "text": "持続力評価: B+"
+            }
+          ],
+          "importance": [
+            {
+              "label": "先行力",
+              "value": 0.8925953017208929
+            },
+            {
+              "label": "スピード指数",
+              "value": 0.7530193980914951
+            },
+            {
+              "label": "枠順優位",
+              "value": 0.7266542933207505
+            }
+          ]
+        },
+        "sub1": {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "type": "単穴",
+          "confidence": "74.4",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 92.4"
+            },
+            {
+              "icon": "★",
+              "text": "ムラ係数: 高変動"
+            },
+            {
+              "icon": "★",
+              "text": "斤量優位: +1kg"
+            },
+            {
+              "icon": "★",
+              "text": "展開次第: 要注意"
+            }
+          ]
+        },
+        "sub2": {
+          "number": 7,
+          "name": "カルカンサン",
+          "type": "単穴2",
+          "confidence": "68.0",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "爆発力指数: 87.2"
+            },
+            {
+              "icon": "★",
+              "text": "穴馬適性: B+"
+            },
+            {
+              "icon": "★",
+              "text": "変動率: 高"
+            },
+            {
+              "icon": "★",
+              "text": "期待値: 中"
+            }
+          ]
+        }
+      },
+      "strategies": {
+        "safe": {
+          "title": "戦略A: 高的中率型",
+          "recommendation": 4,
+          "hitRate": "83.2",
+          "returnRate": "140",
+          "riskLevel": "low",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "馬連",
+              "horses": "8 - 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8-6 - 2,7,3",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "3-6倍",
+          "payoutType": "堅実決着想定"
+        },
+        "balance": {
+          "title": "戦略B: バランス型",
+          "recommendation": 3,
+          "hitRate": "68.7",
+          "returnRate": "157",
+          "riskLevel": "medium",
+          "bets": [
+            {
+              "type": "馬単",
+              "horses": "8 → 6,2,7",
+              "points": "3点"
+            },
+            {
+              "type": "3連複",
+              "horses": "8,6-2,7,3,10",
+              "points": "10点"
+            },
+            {
+              "type": "ワイド",
+              "horses": "8-6,2,7",
+              "points": "3点"
+            }
+          ],
+          "expectedPayout": "6-12倍",
+          "payoutType": "中穴配当想定"
+        },
+        "aggressive": {
+          "title": "戦略C: 高配当追求型",
+          "recommendation": 2,
+          "hitRate": "41.5",
+          "returnRate": "387",
+          "riskLevel": "high",
+          "bets": [
+            {
+              "type": "3連単",
+              "horses": "9→8→6,2,7,3,10",
+              "points": "4点"
+            },
+            {
+              "type": "馬単",
+              "horses": "9→8,6",
+              "points": "2点"
+            },
+            {
+              "type": "3連複",
+              "horses": "9-8-2,7,3,10",
+              "points": "6点"
+            }
+          ],
+          "expectedPayout": "20倍以上",
+          "payoutType": "大穴・万馬券狙い"
+        }
+      },
+      "analysis": {
+        "raceExpected": "XGBoostモデル: ◎8キチョウの安定性を評価（スコア91.3）",
+        "keyIndicators": {
+          "accuracy": "70.9",
+          "similarRaces": "27件",
+          "confidenceInterval": "±3.8",
+          "recommendedInvestment": "資金の2-4%"
+        }
+      },
+      "preview": {
+        "summary": "推奨投資戦略: キチョウ、マイボンドを中心とした馬単、期待値+6.9%",
+        "features": "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+        "riskAnalysis": "低リスク、安定収益型"
+      },
+      "allHorses": [
+        {
+          "number": 2,
+          "name": "トゥルービューティ",
+          "mark": "▲",
+          "confidence": "50.7",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 88.1%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "name": "アウェイクサード",
+          "mark": "△",
+          "confidence": "71.4",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 66.2%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "name": "マイボンド",
+          "mark": "○",
+          "confidence": "51.1",
+          "type": "対抗",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 59.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "name": "カルカンサン",
+          "mark": "▲",
+          "confidence": "52.2",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 80.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "name": "キチョウ",
+          "mark": "◎",
+          "confidence": "67.2",
+          "type": "本命",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 75.3%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "name": "シャルムドンナ",
+          "mark": "×",
+          "confidence": "62.1",
+          "type": "押さえ",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 50.9%"
+            },
+            {
+              "icon": "★",
+              "text": "大穴適性: 高変動"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "name": "アファーマティヴ",
+          "mark": "△",
+          "confidence": "58.1",
+          "type": "連下",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "信頼度: 85.5%"
+            },
+            {
+              "icon": "★",
+              "text": "適性評価: B級"
+            }
+          ]
+        }
+      ],
+      "totalHorses": 7,
+      "lastUpdated": "2025-08-26T00:41:34.465Z"
+    }
+  ],
+  "planAccess": {
+    "free": {
+      "races": [
+        "11R"
+      ],
+      "description": "メインレースのみ（最終レースの1つ前）"
+    },
+    "standard": {
+      "races": [
+        "10R",
+        "11R",
+        "12R"
+      ],
+      "description": "後半3レース"
+    },
+    "premium": {
+      "races": [
+        "1R",
+        "2R",
+        "3R",
+        "4R",
+        "5R",
+        "6R",
+        "7R",
+        "8R",
+        "9R",
+        "10R",
+        "11R",
+        "12R"
+      ],
+      "description": "全レース"
+    }
+  }
+}
