@@ -134,7 +134,13 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
 </style>
 
 <script>
-    import { getUserWithPlan, canAccessContent, getPlanDisplayName } from '../lib/auth-utils.js';
+    // 管理者モード（開発用）: URLに ?admin=true があるかチェック
+    function isAdminMode() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('admin') === 'true' || window.location.hostname === 'localhost';
+    }
+
+    // import { getUserWithPlan, canAccessContent, getPlanDisplayName } from '../lib/auth-utils.js';
 
     async function checkAccess() {
         const accessControl = document.getElementById('access-control');
@@ -145,34 +151,50 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         const requiredPlan = accessControl.dataset.requiredPlan;
         
         try {
-            const { user, plan } = await getUserWithPlan();
-            
-            // アクセス権限チェック
-            if (canAccessContent(plan, requiredPlan)) {
-                // アクセス許可
+            // 管理者モード（開発環境）の場合は常にアクセス許可
+            if (isAdminMode()) {
+                console.log('🔑 管理者モード: 全コンテンツアクセス許可');
                 loadingState.classList.add('hidden');
                 contentArea.classList.remove('hidden');
-            } else {
-                // アクセス拒否
-                loadingState.classList.add('hidden');
-                accessDenied.classList.remove('hidden');
-                
-                // メッセージをカスタマイズ
-                const deniedMessage = accessDenied.querySelector('.denied-message');
-                
-                if (!user) {
-                    deniedMessage.textContent = '無料予想は会員登録なしでもご覧いただけます。より詳細な予想をご希望の場合は、会員登録をお願いします。';
-                } else {
-                    const currentPlanName = getPlanDisplayName(plan);
-                    const requiredPlanName = getPlanDisplayName(requiredPlan);
-                    
-                    deniedMessage.textContent = `現在のプラン: ${currentPlanName}\nこのコンテンツには「${requiredPlanName}」以上のプランが必要です。`;
-                }
+                return;
             }
+
+            // 通常の認証チェック（現在は無効化中）
+            // const { user, plan } = await getUserWithPlan();
+            
+            // 一時的に全コンテンツにアクセス許可（開発用）
+            console.log('⚠️ 開発モード: 認証機能無効化中（全アクセス許可）');
+            loadingState.classList.add('hidden');
+            contentArea.classList.remove('hidden');
+            
+            // // アクセス権限チェック
+            // if (canAccessContent(plan, requiredPlan)) {
+            //     // アクセス許可
+            //     loadingState.classList.add('hidden');
+            //     contentArea.classList.remove('hidden');
+            // } else {
+            //     // アクセス拒否
+            //     loadingState.classList.add('hidden');
+            //     accessDenied.classList.remove('hidden');
+            //     
+            //     // メッセージをカスタマイズ
+            //     const deniedMessage = accessDenied.querySelector('.denied-message');
+            //     
+            //     if (!user) {
+            //         deniedMessage.textContent = '無料予想は会員登録なしでもご覧いただけます。より詳細な予想をご希望の場合は、会員登録をお願いします。';
+            //     } else {
+            //         const currentPlanName = getPlanDisplayName(plan);
+            //         const requiredPlanName = getPlanDisplayName(requiredPlan);
+            //         
+            //         deniedMessage.textContent = `現在のプラン: ${currentPlanName}\nこのコンテンツには「${requiredPlanName}」以上のプランが必要です。`;
+            //     }
+            // }
         } catch (error) {
             console.error('Access control error:', error);
+            // 開発モードではエラー時もアクセス許可
+            console.log('🔧 開発モード: エラー無視、アクセス許可');
             loadingState.classList.add('hidden');
-            accessDenied.classList.remove('hidden');
+            contentArea.classList.remove('hidden');
         }
     }
 
