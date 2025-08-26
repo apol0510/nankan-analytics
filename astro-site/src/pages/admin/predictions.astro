@@ -1,6 +1,7 @@
 ---
 // 簡略化された管理者用予想入力ページ
 import { getRaceTier, isMainRace, getRaceDisplayName, getMainRaceNumber } from '../../lib/race-config.js';
+import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '../../lib/data-validator.js';
 ---
 
 <!DOCTYPE html>
@@ -580,6 +581,105 @@ import { getRaceTier, isMainRace, getRaceDisplayName, getMainRaceNumber } from '
         }
         let parsedPredictionData = null;
 
+        // データバリデーション関数（data-validator.jsの機能を利用）
+        function validateAllRaces() {
+            if (!allRacesData) {
+                showAlert('検証するデータがありません。先にデータを読み込んでください。', 'error');
+                return;
+            }
+            
+            // バリデーション実行
+            const validation = validateAllRacesPredictionInternal(allRacesData);
+            
+            // 結果表示
+            const alertBox = document.getElementById('alert');
+            if (validation.valid) {
+                showAlert('✅ データ検証成功: すべてのデータが正常です', 'success');
+            } else {
+                let message = '⚠️ データ検証で問題が見つかりました:\n\n';
+                
+                if (validation.errors.length > 0) {
+                    message += '【エラー】\n';
+                    validation.errors.forEach(e => message += `• ${e}\n`);
+                }
+                
+                if (validation.warnings.length > 0) {
+                    message += '\n【警告（自動修正可能）】\n';
+                    validation.warnings.forEach(w => message += `• ${w}\n`);
+                }
+                
+                message += '\n自動修正を適用しますか？';
+                
+                if (confirm(message)) {
+                    // 自動修正適用
+                    allRacesData = validation.fixed || allRacesData;
+                    showAlert('データを自動修正しました', 'success');
+                    
+                    // JSONを再生成
+                    const jsonOutput = document.getElementById('json-output');
+                    jsonOutput.value = JSON.stringify(allRacesData, null, 2);
+                }
+            }
+        }
+        
+        // 内部バリデーション関数（data-validator.jsと同じロジック）
+        function validateAllRacesPredictionInternal(data) {
+            const errors = [];
+            const warnings = [];
+            const fixed = JSON.parse(JSON.stringify(data));
+            
+            // 必須フィールドチェック
+            if (!data.raceDate) errors.push('開催日が未設定');
+            if (!data.track) errors.push('競馬場が未設定');
+            if (!data.totalRaces) errors.push('総レース数が未設定');
+            
+            // 各レースのチェック
+            if (data.races && Array.isArray(data.races)) {
+                data.races.forEach((race, index) => {
+                    const raceNum = parseInt(race.raceNumber);
+                    const expectedNum = index + 1;
+                    
+                    // tier検証
+                    const correctTier = getRaceTier(raceNum || expectedNum);
+                    if (race.tier !== correctTier) {
+                        warnings.push(`${race.raceNumber}: tierを${race.tier}→${correctTier}に修正`);
+                        fixed.races[index].tier = correctTier;
+                    }
+                    
+                    // メインレースフラグ検証
+                    const shouldBeMain = isMainRace(raceNum || expectedNum);
+                    if (race.isMainRace !== shouldBeMain) {
+                        warnings.push(`${race.raceNumber}: isMainRaceを${race.isMainRace}→${shouldBeMain}に修正`);
+                        fixed.races[index].isMainRace = shouldBeMain;
+                    }
+                    
+                    // 馬データチェック
+                    if (!race.horses?.main?.number) {
+                        errors.push(`${race.raceNumber}: 本命馬が未設定`);
+                    }
+                    
+                    // importance値の正規化（1以上なら100で割る）
+                    ['main', 'sub'].forEach(horseType => {
+                        if (race.horses?.[horseType]?.importance) {
+                            race.horses[horseType].importance.forEach((item, idx) => {
+                                if (item.value > 1) {
+                                    warnings.push(`${race.raceNumber}: ${horseType}馬のimportance値を正規化`);
+                                    fixed.races[index].horses[horseType].importance[idx].value = item.value / 100;
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            
+            return {
+                valid: errors.length === 0,
+                errors,
+                warnings,
+                fixed: errors.length === 0 ? fixed : null
+            };
+        }
+        
         // レース編集ボタンを動的生成
         function generateRaceEditButtons() {
             const container = document.getElementById('raceEditButtons');
@@ -663,7 +763,14 @@ import { getRaceTier, isMainRace, getRaceDisplayName, getMainRaceNumber } from '
                 updateRaceStatus();
                 logAllRaces('✅ サンプルデータ読み込み完了');
                 
-                // データ検証
+                // データ検証と自動修正
+                const validation = validateAllRacesPredictionInternal(allRacesData);
+                if (!validation.valid && validation.warnings.length > 0) {
+                    logAllRaces(`⚠️ ${validation.warnings.length}件の警告を自動修正しました`);
+                    allRacesData = validation.fixed || allRacesData;
+                }
+                
+                // 既存のデータ検証
                 validateRaceConfiguration(allRacesData);
                 showAlert('サンプルデータを表示しました。実際のデータは allRacesPrediction.json から読み込んでください。', 'success');
                 
