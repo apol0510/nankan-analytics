@@ -3,12 +3,14 @@ import { defineConfig } from 'astro/config';
 import { fileURLToPath, URL } from 'node:url';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import netlify from '@astrojs/netlify';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://nankan-analytics.keiba.link',
   base: '/',
   output: 'server',
+  adapter: netlify(),
 
   // インテグレーション
   integrations: [
