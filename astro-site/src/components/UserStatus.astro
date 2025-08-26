@@ -197,18 +197,28 @@
         if (error || !user) return { user: null, plan: 'free' };
 
         // プロフィールからプラン情報を取得
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('subscription_plan')
-            .eq('id', user.id)
-            .maybeSingle();
+        try {
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('subscription_plan')
+                .eq('id', user.id)
+                .maybeSingle();
 
-        const planName = profile?.subscription_plan?.toLowerCase();
-        let plan = 'free';
-        if (planName?.includes('premium')) plan = 'premium';
-        else if (planName?.includes('standard')) plan = 'standard';
+            if (error) {
+                console.warn('Profile fetch error:', error);
+                return { user, plan: 'free' };
+            }
 
-        return { user, plan };
+            const planName = profile?.subscription_plan?.toLowerCase();
+            let plan = 'free';
+            if (planName?.includes('premium')) plan = 'premium';
+            else if (planName?.includes('standard')) plan = 'standard';
+
+            return { user, plan };
+        } catch (error) {
+            console.warn('Profile query error:', error);
+            return { user, plan: 'free' };
+        }
     }
 
     function getPlanDisplayName(plan) {
