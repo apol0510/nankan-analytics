@@ -231,10 +231,10 @@
         </div>
     </div>
 
-    <script src="/js/supabase.js" is:inline></script>
     <script type="module">
-        // Supabaseクライアントを使用
-        const { createClient } = supabase;
+        // SupabaseをCDNから直接インポート
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+        
         const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
         const client = createClient(supabaseUrl, supabaseAnonKey);
