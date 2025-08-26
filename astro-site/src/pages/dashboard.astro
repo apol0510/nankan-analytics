@@ -332,8 +332,28 @@
     </div>
 
     <script type="module">
-        import { auth, profiles } from '../lib/supabase-client.js';
-        import { PRICING_PLANS } from '/src/lib/stripe.js';
+        // SupabaseをCDNから直接インポート
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+        
+        const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
+        const client = createClient(supabaseUrl, supabaseAnonKey);
+        
+        // Stripe料金プラン設定
+        const PRICING_PLANS = {
+            standard: {
+                id: 'price_standard_monthly',
+                name: 'Standard',
+                price: 1980,
+                description: '10R・12R予想＋基礎コンテンツ'
+            },
+            premium: {
+                id: 'price_premium_monthly', 
+                name: 'Premium',
+                price: 3980,
+                description: '全レース予想＋すべてのコンテンツ'
+            }
+        };
 
         let currentUser = null;
 
@@ -351,7 +371,7 @@
         // 認証チェック
         async function checkAuth() {
             try {
-                const { data: { user }, error } = await auth.getUser();
+                const { data: { user }, error } = await client.auth.getUser();
                 
                 if (error || !user) {
                     // 未認証の場合はログインページへリダイレクト
@@ -390,7 +410,11 @@
                         subscription_end_date: null // デモなので終了日なし
                     };
                 } else {
-                    const { data: profileData, error } = await profiles.getProfile(currentUser.id);
+                    const { data: profileData, error } = await client
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', currentUser.id)
+                        .maybeSingle();
                     
                     if (error) {
                         throw error;
@@ -443,7 +467,11 @@
             }
 
             try {
-                const { data: profile, error } = await profiles.getProfile(currentUser.id);
+                const { data: profile, error } = await client
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .maybeSingle();
                 if (error || !profile) return 'free';
                 
                 const planName = profile.subscription_plan?.toLowerCase();
@@ -565,7 +593,7 @@
         // ログアウト処理
         document.getElementById('logout-btn').addEventListener('click', async () => {
             try {
-                const { error } = await auth.signOut();
+                const { error } = await client.auth.signOut();
                 if (error) throw error;
                 
                 window.location.href = '/auth/login?message=' + encodeURIComponent('ログアウトしました');
