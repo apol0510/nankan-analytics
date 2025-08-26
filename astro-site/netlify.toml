@@ -44,10 +44,10 @@
   to = "/standard-predictions"
   status = 301
 
-# API Routes
+# API Routes - Server function handling
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.netlify/functions/entry"
   status = 200
 
 # Admin panel protection
