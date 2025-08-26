@@ -1969,209 +1969,31 @@ console.log('race12R:', race12R);
         }
     }
 
-    function toggleRace11R() {
-        const content = document.getElementById('race-11r');
-        const icon = document.getElementById('toggle-11r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
+    // アコーディオン共通化: 重複した12個の関数を1つのループで生成
+    function createToggleFunction(raceNumber) {
+        return function() {
+            const content = document.getElementById(`race-${raceNumber}r`);
+            const icon = document.getElementById(`toggle-${raceNumber}r`);
+            
+            if (!content || !icon) return;
+            
+            if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                icon.textContent = '◎';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.maxHeight = '0px';
+                content.style.opacity = '0';
+                icon.textContent = '▼';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        };
     }
-
-    function toggleRace12R() {
-        const content = document.getElementById('race-12r');
-        const icon = document.getElementById('toggle-12r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    // 1R-10R toggle functions
-    function toggleRace1R() {
-        const content = document.getElementById('race-1r');
-        const icon = document.getElementById('toggle-1r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace2R() {
-        const content = document.getElementById('race-2r');
-        const icon = document.getElementById('toggle-2r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace3R() {
-        const content = document.getElementById('race-3r');
-        const icon = document.getElementById('toggle-3r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace4R() {
-        const content = document.getElementById('race-4r');
-        const icon = document.getElementById('toggle-4r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace5R() {
-        const content = document.getElementById('race-5r');
-        const icon = document.getElementById('toggle-5r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace6R() {
-        const content = document.getElementById('race-6r');
-        const icon = document.getElementById('toggle-6r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace7R() {
-        const content = document.getElementById('race-7r');
-        const icon = document.getElementById('toggle-7r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace8R() {
-        const content = document.getElementById('race-8r');
-        const icon = document.getElementById('toggle-8r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace9R() {
-        const content = document.getElementById('race-9r');
-        const icon = document.getElementById('toggle-9r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function toggleRace10R() {
-        const content = document.getElementById('race-10r');
-        const icon = document.getElementById('toggle-10r');
-        
-        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            icon.textContent = '◎';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.maxHeight = '0px';
-            content.style.opacity = '0';
-            icon.textContent = '▼';
-            icon.style.transform = 'rotate(0deg)';
-        }
+    
+    // 全レースのトグル関数を動的生成（1R-12R）
+    for (let i = 1; i <= 12; i++) {
+        window[`toggleRace${i}R`] = createToggleFunction(i);
     }
 </script>
     </AccessControl>
