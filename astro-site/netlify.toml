@@ -47,7 +47,7 @@
 # API Routes - Server function handling
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/entry"
+  to = "/.netlify/functions/ssr"
   status = 200
 
 # Admin panel protection
@@ -58,8 +58,11 @@
   headers = {X-Frame-Options = "DENY"}
 
 [functions]
-  directory = "netlify/functions"
+  directory = ".netlify/functions"
   node_bundler = "esbuild"
+
+[[functions]]
+  function = "ssr"
 
 [dev]
   command = "npm run dev"
