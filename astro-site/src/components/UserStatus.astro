@@ -149,7 +149,7 @@
     /* Mobile responsive styles */
     @media (max-width: 768px) {
         .user-status {
-            display: none; /* UserStatusはデスクトップのみ表示 */
+            display: flex; /* モバイルでも表示 */
         }
     }
     
@@ -183,9 +183,51 @@
     }
 </style>
 
-<script>
-    import { getUserWithPlan, getPlanDisplayName, getPlanIcon } from '../lib/auth-utils.js';
-    import { supabase } from '../lib/supabase-client.js';
+<script type="module">
+    // SupabaseをCDNから直接インポート
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+    
+    const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    // ヘルパー関数
+    async function getUserWithPlan() {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error || !user) return { user: null, plan: 'free' };
+
+        // プロフィールからプラン情報を取得
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('subscription_plan')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        const planName = profile?.subscription_plan?.toLowerCase();
+        let plan = 'free';
+        if (planName?.includes('premium')) plan = 'premium';
+        else if (planName?.includes('standard')) plan = 'standard';
+
+        return { user, plan };
+    }
+
+    function getPlanDisplayName(plan) {
+        const names = {
+            free: 'Free',
+            standard: 'Standard',
+            premium: 'Premium'
+        };
+        return names[plan] || 'Free';
+    }
+
+    function getPlanIcon(plan) {
+        const icons = {
+            free: '👀',
+            standard: '⭐',
+            premium: '💎'
+        };
+        return icons[plan] || '👀';
+    }
 
     async function updateUserStatus() {
         const userInfo = document.getElementById('user-info');
