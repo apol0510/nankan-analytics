@@ -200,7 +200,7 @@
         try {
             const { data: profile, error } = await supabase
                 .from('profiles')
-                .select('subscription_plan')
+                .select('*')
                 .eq('id', user.id)
                 .maybeSingle();
 
@@ -209,7 +209,16 @@
                 return { user, plan: 'free' };
             }
 
-            const planName = profile?.subscription_plan?.toLowerCase();
+            if (profile) {
+                console.log('Profile data:', profile); // デバッグログ
+            }
+
+            // 既存のカラム名を試す
+            const planName = profile?.subscription_tier?.toLowerCase() || 
+                           profile?.subscription_plan?.toLowerCase() || 
+                           profile?.subscription_status?.toLowerCase() ||
+                           profile?.plan?.toLowerCase();
+
             let plan = 'free';
             if (planName?.includes('premium')) plan = 'premium';
             else if (planName?.includes('standard')) plan = 'standard';
