@@ -1,8 +1,9 @@
 export const prerender = false;
 
+import type { APIRoute } from 'astro';
 import { supabase } from '../../../lib/supabase.js';
 
-export async function POST({ request }) {
+export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     const { displayName, email, password } = body;
