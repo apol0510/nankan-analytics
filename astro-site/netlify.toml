@@ -61,9 +61,6 @@
   directory = ".netlify/functions"
   node_bundler = "esbuild"
 
-[[functions]]
-  function = "ssr"
-
 [dev]
   command = "npm run dev"
   port = 4321
