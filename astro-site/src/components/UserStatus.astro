@@ -9,6 +9,7 @@
             <span class="plan-name"></span>
         </span>
         <span class="user-email"></span>
+        <a href="/dashboard" class="dashboard-btn">ダッシュボード</a>
         <button id="logout-btn" class="logout-btn">ログアウト</button>
     </div>
     <div id="guest-info" class="guest-info">
@@ -71,6 +72,24 @@
     .user-email {
         color: #cbd5e1;
         font-size: 14px;
+    }
+
+    .dashboard-btn {
+        padding: 6px 14px;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .dashboard-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     .logout-btn {

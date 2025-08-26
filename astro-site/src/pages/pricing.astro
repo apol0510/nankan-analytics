@@ -291,14 +291,14 @@
         <div class="pricing-grid">
             <!-- スタンダードプラン -->
             <div class="plan-card">
-                <div class="plan-name">スタンダード</div>
+                <div class="plan-name">スタンダード（デモ）</div>
                 <div class="plan-description">
                     基本的なAI予想機能をお得な価格で
                 </div>
                 <div class="plan-price">
                     <span class="price-currency">¥</span>
-                    <span class="price-amount">2,980</span>
-                    <span class="price-period">/月</span>
+                    <span class="price-amount">1,000</span>
+                    <span class="price-period">/月 (デモ)</span>
                 </div>
                 <ul class="features-list">
                     <li>全レース予想閲覧</li>
@@ -316,14 +316,14 @@
             <!-- プレミアムプラン -->
             <div class="plan-card plan-popular">
                 <div class="popular-badge">人気No.1</div>
-                <div class="plan-name">プレミアム</div>
+                <div class="plan-name">プレミアム（デモ）</div>
                 <div class="plan-description">
                     すべての機能と優先サポートを含む最上位プラン
                 </div>
                 <div class="plan-price">
                     <span class="price-currency">¥</span>
-                    <span class="price-amount">4,980</span>
-                    <span class="price-period">/月</span>
+                    <span class="price-amount">2,000</span>
+                    <span class="price-period">/月 (デモ)</span>
                 </div>
                 <ul class="features-list">
                     <li>全機能利用可能</li>
@@ -402,6 +402,51 @@
                     user.id,
                     user.email
                 );
+
+                // デモモードの場合は成功メッセージを表示
+                if (session.demo) {
+                    // サブスクリプション情報を更新
+                    try {
+                        const updateResponse = await fetch('/api/update-subscription-demo', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                userId: user.id,
+                                planType: planType
+                            })
+                        });
+
+                        const updateResult = await updateResponse.json();
+                        
+                        if (updateResponse.ok) {
+                            // ローカルストレージにデモサブスクリプション情報を保存
+                            localStorage.setItem('demo_subscription_' + user.id, JSON.stringify({
+                                planType: planType,
+                                createdAt: new Date().toISOString(),
+                                demo: true
+                            }));
+                            
+                            alert(`${session.message}\n\nプラン: ${planType}\nユーザー: ${user.email}\n\nデモ購入が完了しました！\n\n会員ステータスが更新されました。`);
+                        } else {
+                            // エラーでもローカルストレージには保存（デモなので）
+                            localStorage.setItem('demo_subscription_' + user.id, JSON.stringify({
+                                planType: planType,
+                                createdAt: new Date().toISOString(),
+                                demo: true
+                            }));
+                            
+                            alert(`デモ購入は完了しました！\n\nプラン: ${planType}\nユーザー: ${user.email}\n\n※デモモードのため、会員ステータスはローカルで管理されます。`);
+                        }
+                    } catch (updateError) {
+                        console.error('Subscription update error:', updateError);
+                        alert(`デモ購入は完了しましたが、ステータス更新でエラーが発生しました。`);
+                    }
+                    
+                    window.location.href = '/dashboard';
+                    return;
+                }
 
                 // Stripe Checkout にリダイレクト
                 const stripe = await getStripe();

@@ -9,6 +9,15 @@ export async function getUserWithPlan() {
             return { user: null, plan: 'free' };
         }
 
+        // デモモードのローカルストレージをチェック
+        const demoSubscription = localStorage.getItem('demo_subscription_' + user.id);
+        
+        if (demoSubscription) {
+            const demoData = JSON.parse(demoSubscription);
+            console.log('Demo subscription found in auth-utils:', demoData);
+            return { user, plan: demoData.planType.toLowerCase() };
+        }
+
         // プロフィールからプラン情報を取得
         const { data: profile, error: profileError } = await supabase
             .from('profiles')

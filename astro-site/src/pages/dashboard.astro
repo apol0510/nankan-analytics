@@ -305,7 +305,7 @@
                     <span class="card-icon">⚡</span>
                 </div>
                 <div class="quick-actions">
-                    <a href="/premium-predictions" class="action-btn">
+                    <a href="/premium-predictions" class="action-btn" id="prediction-link">
                         有料予想を見る
                     </a>
                     <a href="/account" class="action-btn">
@@ -342,7 +342,9 @@
             await checkAuth();
             if (currentUser) {
                 await loadUserProfile();
-                await loadTodayPredictions();
+                // プロファイル読み込み後にプラン情報を使ってAI予想を読み込み
+                const currentPlan = await getCurrentUserPlan();
+                await loadTodayPredictions(currentPlan);
             }
         });
 
@@ -371,14 +373,33 @@
             const upgradeSection = document.getElementById('upgrade-section');
             
             try {
-                const { data: profile, error } = await profiles.getProfile(currentUser.id);
+                // デモモードのローカルストレージをチェック
+                const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
                 
-                if (error) {
-                    throw error;
-                }
+                let isActive, planName, profile = null;
+                
+                if (demoSubscription) {
+                    const demoData = JSON.parse(demoSubscription);
+                    console.log('Demo subscription found:', demoData);
+                    isActive = true;
+                    planName = demoData.planType.toLowerCase();
+                    // デモモード用のプロファイル作成
+                    profile = {
+                        subscription_status: 'active',
+                        subscription_plan: planName,
+                        subscription_end_date: null // デモなので終了日なし
+                    };
+                } else {
+                    const { data: profileData, error } = await profiles.getProfile(currentUser.id);
+                    
+                    if (error) {
+                        throw error;
+                    }
 
-                const isActive = profile?.subscription_status === 'active';
-                const planName = profile?.subscription_plan || 'なし';
+                    profile = profileData;
+                    isActive = profile?.subscription_status === 'active';
+                    planName = profile?.subscription_plan || 'なし';
+                }
                 
                 subscriptionInfo.innerHTML = `
                     <div class="subscription-status ${isActive ? 'status-active' : 'status-inactive'}">
@@ -400,6 +421,9 @@
                     upgradeSection.style.display = 'block';
                 }
                 
+                // プランに応じて予想リンクを更新
+                updatePredictionLink(planName);
+                
             } catch (error) {
                 console.error('Profile loading error:', error);
                 subscriptionInfo.innerHTML = `
@@ -408,31 +432,107 @@
             }
         }
 
-        // 今日の予想読み込み（デモデータ）
-        async function loadTodayPredictions() {
+        // 現在のユーザープランを取得
+        async function getCurrentUserPlan() {
+            // デモモードのローカルストレージをチェック
+            const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
+            
+            if (demoSubscription) {
+                const demoData = JSON.parse(demoSubscription);
+                return demoData.planType.toLowerCase();
+            }
+
+            try {
+                const { data: profile, error } = await profiles.getProfile(currentUser.id);
+                if (error || !profile) return 'free';
+                
+                const planName = profile.subscription_plan?.toLowerCase();
+                if (planName?.includes('premium')) return 'premium';
+                if (planName?.includes('standard')) return 'standard';
+                return 'free';
+            } catch (error) {
+                console.error('Error getting user plan:', error);
+                return 'free';
+            }
+        }
+
+        // 今日の予想読み込み（メインレースのみ）
+        async function loadTodayPredictions(userPlan = 'free') {
             const todayPredictions = document.getElementById('today-predictions');
             
-            // 実際の実装では、Supabaseから今日の予想データを取得
-            setTimeout(() => {
+            try {
+                // 実際のデータを読み込み
+                const response = await fetch('/src/data/allRacesPrediction.json');
+                const allRacesData = await response.json();
+                
+                // メインレース（11R）を取得
+                const mainRace = allRacesData.races.find(race => race.isMainRace === true);
+                
+                if (mainRace && mainRace.raceInfo && mainRace.horses) {
+                    const { raceInfo, horses } = mainRace;
+                    const raceTitle = `${raceInfo.track} ${raceInfo.raceNumber} ${raceInfo.raceName}`;
+                    
+                    // 予想馬（本命と対抗）を取得
+                    const recommendedHorses = [];
+                    if (horses.main) recommendedHorses.push(horses.main.name);
+                    if (horses.rival) recommendedHorses.push(horses.rival.name);
+                    
+                    const recommendedHorsesText = recommendedHorses.join('、');
+                    const confidence = raceInfo.confidence ? parseFloat(raceInfo.confidence) : 90;
+                    
+                    // プランに応じたリンクを生成
+                    let detailLink = '';
+                    if (userPlan === 'premium') {
+                        detailLink = '<a href="/premium-predictions/" style="color: #3b82f6; text-decoration: none;">プレミアム予想ページ</a>';
+                    } else if (userPlan === 'standard') {
+                        detailLink = '<a href="/standard-predictions/" style="color: #3b82f6; text-decoration: none;">スタンダード予想ページ</a>';
+                    } else {
+                        detailLink = '<a href="/free-prediction/" style="color: #3b82f6; text-decoration: none;">無料予想ページ</a>';
+                    }
+                    
+                    todayPredictions.innerHTML = `
+                        <div class="prediction-preview">
+                            <div class="race-item">
+                                <div class="race-info">
+                                    <h4>${raceTitle}</h4>
+                                    <p>推奨: ${recommendedHorsesText}</p>
+                                </div>
+                                <div class="confidence-badge">信頼度: ${confidence}%</div>
+                            </div>
+                            <p style="margin-top: 15px; color: #94a3b8; font-size: 14px; text-align: center;">
+                                詳しい予想は${detailLink}をご覧ください
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    // データが取得できない場合のフォールバック
+                    todayPredictions.innerHTML = `
+                        <div class="prediction-preview">
+                            <div class="race-item">
+                                <div class="race-info">
+                                    <h4>本日のメインレース</h4>
+                                    <p>予想データを準備中です</p>
+                                </div>
+                                <div class="confidence-badge">準備中</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load prediction data:', error);
+                // エラー時のフォールバック
                 todayPredictions.innerHTML = `
                     <div class="prediction-preview">
                         <div class="race-item">
                             <div class="race-info">
-                                <h4>大井11R 羽田盃</h4>
-                                <p>推奨: アンジュルナ、アムールピスケス</p>
+                                <h4>本日のメインレース</h4>
+                                <p>予想データの読み込みに失敗しました</p>
                             </div>
-                            <div class="confidence-badge">信頼度: 91%</div>
-                        </div>
-                        <div class="race-item">
-                            <div class="race-info">
-                                <h4>川崎10R 霜月特別</h4>
-                                <p>推奨: ノヴェッラ、ボンブーリープ</p>
-                            </div>
-                            <div class="confidence-badge">信頼度: 87%</div>
+                            <div class="confidence-badge">エラー</div>
                         </div>
                     </div>
                 `;
-            }, 1000);
+            }
         }
 
         // プラン表示名取得
@@ -441,6 +541,25 @@
             
             const plan = Object.values(PRICING_PLANS).find(p => p.stripePriceId.includes(planKey));
             return plan ? plan.name : planKey;
+        }
+
+        // プランに応じて予想リンクを更新
+        function updatePredictionLink(planName) {
+            const predictionLink = document.getElementById('prediction-link');
+            if (!predictionLink) return;
+
+            // プランに応じてリンクを設定
+            if (planName === 'premium') {
+                predictionLink.href = '/premium-predictions';
+                predictionLink.textContent = '全レース予想を見る';
+            } else if (planName === 'standard') {
+                predictionLink.href = '/standard-predictions';
+                predictionLink.textContent = 'スタンダード予想を見る';
+            } else {
+                // 無料プランの場合
+                predictionLink.href = '/free-prediction';
+                predictionLink.textContent = '無料予想を見る';
+            }
         }
 
         // ログアウト処理

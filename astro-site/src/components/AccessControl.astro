@@ -146,6 +146,21 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
 
     // 簡易認証状態チェック（認証モジュール使用まで）
     function getCurrentUserPlan() {
+        // 0. デモモードのサブスクリプション情報をチェック（優先）
+        const demoKeys = Object.keys(localStorage).filter(key => key.startsWith('demo_subscription_'));
+        if (demoKeys.length > 0) {
+            try {
+                const demoData = JSON.parse(localStorage.getItem(demoKeys[0]));
+                console.log('🎭 デモモード認証:', demoData);
+                return { 
+                    user: { id: 'demo_user', email: 'demo@example.com', demo: true }, 
+                    plan: demoData.planType.toLowerCase() 
+                };
+            } catch (error) {
+                console.error('Demo data parsing error:', error);
+            }
+        }
+
         // 1. ローカルストレージから認証情報を取得
         const authData = localStorage.getItem('auth_data');
         if (authData) {

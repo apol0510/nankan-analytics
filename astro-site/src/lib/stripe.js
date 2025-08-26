@@ -9,13 +9,13 @@ if (!stripePublishableKey) {
 // Stripeインスタンスを取得
 export const getStripe = () => loadStripe(stripePublishableKey)
 
-// 料金プラン設定
+// 料金プラン設定 - デモ用（実際の決済はされません）
 export const PRICING_PLANS = {
   STANDARD: {
-    name: 'スタンダード',
+    name: 'スタンダード（デモ）',
     description: '全レース予想閲覧・過去30日分のデータ',
-    price: 2980,
-    stripePriceId: 'price_1RzEMaFA5w33p4Wycj2oSBOz', // スタンダードプラン Price ID
+    price: 1000, // デモ用価格
+    stripePriceId: 'price_1HdT7vFA5w33p4WyDdH1VWwg', // Stripeの標準テストPrice ID
     features: [
       '全レース予想閲覧',
       '過去30日分のデータ',
@@ -24,10 +24,10 @@ export const PRICING_PLANS = {
     ]
   },
   PREMIUM: {
-    name: 'プレミアム',
+    name: 'プレミアム（デモ）',
     description: '全機能・過去データ無制限・優先サポート',
-    price: 4980,
-    stripePriceId: 'price_1RzEVfFA5w33p4Wy7GPtIHfv', // プレミアムプラン Price ID
+    price: 2000, // デモ用価格
+    stripePriceId: 'price_1HdT8lFA5w33p4WyDdH1VWwh', // Stripeの標準テストPrice ID
     features: [
       '全機能利用可能',
       '過去データ無制限',

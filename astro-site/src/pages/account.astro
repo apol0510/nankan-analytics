@@ -495,20 +495,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             if (currentPlan === 'free') {
                 billingElement.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 40px;">請求履歴はありません（無料プラン）</p>';
             } else {
+                // デモ用の請求履歴（今日の日付を基準）
+                const today = new Date();
+                const currentMonth = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+                
                 billingElement.innerHTML = `
                     <div class="invoice-item">
                         <div class="invoice-info">
-                            <h4>月額サブスクリプション</h4>
-                            <p class="invoice-date">2025年8月26日</p>
+                            <h4>デモ購入 (月額サブスクリプション)</h4>
+                            <p class="invoice-date">${currentMonth} - デモ版</p>
                         </div>
-                        <div class="invoice-amount">¥${currentPlan === 'premium' ? '5,980' : '2,980'}</div>
-                    </div>
-                    <div class="invoice-item">
-                        <div class="invoice-info">
-                            <h4>月額サブスクリプション</h4>
-                            <p class="invoice-date">2025年7月26日</p>
-                        </div>
-                        <div class="invoice-amount">¥${currentPlan === 'premium' ? '5,980' : '2,980'}</div>
+                        <div class="invoice-amount">¥${currentPlan === 'premium' ? '200' : '100'} (デモ価格)</div>
                     </div>
                 `;
             }
@@ -551,6 +548,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     // カスタマーポータルへのリダイレクト
     async function redirectToCustomerPortal() {
         try {
+            // デモモードチェック
+            const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
+            
+            if (demoSubscription) {
+                alert('デモモードでは支払い方法の変更はできません。\n\n本番環境では：\n- クレジットカード情報の変更\n- 請求履歴の確認\n- サブスクリプション管理\n\nが可能になります。');
+                return;
+            }
+
             // Stripeの顧客IDを取得（実際の実装では、プロフィールデータから取得）
             const { data: profile } = await supabase
                 .from('profiles')
@@ -598,6 +603,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     document.getElementById('cancel-subscription')?.addEventListener('click', () => {
         if (currentPlan === 'free') {
             alert('現在無料プランをご利用中です。');
+            return;
+        }
+        
+        // デモモードチェック
+        const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
+        
+        if (demoSubscription) {
+            if (confirm('デモ版のサブスクリプションを削除しますか？\n（ローカルデータが削除され、無料プランに戻ります）')) {
+                // デモサブスクリプションを削除
+                localStorage.removeItem('demo_subscription_' + currentUser.id);
+                alert('デモサブスクリプションを削除しました。\nページをリフレッシュしてください。');
+                window.location.reload();
+            }
             return;
         }
         
