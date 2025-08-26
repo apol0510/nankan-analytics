@@ -286,8 +286,13 @@
 
                 if (error) {
                     let errorMessage = '登録に失敗しました。';
-                    if (error.message.includes('User already registered')) {
-                        errorMessage = 'このメールアドレスは既に登録済みです。';
+                    if (error.message.includes('User already registered') || error.message.includes('already been registered')) {
+                        errorMessage = `
+                            <strong>このメールアドレスは既に登録済みです</strong><br><br>
+                            <strong>${email}</strong> は既にアカウントが作成されています。<br><br>
+                            <a href="/auth/login" style="color: #3b82f6; text-decoration: underline;">ログインページ</a>からログインするか、
+                            パスワードを忘れた場合は<a href="/auth/forgot-password" style="color: #3b82f6; text-decoration: underline;">こちら</a>からリセットしてください。
+                        `;
                     } else if (error.message.includes('Password should be')) {
                         errorMessage = 'パスワードは6文字以上で入力してください。';
                     } else if (error.message.includes('Invalid email')) {
