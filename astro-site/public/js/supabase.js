@@ -9,7 +9,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase URL and Anon Key must be provided')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+})
 
 // 認証関連のヘルパー関数
 export const auth = {
