@@ -127,13 +127,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         .nav-wrapper {
             display: flex;
             align-items: center;
-            gap: 30px;
+            gap: 20px;
+            flex: 1;
+            justify-content: flex-end;
         }
 
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 25px;
+            gap: 15px;
             align-items: center;
         }
 
@@ -146,19 +148,24 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s ease;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             position: relative;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-radius: 6px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            white-space: nowrap;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
         }
 
         .nav-menu a:hover {
             color: var(--accent-color);
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
         }
 
         .nav-menu a::after {
@@ -178,12 +185,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         }
 
         .nav-icon {
-            font-size: 1.1rem;
+            font-size: 1rem;
             filter: drop-shadow(0 1px 2px rgba(59, 130, 246, 0.2));
+            flex-shrink: 0;
         }
 
         .pricing-link {
-            background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%) !important;
             color: white !important;
             padding: 8px 16px !important;
             border-radius: 8px;
@@ -191,12 +199,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             font-size: 0.9rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.4) !important;
         }
 
         .pricing-link:hover {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-            background: linear-gradient(135deg, #4f94ff 0%, #9d6cff 100%);
+            background: linear-gradient(135deg, #4f94ff 0%, #9d6cff 100%) !important;
+            border-color: rgba(139, 92, 246, 0.6) !important;
         }
 
         .pricing-link::after {
@@ -509,6 +519,38 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-menu {
+                gap: 10px;
+            }
+            
+            .nav-menu a {
+                font-size: 0.85rem;
+                padding: 6px 8px;
+            }
+            
+            .nav-wrapper {
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .nav-menu a .nav-text {
+                display: none;
+            }
+            
+            .nav-menu a {
+                gap: 0;
+                padding: 8px;
+                min-width: 40px;
+                justify-content: center;
+            }
+            
+            .pricing-link .nav-text {
+                display: inline !important;
+            }
+        }
+        
         @media (max-width: 768px) {
             .nav-menu {
                 display: none;
@@ -561,11 +603,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                 </a>
                 <nav class="nav-wrapper">
                     <ul class="nav-menu" id="nav-menu">
-                        <li><a href="/"><span class="nav-icon">🏠</span> ホーム</a></li>
-                        <li><a href="/free-prediction/"><span class="nav-icon">🎁</span> 無料予想</a></li>
-                        <li><a href="/technology/"><span class="nav-icon">🤖</span> AI技術</a></li>
-                        <li><a href="/blog/"><span class="nav-icon">📰</span> ブログ</a></li>
-                        <li><a href="/pricing/" class="pricing-link"><span class="nav-icon">💎</span> 料金プラン</a></li>
+                        <li><a href="/"><span class="nav-icon">🏠</span> <span class="nav-text">ホーム</span></a></li>
+                        <li><a href="/free-prediction/"><span class="nav-icon">🎁</span> <span class="nav-text">無料予想</span></a></li>
+                        <li><a href="/technology/"><span class="nav-icon">🤖</span> <span class="nav-text">AI技術</span></a></li>
+                        <li><a href="/blog/"><span class="nav-icon">📰</span> <span class="nav-text">ブログ</span></a></li>
+                        <li><a href="/pricing/" class="pricing-link"><span class="nav-icon">💎</span> <span class="nav-text">料金プラン</span></a></li>
                     </ul>
                     
                     <UserStatus />
