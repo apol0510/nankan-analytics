@@ -232,8 +232,6 @@
     </div>
 
     <script type="module">
-        import { auth, supabase } from '/js/supabase.js';
-
         const form = document.getElementById('signup-form');
         const signupBtn = document.getElementById('signup-btn');
         const loading = document.getElementById('loading');
@@ -267,23 +265,27 @@
             clearMessages();
 
             try {
-                const { data, error } = await auth.signUp(email, password);
+                // サーバーAPIを呼び出し
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        displayName,
+                        email,
+                        password
+                    })
+                });
 
-                if (error) {
-                    throw error;
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || '登録に失敗しました。');
                 }
 
-                if (data?.user) {
-                    // プロフィール情報をメタデータとして保存
-                    const { error: updateError } = await supabase.auth.updateUser({
-                        data: { display_name: displayName }
-                    });
-
-                    if (updateError) {
-                        console.warn('Profile update error:', updateError);
-                    }
-
-                    showMessage('登録が完了しました！確認メールをお送りしましたので、メール内のリンクをクリックしてアカウントを有効化してください。', 'success');
+                if (result.success) {
+                    showMessage(result.message, 'success');
                     
                     // フォームをクリア
                     form.reset();
@@ -295,17 +297,7 @@
                 }
             } catch (error) {
                 console.error('Signup error:', error);
-                let errorMessage = '登録に失敗しました。';
-                
-                if (error.message.includes('already registered')) {
-                    errorMessage = 'このメールアドレスは既に登録済みです。';
-                } else if (error.message.includes('Password should be')) {
-                    errorMessage = 'パスワードは6文字以上で入力してください。';
-                } else if (error.message.includes('Invalid email')) {
-                    errorMessage = '有効なメールアドレスを入力してください。';
-                }
-                
-                showMessage(errorMessage, 'error');
+                showMessage(error.message || '登録に失敗しました。', 'error');
             } finally {
                 setLoading(false);
             }

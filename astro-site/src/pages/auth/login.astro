@@ -207,8 +207,6 @@
     </div>
 
     <script type="module">
-        import { auth } from '/js/supabase.js';
-
         const form = document.getElementById('login-form');
         const loginBtn = document.getElementById('login-btn');
         const loading = document.getElementById('loading');
@@ -236,13 +234,25 @@
             clearMessages();
 
             try {
-                const { data, error } = await auth.signIn(email, password);
+                // サーバーAPIを呼び出し
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                });
 
-                if (error) {
-                    throw error;
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'ログインに失敗しました。');
                 }
 
-                if (data?.user) {
+                if (result.success) {
                     showMessage('ログインしています...', 'success');
                     
                     // リダイレクト処理
@@ -253,15 +263,7 @@
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                let errorMessage = 'ログインに失敗しました。';
-                
-                if (error.message === 'Invalid login credentials') {
-                    errorMessage = 'メールアドレスまたはパスワードが間違っています。';
-                } else if (error.message.includes('Email not confirmed')) {
-                    errorMessage = 'メールアドレスが確認されていません。受信メールを確認してください。';
-                }
-                
-                showMessage(errorMessage, 'error');
+                showMessage(error.message || 'ログインに失敗しました。', 'error');
             } finally {
                 setLoading(false);
             }
