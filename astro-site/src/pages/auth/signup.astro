@@ -142,6 +142,16 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
+        
+        .warning-message {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
 
         .loading {
             display: none;
@@ -331,6 +341,14 @@
                     // sessionがnullでuserがある場合も既存ユーザーの可能性
                     if (!data.session && data.user) {
                         console.log('Possible existing user - session is null');
+                        // sessionがない場合も既存ユーザーと判定
+                        showMessage(`
+                            <strong>このメールアドレスは既に登録済みの可能性があります</strong><br><br>
+                            <strong>${email}</strong> で登録済みの場合は、<br>
+                            <a href="/auth/login" style="color: #3b82f6; text-decoration: underline;">ログインページ</a>からログインしてください。<br><br>
+                            初めての登録で確認メールが届かない場合は、別のメールアドレスでお試しください。
+                        `, 'warning');
+                        return;
                     }
                 }
                 
@@ -452,7 +470,13 @@
 
         function showMessage(message, type = 'error') {
             const messageDiv = document.createElement('div');
-            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            if (type === 'error') {
+                messageDiv.className = 'error-message';
+            } else if (type === 'warning') {
+                messageDiv.className = 'warning-message';
+            } else {
+                messageDiv.className = 'success-message';
+            }
             messageDiv.innerHTML = message; // textContentからinnerHTMLに変更
             messageContainer.appendChild(messageDiv);
         }
