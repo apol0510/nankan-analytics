@@ -405,14 +405,33 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
         // Checkoutセッション作成関数
         const createCheckoutSession = async (priceId, userId, customerEmail) => {
             try {
+                console.log('Creating checkout session for:', { priceId, userId, customerEmail });
+                
                 const response = await fetch('/api/create-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ priceId, userId, customerEmail })
                 });
-                const session = await response.json();
+                
+                console.log('API response status:', response.status);
+                console.log('API response headers:', [...response.headers.entries()]);
+                
+                const responseText = await response.text();
+                console.log('Raw API response:', responseText);
+                
+                let session;
+                try {
+                    session = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    throw new Error('APIレスポンスのパースに失敗しました: ' + responseText);
+                }
+                
                 if (!response.ok) {
-                    throw new Error(session.error || 'チェックアウトセッションの作成に失敗しました');
+                    console.error('API error response:', session);
+                    const error = new Error(session.error || 'チェックアウトセッションの作成に失敗しました');
+                    error.debug = session.debug;
+                    throw error;
                 }
                 return session;
             } catch (error) {
