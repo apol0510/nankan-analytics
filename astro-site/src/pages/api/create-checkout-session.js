@@ -152,18 +152,5 @@ export async function POST({ request }) {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
-  } catch (fatalError) {
-    // 最終的なエラーキャッチ
-    console.error('Fatal API Error:', fatalError);
-    return new Response(JSON.stringify({
-      error: 'サーバー内部エラー',
-      debug: {
-        fatalError: fatalError.message,
-        stack: fatalError.stack
-      }
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
   }
 }
