@@ -14,6 +14,8 @@ const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
 export const prerender = false;
 
 export async function POST({ request }) {
+  let body = null; // スコープを広くして全体でアクセス可能に
+  
   try {
     // プロダクションモード: 実際の決済を行う
     const isDemoMode = false; // 本番環境に設定
@@ -40,7 +42,6 @@ export async function POST({ request }) {
     }
 
     // リクエストボディの安全な取得
-    let body;
     try {
       const text = await request.text();
       if (!text.trim()) {
@@ -118,7 +119,8 @@ export async function POST({ request }) {
     });
 
   } catch (error) {
-    console.error('Stripe Checkout error:', error);
+    console.error('API Endpoint Error:', error);
+    console.error('Error stack:', error.stack);
     
     let errorMessage = 'チェックアウトセッションの作成に失敗しました';
     let debugInfo = {};
@@ -141,11 +143,24 @@ export async function POST({ request }) {
     debugInfo.hasStripeKey = !!stripeSecretKey;
     debugInfo.keyPrefix = stripeSecretKey ? stripeSecretKey.substring(0, 7) + '...' : 'none';
     debugInfo.siteUrl = import.meta.env.SITE_URL;
-    debugInfo.requestedPriceId = body?.priceId;
+    debugInfo.requestedPriceId = body && body.priceId ? body.priceId : 'unknown';
     
     return new Response(JSON.stringify({
       error: errorMessage,
       debug: debugInfo
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (fatalError) {
+    // 最終的なエラーキャッチ
+    console.error('Fatal API Error:', fatalError);
+    return new Response(JSON.stringify({
+      error: 'サーバー内部エラー',
+      debug: {
+        fatalError: fatalError.message,
+        stack: fatalError.stack
+      }
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
