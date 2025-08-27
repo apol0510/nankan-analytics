@@ -1,13 +1,25 @@
-import { loadStripe } from '@stripe/stripe-js'
+// Browser-compatible Stripe client library using CDN
+import { loadStripe } from 'https://cdn.skypack.dev/@stripe/stripe-js'
 
-const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY
-
-if (!stripePublishableKey) {
-  throw new Error('Stripe Publishable Key must be provided')
+// Get Stripe publishable key from runtime or meta tag
+const getStripePublishableKey = () => {
+  // In browser context, the environment variable needs to be passed from server
+  // Check for a meta tag containing the key
+  const metaKey = document.querySelector('meta[name="stripe-publishable-key"]')?.content
+  if (metaKey) return metaKey
+  
+  // For demo purposes, use test key (should be replaced with actual environment variable)
+  return null // Will need to be set via meta tag or passed from server
 }
 
 // Stripeインスタンスを取得
-export const getStripe = () => loadStripe(stripePublishableKey)
+export const getStripe = async (publishableKey = null) => {
+  const key = publishableKey || getStripePublishableKey()
+  if (!key) {
+    throw new Error('Stripe publishable key not found. Please set PUBLIC_STRIPE_PUBLISHABLE_KEY environment variable.')
+  }
+  return await loadStripe(key)
+}
 
 // 料金プラン設定 - 本番環境
 export const PRICING_PLANS = {

@@ -15,8 +15,8 @@ export const prerender = false;
 
 export async function POST({ request }) {
   try {
-    // デモモード: 実際の決済を行わずにモック応答を返す
-    const isDemoMode = true; // 本番では false に設定
+    // プロダクションモード: 実際の決済を行う
+    const isDemoMode = false; // 本番環境に設定
     
     if (isDemoMode) {
       // デモ用のモック応答

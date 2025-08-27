@@ -1,4 +1,6 @@
-# NANKANアナリティクス 開発仕様書
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 【最重要】レース区分定義（絶対厳守・必ず最初に確認）
 
@@ -54,118 +56,140 @@
 - **Premium会員**: 全レース（1R-12R）予想とすべてのコンテンツ
 - **管理者機能**: レース結果管理、予想データ更新、統計分析
 
-## 技術要件
+## 技術スタック
 
-### 現在の技術スタック
-- **Astro** 4.x 静的サイトジェネレーター（メインフレームワーク）
-- **Supabase** バックエンドサービス（認証・データベース）
-- **Stripe** 決済処理システム
-- **Netlify** ホスティング＋自動デプロイ
-- **JavaScript/CSS** フロントエンド開発
-- **PostgreSQL** データベース（Supabase経由）
+### Core Technologies
+- **Astro** 5.x - Static Site Generator with Server-Side Rendering support
+- **Node.js** 18+ - Runtime environment (defined in netlify.toml)
+- **Supabase** - Backend-as-a-Service (authentication, database, real-time subscriptions)
+- **Stripe** - Payment processing and subscription management
+- **Netlify** - Hosting with serverless functions and automatic deployments
 
-### デプロイメント
-- **本番環境**: https://nankan-analytics.keiba.link
-- **開発環境**: http://localhost:4321
-- **CI/CD**: GitHub → Netlify 自動デプロイ
-- **環境変数**: Netlify環境設定で管理
+### Frontend
+- **JavaScript/TypeScript** - Primary development languages
+- **CSS/SCSS** - Styling with Sass preprocessing
+- **Astro Components** - Server-side rendered components
+- **Responsive Design** - Mobile-first approach
 
-### データベース設計
-```sql
--- ユーザープロファイル管理
-CREATE TABLE profiles (
-    id UUID PRIMARY KEY,
-    email TEXT,
-    subscription_tier TEXT,
-    created_at TIMESTAMP
-);
+### Data Layer
+- **PostgreSQL** - Primary database (via Supabase)
+- **JSON Files** - Local data storage for race predictions and results
+- **Real-time subscriptions** - Live data updates via Supabase
 
--- 決済情報
-CREATE TABLE subscriptions (
-    id SERIAL PRIMARY KEY,
-    user_id UUID REFERENCES profiles(id),
-    stripe_subscription_id TEXT,
-    status TEXT,
-    plan_id TEXT
-);
+## Development Commands
+
+### Working Directory
+**IMPORTANT**: Always work from the astro-site directory:
+```bash
+cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
 ```
 
-## アーキテクチャ構成
+### Essential Commands
+```bash
+# Install dependencies
+npm install
 
-### ディレクトリ構造
+# Start development server (http://localhost:4321)
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Type checking
+npm run typecheck
+
+# Linting
+npm run lint
+
+# Clean build artifacts
+npm run clean
+```
+
+### Testing and System Health
+```bash
+# Run system health checks
+node scripts/system-health.js
+
+# Run comprehensive system tests
+node scripts/test-system.js
+
+# Auto backup data
+node scripts/auto-backup.js
+```
+
+## Architecture Overview
+
+### High-Level Architecture
+The application follows a hybrid static/dynamic architecture:
+- **Static Generation**: Content pages, blog posts, and marketing pages
+- **Server-Side Rendering**: Dynamic user dashboards and admin panels
+- **API Routes**: Authentication, payments, and data management
+- **Edge Functions**: Real-time webhooks and subscription management
+
+### Key Directories
 ```
 astro-site/
 ├── src/
-│   ├── components/           # 再利用可能なコンポーネント
-│   │   ├── AccessControl.astro
-│   │   ├── RaceAccordion.astro
-│   │   ├── RaceStrategy.astro
+│   ├── components/          # Reusable Astro components
+│   │   ├── AccessControl.astro      # Membership tier access control
+│   │   ├── RaceAccordion.astro      # Race prediction display
+│   │   ├── RaceStrategy.astro       # Investment strategy display
 │   │   └── StandardRaceAccordion.astro
-│   ├── data/                 # データファイル
-│   │   ├── raceResults.json
-│   │   └── allRacesPrediction.json
-│   ├── layouts/              # レイアウトテンプレート
-│   ├── pages/                # ページコンポーネント
-│   │   ├── admin/            # 管理者専用ページ
-│   │   ├── api/              # APIエンドポイント
-│   │   ├── auth/             # 認証関連ページ
-│   │   └── payment/          # 決済関連ページ
-│   └── lib/                  # ユーティリティ・共通処理
+│   ├── data/               # JSON data files
+│   │   ├── allRacesPrediction.json  # Main prediction data
+│   │   └── raceResults.json         # Historical race results
+│   ├── lib/                # Utility libraries and business logic
+│   │   ├── race-config.js           # Race tier configuration (CRITICAL)
+│   │   ├── auth-utils.js            # Supabase authentication
+│   │   ├── stripe.js               # Payment processing
+│   │   └── supabase-client.js      # Database client
+│   ├── pages/              # File-based routing
+│   │   ├── admin/          # Administrator dashboard
+│   │   ├── api/            # Server-side API endpoints
+│   │   ├── auth/           # Authentication pages
+│   │   └── payment/        # Stripe integration pages
+│   └── layouts/            # Page layout templates
+├── public/                 # Static assets
+└── scripts/                # Maintenance and health check scripts
 ```
 
-### コンポーネント設計思想
-- **再利用性**: 共通UIコンポーネントの統一
-- **アクセス制御**: 会員レベル別の表示制御
-- **モバイル対応**: レスポンシブデザイン優先
-- **パフォーマンス**: 静的生成による高速化
+### Data Flow Architecture
+1. **Race Predictions**: JSON files → Components → User display (tier-controlled)
+2. **User Management**: Supabase Auth → Profile management → Access control
+3. **Payments**: Stripe Checkout → Webhooks → Supabase subscription updates
+4. **Admin Updates**: Admin UI → JSON generation → File updates → Site rebuild
 
-## 現在の主要機能
+### Critical Business Logic
+- **Race Configuration**: `src/lib/race-config.js` contains all tier assignments
+- **Access Control**: Components check user subscription against race tiers
+- **Data Validation**: `src/lib/data-validator.js` ensures data integrity
+- **Payment Flow**: Stripe → Netlify Functions → Supabase updates
 
-### 1. 予想システム
-- **リアルタイム予想**: 各レースのAI予想とオッズ分析
-- **投資戦略**: 安全・バランス・攻撃的の3段階戦略
-- **進捗バー表示**: 的中確率・期待収益率を視覚化
-- **馬券印**: ◎本命、○対抗、▲単穴の表示
+## Deployment and Environment
 
-### 2. 会員システム
-- **認証**: Supabaseによるログイン/登録
-- **サブスクリプション**: Stripeによる月額課金
-- **アクセス制御**: 会員レベル別コンテンツ制御
-- **ダッシュボード**: ユーザー専用管理画面
+### Production Environment
+- **URL**: https://nankan-analytics.keiba.link
+- **Hosting**: Netlify with automatic GitHub deployments
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist/`
+- **Node Version**: 18 (specified in netlify.toml)
 
-### 3. 管理システム
-- **予想データ更新**: admin/predictions.astroで一括管理
-- **結果入力**: admin.astroでレース結果の簡単入力
-- **統計管理**: 的中率・回収率の自動計算
-- **バックアップ**: 自動データバックアップシステム
+### Environment Variables (Netlify)
+Required environment variables for production:
+- `SUPABASE_URL` - Supabase project URL
+- `SUPABASE_ANON_KEY` - Supabase anonymous key
+- `STRIPE_SECRET_KEY` - Stripe secret key
+- `STRIPE_PUBLISHABLE_KEY` - Stripe publishable key
+- `STRIPE_WEBHOOK_SECRET` - Webhook endpoint secret
 
-### 4. 決済システム
-- **Stripe Checkout**: 安全な決済処理
-- **Webhook**: 決済状況の自動同期
-- **プラン管理**: Standard/Premiumプランの管理
-- **顧客ポータル**: 自動請求・キャンセル機能
-
-## UI/UXデザインルール
-
-### カラーテーマ（ダークモード専用）
-- **プライマリ**: #3b82f6 (青系)
-- **セカンダリ**: #8b5cf6 (紫系)
-- **背景**: #0f172a (ダークネイビー)
-- **テキスト**: #e2e8f0 (ライトグレー)
-- **成功色**: #10b981 (グリーン)
-- **警告色**: #f59e0b (オレンジ)
-- **エラー色**: #ef4444 (レッド)
-
-### デザイン原則
-- **ダークテーマ**: 夜間利用を考慮した目に優しいデザイン
-- **グラスモーフィズム**: backdrop-filter: blur()による透明感
-- **カード型レイアウト**: 情報の構造化と視認性向上
-- **アニメーション**: hover効果による直感的なインタラクション
-
-### アイコン使用規則
-- **禁止**: 🎯（ターゲットマーク）は競馬予想に不適切
-- **推奨**: ⚡（攻略）、🤖（AI）、📊（データ）、🏇（競馬）
-- **馬券印**: ◎（本命）、○（対抗）、▲（単穴）
+### Configuration Files
+- `astro.config.mjs` - Astro framework configuration
+- `netlify.toml` - Netlify deployment and routing configuration  
+- `tsconfig.json` - TypeScript configuration
+- `package.json` - Dependencies and scripts
 
 ## 重要な技術仕様
 
@@ -192,100 +216,124 @@ value.toFixed(2)  // 0.90と表示されてしまう
 - **CSS制御**: max-height: 0 → max-height: 2000px
 - **アニメーション**: transition: max-height 0.3s ease
 
-## 開発・保守運用
+## UI/UXデザインルール
 
-### 開発環境セットアップ
+### カラーテーマ（ダークモード専用）
+- **プライマリ**: #3b82f6 (青系)
+- **セカンダリ**: #8b5cf6 (紫系)
+- **背景**: #0f172a (ダークネイビー)
+- **テキスト**: #e2e8f0 (ライトグレー)
+- **成功色**: #10b981 (グリーン)
+- **警告色**: #f59e0b (オレンジ)
+- **エラー色**: #ef4444 (レッド)
+
+### デザイン原則
+- **ダークテーマ**: 夜間利用を考慮した目に優しいデザイン
+- **グラスモーフィズム**: backdrop-filter: blur()による透明感
+- **カード型レイアウト**: 情報の構造化と視認性向上
+- **アニメーション**: hover効果による直感的なインタラクション
+
+### アイコン使用規則
+- **禁止**: 🎯（ターゲットマーク）は競馬予想に不適切
+- **推奨**: ⚡（攻略）、🤖（AI）、📊（データ）、🏇（競馬）
+- **馬券印**: ◎（本命）、○（対抗）、▲（単穴）
+
+## Common Development Tasks
+
+### Race Data Management
+1. **Update Predictions**: Use `admin/predictions.astro` for bulk updates
+2. **Result Entry**: Use `admin.astro` for race result input
+3. **Data Validation**: Always run validation after updates
+4. **Mobile Testing**: Verify responsive display on all changes
+
+### User Management
+1. **Authentication**: Handled by Supabase Auth with email/password
+2. **Subscription Management**: Stripe Customer Portal integration
+3. **Access Control**: Automatic tier-based content filtering
+4. **Profile Updates**: Real-time sync between Stripe and Supabase
+
+### Content Updates
+1. **Blog Posts**: Add markdown files to `src/content/blog/`
+2. **Static Pages**: Update Astro components in `src/pages/`
+3. **Components**: Modify reusable elements in `src/components/`
+4. **Styling**: Update SCSS files with design system colors
+
+### Troubleshooting
+
+#### Server Issues
 ```bash
-# 正しいディレクトリに移動
-cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
-
-# 依存関係インストール
-npm install
-
-# 開発サーバー起動
-npm run dev
-```
-
-### トラブルシューティング
-
-#### 1. サーバー混在問題
-```bash
-# 既存サーバー停止
+# Kill existing servers
 pkill -f "python.*http.server"
 pkill -f "astro dev"
 
-# ポート確認
+# Check port usage
 lsof -i tcp:4321
 ```
 
-#### 2. ブラウザキャッシュ問題
-- **症状**: 更新が反映されない
-- **解決**: Cmd+Shift+Delete でキャッシュクリア
-- **確認**: プライベートモードで検証
+#### Cache Issues
+- **Symptoms**: Updates not reflecting in browser
+- **Solution**: Clear browser cache (Cmd+Shift+Delete on Mac)
+- **Verification**: Test in private/incognito mode
 
-#### 3. 表示不具合
-- **プログレスバー**: Math.round(value * 100) + '%' 形式確認
-- **馬券印**: ◎○▲の正しい記号確認
-- **モバイル表示**: レスポンシブ対応確認
+#### Display Issues
+- **Progress Bars**: Verify Math.round(value * 100) + '%' format
+- **Race Symbols**: Check ◎○▲ character correctness
+- **Mobile Layout**: Test responsive breakpoints
 
-### 更新作業フロー
+## Critical Development Guidelines
 
-#### 予想データ更新
-1. admin/predictions.astroで予想データ編集
-2. 進捗バー数値をパーセンテージ確認
-3. 馬券印の正確性確認
-4. モバイル表示での検証
+### Race Configuration (NEVER MODIFY WITHOUT CONFIRMATION)
+The race tier system is the core business logic. Changes to `src/lib/race-config.js` must be verified:
+- 11R must always be `tier: "free"` and `isMainRace: true`
+- 12R must always be `tier: "standard"` (never free)
+- Main race is always 1 race before the final race
 
-#### レース結果更新  
-1. admin.astroで結果データ入力
-2. JSON自動生成・コピー
-3. src/data/raceResults.json更新
-4. 統計数値の自動計算確認
+### Data Integrity
+- Always validate JSON structure before committing
+- Use `src/lib/data-validator.js` for automated checks
+- Backup existing data before major updates
+- Test all subscription tiers after data changes
 
-#### git管理
+### Security Requirements
+- Never commit API keys or secrets
+- Use environment variables for all sensitive data
+- Implement proper authentication checks on admin routes
+- Validate user permissions before displaying content
+
+### Performance Standards
+- Maintain mobile-first responsive design
+- Keep Lighthouse scores above 90
+- Optimize images and static assets
+- Use lazy loading for non-critical content
+
+## Version Control and Deployment
+
+### Git Workflow
 ```bash
-# 標準コミットフロー
+# Standard commit format
 git add .
-git commit -m "機能改善: プログレスバー表示修正と馬券印正規化
+git commit -m "機能改善: [specific change description]
 
 🤖 Generated with Claude Code
 Co-Authored-By: Claude <noreply@anthropic.com>"
 git push
 ```
 
-## セキュリティ・運用監視
+### Deployment Process
+1. **Development**: Work in feature branches or directly on main
+2. **Testing**: Verify changes locally with `npm run dev`
+3. **Building**: Ensure `npm run build` succeeds
+4. **Deployment**: Push to GitHub triggers automatic Netlify deployment
+5. **Verification**: Check production site functionality
 
-### セキュリティ要件
-- **認証**: Supabase RLS（Row Level Security）
-- **決済**: Stripe PCI-DSS準拠
-- **API保護**: 環境変数による秘匿情報管理
-- **アクセス制御**: 会員レベル別認可システム
-
-### 監視・メンテナンス
-- **アップタイム**: Netlify自動監視
-- **エラー追跡**: ブラウザコンソールでの確認
-- **パフォーマンス**: Lighthouse スコア維持
-- **バックアップ**: データの定期バックアップ
-
-## 重要な開発方針
-
-### 既存資産の保護
-- **破壊的変更禁止**: 動作中のシステムを優先
-- **段階的改善**: 小さな改善の積み重ね
-- **後方互換性**: 既存ユーザーへの影響最小化
-
-### コミュニケーション
-- **確認重視**: 作業前の意図確認必須
-- **具体的質問**: 不明点の具体的な確認
-- **推測作業禁止**: 確認なしの推測実装禁止
-
-### 品質基準
-- **モバイル最優先**: スマートフォン表示の最適化
-- **アクセシビリティ**: 読みやすさ・使いやすさの重視
-- **パフォーマンス**: 高速表示の維持
+### Monitoring and Maintenance
+- **Uptime**: Monitored automatically by Netlify
+- **Performance**: Regular Lighthouse audits
+- **Error Tracking**: Browser console monitoring
+- **Data Backup**: Automated backup scripts in `/scripts/`
 
 ---
 
-**最後更新**: 2025年8月26日  
-**プロジェクト状況**: Phase 3完了・運用中  
-**次回課題**: ユーザーフィードバックに基づく機能改善
+**Last Updated**: 2025-08-27
+**Project Phase**: Production (Phase 3 Complete)
+**Next Priority**: User feedback-based improvements
