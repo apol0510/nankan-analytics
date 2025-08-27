@@ -62,14 +62,18 @@ exports.handler = async (event, context) => {
         // トランザクションメール送信
         const emailData = {
             sender: {
-                name: 'NANKANアナリティクス',
-                email: 'test@nankan-analytics.keiba.link'
+                name: '南関アナリティクス',
+                email: 'noreply@keiba.link'  // 認証済みドメインを使用
+            },
+            replyTo: {
+                email: 'support@keiba.link',
+                name: '南関サポート'
             },
             to: [{
                 email: email,
                 name: 'テストユーザー'
             }],
-            subject: '【NANKAN】会員登録完了のお知らせ',
+            subject: '【南関】会員登録完了のお知らせ',
             htmlContent: `
                 <!DOCTYPE html>
                 <html>
@@ -90,14 +94,14 @@ exports.handler = async (event, context) => {
                 <body>
                     <div class="container">
                         <div class="header">
-                            <h1>🏇 NANKANアナリティクス</h1>
+                            <h1>🏇 南関アナリティクス</h1>
                             <p>AI予想プラットフォームへようこそ</p>
                         </div>
                         <div class="content">
                             <h2>会員登録が完了しました</h2>
                             <div class="plan-badge">${plan.toUpperCase()}プラン</div>
                             
-                            <p>この度はNANKANアナリティクスにご登録いただき、誠にありがとうございます。</p>
+                            <p>この度は南関アナリティクスにご登録いただき、誠にありがとうございます。</p>
                             
                             <div class="feature-list">
                                 <h3>ご利用可能な機能：</h3>
@@ -123,7 +127,7 @@ exports.handler = async (event, context) => {
                             <a href="https://nankan-analytics.keiba.link" class="button">サイトにアクセス</a>
                             
                             <div class="footer">
-                                <p>© 2025 NANKANアナリティクス. All rights reserved.</p>
+                                <p>© 2025 南関アナリティクス. All rights reserved.</p>
                                 <p>お問い合わせ: support@nankan-analytics.keiba.link</p>
                             </div>
                         </div>
@@ -131,7 +135,7 @@ exports.handler = async (event, context) => {
                 </body>
                 </html>
             `,
-            textContent: `NANKANアナリティクスへようこそ！\n\n会員登録が完了しました。\nプラン: ${plan.toUpperCase()}\n\nサイトURL: https://nankan-analytics.keiba.link`
+            textContent: `南関アナリティクスへようこそ！\n\n会員登録が完了しました。\nプラン: ${plan.toUpperCase()}\n\nサイトURL: https://nankan-analytics.keiba.link`
         };
 
         const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {

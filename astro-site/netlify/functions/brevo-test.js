@@ -108,8 +108,12 @@ exports.handler = async (event, context) => {
             // トランザクションメール送信
             const emailData = {
                 sender: {
-                    name: 'NANKANアナリティクス',
-                    email: 'test@nankan-analytics.keiba.link'
+                    name: '南関アナリティクス',
+                    email: 'noreply@keiba.link'  // 認証済みドメインを使用
+                },
+                replyTo: {
+                    email: 'support@keiba.link',
+                    name: '南関サポート'
                 },
                 to: [
                     {
@@ -139,7 +143,7 @@ exports.handler = async (event, context) => {
                             </div>
                             <div class="content">
                                 <h2>テストメール送信完了</h2>
-                                <p>NANKANアナリティクスのBrevo API連携が正常に動作しています。</p>
+                                <p>南関アナリティクスのBrevo API連携が正常に動作しています。</p>
                                 
                                 <h3>✅ 確認済み項目</h3>
                                 <ul>
@@ -153,7 +157,7 @@ exports.handler = async (event, context) => {
                                 <a href="https://nankan-analytics.keiba.link" class="button">サイトを見る</a>
                                 
                                 <div class="footer">
-                                    <p>© 2025 NANKANアナリティクス. All rights reserved.</p>
+                                    <p>© 2025 南関アナリティクス. All rights reserved.</p>
                                     <p>このメールはテスト送信です。</p>
                                 </div>
                             </div>
