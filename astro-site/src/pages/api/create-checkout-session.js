@@ -121,15 +121,29 @@ export async function POST({ request }) {
     console.error('Stripe Checkout error:', error);
     
     let errorMessage = 'チェックアウトセッションの作成に失敗しました';
+    let debugInfo = {};
     
     if (error.code === 'price_not_found') {
       errorMessage = '指定された料金プランが見つかりません';
     } else if (error.code === 'customer_creation_failed') {
       errorMessage = '顧客情報の作成に失敗しました';
+    } else if (error.type === 'StripeInvalidRequestError') {
+      errorMessage = 'Stripe設定エラー';
+      debugInfo.stripeError = error.message;
+    } else if (!stripeSecretKey) {
+      errorMessage = 'Stripe設定が不完全です';
+      debugInfo.missingEnv = 'STRIPE_SECRET_KEY';
     }
     
+    // デバッグ情報を含める（本番環境でも一時的に）
+    debugInfo.errorType = error.type;
+    debugInfo.errorCode = error.code;
+    debugInfo.hasStripeKey = !!stripeSecretKey;
+    debugInfo.siteUrl = import.meta.env.SITE_URL;
+    
     return new Response(JSON.stringify({
-      error: errorMessage
+      error: errorMessage,
+      debug: debugInfo
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }

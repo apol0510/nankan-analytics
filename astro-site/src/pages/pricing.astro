@@ -590,6 +590,12 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                     errorMessage = 'ネットワークエラーが発生しました。';
                 }
                 
+                // デバッグ情報があれば表示
+                if (error.debug) {
+                    console.log('Debug info:', error.debug);
+                    errorMessage += '\n\nデバッグ情報: ' + JSON.stringify(error.debug, null, 2);
+                }
+                
                 alert(errorMessage);
             } finally {
                 setButtonLoading(button, false);
