@@ -88,6 +88,11 @@ export async function POST({ request }) {
       });
     }
 
+    // URL設定（明示的にHTTPSスキームを指定）
+    const siteUrl = import.meta.env.SITE_URL || 'https://nankan-analytics.keiba.link';
+    const successUrl = siteUrl.startsWith('http') ? siteUrl : `https://${siteUrl}`;
+    const cancelUrl = siteUrl.startsWith('http') ? siteUrl : `https://${siteUrl}`;
+
     // Checkout セッション作成
     const session = await stripe.checkout.sessions.create({
       customer: customer.id,
@@ -99,8 +104,8 @@ export async function POST({ request }) {
         },
       ],
       mode: 'subscription',
-      success_url: `${import.meta.env.SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${import.meta.env.SITE_URL}/pricing?canceled=true`,
+      success_url: `${successUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${cancelUrl}/pricing?canceled=true`,
       metadata: {
         user_id: userId,
       },
@@ -143,6 +148,8 @@ export async function POST({ request }) {
     debugInfo.hasStripeKey = !!stripeSecretKey;
     debugInfo.keyPrefix = stripeSecretKey ? stripeSecretKey.substring(0, 7) + '...' : 'none';
     debugInfo.siteUrl = import.meta.env.SITE_URL;
+    debugInfo.resolvedSuccessUrl = `${successUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
+    debugInfo.resolvedCancelUrl = `${cancelUrl}/pricing?canceled=true`;
     debugInfo.requestedPriceId = body && body.priceId ? body.priceId : 'unknown';
     
     return new Response(JSON.stringify({
