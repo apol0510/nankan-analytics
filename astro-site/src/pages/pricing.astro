@@ -371,8 +371,64 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
     </div>
 
     <script type="module">
-        import { getStripe, createCheckoutSession, PRICING_PLANS } from '/src/lib/stripe.js';
-        import { auth } from '/src/lib/supabase-client.js';
+        // Stripe関連の関数とデータを直接インライン
+        import { loadStripe } from 'https://js.stripe.com/v3/';
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+        // Stripe設定
+        const stripePublishableKey = document.querySelector('meta[name="stripe-publishable-key"]')?.content;
+        const getStripe = () => loadStripe(stripePublishableKey);
+
+        // 料金プラン設定
+        const PRICING_PLANS = {
+            STANDARD: {
+                name: 'スタンダード',
+                description: '後半レース予想・基礎コンテンツ',
+                price: 5980,
+                stripePriceId: 'price_1S0YFdFA5w33p4WyJNK6MoRR',
+                features: ['10R・11R・12R予想閲覧', '基礎コンテンツアクセス', 'メールサポート', '過去30日分のデータ']
+            },
+            PREMIUM: {
+                name: 'プレミアム',
+                description: '全レース予想・すべてのコンテンツ',
+                price: 9980,
+                stripePriceId: 'price_1S0YUfFA5w33p4WyVImKgx4c',
+                features: ['1R-12R 全レース予想閲覧', '全コンテンツアクセス', '無制限データアクセス', '優先サポート', 'AI分析レポート']
+            }
+        };
+
+        // Checkoutセッション作成関数
+        const createCheckoutSession = async (priceId, userId, customerEmail) => {
+            try {
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ priceId, userId, customerEmail })
+                });
+                const session = await response.json();
+                if (!response.ok) {
+                    throw new Error(session.error || 'チェックアウトセッションの作成に失敗しました');
+                }
+                return session;
+            } catch (error) {
+                console.error('Checkout session creation error:', error);
+                throw error;
+            }
+        };
+
+        // Supabase設定
+        const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+        
+        const auth = {
+            async getUser() {
+                return await supabase.auth.getUser();
+            },
+            async signOut() {
+                return await supabase.auth.signOut();
+            }
+        };
 
         // 購読ボタンのイベントリスナー
         document.querySelectorAll('.subscribe-btn').forEach(btn => {
