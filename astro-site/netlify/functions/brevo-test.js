@@ -109,11 +109,16 @@ exports.handler = async (event, context) => {
             const emailData = {
                 sender: {
                     name: '南関アナリティクス',
-                    email: 'noreply@keiba.link'  // 認証済みドメインを使用
+                    email: 'info@keiba.link'  // noreplyではなくinfoを使用
                 },
                 replyTo: {
-                    email: 'support@keiba.link',
-                    name: '南関サポート'
+                    email: 'info@keiba.link',  // supportよりinfoの方が信頼性高い
+                    name: '南関アナリティクス'
+                },
+                headers: {
+                    'X-Priority': '3',  // 通常優先度
+                    'List-Unsubscribe': '<mailto:unsubscribe@keiba.link>',  // 配信停止リンク
+                    'Precedence': 'bulk'  // 一括送信メールであることを明示
                 },
                 to: [
                     {
@@ -121,51 +126,93 @@ exports.handler = async (event, context) => {
                         name: 'テストユーザー'
                     }
                 ],
-                subject: 'Brevo API連携テスト',
+                subject: '【南関アナリティクス】システム連携テストのお知らせ',
                 htmlContent: `
                     <!DOCTYPE html>
-                    <html>
+                    <html lang="ja">
                     <head>
                         <meta charset="UTF-8">
-                        <style>
-                            body { font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; }
-                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-                            .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-                            .button { display: inline-block; background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-                            .footer { text-align: center; color: #666; font-size: 12px; margin-top: 30px; }
-                        </style>
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>南関アナリティクス - システム連携テスト</title>
                     </head>
-                    <body>
-                        <div class="container">
-                            <div class="header">
-                                <h1>🎉 Brevo連携成功！</h1>
-                            </div>
-                            <div class="content">
-                                <h2>テストメール送信完了</h2>
-                                <p>南関アナリティクスのBrevo API連携が正常に動作しています。</p>
-                                
-                                <h3>✅ 確認済み項目</h3>
-                                <ul>
-                                    <li>API認証: 成功</li>
-                                    <li>メール送信: 成功</li>
-                                    <li>テンプレート表示: 正常</li>
-                                </ul>
-                                
-                                <p>このメールが届いていれば、メール配信システムは正常に動作しています。</p>
-                                
-                                <a href="https://nankan-analytics.keiba.link" class="button">サイトを見る</a>
-                                
-                                <div class="footer">
-                                    <p>© 2025 南関アナリティクス. All rights reserved.</p>
-                                    <p>このメールはテスト送信です。</p>
-                                </div>
-                            </div>
-                        </div>
+                    <body style="margin:0;padding:0;font-family:'メイリオ','Meiryo',sans-serif;background-color:#f5f5f5;">
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td align="center" style="padding:20px;">
+                                    <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #e0e0e0;">
+                                        <tr>
+                                            <td style="padding:30px;background-color:#4a5568;color:#ffffff;text-align:center;">
+                                                <h1 style="margin:0;font-size:24px;">南関アナリティクス</h1>
+                                                <p style="margin:10px 0 0 0;font-size:14px;">AI競馬予想プラットフォーム</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:30px;">
+                                                <h2 style="color:#2d3748;font-size:20px;margin:0 0 20px 0;">システム連携テスト</h2>
+                                                <p style="color:#4a5568;line-height:1.8;margin:0 0 20px 0;">
+                                                    いつも南関アナリティクスをご利用いただき、ありがとうございます。<br>
+                                                    このメールは、メール配信システムの動作確認のために送信されています。
+                                                </p>
+                                                <div style="background-color:#f7fafc;border-left:4px solid #4299e1;padding:15px;margin:20px 0;">
+                                                    <p style="color:#2b6cb0;font-weight:bold;margin:0 0 10px 0;">確認項目：</p>
+                                                    <ul style="color:#4a5568;margin:0;padding-left:20px;">
+                                                        <li>メール到達確認</li>
+                                                        <li>文字化けの有無</li>
+                                                        <li>表示の正常性</li>
+                                                    </ul>
+                                                </div>
+                                                <p style="color:#4a5568;line-height:1.8;margin:20px 0;">
+                                                    正常にこのメールが届いていれば、システムは問題なく動作しています。
+                                                </p>
+                                                <table cellpadding="0" cellspacing="0" border="0" style="margin:30px auto;">
+                                                    <tr>
+                                                        <td style="background-color:#4299e1;border-radius:5px;text-align:center;">
+                                                            <a href="https://nankan-analytics.keiba.link" style="color:#ffffff;text-decoration:none;display:block;padding:12px 30px;font-size:16px;">サイトへアクセス</a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:20px;background-color:#f7fafc;border-top:1px solid #e2e8f0;">
+                                                <p style="color:#718096;font-size:12px;margin:0;text-align:center;">
+                                                    このメールは南関アナリティクスから送信されています。<br>
+                                                    お問い合わせ: info@keiba.link<br>
+                                                    〒100-0001 東京都千代田区<br>
+                                                    <a href="https://nankan-analytics.keiba.link/unsubscribe" style="color:#4299e1;">配信停止</a>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
                     </body>
                     </html>
                 `,
-                textContent: 'Brevo API連携テスト - このメールが届いていれば、システムは正常に動作しています。'
+                textContent: `南関アナリティクス - システム連携テスト
+
+いつも南関アナリティクスをご利用いただき、ありがとうございます。
+
+このメールは、メール配信システムの動作確認のために送信されています。
+
+【確認項目】
+・メール到達確認
+・文字化けの有無
+・表示の正常性
+
+正常にこのメールが届いていれば、システムは問題なく動作しています。
+
+▼ サイトへアクセス
+https://nankan-analytics.keiba.link
+
+────────────────────
+南関アナリティクス
+AI競馬予想プラットフォーム
+
+お問い合わせ: info@keiba.link
+配信停止: https://nankan-analytics.keiba.link/unsubscribe
+────────────────────`
             };
 
             const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
