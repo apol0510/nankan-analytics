@@ -344,13 +344,13 @@
             standard: {
                 id: 'price_standard_monthly',
                 name: 'Standard',
-                price: 1980,
+                price: 5980,
                 description: '10R・12R予想＋基礎コンテンツ'
             },
             premium: {
                 id: 'price_premium_monthly', 
                 name: 'Premium',
-                price: 3980,
+                price: 9980,
                 description: '全レース予想＋すべてのコンテンツ'
             }
         };
@@ -567,7 +567,12 @@
         function getPlanDisplayName(planKey) {
             if (!planKey || planKey === 'なし') return '未契約';
             
-            const plan = Object.values(PRICING_PLANS).find(p => p.stripePriceId.includes(planKey));
+            // デモサブスクリプション用のプラン名マッピング
+            if (planKey === 'premium') return 'プレミアム';
+            if (planKey === 'standard') return 'スタンダード';
+            
+            // Stripe Price IDでの検索（stripePriceIdが存在する場合のみ）
+            const plan = Object.values(PRICING_PLANS).find(p => p.stripePriceId && p.stripePriceId.includes(planKey));
             return plan ? plan.name : planKey;
         }
 

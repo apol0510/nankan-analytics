@@ -53,6 +53,11 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
             margin-left: 16px;
         }
 
+        .nav-loading {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -278,8 +283,7 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
         <div class="navbar-content">
             <a href="/" class="logo">🤖 NANKANアナリティクス</a>
             <div class="nav-right">
-                <a href="/auth/login">ログイン</a>
-                <a href="/dashboard">ダッシュボード</a>
+                <span class="nav-loading">読み込み中...</span>
             </div>
         </div>
     </nav>
@@ -367,8 +371,8 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
     </div>
 
     <script type="module">
-        import { getStripe, createCheckoutSession, PRICING_PLANS } from '/lib/stripe.js';
-        import { auth } from '/lib/supabase-client.js';
+        import { getStripe, createCheckoutSession, PRICING_PLANS } from '/src/lib/stripe.js';
+        import { auth } from '/src/lib/supabase-client.js';
 
         // 購読ボタンのイベントリスナー
         document.querySelectorAll('.subscribe-btn').forEach(btn => {
@@ -383,14 +387,45 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                 // ローディング状態開始
                 setButtonLoading(button, true);
 
-                // 現在のユーザー取得
-                const { data: { user }, error: authError } = await auth.getUser();
+                // 現在のユーザー取得（複数の方法で確認）
+                let user = null;
                 
-                if (authError || !user) {
-                    // 未認証の場合、サインアップページへリダイレクト
-                    window.location.href = '/auth/signup?redirect=' + encodeURIComponent('/pricing');
+                // 方法1: window.currentUser（ページ読み込み時に設定）
+                if (window.currentUser) {
+                    user = window.currentUser;
+                    console.log('Using cached user from window.currentUser:', user.email);
+                } else {
+                    // 方法2: Supabase auth.getUser()
+                    const { data: { user: supabaseUser }, error: authError } = await auth.getUser();
+                    console.log('Supabase getUser in subscribe:', { user: supabaseUser?.email, error: authError });
+                    
+                    if (supabaseUser && !authError) {
+                        user = supabaseUser;
+                    } else {
+                        // 方法3: ローカルストレージから確認
+                        const session = localStorage.getItem('sb-' + 'qysycsrhaatudnksbpqe' + '-auth-token');
+                        if (session) {
+                            try {
+                                const sessionData = JSON.parse(session);
+                                if (sessionData.user) {
+                                    user = sessionData.user;
+                                    console.log('Using user from localStorage in subscribe:', user.email);
+                                }
+                            } catch (e) {
+                                console.log('Error parsing session in subscribe:', e);
+                            }
+                        }
+                    }
+                }
+                
+                if (!user) {
+                    console.log('User not authenticated, redirecting to login');
+                    // 未認証の場合、ログインページへリダイレクト（既存ユーザーも考慮）
+                    window.location.href = '/auth/login?redirect=' + encodeURIComponent('/pricing');
                     return;
                 }
+                
+                console.log('Proceeding with subscription for user:', user.email);
 
                 // プランの詳細取得
                 const planDetails = PRICING_PLANS[planType.toUpperCase()];
@@ -398,15 +433,38 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                     throw new Error('Invalid plan type');
                 }
 
-                // Stripe Checkout セッション作成
-                const session = await createCheckoutSession(
-                    planDetails.stripePriceId,
-                    user.id,
-                    user.email
-                );
+                // 開発環境ではデモモードを使用
+                const isDevelopment = window.location.hostname === 'localhost';
+                
+                if (isDevelopment) {
+                    // デモモード: APIを使わず直接処理
+                    console.log('Demo mode: Simulating subscription for', user.email);
+                    const session = {
+                        demo: true,
+                        message: `デモ購入完了！\n\nプラン: ${planType}\nユーザー: ${user.email}\n\nこれは開発環境でのテストです。`
+                    };
+                    
+                    // デモサブスクリプション処理
+                    localStorage.setItem('demo_subscription_' + user.id, JSON.stringify({
+                        planType: planType,
+                        createdAt: new Date().toISOString(),
+                        demo: true
+                    }));
+                    
+                    alert(session.message);
+                    window.location.href = '/dashboard';
+                    return;
+                } else {
+                    // 本番環境: 実際のStripe処理
+                    const session = await createCheckoutSession(
+                        planDetails.stripePriceId,
+                        user.id,
+                        user.email
+                    );
+                }
 
-                // デモモードの場合は成功メッセージを表示
-                if (session.demo) {
+                // 本番環境でのデモモード対応（残しておく）
+                if (session && session.demo) {
                     // サブスクリプション情報を更新
                     try {
                         const updateResponse = await fetch('/api/update-subscription-demo', {
@@ -491,21 +549,75 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
         // ページロード時にユーザー状態をチェック
         document.addEventListener('DOMContentLoaded', async () => {
+            const navRight = document.querySelector('.nav-right');
+            
+            // セッション情報を複数の方法で確認
+            let user = null;
+            
             try {
-                const { data: { user } } = await auth.getUser();
+                // 方法1: Supabase auth.getUser()
+                const { data: { user: supabaseUser }, error: authError } = await auth.getUser();
+                console.log('Supabase getUser result:', { user: supabaseUser?.email, error: authError });
+                
+                if (supabaseUser && !authError) {
+                    user = supabaseUser;
+                } else {
+                    // 方法2: ローカルストレージからセッション確認
+                    const session = localStorage.getItem('sb-' + 'qysycsrhaatudnksbpqe' + '-auth-token');
+                    console.log('LocalStorage session check:', !!session);
+                    
+                    if (session) {
+                        try {
+                            const sessionData = JSON.parse(session);
+                            if (sessionData.user) {
+                                user = sessionData.user;
+                                console.log('Found user in localStorage:', user.email);
+                            }
+                        } catch (e) {
+                            console.log('Error parsing session:', e);
+                        }
+                    }
+                }
+                
+                // セッション確認用のグローバル変数設定（デバッグ用）
+                window.currentUser = user;
                 
                 if (user) {
                     // ログイン済みの場合、ナビゲーションを更新
-                    const navRight = document.querySelector('.nav-right');
                     navRight.innerHTML = `
                         <span style="color: #94a3b8; margin-right: 16px;">${user.email}</span>
                         <a href="/dashboard">ダッシュボード</a>
+                        <a href="#" onclick="handleLogout()" style="margin-left: 16px;">ログアウト</a>
                     `;
+                    console.log('Navigation updated for logged in user:', user.email);
+                } else {
+                    // 未認証の場合、ログイン・登録リンクを表示
+                    navRight.innerHTML = `
+                        <a href="/auth/login">ログイン</a>
+                        <a href="/auth/signup">新規登録</a>
+                    `;
+                    console.log('Navigation updated for guest user');
                 }
             } catch (error) {
-                // エラーは無視（未認証状態）
+                console.error('Authentication check error:', error);
+                // エラーの場合、未認証状態として処理
+                navRight.innerHTML = `
+                    <a href="/auth/login">ログイン</a>
+                    <a href="/auth/signup">新規登録</a>
+                `;
             }
         });
+
+        // ログアウト処理
+        window.handleLogout = async () => {
+            try {
+                await auth.signOut();
+                window.location.reload();
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('ログアウトでエラーが発生しました。');
+            }
+        };
     </script>
 </body>
 </html>

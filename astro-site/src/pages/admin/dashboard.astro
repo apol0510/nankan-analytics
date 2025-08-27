@@ -616,7 +616,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         const standardUsers = parseInt(document.getElementById('standard-users').textContent) || 0;
         const premiumUsers = parseInt(document.getElementById('premium-users').textContent) || 0;
         
-        const monthlyRevenue = (standardUsers * 2980) + (premiumUsers * 5980);
+        const monthlyRevenue = (standardUsers * 5980) + (premiumUsers * 9980);
         document.getElementById('monthly-revenue').textContent = '¥' + monthlyRevenue.toLocaleString();
     }
 

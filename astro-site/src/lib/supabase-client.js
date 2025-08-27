@@ -2,8 +2,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 // 環境変数を取得（ブラウザ環境では直接値を使用）
-const supabaseUrl = 'https://rkqsoxitqjdvqqdexuhm.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrcXNveGl0cWpkdnFxZGV4dWhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI0MjM4NjgsImV4cCI6MjA0ODAwMDA2OH0.eAGqEZ5-PGHxBQxFz1AqI3ZyA0vfTrNqJD3uBp1zKXE'
+const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co'
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
