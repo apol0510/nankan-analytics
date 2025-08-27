@@ -139,7 +139,9 @@ export async function POST({ request }) {
     debugInfo.errorType = error.type;
     debugInfo.errorCode = error.code;
     debugInfo.hasStripeKey = !!stripeSecretKey;
+    debugInfo.keyPrefix = stripeSecretKey ? stripeSecretKey.substring(0, 7) + '...' : 'none';
     debugInfo.siteUrl = import.meta.env.SITE_URL;
+    debugInfo.requestedPriceId = body?.priceId;
     
     return new Response(JSON.stringify({
       error: errorMessage,
