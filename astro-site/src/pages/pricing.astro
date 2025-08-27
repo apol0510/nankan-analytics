@@ -528,10 +528,12 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                 // 開発環境ではデモモードを使用
                 const isDevelopment = window.location.hostname === 'localhost';
                 
+                let session; // セッション変数を外部で定義
+                
                 if (isDevelopment) {
                     // デモモード: APIを使わず直接処理
                     console.log('Demo mode: Simulating subscription for', user.email);
-                    const session = {
+                    session = {
                         demo: true,
                         message: `デモ購入完了！\n\nプラン: ${planType}\nユーザー: ${user.email}\n\nこれは開発環境でのテストです。`
                     };
@@ -548,7 +550,7 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                     return;
                 } else {
                     // 本番環境: 実際のStripe処理
-                    const session = await createCheckoutSession(
+                    session = await createCheckoutSession(
                         planDetails.stripePriceId,
                         user.id,
                         user.email
