@@ -2,6 +2,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import haihaiMail from '../../lib/haihai-mail.js';
+import { sendEmail } from '../../lib/email.js';
 
 // 環境変数チェック
 const stripeSecretKey = import.meta.env.STRIPE_SECRET_KEY;
@@ -139,6 +140,31 @@ async function handleCheckoutCompleted(session) {
         console.log(`配配メール: ${profile.email} を ${planName} グループに移動しました`);
       } catch (mailError) {
         console.warn('配配メールグループ移動エラー:', mailError);
+      }
+    }
+
+    // 決済完了メールを送信
+    if (profile?.email) {
+      try {
+        const planDisplayName = planName === 'premium' ? 'プレミアム' : 'スタンダード';
+        const planAmount = planName === 'premium' ? '9,980' : '5,980';
+        const nextBillingDate = new Date(subscription.current_period_end * 1000).toLocaleDateString('ja-JP');
+        
+        const features = planName === 'premium' 
+          ? '<ul><li>1R-12R 全レース予想閲覧</li><li>全コンテンツアクセス</li><li>無制限データアクセス</li><li>優先サポート</li><li>AI分析レポート</li></ul>'
+          : '<ul><li>10R・11R・12R予想閲覧</li><li>基礎コンテンツアクセス</li><li>メールサポート</li><li>過去30日分のデータ</li></ul>';
+
+        await sendEmail(profile.email, 'PAYMENT_SUCCESS', {
+          email: profile.email,
+          planName: planDisplayName,
+          amount: planAmount,
+          nextBillingDate: nextBillingDate,
+          features: features
+        });
+
+        console.log(`決済完了メールを送信しました: ${profile.email}`);
+      } catch (emailError) {
+        console.warn('決済完了メール送信エラー:', emailError);
       }
     }
 

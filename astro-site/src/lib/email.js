@@ -99,9 +99,9 @@ const EMAIL_TEMPLATES = {
                            style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 16px; margin-right: 12px;">
                             📊 ダッシュボード
                         </a>
-                        <a href="https://nankan-analytics.keiba.link/premium-predictions" 
+                        <a href="${userData.planName === 'プレミアム' ? 'https://nankan-analytics.keiba.link/premium-predictions' : 'https://nankan-analytics.keiba.link/standard-predictions'}" 
                            style="display: inline-block; background: transparent; color: #10b981; border: 2px solid #10b981; text-decoration: none; padding: 12px 26px; border-radius: 8px; font-weight: 600; font-size: 16px;">
-                            🏇 プレミアム予想
+                            🏇 ${userData.planName}予想
                         </a>
                     </div>
                     
