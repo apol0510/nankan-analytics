@@ -146,7 +146,7 @@ class BrevoAPI {
             textContent: textContent || this.stripHtml(htmlContent),
             sender: {
                 name: 'NANKANアナリティクス',
-                email: 'info@nankan-analytics.keiba.link'
+                email: 'test@nankan-analytics.keiba.link' // 診断テストで確認済みのアドレス
             },
             recipients: {
                 listIds: Array.isArray(listIds) ? listIds.map(id => this.getListId(id)) : [this.getListId(listIds)]
