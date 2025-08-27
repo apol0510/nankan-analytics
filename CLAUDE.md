@@ -9,7 +9,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **12Rをメインレースとして扱う** ← 違います！
 - **12Rにtier: "free"を設定する** ← エラー！
 
-### ✅ 正しいレース区分（12レース開催時）
+### ✅ 正しいレース区分の基本原則
+**重要**: Standard会員は「**最終レース以前の後半3レース**」が対象
+
+#### パターン1: 12レース開催時
 ```
 1R-9R: tier: "premium" （プレミアム会員）
 10R:   tier: "standard"（スタンダード会員）
@@ -17,20 +20,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 12R:   tier: "standard"（スタンダード会員）← 最終だが無料ではない！
 ```
 
-### ✅ 正しいレース区分（10レース開催時）
+#### パターン2: 11レース開催時
 ```
 1R-8R: tier: "premium" （プレミアム会員）
+9R:    tier: "standard"（スタンダード会員）
+10R:   tier: "free"    （無料・メインレース）★★★
+11R:   tier: "standard"（スタンダード会員）
+```
+
+#### パターン3: 10レース開催時
+```
+1R-7R: tier: "premium" （プレミアム会員）
+8R:    tier: "standard"（スタンダード会員）
 9R:    tier: "free"    （無料・メインレース）★★★
 10R:   tier: "standard"（スタンダード会員）
 ```
 
 ### 📋 レース設定チェックリスト（作業前に必ず確認）
-- [ ] 11RがisMainRace: true になっている
-- [ ] 11Rがtier: "free" になっている
-- [ ] 12Rがtier: "standard" になっている（freeではない！）
-- [ ] planAccess.free.races: ["11R"] になっている（12Rは含まない！）
-- [ ] 編集ボタンが "11R編集 (メイン・free)" になっている
-- [ ] JavaScriptのtierMappingで11: 'free', 12: 'standard'になっている
+**重要**: 開催レース数により設定が変動するため必ず確認！
+
+#### 共通チェック項目
+- [ ] メインレース（最終の1つ前）がisMainRace: true になっている
+- [ ] メインレースがtier: "free" になっている
+- [ ] Standard対象レースが「後半3レース」に設定されている
+- [ ] 最終レースがtier: "standard" になっている（freeではない！）
+
+#### 開催パターン別チェック
+**12レース開催時:**
+- [ ] planAccess.free.races: ["11R"] 
+- [ ] 編集ボタンが "11R編集 (メイン・free)" 
+- [ ] JavaScriptのtierMapping: {10: 'standard', 11: 'free', 12: 'standard'}
+
+**11レース開催時:**
+- [ ] planAccess.free.races: ["10R"]
+- [ ] 編集ボタンが "10R編集 (メイン・free)"
+- [ ] JavaScriptのtierMapping: {9: 'standard', 10: 'free', 11: 'standard'}
+
+**10レース開催時:**
+- [ ] planAccess.free.races: ["9R"]
+- [ ] 編集ボタンが "9R編集 (メイン・free)"
+- [ ] JavaScriptのtierMapping: {8: 'standard', 9: 'free', 10: 'standard'}
 
 ### 🚨 なぜこの仕様なのか
 南関競馬では**最終レースの1つ前**がメインレース（重要なレース）として扱われる慣習があります。
@@ -51,10 +80,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **ユーザー層**: 有料会員（Standard/Premium）+ 無料利用者
 
 ### サービス構成
-- **無料予想**: メインレース（11R）のみ
-- **Standard会員**: 10R、12R予想に加え、基礎コンテンツ
-- **Premium会員**: 全レース（1R-12R）予想とすべてのコンテンツ
+- **無料予想**: メインレース（最終レースの1つ前）のみ
+- **Standard会員**: 後半3レース予想に加え、基礎コンテンツ
+- **Premium会員**: 全レース予想とすべてのコンテンツ
 - **管理者機能**: レース結果管理、予想データ更新、統計分析
+
+### レース数別Standard対象レース
+- **12レース開催**: 10R、11R、12R（11Rは無料、10R・12Rが有料Standard）
+- **11レース開催**: 9R、10R、11R（10Rは無料、9R・11Rが有料Standard）
+- **10レース開催**: 8R、9R、10R（9Rは無料、8R・10Rが有料Standard）
 
 ## 技術スタック
 
