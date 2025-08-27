@@ -58,7 +58,7 @@
   headers = {X-Frame-Options = "DENY"}
 
 [functions]
-  directory = ".netlify/functions"
+  directory = "netlify/functions"
   node_bundler = "esbuild"
 
 [dev]
