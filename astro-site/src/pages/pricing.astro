@@ -370,14 +370,19 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
         </div>
     </div>
 
+    <!-- Stripe.js を通常のスクリプトで読み込み -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
     <script type="module">
-        // Stripe関連の関数とデータを直接インライン
-        import { loadStripe } from 'https://js.stripe.com/v3/';
+        // Supabaseをインポート
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-        // Stripe設定
+        // Stripe設定（グローバルに読み込まれたStripeを使用）
         const stripePublishableKey = document.querySelector('meta[name="stripe-publishable-key"]')?.content;
-        const getStripe = () => loadStripe(stripePublishableKey);
+        
+        const getStripe = () => {
+            return window.Stripe ? window.Stripe(stripePublishableKey) : null;
+        };
 
         // 料金プラン設定
         const PRICING_PLANS = {
@@ -565,7 +570,10 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                 }
 
                 // Stripe Checkout にリダイレクト
-                const stripe = await getStripe();
+                const stripe = getStripe();
+                if (!stripe) {
+                    throw new Error('Stripe が読み込まれていません');
+                }
                 const { error } = await stripe.redirectToCheckout({
                     sessionId: session.id
                 });
