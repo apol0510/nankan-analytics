@@ -73,9 +73,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </ul>
                     
                     <div class="plan-footer">
-                        <a href="/pricing?plan=standard" class="plan-btn primary">
+                        <button onclick="changeToStandard()" class="plan-btn primary">
                             このプランを選ぶ
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -100,9 +100,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </ul>
                     
                     <div class="plan-footer">
-                        <a href="/pricing?plan=premium" class="plan-btn premium-btn">
+                        <button onclick="changeToPremium()" class="plan-btn premium-btn">
                             最上位プランを選ぶ
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -524,6 +524,90 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         } catch (error) {
             console.error('Error loading plan info:', error);
             planDisplay.innerHTML = '<p style="color: #ef4444;">プラン情報の読み込みに失敗しました</p>';
+        }
+    }
+
+    // プラン変更関数
+    async function changeToStandard() {
+        await changeSubscription('standard', 'price_1S14mjFA5w33p4WyV9ZZVSqj');
+    }
+
+    async function changeToPremium() {
+        await changeSubscription('premium', 'price_1S0YUfFA5w33p4WyVImKgx4c');
+    }
+
+    async function changeSubscription(targetPlan, newPriceId) {
+        try {
+            // ユーザー情報を取得
+            const { user, plan: currentPlan } = await getUserWithPlan();
+            
+            if (!user) {
+                alert('プラン変更にはログインが必要です');
+                window.location.href = '/auth/login';
+                return;
+            }
+
+            if (currentPlan === targetPlan) {
+                alert('既に同じプランをご利用中です');
+                return;
+            }
+
+            // 確認ダイアログ
+            const planNames = {
+                'free': '無料プラン',
+                'standard': 'スタンダードプラン',
+                'premium': 'プレミアムプラン'
+            };
+            
+            const confirmed = confirm(
+                `${planNames[currentPlan]}から${planNames[targetPlan]}に変更しますか？\n\n` +
+                `変更は即座に反映され、日割り計算で課金されます。`
+            );
+            
+            if (!confirmed) return;
+
+            // ボタンを無効化
+            const allButtons = document.querySelectorAll('.plan-btn');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.textContent = '処理中...';
+            });
+
+            // API呼び出し
+            const response = await fetch('/api/change-subscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customerEmail: user.email,
+                    newPriceId: newPriceId,
+                    currentPlan: currentPlan,
+                    targetPlan: targetPlan
+                })
+            });
+
+            const result = await response.json();
+            
+            if (response.ok) {
+                if (result.type === 'new_subscription') {
+                    // 新規サブスクリプション作成の場合はStripe Checkoutに遷移
+                    window.location.href = result.checkout_url;
+                } else {
+                    // 既存サブスクリプション更新の場合
+                    alert(`プランが${planNames[targetPlan]}に変更されました！`);
+                    window.location.reload();
+                }
+            } else {
+                throw new Error(result.message || 'プラン変更に失敗しました');
+            }
+
+        } catch (error) {
+            console.error('Plan change error:', error);
+            alert(`プラン変更でエラーが発生しました: ${error.message}`);
+            
+            // ボタンを復元
+            location.reload();
         }
     }
 
