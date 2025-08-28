@@ -132,24 +132,23 @@
     <div class="success-container">
         <div class="success-icon">🎉</div>
         <h1 class="success-title">決済が完了しました！</h1>
-        <p class="success-message">
+        <p class="success-message" id="success-message">
             NANKANアナリティクスへのご加入ありがとうございます。<br>
-            アカウントのアップグレードが完了し、プレミアム機能がご利用いただけるようになりました。
+            <span id="plan-description">アカウントのアップグレード処理中...</span>
         </p>
 
         <div class="next-steps">
             <h3>次のステップ</h3>
-            <ul>
+            <ul id="next-steps-list">
                 <li>確認メールが送信されました（数分以内に届きます）</li>
-                <li>ダッシュボードですべての機能にアクセス可能です</li>
-                <li>今日のAI予想レポートをすぐにご覧いただけます</li>
-                <li>過去データと詳細分析もご利用いただけます</li>
+                <li>ダッシュボードで機能にアクセス可能です</li>
+                <li>今日のAI予想レポートをご覧いただけます</li>
             </ul>
         </div>
 
-        <div>
+        <div id="action-buttons">
             <a href="/dashboard" class="btn">ダッシュボードへ</a>
-            <a href="/premium-predictions" class="btn btn-outline">AI予想を見る</a>
+            <a href="/premium-predictions" class="btn btn-outline" id="prediction-link">AI予想を見る</a>
         </div>
 
         <div class="support-note">
@@ -159,23 +158,175 @@
     </div>
 
     <script type="module">
-        // URLパラメータからセッションIDを取得
-        const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session_id');
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
         
-        if (sessionId) {
-            // 決済情報を検証（オプション）
+        // Supabase設定
+        const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
+        const client = createClient(supabaseUrl, supabaseAnonKey);
+        
+        // メイン処理を async 関数でラップ
+        async function handlePaymentSuccess() {
+            // URLパラメータからセッションIDを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            
+            if (!sessionId) {
+                console.warn('No session ID found in URL');
+                updatePageContent('free'); // デフォルト表示
+                return;
+            }
+            
             console.log('Payment completed with session:', sessionId);
             
-            // 数秒後にダッシュボードへ自動リダイレクト（オプション）
-            setTimeout(() => {
-                // 自動リダイレクトはコメントアウト（ユーザーが手動で移動する方が良い）
-                // window.location.href = '/dashboard';
-            }, 10000);
+            try {
+                // 現在のユーザー取得
+                const { data: { user }, error: userError } = await client.auth.getUser();
+                
+                if (user && !userError) {
+                    // セッションIDからプラン情報を判定
+                    let planType = 'free'; // デフォルトをfreeに変更（安全側に倒す）
+                    
+                    // ローカルストレージから直前の決済情報を確認
+                    const lastCheckoutData = localStorage.getItem('last_checkout_data');
+                    console.log('[SUCCESS] Last checkout data from localStorage:', lastCheckoutData);
+                    
+                    if (lastCheckoutData) {
+                        const checkoutInfo = JSON.parse(lastCheckoutData);
+                        console.log('[SUCCESS] Parsed checkout info:', checkoutInfo);
+                        console.log('[SUCCESS] Price ID:', checkoutInfo.priceId);
+                        
+                        // price IDから判定（完全一致で判定）
+                        if (checkoutInfo.priceId === 'price_1RzEMaFA5w33p4Wycj2oSBOz') {
+                            planType = 'standard';
+                            console.log('[SUCCESS] Plan determined as STANDARD');
+                        } else if (checkoutInfo.priceId === 'price_1RzEVfFA5w33p4Wy7GPtIHfv') {
+                            planType = 'premium';
+                            console.log('[SUCCESS] Plan determined as PREMIUM');
+                        } else {
+                            console.warn('[SUCCESS] Unknown price ID:', checkoutInfo.priceId);
+                            // URLパラメータからヒントを取得（フォールバック）
+                            if (sessionId.includes('standard') || checkoutInfo.priceId.includes('RzEMa')) {
+                                planType = 'standard';
+                            } else if (sessionId.includes('premium') || checkoutInfo.priceId.includes('RzEVf')) {
+                                planType = 'premium';
+                            }
+                        }
+                    } else {
+                        console.warn('[SUCCESS] No checkout data found in localStorage');
+                    }
+                    
+                    // 既存のテストサブスクリプションをクリア（新しいプランで上書き）
+                    const existingTest = localStorage.getItem('test_subscription_' + user.id);
+                    if (existingTest) {
+                        console.log('[SUCCESS] Removing existing test subscription:', existingTest);
+                        localStorage.removeItem('test_subscription_' + user.id);
+                    }
+                    
+                    // テスト用サブスクリプション情報をローカルストレージに保存
+                    const testSubscription = {
+                        userId: user.id,
+                        planType: planType,
+                        status: 'active',
+                        sessionId: sessionId,
+                        priceId: lastCheckoutData ? JSON.parse(lastCheckoutData).priceId : 'unknown',
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('test_subscription_' + user.id, JSON.stringify(testSubscription));
+                    console.log('[SUCCESS] Test subscription saved:', testSubscription);
+                    console.log('[SUCCESS] Plan type:', planType);
+                    
+                    // プランに応じて表示内容を更新
+                    updatePageContent(planType);
+                    
+                    // 他のページに行く際のキャッシュ対策
+                    // sessionStorageにフラグを立てて、他ページでリフレッシュを促す
+                    sessionStorage.setItem('subscription_updated', 'true');
+                    sessionStorage.setItem('new_plan_type', planType);
+                    
+                    // 決済データをクリア
+                    localStorage.removeItem('last_checkout_data');
+                } else {
+                    console.error('User not found:', userError);
+                }
+            } catch (error) {
+                console.error('Error handling payment success:', error);
+                // エラー時はfreeプランとして表示
+                updatePageContent('free');
+            }
         }
         
-        // 成功メッセージの表示アニメーション
-        document.addEventListener('DOMContentLoaded', () => {
+        // プランに応じてページ内容を更新
+        function updatePageContent(planType) {
+            console.log('[SUCCESS] updatePageContent called with planType:', planType);
+            
+            const planDescription = document.getElementById('plan-description');
+            const nextStepsList = document.getElementById('next-steps-list');
+            const predictionLink = document.getElementById('prediction-link');
+            
+            if (!planDescription || !nextStepsList || !predictionLink) {
+                console.error('[SUCCESS] Required DOM elements not found:', {
+                    planDescription: !!planDescription,
+                    nextStepsList: !!nextStepsList,
+                    predictionLink: !!predictionLink
+                });
+                return;
+            }
+            
+            console.log('[SUCCESS] All DOM elements found, updating content...');
+            
+            if (planType === 'standard') {
+                // スタンダードプラン用の表示
+                planDescription.textContent = 'スタンダードプランへのアップグレードが完了しました。';
+                
+                nextStepsList.innerHTML = `
+                    <li>確認メールが送信されました（数分以内に届きます）</li>
+                    <li>ダッシュボードで後半3レース予想にアクセス可能です</li>
+                    <li>10R・11R・12Rの詳細予想をご覧いただけます</li>
+                    <li>基礎コンテンツと分析レポートもご利用いただけます</li>
+                `;
+                
+                predictionLink.href = '/standard-predictions';
+                predictionLink.textContent = 'スタンダード予想を見る';
+                console.log('[SUCCESS] Standard plan content updated');
+                
+            } else if (planType === 'premium') {
+                // プレミアムプラン用の表示
+                planDescription.textContent = 'プレミアムプランへのアップグレードが完了し、全機能がご利用いただけるようになりました。';
+                
+                nextStepsList.innerHTML = `
+                    <li>確認メールが送信されました（数分以内に届きます）</li>
+                    <li>ダッシュボードですべての機能にアクセス可能です</li>
+                    <li>1R〜12R 全レースの予想をすぐにご覧いただけます</li>
+                    <li>過去データと詳細分析もご利用いただけます</li>
+                `;
+                
+                predictionLink.href = '/premium-predictions';
+                predictionLink.textContent = '全レース予想を見る';
+                console.log('[SUCCESS] Premium plan content updated');
+                
+            } else {
+                // フリープランまたは不明な場合
+                planDescription.textContent = 'アカウントの設定が完了しました。';
+                
+                nextStepsList.innerHTML = `
+                    <li>確認メールが送信されました（数分以内に届きます）</li>
+                    <li>ダッシュボードにアクセス可能です</li>
+                    <li>11R（メインレース）の無料予想をご覧いただけます</li>
+                `;
+                
+                predictionLink.href = '/free-prediction';
+                predictionLink.textContent = '無料予想を見る';
+                console.log('[SUCCESS] Free plan content updated');
+            }
+            
+            console.log('[SUCCESS] Page content update completed for plan:', planType);
+        }
+        
+        // ページ初期化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 成功メッセージの表示アニメーション
             const container = document.querySelector('.success-container');
             container.style.opacity = '0';
             container.style.transform = 'translateY(20px)';
@@ -185,6 +336,9 @@
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
             }, 100);
+            
+            // 決済処理を実行
+            await handlePaymentSuccess();
         });
     </script>
 </body>

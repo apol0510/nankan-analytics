@@ -413,6 +413,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const { data: { user }, error } = await supabase.auth.getUser();
         if (error || !user) return { user: null, plan: 'free' };
 
+        // テスト決済・デモモードのローカルストレージを先にチェック
+        const testSubscription = localStorage.getItem('test_subscription_' + user.id);
+        const demoSubscription = localStorage.getItem('demo_subscription_' + user.id);
+        
+        if (testSubscription) {
+            const testData = JSON.parse(testSubscription);
+            console.log('Test subscription found in account page:', testData);
+            return { user, plan: testData.planType.toLowerCase() };
+        } else if (demoSubscription) {
+            const demoData = JSON.parse(demoSubscription);
+            console.log('Demo subscription found in account page:', demoData);
+            return { user, plan: demoData.planType.toLowerCase() };
+        }
+
         // プロフィールからプラン情報を取得
         try {
             const { data: profile, error } = await supabase
@@ -462,14 +476,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
     // Stripe料金プラン設定
     const PRICING_PLANS = {
-        standard: {
-            id: 'price_standard_monthly',
+        STANDARD: {
+            stripePriceId: 'price_1RzEMaFA5w33p4Wycj2oSBOz',
             name: 'Standard',
             price: 5980,
             description: '後半3レース予想・基本分析'
         },
-        premium: {
-            id: 'price_premium_monthly', 
+        PREMIUM: {
+            stripePriceId: 'price_1RzEVfFA5w33p4Wy7GPtIHfv', 
             name: 'Premium',
             price: 9980,
             description: '全レース予想・完全分析'
@@ -677,14 +691,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             return;
         }
         
-        // デモモードチェック
+        // テスト決済・デモモードチェック
+        const testSubscription = localStorage.getItem('test_subscription_' + currentUser.id);
         const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
         
-        if (demoSubscription) {
-            if (confirm('デモ版のサブスクリプションを削除しますか？\n（ローカルデータが削除され、無料プランに戻ります）')) {
-                // デモサブスクリプションを削除
+        if (testSubscription || demoSubscription) {
+            if (confirm('テスト/デモ版のサブスクリプションを削除しますか？\n（ローカルデータが削除され、無料プランに戻ります）')) {
+                // テスト・デモサブスクリプションを削除
+                localStorage.removeItem('test_subscription_' + currentUser.id);
                 localStorage.removeItem('demo_subscription_' + currentUser.id);
-                alert('デモサブスクリプションを削除しました。\nページをリフレッシュしてください。');
+                alert('テスト/デモサブスクリプションを削除しました。\nページをリフレッシュしてください。');
                 window.location.reload();
             }
             return;

@@ -357,8 +357,36 @@
 
         let currentUser = null;
 
+        // ページが表示されたときに更新（ブラウザ戻るボタン対応）
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && currentUser) {
+                console.log('[Dashboard] Page became visible, refreshing user profile...');
+                loadUserProfile().then(async () => {
+                    const userPlan = await getCurrentUserPlan();
+                    updatePredictionLink(userPlan);
+                });
+            }
+        });
+
         // 初期化
         document.addEventListener('DOMContentLoaded', async () => {
+            // サブスクリプション更新フラグをチェック
+            const subscriptionUpdated = sessionStorage.getItem('subscription_updated');
+            const newPlanType = sessionStorage.getItem('new_plan_type');
+            
+            if (subscriptionUpdated === 'true') {
+                console.log('[Dashboard] Subscription was updated, clearing cache flags...');
+                sessionStorage.removeItem('subscription_updated');
+                sessionStorage.removeItem('new_plan_type');
+                
+                // 少し待ってから強制的にリフレッシュ
+                setTimeout(() => {
+                    console.log('[Dashboard] Forcing page refresh due to subscription update...');
+                    window.location.reload();
+                }, 500);
+                return;
+            }
+            
             await checkAuth();
             if (currentUser) {
                 await loadUserProfile();
@@ -393,12 +421,24 @@
             const upgradeSection = document.getElementById('upgrade-section');
             
             try {
-                // デモモードのローカルストレージをチェック
+                // テスト決済・デモモードのローカルストレージをチェック
+                const testSubscription = localStorage.getItem('test_subscription_' + currentUser.id);
                 const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
                 
                 let isActive, planName, profile = null;
                 
-                if (demoSubscription) {
+                if (testSubscription) {
+                    const testData = JSON.parse(testSubscription);
+                    console.log('Test subscription found:', testData);
+                    isActive = testData.status === 'active';
+                    planName = testData.planType.toLowerCase();
+                    // テスト決済用のプロファイル作成
+                    profile = {
+                        subscription_status: testData.status,
+                        subscription_plan: planName,
+                        subscription_end_date: null
+                    };
+                } else if (demoSubscription) {
                     const demoData = JSON.parse(demoSubscription);
                     console.log('Demo subscription found:', demoData);
                     isActive = true;
@@ -458,10 +498,14 @@
 
         // 現在のユーザープランを取得
         async function getCurrentUserPlan() {
-            // デモモードのローカルストレージをチェック
+            // テスト決済・デモモードのローカルストレージをチェック
+            const testSubscription = localStorage.getItem('test_subscription_' + currentUser.id);
             const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
             
-            if (demoSubscription) {
+            if (testSubscription) {
+                const testData = JSON.parse(testSubscription);
+                return testData.planType.toLowerCase();
+            } else if (demoSubscription) {
                 const demoData = JSON.parse(demoSubscription);
                 return demoData.planType.toLowerCase();
             }

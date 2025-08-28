@@ -211,6 +211,20 @@
         const { data: { user }, error } = await supabase.auth.getUser();
         if (error || !user) return { user: null, plan: 'free' };
 
+        // テスト決済・デモモードのローカルストレージを先にチェック
+        const testSubscription = localStorage.getItem('test_subscription_' + user.id);
+        const demoSubscription = localStorage.getItem('demo_subscription_' + user.id);
+        
+        if (testSubscription) {
+            const testData = JSON.parse(testSubscription);
+            console.log('Test subscription found in UserStatus:', testData);
+            return { user, plan: testData.planType.toLowerCase() };
+        } else if (demoSubscription) {
+            const demoData = JSON.parse(demoSubscription);
+            console.log('Demo subscription found in UserStatus:', demoData);
+            return { user, plan: demoData.planType.toLowerCase() };
+        }
+
         // プロフィールからプラン情報を取得
         try {
             const { data: profile, error } = await supabase
@@ -309,13 +323,42 @@
         }
     });
 
+    // ローカルストレージの変化を監視
+    function watchLocalStorage() {
+        // ページ表示時に更新
+        updateUserStatus();
+        
+        // 1秒ごとにローカルストレージをチェック（テスト決済の変更を検出）
+        setInterval(() => {
+            const currentUser = supabase.auth.getUser().then(({data: {user}}) => {
+                if (user) {
+                    const testSub = localStorage.getItem('test_subscription_' + user.id);
+                    const demoSub = localStorage.getItem('demo_subscription_' + user.id);
+                    if (testSub || demoSub) {
+                        console.log('[UserStatus] Detected subscription change, updating...');
+                        updateUserStatus();
+                    }
+                }
+            });
+        }, 1000);
+    }
+
     // 初期表示とauth状態の監視
     document.addEventListener('DOMContentLoaded', () => {
         updateUserStatus();
+        watchLocalStorage();
         
         // 認証状態の変化を監視
         supabase.auth.onAuthStateChange(() => {
             updateUserStatus();
         });
+    });
+    
+    // ページが表示されたときに更新（ブラウザ戻るボタン対応）
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            console.log('[UserStatus] Page became visible, updating status...');
+            updateUserStatus();
+        }
     });
 </script>

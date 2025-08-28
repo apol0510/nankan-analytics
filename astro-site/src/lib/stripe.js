@@ -9,13 +9,20 @@ if (!stripePublishableKey) {
 // Stripeインスタンスを取得
 export const getStripe = () => loadStripe(stripePublishableKey)
 
-// 料金プラン設定 - 本番環境
+// 料金プラン設定
+const isTestMode = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith('pk_test_')
+console.log('Stripe key:', import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 8) + '...')
+console.log('isTestMode:', isTestMode)
+
 export const PRICING_PLANS = {
   STANDARD: {
     name: 'スタンダード',
     description: '後半レース予想・基礎コンテンツ',
     price: 5980, // 月額5,980円
-    stripePriceId: 'price_1S0YFdFA5w33p4WyJNK6MoRR', // NANKANアナリティクス(スタンダード)
+    // テストモードと本番モードで価格IDを切り替え
+    stripePriceId: isTestMode 
+      ? 'price_1RzEMaFA5w33p4Wycj2oSBOz' // テストモード: スタンダード
+      : 'price_1S0YFdFA5w33p4WyJNK6MoRR', // 本番モード: NANKANアナリティクス(スタンダード)
     features: [
       '10R・11R・12R予想閲覧',
       '基礎コンテンツアクセス',
@@ -27,7 +34,10 @@ export const PRICING_PLANS = {
     name: 'プレミアム',
     description: '全レース予想・すべてのコンテンツ',
     price: 9980, // 月額9,980円
-    stripePriceId: 'price_1S0YUfFA5w33p4WyVImKgx4c', // NANKANアナリティクス(プレミアム)
+    // テストモードと本番モードで価格IDを切り替え
+    stripePriceId: isTestMode
+      ? 'price_1RzEVfFA5w33p4Wy7GPtIHfv' // テストモード: プレミアム
+      : 'price_1S0YUfFA5w33p4WyVImKgx4c', // 本番モード: NANKANアナリティクス(プレミアム)
     features: [
       '1R-12R 全レース予想閲覧',
       '全コンテンツアクセス',
@@ -41,6 +51,10 @@ export const PRICING_PLANS = {
 // Checkoutセッション作成用の関数
 export const createCheckoutSession = async (priceId, userId, customerEmail) => {
   try {
+    // タイムアウト設定付きのfetch
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒タイムアウト
+    
     const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: {
@@ -51,7 +65,14 @@ export const createCheckoutSession = async (priceId, userId, customerEmail) => {
         userId,
         customerEmail,
       }),
+      signal: controller.signal
     })
+    
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
 
     const session = await response.json()
     
@@ -62,6 +83,11 @@ export const createCheckoutSession = async (priceId, userId, customerEmail) => {
     return session
   } catch (error) {
     console.error('Checkout session creation error:', error)
+    
+    if (error.name === 'AbortError') {
+      throw new Error('リクエストがタイムアウトしました。再度お試しください。')
+    }
+    
     throw error
   }
 }

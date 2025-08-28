@@ -283,7 +283,8 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
         <div class="navbar-content">
             <a href="/" class="logo">🤖 NANKANアナリティクス</a>
             <div class="nav-right">
-                <span class="nav-loading">読み込み中...</span>
+                <a href="/auth/login">ログイン</a>
+                <a href="/dashboard">ダッシュボード</a>
             </div>
         </div>
     </nav>
@@ -370,113 +371,9 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
         </div>
     </div>
 
-    <!-- Stripe.js を通常のスクリプトで読み込み -->
-    <script src="https://js.stripe.com/v3/"></script>
-    
     <script type="module">
-        // Supabaseをインポート
-        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
-
-        // Stripe設定（グローバルに読み込まれたStripeを使用）
-        const stripePublishableKey = document.querySelector('meta[name="stripe-publishable-key"]')?.content;
-        
-        const getStripe = () => {
-            return window.Stripe ? window.Stripe(stripePublishableKey) : null;
-        };
-
-        // 料金プラン設定
-        // テスト用の価格IDに更新
-        const PRICING_PLANS = {
-            STANDARD: {
-                name: 'スタンダード',
-                description: '後半レース予想・基礎コンテンツ',
-                price: 5980,
-                stripePriceId: 'price_1RzEMaFA5w33p4Wycj2oSBOz', // テスト用
-                features: ['10R・11R・12R予想閲覧', '基礎コンテンツアクセス', 'メールサポート', '過去30日分のデータ']
-            },
-            PREMIUM: {
-                name: 'プレミアム',
-                description: '全レース予想・すべてのコンテンツ',
-                price: 9980,
-                stripePriceId: 'price_1RzEVfFA5w33p4Wy7GPtIHfv', // テスト用
-                features: ['1R-12R 全レース予想閲覧', '全コンテンツアクセス', '無制限データアクセス', '優先サポート', 'AI分析レポート']
-            }
-        };
-
-        // Checkoutセッション作成関数
-        const createCheckoutSession = async (priceId, userId, customerEmail) => {
-            try {
-                console.log('Creating checkout session for:', { priceId, userId, customerEmail });
-                
-                // 決済情報をローカルストレージに保存（successページで参照用）
-                localStorage.setItem('last_checkout_data', JSON.stringify({
-                    priceId,
-                    userId,
-                    customerEmail,
-                    timestamp: new Date().toISOString()
-                }));
-                
-                // Stripe Checkout Session API
-                const apiUrl = '/api/create-checkout-session-simple';
-                console.log('Using Stripe API URL:', apiUrl);
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ priceId, userId, customerEmail })
-                });
-                
-                console.log('API response status:', response.status);
-                console.log('API response headers:', [...response.headers.entries()]);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('API error response:', errorText);
-                    throw new Error(`API request failed: ${response.status} ${errorText}`);
-                }
-                
-                const session = await response.json();
-                console.log('Session data:', session);
-                
-                // エラーがある場合のハンドリング
-                if (session.error) {
-                    console.error('API error response:', session);
-                    console.log('Debug details:', session.debug);
-                    
-                    // デバッグ情報を詳細に表示
-                    if (session.debug) {
-                        console.log('Error Type:', session.debug.errorType);
-                        console.log('Error Code:', session.debug.errorCode);
-                        console.log('Key Prefix:', session.debug.keyPrefix);
-                        console.log('Has Stripe Key:', session.debug.hasStripeKey);
-                        console.log('Requested Price ID:', session.debug.requestedPriceId);
-                        console.log('Site URL:', session.debug.siteUrl);
-                    }
-                    
-                    const error = new Error(session.error || 'チェックアウトセッションの作成に失敗しました');
-                    error.debug = session.debug;
-                    throw error;
-                }
-                return session;
-            } catch (error) {
-                console.error('Checkout session creation error:', error);
-                throw error;
-            }
-        };
-
-        // Supabase設定
-        const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
-        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
-        const supabase = createClient(supabaseUrl, supabaseAnonKey);
-        
-        const auth = {
-            async getUser() {
-                return await supabase.auth.getUser();
-            },
-            async signOut() {
-                return await supabase.auth.signOut();
-            }
-        };
+        import { getStripe, createCheckoutSession, PRICING_PLANS } from '/lib/stripe.js';
+        import { auth } from '/lib/supabase-client.js';
 
         // 購読ボタンのイベントリスナー
         document.querySelectorAll('.subscribe-btn').forEach(btn => {
@@ -491,45 +388,14 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                 // ローディング状態開始
                 setButtonLoading(button, true);
 
-                // 現在のユーザー取得（複数の方法で確認）
-                let user = null;
+                // 現在のユーザー取得
+                const { data: { user }, error: authError } = await auth.getUser();
                 
-                // 方法1: window.currentUser（ページ読み込み時に設定）
-                if (window.currentUser) {
-                    user = window.currentUser;
-                    console.log('Using cached user from window.currentUser:', user.email);
-                } else {
-                    // 方法2: Supabase auth.getUser()
-                    const { data: { user: supabaseUser }, error: authError } = await auth.getUser();
-                    console.log('Supabase getUser in subscribe:', { user: supabaseUser?.email, error: authError });
-                    
-                    if (supabaseUser && !authError) {
-                        user = supabaseUser;
-                    } else {
-                        // 方法3: ローカルストレージから確認
-                        const session = localStorage.getItem('sb-' + 'qysycsrhaatudnksbpqe' + '-auth-token');
-                        if (session) {
-                            try {
-                                const sessionData = JSON.parse(session);
-                                if (sessionData.user) {
-                                    user = sessionData.user;
-                                    console.log('Using user from localStorage in subscribe:', user.email);
-                                }
-                            } catch (e) {
-                                console.log('Error parsing session in subscribe:', e);
-                            }
-                        }
-                    }
-                }
-                
-                if (!user) {
-                    console.log('User not authenticated, redirecting to login');
-                    // 未認証の場合、ログインページへリダイレクト（既存ユーザーも考慮）
-                    window.location.href = '/auth/login?redirect=' + encodeURIComponent('/pricing');
+                if (authError || !user) {
+                    // 未認証の場合、サインアップページへリダイレクト
+                    window.location.href = '/auth/signup?redirect=' + encodeURIComponent('/pricing');
                     return;
                 }
-                
-                console.log('Proceeding with subscription for user:', user.email);
 
                 // プランの詳細取得
                 const planDetails = PRICING_PLANS[planType.toUpperCase()];
@@ -537,49 +403,15 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                     throw new Error('Invalid plan type');
                 }
 
-                // デモモードを無効化（Stripeテストモードを使用）
-                const isDevelopment = false; // 常にStripe Checkoutを使用
-                
-                let session; // セッション変数を外部で定義
-                
-                if (isDevelopment) {
-                    // デモモード: APIを使わず直接処理
-                    console.log('Demo mode: Simulating subscription for', user.email);
-                    session = {
-                        demo: true,
-                        message: `デモ購入完了！\n\nプラン: ${planType}\nユーザー: ${user.email}\n\nこれは開発環境でのテストです。`
-                    };
-                    
-                    // デモサブスクリプション処理
-                    localStorage.setItem('demo_subscription_' + user.id, JSON.stringify({
-                        planType: planType,
-                        createdAt: new Date().toISOString(),
-                        demo: true
-                    }));
-                    
-                    alert(session.message);
-                    window.location.href = '/dashboard';
-                    return;
-                } else {
-                    // 本番環境: 実際のStripe処理
-                    console.log('Plan details:', planDetails);
-                    console.log('Creating checkout session with:', {
-                        priceId: planDetails.stripePriceId,
-                        userId: user.id,
-                        email: user.email
-                    });
-                    
-                    session = await createCheckoutSession(
-                        planDetails.stripePriceId,
-                        user.id,
-                        user.email
-                    );
-                    
-                    console.log('Checkout session result:', session);
-                }
+                // Stripe Checkout セッション作成
+                const session = await createCheckoutSession(
+                    planDetails.stripePriceId,
+                    user.id,
+                    user.email
+                );
 
-                // 本番環境でのデモモード対応（残しておく）
-                if (session && session.demo) {
+                // デモモードの場合は成功メッセージを表示
+                if (session.demo) {
                     // サブスクリプション情報を更新
                     try {
                         const updateResponse = await fetch('/api/update-subscription-demo', {
@@ -624,10 +456,7 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
                 }
 
                 // Stripe Checkout にリダイレクト
-                const stripe = getStripe();
-                if (!stripe) {
-                    throw new Error('Stripe が読み込まれていません');
-                }
+                const stripe = await getStripe();
                 const { error } = await stripe.redirectToCheckout({
                     sessionId: session.id
                 });
@@ -638,35 +467,14 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
             } catch (error) {
                 console.error('Subscription error:', error);
-                console.error('Error type:', typeof error);
-                console.error('Error name:', error.name);
-                console.error('Error stack:', error.stack);
                 
                 let errorMessage = '決済処理でエラーが発生しました。';
-                
-                // エラーの詳細を表示
-                if (error.message) {
-                    errorMessage += '\n\n詳細: ' + error.message;
-                    console.error('Error message:', error.message);
-                }
-                
-                if (error.message && error.message.includes('timeout')) {
-                    errorMessage = 'タイムアウトエラーが発生しました。再度お試しください。';
-                } else if (error.message && error.message.includes('network')) {
-                    errorMessage = 'ネットワークエラーが発生しました。接続を確認してください。';
-                } else if (error.name === 'AbortError') {
-                    errorMessage = 'リクエストがタイムアウトしました。再度お試しください。';
-                }
-                
-                // デバッグ情報があれば表示
-                if (error.debug) {
-                    console.log('Debug info:', error.debug);
-                    errorMessage += '\n\nデバッグ情報: ' + JSON.stringify(error.debug, null, 2);
+                if (error.message.includes('network')) {
+                    errorMessage = 'ネットワークエラーが発生しました。';
                 }
                 
                 alert(errorMessage);
-                
-                // エラー時もボタンを再度有効化
+            } finally {
                 setButtonLoading(button, false);
             }
         }
@@ -688,75 +496,21 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
         // ページロード時にユーザー状態をチェック
         document.addEventListener('DOMContentLoaded', async () => {
-            const navRight = document.querySelector('.nav-right');
-            
-            // セッション情報を複数の方法で確認
-            let user = null;
-            
             try {
-                // 方法1: Supabase auth.getUser()
-                const { data: { user: supabaseUser }, error: authError } = await auth.getUser();
-                console.log('Supabase getUser result:', { user: supabaseUser?.email, error: authError });
-                
-                if (supabaseUser && !authError) {
-                    user = supabaseUser;
-                } else {
-                    // 方法2: ローカルストレージからセッション確認
-                    const session = localStorage.getItem('sb-' + 'qysycsrhaatudnksbpqe' + '-auth-token');
-                    console.log('LocalStorage session check:', !!session);
-                    
-                    if (session) {
-                        try {
-                            const sessionData = JSON.parse(session);
-                            if (sessionData.user) {
-                                user = sessionData.user;
-                                console.log('Found user in localStorage:', user.email);
-                            }
-                        } catch (e) {
-                            console.log('Error parsing session:', e);
-                        }
-                    }
-                }
-                
-                // セッション確認用のグローバル変数設定（デバッグ用）
-                window.currentUser = user;
+                const { data: { user } } = await auth.getUser();
                 
                 if (user) {
                     // ログイン済みの場合、ナビゲーションを更新
+                    const navRight = document.querySelector('.nav-right');
                     navRight.innerHTML = `
                         <span style="color: #94a3b8; margin-right: 16px;">${user.email}</span>
                         <a href="/dashboard">ダッシュボード</a>
-                        <a href="#" onclick="handleLogout()" style="margin-left: 16px;">ログアウト</a>
                     `;
-                    console.log('Navigation updated for logged in user:', user.email);
-                } else {
-                    // 未認証の場合、ログイン・登録リンクを表示
-                    navRight.innerHTML = `
-                        <a href="/auth/login">ログイン</a>
-                        <a href="/auth/signup">新規登録</a>
-                    `;
-                    console.log('Navigation updated for guest user');
                 }
             } catch (error) {
-                console.error('Authentication check error:', error);
-                // エラーの場合、未認証状態として処理
-                navRight.innerHTML = `
-                    <a href="/auth/login">ログイン</a>
-                    <a href="/auth/signup">新規登録</a>
-                `;
+                // エラーは無視（未認証状態）
             }
         });
-
-        // ログアウト処理
-        window.handleLogout = async () => {
-            try {
-                await auth.signOut();
-                window.location.reload();
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('ログアウトでエラーが発生しました。');
-            }
-        };
     </script>
 </body>
 </html>

@@ -14,6 +14,7 @@ const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
 export const prerender = false;
 
 export async function POST({ request }) {
+  console.log('[API] Checkout session creation started');
   let body = null; // スコープを広くして全体でアクセス可能に
   
   try {
@@ -41,14 +42,13 @@ export async function POST({ request }) {
       });
     }
 
-    // リクエストボディの安全な取得
+    // リクエストボディの取得（簡略化）
+    console.log('[API] Getting request body...');
     try {
-      const text = await request.text();
-      if (!text.trim()) {
-        throw new Error('Empty request body');
-      }
-      body = JSON.parse(text);
+      body = await request.json();
+      console.log('[API] Request body parsed:', body);
     } catch (parseError) {
+      console.error('[API] Parse error:', parseError);
       return new Response(JSON.stringify({
         error: 'リクエストボディが無効です'
       }), {
@@ -69,24 +69,19 @@ export async function POST({ request }) {
       });
     }
 
-    // 既存の顧客を検索
+    // 一時的に顧客検索をスキップ（デバッグ用）
     let customer;
-    const existingCustomers = await stripe.customers.list({
+    console.log('Creating new customer for:', customerEmail);
+    
+    // 新規顧客作成（検索をスキップ）
+    customer = await stripe.customers.create({
       email: customerEmail,
-      limit: 1
+      metadata: {
+        supabase_user_id: userId
+      }
     });
-
-    if (existingCustomers.data.length > 0) {
-      customer = existingCustomers.data[0];
-    } else {
-      // 新規顧客作成
-      customer = await stripe.customers.create({
-        email: customerEmail,
-        metadata: {
-          supabase_user_id: userId
-        }
-      });
-    }
+    
+    console.log('Customer created:', customer.id);
 
     // URL設定（明示的にHTTPSスキームを指定）
     const siteUrl = import.meta.env.SITE_URL || 'https://nankan-analytics.keiba.link';

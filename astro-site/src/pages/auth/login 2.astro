@@ -172,11 +172,6 @@
             <p>AI・機械学習で勝つ競馬予想</p>
         </div>
 
-        <div id="welcome-message" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center; display: none;">
-            <h2 style="font-size: 18px; margin-bottom: 8px;">お申し込みありがとうございます</h2>
-            <p style="font-size: 14px; opacity: 0.95;">会員プランのご利用には、ログインまたは新規登録が必要です</p>
-        </div>
-
         <div id="message-container"></div>
 
         <form id="login-form">
@@ -200,13 +195,10 @@
             </div>
         </form>
 
-        <div class="auth-links" style="padding: 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; margin-top: 20px;">
-            <p style="margin-bottom: 12px; font-size: 14px; color: #cbd5e1;">まだアカウントをお持ちでない方</p>
-            <a href="/auth/signup" style="display: inline-block; padding: 10px 20px; background: #3b82f6; color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">新規登録はこちら</a>
-        </div>
-
-        <div class="auth-links" style="margin-top: 12px;">
-            <a href="/auth/forgot-password" style="font-size: 13px; color: #94a3b8;">パスワードを忘れた方</a>
+        <div class="auth-links">
+            <a href="/auth/signup">新規登録</a>
+            |
+            <a href="/auth/forgot-password">パスワードを忘れた方</a>
         </div>
 
         <div class="auth-links" style="margin-top: 30px;">
@@ -227,16 +219,9 @@
         const loading = document.getElementById('loading');
         const messageContainer = document.getElementById('message-container');
 
-        // URLパラメータからメッセージとリダイレクト先を取得
+        // URLパラメータからメッセージを取得
         const urlParams = new URLSearchParams(window.location.search);
         const message = urlParams.get('message');
-        const redirect = urlParams.get('redirect');
-        
-        // 料金ページからのリダイレクトの場合、特別なメッセージを表示
-        if (redirect && redirect.includes('/pricing')) {
-            document.getElementById('welcome-message').style.display = 'block';
-        }
-        
         if (message) {
             showMessage(decodeURIComponent(message), 'success');
         }
