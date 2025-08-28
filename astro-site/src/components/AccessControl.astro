@@ -191,7 +191,22 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 3. デフォルトは無料プラン
+        // 3. 旧形式のtest_subscription_データをチェック（互換性のため）
+        const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
+        if (testSubscriptionKeys.length > 0) {
+            try {
+                const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
+                console.log('📦 旧形式認証データ発見:', testData);
+                return { 
+                    user: { id: testData.userId, legacy: true }, 
+                    plan: testData.planType.toLowerCase() 
+                };
+            } catch (error) {
+                console.error('Test subscription data parsing error:', error);
+            }
+        }
+
+        // 4. デフォルトは無料プラン
         return { user: null, plan: 'free' };
     }
 

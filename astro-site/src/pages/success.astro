@@ -216,25 +216,29 @@
                         console.warn('[SUCCESS] No checkout data found in localStorage');
                     }
                     
-                    // 既存のテストサブスクリプションをクリア（新しいプランで上書き）
-                    const existingTest = localStorage.getItem('test_subscription_' + user.id);
-                    if (existingTest) {
-                        console.log('[SUCCESS] Removing existing test subscription:', existingTest);
-                        localStorage.removeItem('test_subscription_' + user.id);
-                    }
+                    // 既存の認証データをクリア
+                    localStorage.removeItem('auth_data');
+                    localStorage.removeItem('test_subscription_' + user.id);
                     
-                    // テスト用サブスクリプション情報をローカルストレージに保存
-                    const testSubscription = {
-                        userId: user.id,
-                        planType: planType,
-                        status: 'active',
-                        sessionId: sessionId,
-                        priceId: lastCheckoutData ? JSON.parse(lastCheckoutData).priceId : 'unknown',
-                        timestamp: new Date().toISOString()
+                    // AccessControl.astroが認識できる形式で認証情報を保存
+                    const authData = {
+                        user: {
+                            id: user.id,
+                            email: user.email,
+                            subscription_status: 'active'
+                        },
+                        plan: planType,
+                        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30日間有効
+                        metadata: {
+                            sessionId: sessionId,
+                            priceId: lastCheckoutData ? JSON.parse(lastCheckoutData).priceId : 'unknown',
+                            timestamp: new Date().toISOString(),
+                            source: 'stripe_payment'
+                        }
                     };
                     
-                    localStorage.setItem('test_subscription_' + user.id, JSON.stringify(testSubscription));
-                    console.log('[SUCCESS] Test subscription saved:', testSubscription);
+                    localStorage.setItem('auth_data', JSON.stringify(authData));
+                    console.log('[SUCCESS] Auth data saved:', authData);
                     console.log('[SUCCESS] Plan type:', planType);
                     
                     // プランに応じて表示内容を更新
