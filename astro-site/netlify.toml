@@ -5,6 +5,8 @@
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
+  # Force cache clear for stripe removal
+  NETLIFY_CACHE_VERSION = "v2"
 
 [[headers]]
   for = "/*"
