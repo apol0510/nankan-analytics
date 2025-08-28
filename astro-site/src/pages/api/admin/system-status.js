@@ -1,12 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
-import Stripe from 'stripe';
 
 const supabase = createClient(
     import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.SUPABASE_SERVICE_ROLE_KEY
+    import.meta.env.SUPABASE_SERVICE_ROLE_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 );
-
-const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY);
 
 export const prerender = false;
 
@@ -24,16 +21,14 @@ export async function GET({ request }) {
         // システム各種ヘルスチェック
         const healthChecks = await Promise.allSettled([
             checkDatabase(),
-            checkStripe(),
             checkEmailService(),
             checkStorage()
         ]);
 
         const results = {
             database: getResultStatus(healthChecks[0]),
-            stripe: getResultStatus(healthChecks[1]),
-            email: getResultStatus(healthChecks[2]),
-            storage: getResultStatus(healthChecks[3]),
+            email: getResultStatus(healthChecks[1]),
+            storage: getResultStatus(healthChecks[2]),
             timestamp: new Date().toISOString()
         };
 
@@ -69,15 +64,6 @@ async function checkDatabase() {
     }
 }
 
-// Stripe API確認
-async function checkStripe() {
-    try {
-        await stripe.accounts.retrieve();
-        return { status: 'ok', message: 'Stripe API accessible' };
-    } catch (error) {
-        return { status: 'error', message: error.message };
-    }
-}
 
 // メール配信サービス確認
 async function checkEmailService() {

@@ -339,16 +339,16 @@
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
         const client = createClient(supabaseUrl, supabaseAnonKey);
         
-        // Stripe料金プラン設定
+        // 料金プラン設定
         const PRICING_PLANS = {
             standard: {
-                id: 'price_standard_monthly',
+                id: 'standard_plan',
                 name: 'Standard',
                 price: 5980,
                 description: '10R・12R予想＋基礎コンテンツ'
             },
             premium: {
-                id: 'price_premium_monthly', 
+                id: 'premium_plan', 
                 name: 'Premium',
                 price: 9980,
                 description: '全レース予想＋すべてのコンテンツ'
@@ -615,8 +615,8 @@
             if (planKey === 'premium') return 'プレミアム';
             if (planKey === 'standard') return 'スタンダード';
             
-            // Stripe Price IDでの検索（stripePriceIdが存在する場合のみ）
-            const plan = Object.values(PRICING_PLANS).find(p => p.stripePriceId && p.stripePriceId.includes(planKey));
+            // プランIDでの検索
+            const plan = Object.values(PRICING_PLANS).find(p => p.id && p.id.includes(planKey));
             return plan ? plan.name : planKey;
         }
 
