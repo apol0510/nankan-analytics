@@ -48,6 +48,15 @@ export default defineConfig({
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
+    },
+    define: {
+      __DEFINES__: '{}'
+    },
+    optimizeDeps: {
+      exclude: []
+    },
+    ssr: {
+      noExternal: []
     }
   }
 });
