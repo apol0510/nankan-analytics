@@ -2,12 +2,6 @@
 // 決済システム完全テストページ - pricing-final.astroアプローチ
 export const prerender = false;
 
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 // テストシナリオ管理
 let testResults = [];
 let currentTest = null;
@@ -34,7 +28,7 @@ if (Astro.request.method === 'POST') {
                 currentTest = testFailedPayment('network_error');
                 break;
             case 'access_check':
-                currentTest = await testAccessPermissions(userEmail);
+                currentTest = testAccessPermissions(userEmail);
                 break;
             default:
                 currentTest = { error: 'Unknown test type' };
@@ -81,7 +75,7 @@ async function testSuccessfulPayment(planType, userEmail) {
     };
     
     // 3. アクセス権確認
-    const accessCheck = await checkUserAccess(planType);
+    const accessCheck = checkUserAccess(planType);
     
     return {
         success: true,
@@ -113,8 +107,8 @@ function testFailedPayment(errorType) {
     };
 }
 
-// アクセス権確認テスト関数
-async function checkUserAccess(planType) {
+// アクセス権確認テスト関数  
+function checkUserAccess(planType) {
     const accessMap = {
         'standard': {
             races: ['10R', '11R', '12R'],
@@ -138,7 +132,7 @@ async function checkUserAccess(planType) {
 }
 
 // ユーザーアクセス権テスト
-async function testAccessPermissions(userEmail) {
+function testAccessPermissions(userEmail) {
     const testCases = [
         { race: '11R', expectedAccess: true, reason: '無料レース（メインレース）' },
         { race: '10R', expectedAccess: 'depends_on_plan', reason: 'Standard以上必要' },
