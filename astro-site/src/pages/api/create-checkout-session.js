@@ -94,19 +94,33 @@ export async function POST({ request }) {
       throw new Error(`顧客作成エラー: ${customerError.message}`);
     }
 
-    // URL設定（環境に応じて自動切り替え）
-    const origin = Astro.url.origin;
-    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+    // URL設定（リクエストヘッダーから正しいホストを取得）
+    const headers = Astro.request.headers;
+    const host = headers.get('host') || headers.get('x-forwarded-host');
+    const protocol = headers.get('x-forwarded-proto') || 'https';
     
-    // 本番環境では常に本番URLを使用、ローカル環境でのみlocalhostを使用
-    const baseUrl = isLocal 
-      ? origin 
-      : 'https://nankan-analytics.keiba.link';
+    // 本番環境判定（Netlifyでホストされている場合は必ず本番URL）
+    const isProduction = host && (
+      host.includes('nankan-analytics.keiba.link') || 
+      host.includes('netlify.app') ||
+      !host.includes('localhost')
+    );
+    
+    // 本番環境では必ず本番URLを使用
+    const baseUrl = isProduction 
+      ? 'https://nankan-analytics.keiba.link'
+      : `${protocol}://${host || 'localhost:4321'}`;
     
     console.log('Environment detection:', {
-      origin,
-      isLocal,
-      baseUrl
+      host,
+      protocol,
+      isProduction,
+      baseUrl,
+      headers: {
+        host: headers.get('host'),
+        xForwardedHost: headers.get('x-forwarded-host'),
+        xForwardedProto: headers.get('x-forwarded-proto')
+      }
     });
 
     // Checkout セッション作成
@@ -172,9 +186,9 @@ export async function POST({ request }) {
     debugInfo.errorCode = error.code;
     debugInfo.hasStripeKey = !!stripeSecretKey;
     debugInfo.keyPrefix = stripeSecretKey ? stripeSecretKey.substring(0, 7) + '...' : 'none';
-    debugInfo.origin = Astro.url.origin;
-    debugInfo.resolvedSuccessUrl = `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
-    debugInfo.resolvedCancelUrl = `${baseUrl}/pricing?canceled=true`;
+    debugInfo.host = Astro.request.headers.get('host');
+    debugInfo.resolvedSuccessUrl = 'https://nankan-analytics.keiba.link/success?session_id={CHECKOUT_SESSION_ID}';
+    debugInfo.resolvedCancelUrl = 'https://nankan-analytics.keiba.link/pricing?canceled=true';
     debugInfo.requestedPriceId = body && body.priceId ? body.priceId : 'unknown';
     
     return new Response(JSON.stringify({
