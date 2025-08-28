@@ -15,10 +15,28 @@ export async function GET() {
 
 export async function POST({ request }) {
   console.log('[API] Simple POST endpoint called');
+  console.log('[API] Request headers:', Object.fromEntries(request.headers));
+  console.log('[API] Request method:', request.method);
   
   try {
-    const body = await request.json();
-    console.log('[API] Request body:', body);
+    // request.json()の代わりに手動でパーシング
+    console.log('[API] Reading request text...');
+    const text = await request.text();
+    console.log('[API] Request text:', text);
+    
+    let body;
+    if (text) {
+      try {
+        body = JSON.parse(text);
+        console.log('[API] Parsed body:', body);
+      } catch (parseError) {
+        console.log('[API] JSON parse error:', parseError.message);
+        body = { rawText: text };
+      }
+    } else {
+      console.log('[API] Empty request body');
+      body = {};
+    }
     
     return new Response(JSON.stringify({ 
       message: 'POST received successfully',
