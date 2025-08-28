@@ -58,8 +58,8 @@ export async function POST({ request }) {
         quantity: 1,
       }],
       mode: 'subscription',
-      success_url: 'http://localhost:4321/success?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: 'http://localhost:4321/pricing?canceled=true',
+      success_url: 'https://nankan-analytics.keiba.link/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'https://nankan-analytics.keiba.link/pricing?canceled=true',
       metadata: { user_id: userId || 'test' }
     });
 
