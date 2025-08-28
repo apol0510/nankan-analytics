@@ -13,9 +13,12 @@ const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
 export const prerender = false;
 
 export async function POST({ request }) {
-  console.log('[CHANGE-SUB] Subscription change started');
+  console.log('[CHANGE-SUB] ===== Subscription change started =====');
+  console.log('[CHANGE-SUB] Stripe configured:', !!stripe);
+  console.log('[CHANGE-SUB] Environment key prefix:', stripeSecretKey ? stripeSecretKey.substring(0, 8) + '...' : 'none');
   
   if (!stripe) {
+    console.error('[CHANGE-SUB] Stripe not initialized');
     return new Response(JSON.stringify({
       error: 'Stripe configuration error'
     }), {
@@ -28,17 +31,25 @@ export async function POST({ request }) {
     const body = await request.json();
     const { customerEmail, newPriceId, currentPlan, targetPlan } = body;
 
-    console.log('[CHANGE-SUB] Request:', { customerEmail, newPriceId, currentPlan, targetPlan });
+    console.log('[CHANGE-SUB] ===== Request Details =====');
+    console.log('[CHANGE-SUB] Customer Email:', customerEmail);
+    console.log('[CHANGE-SUB] New Price ID:', newPriceId);
+    console.log('[CHANGE-SUB] Current Plan:', currentPlan);
+    console.log('[CHANGE-SUB] Target Plan:', targetPlan);
 
     // 顧客を検索
+    console.log('[CHANGE-SUB] ===== Searching for customer =====');
     const customers = await stripe.customers.list({
       email: customerEmail,
       limit: 1
     });
 
+    console.log('[CHANGE-SUB] Customer search results:', customers.data.length);
     if (customers.data.length === 0) {
+      console.error('[CHANGE-SUB] Customer not found for email:', customerEmail);
       return new Response(JSON.stringify({
-        error: 'Customer not found'
+        error: 'Customer not found',
+        email: customerEmail
       }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' }
@@ -46,7 +57,9 @@ export async function POST({ request }) {
     }
 
     const customer = customers.data[0];
-    console.log('[CHANGE-SUB] Customer found:', customer.id);
+    console.log('[CHANGE-SUB] ===== Customer Found =====');
+    console.log('[CHANGE-SUB] Customer ID:', customer.id);
+    console.log('[CHANGE-SUB] Customer Email:', customer.email);
 
     // アクティブなサブスクリプションを検索
     const subscriptions = await stripe.subscriptions.list({

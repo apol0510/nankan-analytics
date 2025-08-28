@@ -426,39 +426,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    // ヘルパー関数
+    // ヘルパー関数（認証情報を優先してチェック）
     async function getUserWithPlan() {
-        const { data: { user }, error } = await supabase.auth.getUser();
-        if (error || !user) return { user: null, plan: 'free' };
-
-        // プロフィールからプラン情報を取得
-        try {
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .maybeSingle();
-
-            if (error) {
-                console.warn('Profile fetch error:', error);
-                return { user, plan: 'free' };
+        console.log('[UPGRADE] Getting user with plan...');
+        
+        // まずローカルストレージから認証情報をチェック（最も確実）
+        const authData = localStorage.getItem('auth_data');
+        if (authData) {
+            try {
+                const { user, plan, expiresAt } = JSON.parse(authData);
+                
+                // 有効期限チェック
+                if (new Date() > new Date(expiresAt)) {
+                    console.warn('[UPGRADE] Auth data expired');
+                    localStorage.removeItem('auth_data');
+                } else {
+                    console.log('[UPGRADE] Using local auth data:', { plan, email: user.email });
+                    return { user, plan: plan || 'free' };
+                }
+            } catch (error) {
+                console.error('[UPGRADE] Auth data parsing error:', error);
+                localStorage.removeItem('auth_data');
             }
-
-            // 既存のカラム名を試す
-            const planName = profile?.subscription_tier?.toLowerCase() || 
-                           profile?.subscription_plan?.toLowerCase() || 
-                           profile?.subscription_status?.toLowerCase() ||
-                           profile?.plan?.toLowerCase();
-
-            let plan = 'free';
-            if (planName?.includes('premium')) plan = 'premium';
-            else if (planName?.includes('standard')) plan = 'standard';
-
-            return { user, plan };
-        } catch (error) {
-            console.warn('Profile query error:', error);
-            return { user, plan: 'free' };
         }
+
+        // 旧形式のtest_subscription_データをチェック
+        const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
+        if (testSubscriptionKeys.length > 0) {
+            try {
+                const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
+                console.log('[UPGRADE] Using legacy test subscription data:', testData);
+                return { 
+                    user: { id: testData.userId, email: 'test@example.com' }, 
+                    plan: testData.planType.toLowerCase() 
+                };
+            } catch (error) {
+                console.error('[UPGRADE] Test subscription data parsing error:', error);
+            }
+        }
+
+        // Supabaseからユーザー取得（フォールバック）
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error || !user) {
+            console.log('[UPGRADE] No user found, returning free plan');
+            return { user: null, plan: 'free' };
+        }
+
+        console.log('[UPGRADE] Supabase user found, using free plan as default');
+        return { user, plan: 'free' };
     }
 
     function getPlanDisplayName(plan) {
@@ -604,10 +619,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         } catch (error) {
             console.error('Plan change error:', error);
-            alert(`プラン変更でエラーが発生しました: ${error.message}`);
             
-            // ボタンを復元
-            location.reload();
+            // フォールバック: 従来のpricing.astro方式を提案
+            const useFallback = confirm(
+                `プラン変更でエラーが発生しました: ${error.message}\n\n` +
+                `代替方法として通常の決済ページに移動しますか？\n` +
+                `（新しいサブスクリプションが作成される可能性があります）`
+            );
+            
+            if (useFallback) {
+                const fallbackUrl = targetPlan === 'premium' ? '/pricing?plan=premium' : '/pricing?plan=standard';
+                window.location.href = fallbackUrl;
+            } else {
+                // ボタンを復元
+                location.reload();
+            }
         }
     }
 
