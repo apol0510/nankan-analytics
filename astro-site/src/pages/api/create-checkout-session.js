@@ -94,17 +94,27 @@ export async function POST({ request }) {
       throw new Error(`顧客作成エラー: ${customerError.message}`);
     }
 
-    // URL設定（明示的にHTTPSスキームを指定）
-    const siteUrl = import.meta.env.SITE_URL || 'https://nankan-analytics.keiba.link';
-    const successUrl = siteUrl.startsWith('http') ? siteUrl : `https://${siteUrl}`;
-    const cancelUrl = siteUrl.startsWith('http') ? siteUrl : `https://${siteUrl}`;
+    // URL設定（環境に応じて自動切り替え）
+    const origin = Astro.url.origin;
+    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+    
+    // 本番環境では常に本番URLを使用、ローカル環境でのみlocalhostを使用
+    const baseUrl = isLocal 
+      ? origin 
+      : 'https://nankan-analytics.keiba.link';
+    
+    console.log('Environment detection:', {
+      origin,
+      isLocal,
+      baseUrl
+    });
 
     // Checkout セッション作成
     console.log('Creating checkout session with:', {
       customerId: customer.id,
       priceId,
-      successUrl: `${successUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${cancelUrl}/pricing?canceled=true`
+      successUrl: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${baseUrl}/pricing?canceled=true`
     });
     
     const session = await stripe.checkout.sessions.create({
@@ -117,8 +127,8 @@ export async function POST({ request }) {
         },
       ],
       mode: 'subscription',
-      success_url: `${successUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${cancelUrl}/pricing?canceled=true`,
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/pricing?canceled=true`,
       metadata: {
         user_id: userId,
       },
@@ -162,9 +172,9 @@ export async function POST({ request }) {
     debugInfo.errorCode = error.code;
     debugInfo.hasStripeKey = !!stripeSecretKey;
     debugInfo.keyPrefix = stripeSecretKey ? stripeSecretKey.substring(0, 7) + '...' : 'none';
-    debugInfo.siteUrl = import.meta.env.SITE_URL;
-    debugInfo.resolvedSuccessUrl = `${successUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
-    debugInfo.resolvedCancelUrl = `${cancelUrl}/pricing?canceled=true`;
+    debugInfo.origin = Astro.url.origin;
+    debugInfo.resolvedSuccessUrl = `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
+    debugInfo.resolvedCancelUrl = `${baseUrl}/pricing?canceled=true`;
     debugInfo.requestedPriceId = body && body.priceId ? body.priceId : 'unknown';
     
     return new Response(JSON.stringify({
