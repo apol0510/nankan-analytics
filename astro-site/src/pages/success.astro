@@ -173,7 +173,7 @@
             
             if (!sessionId) {
                 console.warn('No session ID found in URL');
-                updatePageContent('free'); // デフォルト表示
+                updatePageContent('standard'); // デフォルトをstandardに変更
                 return;
             }
             
@@ -185,7 +185,7 @@
                 
                 if (user && !userError) {
                     // セッションIDからプラン情報を判定
-                    let planType = 'free'; // デフォルトをfreeに変更（安全側に倒す）
+                    let planType = 'standard'; // デフォルトをstandardに設定（テスト決済のデフォルト）
                     
                     // ローカルストレージから直前の決済情報を確認
                     const lastCheckoutData = localStorage.getItem('last_checkout_data');
@@ -252,8 +252,8 @@
                 }
             } catch (error) {
                 console.error('Error handling payment success:', error);
-                // エラー時はfreeプランとして表示
-                updatePageContent('free');
+                // エラー時もstandardプランとして表示（決済したことは確実なので）
+                updatePageContent('standard');
             }
         }
         
@@ -307,18 +307,18 @@
                 console.log('[SUCCESS] Premium plan content updated');
                 
             } else {
-                // フリープランまたは不明な場合
-                planDescription.textContent = 'アカウントの設定が完了しました。';
+                // プラン判定できない場合（テスト決済なのでstandardとして扱う）
+                planDescription.textContent = 'NANKANアナリティクスへのご加入ありがとうございます。';
                 
                 nextStepsList.innerHTML = `
                     <li>確認メールが送信されました（数分以内に届きます）</li>
-                    <li>ダッシュボードにアクセス可能です</li>
-                    <li>11R（メインレース）の無料予想をご覧いただけます</li>
+                    <li>ダッシュボードで後半レース予想にアクセス可能です</li>
+                    <li>AI予想と分析レポートをご覧いただけます</li>
                 `;
                 
-                predictionLink.href = '/free-prediction';
-                predictionLink.textContent = '無料予想を見る';
-                console.log('[SUCCESS] Free plan content updated');
+                predictionLink.href = '/dashboard';
+                predictionLink.textContent = 'ダッシュボードへ';
+                console.log('[SUCCESS] Default plan content updated');
             }
             
             console.log('[SUCCESS] Page content update completed for plan:', planType);
