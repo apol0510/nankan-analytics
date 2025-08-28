@@ -58,7 +58,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <span class="plan-icon">⭐</span>
                         <h3>スタンダード</h3>
                         <div class="price">
-                            <span class="amount">¥2,980</span>
+                            <span class="amount" id="standard-price">¥2,980</span>
                             <span class="period">/月</span>
                         </div>
                     </div>
@@ -85,7 +85,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <span class="plan-icon">👑</span>
                         <h3>プレミアム</h3>
                         <div class="price">
-                            <span class="amount">¥5,980</span>
+                            <span class="amount" id="premium-price">¥5,980</span>
                             <span class="period">/月</span>
                         </div>
                     </div>
@@ -542,13 +542,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
     }
 
+    // 環境別価格ID設定
+    function getPriceId(plan) {
+        const isProduction = window.location.hostname === 'nankan-analytics.keiba.link';
+        
+        if (isProduction) {
+            // 本番環境用価格ID
+            return {
+                'standard': 'price_1S14mjFA5w33p4WyV9ZZVSqj',  // 本番Standard
+                'premium': 'price_1S0YUfFA5w33p4WyVImKgx4c'    // 本番Premium
+            }[plan];
+        } else {
+            // テスト環境用価格ID
+            return {
+                'standard': 'price_1S16WLFA5w33p4Wyq5yPxirV',  // テストStandard ¥100
+                'premium': 'price_1S16WMFA5w33p4Wycgqnr8kd'     // テストPremium ¥200
+            }[plan];
+        }
+    }
+
     // プラン変更関数
     async function changeToStandard() {
-        await changeSubscription('standard', 'price_1S14mjFA5w33p4WyV9ZZVSqj');
+        await changeSubscription('standard', getPriceId('standard'));
     }
 
     async function changeToPremium() {
-        await changeSubscription('premium', 'price_1S0YUfFA5w33p4WyVImKgx4c');
+        await changeSubscription('premium', getPriceId('premium'));
     }
 
     async function changeSubscription(targetPlan, newPriceId) {
@@ -637,7 +656,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
     }
 
+    // 環境別表示設定
+    function setupEnvironmentDisplay() {
+        const isProduction = window.location.hostname === 'nankan-analytics.keiba.link';
+        
+        if (!isProduction) {
+            // テスト環境の場合は価格を変更し、テスト表示を追加
+            document.getElementById('standard-price').textContent = '¥100';
+            document.getElementById('premium-price').textContent = '¥200';
+            
+            // テスト環境バッジを追加
+            const header = document.querySelector('.upgrade-header h1');
+            header.innerHTML = '🧪 プランをアップグレード <small style="color: #f59e0b; font-size: 0.5em;">(TEST)</small>';
+            
+            // テスト環境通知を追加
+            const container = document.querySelector('.upgrade-container');
+            const testNotice = document.createElement('div');
+            testNotice.innerHTML = `
+                <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); 
+                     border-radius: 8px; padding: 16px; margin-bottom: 30px; text-align: center; color: #f59e0b;">
+                    🧪 <strong>テスト環境</strong> - 実際の課金は発生しません（Standard: ¥100、Premium: ¥200）
+                </div>
+            `;
+            container.insertBefore(testNotice, container.children[1]);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        setupEnvironmentDisplay();
         displayCurrentPlan();
     });
 </script>
