@@ -15,6 +15,12 @@ export const prerender = false;
 
 export async function POST({ request }) {
   console.log('[API] Checkout session creation started');
+  console.log('[API] Environment check:', {
+    hasStripeKey: !!import.meta.env.STRIPE_SECRET_KEY,
+    keyPrefix: import.meta.env.STRIPE_SECRET_KEY ? import.meta.env.STRIPE_SECRET_KEY.substring(0, 7) + '...' : 'none',
+    siteUrl: import.meta.env.SITE_URL
+  });
+  
   let body = null; // スコープを広くして全体でアクセス可能に
   
   try {
@@ -73,15 +79,20 @@ export async function POST({ request }) {
     let customer;
     console.log('Creating new customer for:', customerEmail);
     
-    // 新規顧客作成（検索をスキップ）
-    customer = await stripe.customers.create({
-      email: customerEmail,
-      metadata: {
-        supabase_user_id: userId
-      }
-    });
-    
-    console.log('Customer created:', customer.id);
+    try {
+      // 新規顧客作成（検索をスキップ）
+      customer = await stripe.customers.create({
+        email: customerEmail,
+        metadata: {
+          supabase_user_id: userId
+        }
+      });
+      
+      console.log('Customer created:', customer.id);
+    } catch (customerError) {
+      console.error('Customer creation error:', customerError);
+      throw new Error(`顧客作成エラー: ${customerError.message}`);
+    }
 
     // URL設定（明示的にHTTPSスキームを指定）
     const siteUrl = import.meta.env.SITE_URL || 'https://nankan-analytics.keiba.link';
@@ -89,6 +100,13 @@ export async function POST({ request }) {
     const cancelUrl = siteUrl.startsWith('http') ? siteUrl : `https://${siteUrl}`;
 
     // Checkout セッション作成
+    console.log('Creating checkout session with:', {
+      customerId: customer.id,
+      priceId,
+      successUrl: `${successUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${cancelUrl}/pricing?canceled=true`
+    });
+    
     const session = await stripe.checkout.sessions.create({
       customer: customer.id,
       payment_method_types: ['card'],
@@ -112,6 +130,8 @@ export async function POST({ request }) {
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
     });
+    
+    console.log('Session created successfully:', session.id);
 
     return new Response(JSON.stringify({ id: session.id }), {
       status: 200,

@@ -108,6 +108,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 </BaseLayout>
 
+<script define:vars={{ stripePublishableKey: import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51RzEBOFA5w33p4WyQ4xJmwRwBzGWa0B5wlTPF3J4pOLLjkqVOmvs6iKU2BheFDbejjRjH7eBIQvFO5c11YeLzxTl00Q4cYO6hr' }}>
+    // Stripe公開キーをグローバルに設定
+    window.stripePublishableKey = stripePublishableKey;
+    console.log('Stripe key set:', stripePublishableKey ? stripePublishableKey.substring(0, 12) + '...' : 'none');
+</script>
+
 <style>
     .account-container {
         max-width: 1000px;
@@ -604,7 +610,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
 
         try {
+            console.log('Plan change started for plan:', newPlan);
+            
             const planConfig = PRICING_PLANS[newPlan.toUpperCase()];
+            if (!planConfig) {
+                throw new Error(`Invalid plan: ${newPlan}`);
+            }
+            
+            console.log('Plan config:', planConfig);
+            console.log('Current user:', currentUser);
+
             const response = await fetch('/api/create-checkout-session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -615,17 +630,57 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }),
             });
 
-            const { id: sessionId, error } = await response.json();
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('HTTP Error:', response.status, errorText);
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+
+            const responseData = await response.json();
+            console.log('Response data:', responseData);
+            
+            const { id: sessionId, error } = responseData;
             
             if (error) {
-                throw new Error(error);
+                console.error('API Error:', error);
+                throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
+            }
+
+            if (!sessionId) {
+                throw new Error('No session ID received from API');
             }
 
             // Stripe Checkoutにリダイレクト
-            const stripe = await window.Stripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+            if (!window.Stripe) {
+                throw new Error('Stripe library not loaded');
+            }
+            
+            // 環境変数の取得（クライアントサイド用）
+            let stripeKey;
+            
+            // 本番環境チェック
+            if (window.location.hostname === 'nankan-analytics.keiba.link') {
+                // 本番環境用のStripe公開キー
+                stripeKey = 'pk_live_51RzEBOFA5w33p4WyNRZSQ9TyXUEGIJPGnTgFjDUQQGdHLWqOWDuGVkrnMZUXPcnhC3G6WKzXqXE9JJdeLRKlBGxg00txhyD5Yp';
+            } else {
+                // テスト環境用のStripe公開キー
+                stripeKey = window.stripePublishableKey || 'pk_test_51RzEBOFA5w33p4WyQ4xJmwRwBzGWa0B5wlTPF3J4pOLLjkqVOmvs6iKU2BheFDbejjRjH7eBIQvFO5c11YeLzxTl00Q4cYO6hr';
+            }
+            console.log('Using Stripe key (prefix):', stripeKey.substring(0, 12) + '...');
+            
+            const stripe = window.Stripe(stripeKey);
+            console.log('Redirecting to checkout with session ID:', sessionId);
+            
             await stripe.redirectToCheckout({ sessionId });
         } catch (error) {
             console.error('Plan change error:', error);
+            console.error('Error details:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
             alert('プラン変更でエラーが発生しました: ' + error.message);
         }
     }
@@ -713,17 +768,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     // Stripeライブラリの読み込み
     function loadStripe() {
-        if (!window.Stripe) {
+        return new Promise((resolve) => {
+            if (window.Stripe) {
+                console.log('Stripe already loaded');
+                resolve();
+                return;
+            }
+            
+            console.log('Loading Stripe library...');
             const script = document.createElement('script');
             script.src = 'https://js.stripe.com/v3/';
             script.async = true;
+            script.onload = () => {
+                console.log('Stripe library loaded successfully');
+                resolve();
+            };
+            script.onerror = () => {
+                console.error('Failed to load Stripe library');
+                resolve(); // Don't reject to avoid blocking initialization
+            };
             document.head.appendChild(script);
-        }
+        });
     }
 
     // 初期化
-    document.addEventListener('DOMContentLoaded', () => {
-        loadStripe();
-        initializePage();
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('Page DOM loaded, initializing...');
+        try {
+            await loadStripe();
+            console.log('Stripe loaded, initializing page...');
+            await initializePage();
+            console.log('Page initialization complete');
+        } catch (error) {
+            console.error('Initialization error:', error);
+        }
     });
 </script>
