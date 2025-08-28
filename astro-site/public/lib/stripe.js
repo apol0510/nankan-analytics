@@ -26,8 +26,8 @@ export const PRICING_PLANS = {
   STANDARD: {
     name: 'スタンダード',
     description: '後半レース予想・基礎コンテンツ',
-    price: 5980, // 月額5,980円
-    stripePriceId: 'price_1S0YFdFA5w33p4WyJNK6MoRR', // NANKANアナリティクス(スタンダード)
+    price: 100, // 月額100円
+    stripePriceId: 'price_1S14mjFA5w33p4WyV9ZZVSqj', // NANKANアナリティクス(スタンダード) 100円
     features: [
       '10R・11R・12R予想閲覧',
       '基礎コンテンツアクセス',

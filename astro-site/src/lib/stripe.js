@@ -18,11 +18,11 @@ export const PRICING_PLANS = {
   STANDARD: {
     name: 'スタンダード',
     description: '後半レース予想・基礎コンテンツ',
-    price: 5980, // 月額5,980円
+    price: 100, // 月額100円
     // テストモードと本番モードで価格IDを切り替え
     stripePriceId: isTestMode 
       ? 'price_1RzEMaFA5w33p4Wycj2oSBOz' // テストモード: スタンダード
-      : 'price_1S0YFdFA5w33p4WyJNK6MoRR', // 本番モード: NANKANアナリティクス(スタンダード)
+      : 'price_1S14mjFA5w33p4WyV9ZZVSqj', // 本番モード: NANKANアナリティクス(スタンダード) 100円
     features: [
       '10R・11R・12R予想閲覧',
       '基礎コンテンツアクセス',
