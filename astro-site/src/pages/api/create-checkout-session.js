@@ -94,33 +94,15 @@ export async function POST({ request }) {
       throw new Error(`顧客作成エラー: ${customerError.message}`);
     }
 
-    // URL設定（リクエストヘッダーから正しいホストを取得）
-    const headers = Astro.request.headers;
-    const host = headers.get('host') || headers.get('x-forwarded-host');
-    const protocol = headers.get('x-forwarded-proto') || 'https';
+    // URL設定 - シンプルに本番URLを強制使用！
+    // Stripeのテスト環境でも本番URLにリダイレクトさせる
+    const baseUrl = 'https://nankan-analytics.keiba.link';
     
-    // 本番環境判定（Netlifyでホストされている場合は必ず本番URL）
-    const isProduction = host && (
-      host.includes('nankan-analytics.keiba.link') || 
-      host.includes('netlify.app') ||
-      !host.includes('localhost')
-    );
-    
-    // 本番環境では必ず本番URLを使用
-    const baseUrl = isProduction 
-      ? 'https://nankan-analytics.keiba.link'
-      : `${protocol}://${host || 'localhost:4321'}`;
-    
-    console.log('Environment detection:', {
-      host,
-      protocol,
-      isProduction,
+    console.log('Redirect URL configuration:', {
       baseUrl,
-      headers: {
-        host: headers.get('host'),
-        xForwardedHost: headers.get('x-forwarded-host'),
-        xForwardedProto: headers.get('x-forwarded-proto')
-      }
+      successUrl: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${baseUrl}/pricing?canceled=true`,
+      note: 'Always use production URL for Stripe redirects'
     });
 
     // Checkout セッション作成
@@ -186,7 +168,7 @@ export async function POST({ request }) {
     debugInfo.errorCode = error.code;
     debugInfo.hasStripeKey = !!stripeSecretKey;
     debugInfo.keyPrefix = stripeSecretKey ? stripeSecretKey.substring(0, 7) + '...' : 'none';
-    debugInfo.host = Astro.request.headers.get('host');
+    debugInfo.baseUrl = 'https://nankan-analytics.keiba.link';
     debugInfo.resolvedSuccessUrl = 'https://nankan-analytics.keiba.link/success?session_id={CHECKOUT_SESSION_ID}';
     debugInfo.resolvedCancelUrl = 'https://nankan-analytics.keiba.link/pricing?canceled=true';
     debugInfo.requestedPriceId = body && body.priceId ? body.priceId : 'unknown';
