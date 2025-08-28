@@ -200,7 +200,7 @@
                         if (checkoutInfo.priceId === 'price_1RzEMaFA5w33p4Wycj2oSBOz' || checkoutInfo.priceId === 'price_1S14mjFA5w33p4WyV9ZZVSqj') {
                             planType = 'standard';
                             console.log('[SUCCESS] Plan determined as STANDARD');
-                        } else if (checkoutInfo.priceId === 'price_1RzEVfFA5w33p4Wy7GPtIHfv') {
+                        } else if (checkoutInfo.priceId === 'price_1RzEVfFA5w33p4Wy7GPtIHfv' || checkoutInfo.priceId === 'price_1S0YUfFA5w33p4WyVImKgx4c') {
                             planType = 'premium';
                             console.log('[SUCCESS] Plan determined as PREMIUM');
                         } else {
@@ -208,7 +208,7 @@
                             // URLパラメータからヒントを取得（フォールバック）
                             if (sessionId.includes('standard') || checkoutInfo.priceId.includes('RzEMa')) {
                                 planType = 'standard';
-                            } else if (sessionId.includes('premium') || checkoutInfo.priceId.includes('RzEVf')) {
+                            } else if (sessionId.includes('premium') || checkoutInfo.priceId.includes('RzEVf') || checkoutInfo.priceId.includes('S0YUf')) {
                                 planType = 'premium';
                             }
                         }
