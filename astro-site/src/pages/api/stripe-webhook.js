@@ -147,7 +147,7 @@ async function handleCheckoutCompleted(session) {
     if (profile?.email) {
       try {
         const planDisplayName = planName === 'premium' ? 'プレミアム' : 'スタンダード';
-        const planAmount = planName === 'premium' ? '9,980' : '5,980';
+        const planAmount = planName === 'premium' ? '9,980' : '100';
         const nextBillingDate = new Date(subscription.current_period_end * 1000).toLocaleDateString('ja-JP');
         
         const features = planName === 'premium' 
