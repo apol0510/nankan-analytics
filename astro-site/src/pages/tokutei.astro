@@ -1,0 +1,252 @@
+---
+// 特定商取引法に基づく表記ページ
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特定商取引法に基づく表記 | NANKANアナリティクス</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #3b82f6;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #60a5fa;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .section-content {
+            color: #cbd5e1;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #cbd5e1;
+        }
+
+        .note {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #3b82f6;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .price-table {
+            margin-top: 15px;
+        }
+
+        .update-date {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>特定商取引法に基づく表記</h1>
+
+        <div class="section">
+            <div class="section-title">販売業者</div>
+            <div class="section-content">
+                NANKANアナリティクス
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">運営責任者</div>
+            <div class="section-content">
+                [責任者名をここに記載]
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">所在地</div>
+            <div class="section-content">
+                [住所をここに記載]
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">電話番号</div>
+            <div class="section-content">
+                [電話番号をここに記載]<br>
+                <small>※お問い合わせはメールにてお願いいたします</small>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">メールアドレス</div>
+            <div class="section-content">
+                [メールアドレスをここに記載]
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">販売価格</div>
+            <div class="section-content">
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>プラン名</th>
+                            <th>月額料金（税込）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Standard会員</td>
+                            <td>980円</td>
+                        </tr>
+                        <tr>
+                            <td>Premium会員</td>
+                            <td>2,980円</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">商品代金以外の必要料金</div>
+            <div class="section-content">
+                なし（インターネット接続料金、通信料金等はお客様のご負担となります）
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">支払方法</div>
+            <div class="section-content">
+                クレジットカード決済（VISA、MasterCard、JCB、American Express、Diners、Discover）<br>
+                ※決済はPAY.JPを利用しています
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">支払時期</div>
+            <div class="section-content">
+                ご購入時に初回の料金をお支払いいただきます。<br>
+                以降、1ヶ月ごとに自動的に料金が課金されます。
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">商品の引渡し時期</div>
+            <div class="section-content">
+                決済完了後、即時にサービスをご利用いただけます。
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">返品・交換・キャンセル等</div>
+            <div class="section-content">
+                サービスの性質上、返品・返金はお受けしておりません。<br>
+                ただし、サービスに重大な不具合があった場合はこの限りではありません。<br>
+                解約はマイページからいつでも可能です。解約後は次回更新日以降、課金されません。
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">中途解約について</div>
+            <div class="section-content">
+                月額プランは、いつでも解約可能です。<br>
+                解約した場合でも、既にお支払いいただいた期間の終了まではサービスをご利用いただけます。<br>
+                日割り計算による返金は行っておりません。
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>ご注意：</strong><br>
+            ・当サービスは競馬予想の参考情報を提供するものであり、的中を保証するものではありません。<br>
+            ・競馬は自己責任で楽しんでください。<br>
+            ・未成年者のご利用はお断りしております。
+        </div>
+
+        <div class="update-date">
+            最終更新日：2025年8月29日
+        </div>
+
+        <a href="/" class="back-link">← トップページに戻る</a>
+    </div>
+</body>
+</html>
