@@ -1,0 +1,516 @@
+---
+// 料金プランページ
+const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="stripe-publishable-key" content={stripePublishableKey}>
+    <title>料金プラン | NANKANアナリティクス</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 16px 0;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            color: #3b82f6;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-right a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 16px;
+        }
+
+        .nav-loading {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 20px;
+            color: #94a3b8;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .plan-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 20px 40px -12px rgba(59, 130, 246, 0.3);
+        }
+
+        .plan-popular {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .plan-description {
+            color: #94a3b8;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 24px;
+        }
+
+        .price-amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+
+        .price-currency {
+            font-size: 20px;
+            color: #94a3b8;
+            margin-right: 4px;
+        }
+
+        .price-period {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-left: 4px;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            color: #cbd5e1;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .subscribe-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subscribe-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+        }
+
+        .subscribe-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .faq-section {
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .faq-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #f1f5f9;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            text-align: left;
+        }
+
+        .faq-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .faq-question {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+        }
+
+        .faq-answer {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .container {
+                padding: 40px 16px;
+            }
+            
+            .header h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/" class="logo">🤖 NANKANアナリティクス</a>
+            <div class="nav-right">
+                <a href="/auth/login">ログイン</a>
+                <a href="/dashboard">ダッシュボード</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>料金プラン</h1>
+            <p>AIの力で競馬予想を次のレベルへ</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- スタンダードプラン -->
+            <div class="plan-card">
+                <div class="plan-name">スタンダード</div>
+                <div class="plan-description">
+                    後半3レース予想と基礎コンテンツ
+                </div>
+                <div class="plan-price">
+                    <span class="price-currency">¥</span>
+                    <span class="price-amount">5,980</span>
+                    <span class="price-period">/月</span>
+                </div>
+                <ul class="features-list">
+                    <li>10R・11R・12R予想閲覧</li>
+                    <li>基礎コンテンツアクセス</li>
+                    <li>メールサポート</li>
+                    <li>過去30日分のデータ</li>
+                    <li>AI分析レポート</li>
+                </ul>
+                <button class="subscribe-btn" data-plan="standard">
+                    <span class="loading-spinner"></span>
+                    今すぐ始める
+                </button>
+            </div>
+
+            <!-- プレミアムプラン -->
+            <div class="plan-card plan-popular">
+                <div class="popular-badge">人気No.1</div>
+                <div class="plan-name">プレミアム</div>
+                <div class="plan-description">
+                    全レース予想とすべてのコンテンツアクセス
+                </div>
+                <div class="plan-price">
+                    <span class="price-currency">¥</span>
+                    <span class="price-amount">9,980</span>
+                    <span class="price-period">/月</span>
+                </div>
+                <ul class="features-list">
+                    <li>1R-12R 全レース予想閲覧</li>
+                    <li>全コンテンツアクセス</li>
+                    <li>無制限データアクセス</li>
+                    <li>優先サポート</li>
+                    <li>AI分析レポート</li>
+                    <li>リアルタイム通知</li>
+                </ul>
+                <button class="subscribe-btn" data-plan="premium">
+                    <span class="loading-spinner"></span>
+                    今すぐ始める
+                </button>
+            </div>
+        </div>
+
+        <!-- FAQ セクション -->
+        <div class="faq-section">
+            <h2 class="faq-title">よくある質問</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">支払い方法は？</div>
+                    <div class="faq-answer">クレジットカード（Visa、MasterCard、American Express、JCB）に対応しています。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">いつでもキャンセルできますか？</div>
+                    <div class="faq-answer">はい。いつでもキャンセル可能で、次回更新日まで利用できます。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">プラン変更は可能ですか？</div>
+                    <div class="faq-answer">はい。アカウント管理画面からいつでもプランの変更が可能です。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">返金保証はありますか？</div>
+                    <div class="faq-answer">初回登録から7日間は全額返金保証いたします。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getStripe, createCheckoutSession, PRICING_PLANS } from '/lib/stripe.js';
+        import { auth } from '/lib/supabase-client.js';
+
+        // 購読ボタンのイベントリスナー
+        document.querySelectorAll('.subscribe-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const planType = e.target.dataset.plan;
+                await handleSubscribe(planType, e.target);
+            });
+        });
+
+        async function handleSubscribe(planType, button) {
+            try {
+                // ローディング状態開始
+                setButtonLoading(button, true);
+
+                // 現在のユーザー取得
+                const { data: { user }, error: authError } = await auth.getUser();
+                
+                if (authError || !user) {
+                    // 未認証の場合、サインアップページへリダイレクト
+                    window.location.href = '/auth/signup?redirect=' + encodeURIComponent('/pricing');
+                    return;
+                }
+
+                // プランの詳細取得
+                const planDetails = PRICING_PLANS[planType.toUpperCase()];
+                if (!planDetails) {
+                    throw new Error('Invalid plan type');
+                }
+
+                // Stripe Checkout セッション作成
+                const session = await createCheckoutSession(
+                    planDetails.stripePriceId,
+                    user.id,
+                    user.email
+                );
+
+                // デモモードの場合は成功メッセージを表示
+                if (session.demo) {
+                    // サブスクリプション情報を更新
+                    try {
+                        const updateResponse = await fetch('/api/update-subscription-demo', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                userId: user.id,
+                                planType: planType
+                            })
+                        });
+
+                        const updateResult = await updateResponse.json();
+                        
+                        if (updateResponse.ok) {
+                            // ローカルストレージにデモサブスクリプション情報を保存
+                            localStorage.setItem('demo_subscription_' + user.id, JSON.stringify({
+                                planType: planType,
+                                createdAt: new Date().toISOString(),
+                                demo: true
+                            }));
+                            
+                            alert(`${session.message}\n\nプラン: ${planType}\nユーザー: ${user.email}\n\nデモ購入が完了しました！\n\n会員ステータスが更新されました。`);
+                        } else {
+                            // エラーでもローカルストレージには保存（デモなので）
+                            localStorage.setItem('demo_subscription_' + user.id, JSON.stringify({
+                                planType: planType,
+                                createdAt: new Date().toISOString(),
+                                demo: true
+                            }));
+                            
+                            alert(`デモ購入は完了しました！\n\nプラン: ${planType}\nユーザー: ${user.email}\n\n※デモモードのため、会員ステータスはローカルで管理されます。`);
+                        }
+                    } catch (updateError) {
+                        console.error('Subscription update error:', updateError);
+                        alert(`デモ購入は完了しましたが、ステータス更新でエラーが発生しました。`);
+                    }
+                    
+                    window.location.href = '/dashboard';
+                    return;
+                }
+
+                // Stripe Checkout にリダイレクト
+                const stripe = await getStripe();
+                const { error } = await stripe.redirectToCheckout({
+                    sessionId: session.id
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+            } catch (error) {
+                console.error('Subscription error:', error);
+                
+                let errorMessage = '決済処理でエラーが発生しました。';
+                if (error.message.includes('network')) {
+                    errorMessage = 'ネットワークエラーが発生しました。';
+                }
+                
+                alert(errorMessage);
+            } finally {
+                setButtonLoading(button, false);
+            }
+        }
+
+        function setButtonLoading(button, isLoading) {
+            const spinner = button.querySelector('.loading-spinner');
+            const text = button.childNodes[button.childNodes.length - 1];
+            
+            if (isLoading) {
+                button.disabled = true;
+                spinner.style.display = 'inline-block';
+                text.textContent = '処理中...';
+            } else {
+                button.disabled = false;
+                spinner.style.display = 'none';
+                text.textContent = '今すぐ始める';
+            }
+        }
+
+        // ページロード時にユーザー状態をチェック
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { data: { user } } = await auth.getUser();
+                
+                if (user) {
+                    // ログイン済みの場合、ナビゲーションを更新
+                    const navRight = document.querySelector('.nav-right');
+                    navRight.innerHTML = `
+                        <span style="color: #94a3b8; margin-right: 16px;">${user.email}</span>
+                        <a href="/dashboard">ダッシュボード</a>
+                    `;
+                }
+            } catch (error) {
+                // エラーは無視（未認証状態）
+            }
+        });
+    </script>
+</body>
+</html>

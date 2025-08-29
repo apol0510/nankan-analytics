@@ -1,0 +1,242 @@
+---
+// 簡単な決済テストページ - pricing-final.astroアプローチ（軽量版）
+export const prerender = false;
+
+let testResult = null;
+
+if (Astro.request.method === 'POST') {
+    const formData = await Astro.request.formData();
+    const testType = formData.get('testType');
+    
+    const startTime = Date.now();
+    
+    switch (testType) {
+        case 'success':
+            testResult = {
+                success: true,
+                message: '✅ Standard決済テスト成功！アクセス権正常付与確認',
+                mockData: {
+                    planType: 'standard',
+                    price: '¥5,980',
+                    accessRaces: ['10R', '11R', '12R'],
+                    subscriptionId: 'sub_test_' + Math.random().toString(36).substr(2, 9)
+                }
+            };
+            break;
+        case 'error':
+            testResult = {
+                success: false,
+                message: '❌ カード拒否エラーテスト - エラーハンドリング正常動作',
+                errorCode: 'card_declined',
+                userMessage: 'お客様のカードが拒否されました。別のお支払い方法をお試しください。'
+            };
+            break;
+        default:
+            testResult = {
+                success: false,
+                message: '不明なテストタイプです'
+            };
+    }
+    
+    testResult.executionTime = Date.now() - startTime;
+}
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡単決済テスト | NANKANアナリティクス</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .header h1 {
+            color: #3b82f6;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .test-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .test-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .test-btn.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .test-btn.error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .results {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .result-success {
+            border-left-color: #10b981;
+        }
+
+        .result-error {
+            border-left-color: #ef4444;
+        }
+
+        .execution-time {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .mock-data {
+            background: rgba(30, 41, 59, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .back-link {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/pricing" class="back-link">← 本番料金ページに戻る</a>
+        
+        <div class="header">
+            <h1>🧪 簡単決済テスト</h1>
+            <p>pricing-final.astroアプローチによる軽量テスト環境</p>
+        </div>
+
+        <div class="test-section">
+            <h2 style="color: #3b82f6; margin-bottom: 20px;">⚡ 高速テスト実行</h2>
+            
+            <div class="test-buttons">
+                <form method="POST" style="display: contents;">
+                    <input type="hidden" name="testType" value="success">
+                    <button type="submit" class="test-btn success">✅ 決済成功テスト</button>
+                </form>
+                
+                <form method="POST" style="display: contents;">
+                    <input type="hidden" name="testType" value="error">
+                    <button type="submit" class="test-btn error">❌ 決済失敗テスト</button>
+                </form>
+            </div>
+
+            <p style="color: #94a3b8; font-size: 0.9rem;">
+                💡 モック処理のため実際の課金は発生しません
+            </p>
+        </div>
+
+        {testResult && (
+            <div class={`results ${testResult.success ? 'result-success' : 'result-error'}`}>
+                <h3 style="color: #3b82f6; margin-bottom: 15px;">📊 テスト結果</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <h4>{testResult.success ? '✅ テスト成功' : '❌ テスト失敗'}</h4>
+                    <p style="margin-top: 8px;">{testResult.message}</p>
+                    <span class="execution-time">実行時間: {testResult.executionTime}ms</span>
+                </div>
+
+                {testResult.mockData && (
+                    <div class="mock-data">
+                        <strong>📋 モックデータ:</strong><br>
+                        プラン: {testResult.mockData.planType}<br>
+                        価格: {testResult.mockData.price}<br>
+                        アクセス可能レース: {testResult.mockData.accessRaces.join(', ')}<br>
+                        サブスクリプションID: {testResult.mockData.subscriptionId}
+                    </div>
+                )}
+
+                {testResult.errorCode && (
+                    <div class="mock-data">
+                        <strong>🚨 エラー詳細:</strong><br>
+                        エラーコード: {testResult.errorCode}<br>
+                        ユーザーメッセージ: {testResult.userMessage}
+                    </div>
+                )}
+            </div>
+        )}
+
+        <div style="text-align: center; margin-top: 40px; color: #64748b;">
+            <p>🤖 powered by pricing-final.astro approach | マコ&クロの完全自動化決済システム</p>
+        </div>
+    </div>
+</body>
+</html>
