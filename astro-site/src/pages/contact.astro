@@ -328,8 +328,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 };
 
                 try {
-                    // デバッグモード: 一時的にデバッグAPIを使用
-                    const response = await fetch('/api/contact-debug', {
+                    // SendGrid Web API使用
+                    const response = await fetch('/api/contact-sendgrid', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
