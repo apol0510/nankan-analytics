@@ -137,29 +137,66 @@ export async function POST({ request }) {
         console.log('SendGrid Web API経由でメール送信開始');
         
         // 管理者向けメール送信
+        let adminSuccess = false;
+        let userSuccess = false;
+        let errors = [];
+
         try {
             console.log('管理者向けメール送信中...');
             const adminResult = await sgMail.send(adminMsg);
-            console.log('管理者向けメール送信成功:', adminResult[0].statusCode);
+            console.log('管理者向けメール送信成功:', {
+                statusCode: adminResult[0].statusCode,
+                messageId: adminResult[0].headers['x-message-id']
+            });
+            adminSuccess = true;
         } catch (adminError) {
             console.error('管理者向けメール送信エラー:', adminError);
-            throw adminError;
+            errors.push(`管理者向けメール: ${adminError.message}`);
+            
+            // 管理者向けメールが失敗した場合の詳細ログ
+            if (adminError.response && adminError.response.body) {
+                console.error('管理者向けメール詳細エラー:', adminError.response.body);
+                errors.push(`管理者向け詳細: ${JSON.stringify(adminError.response.body)}`);
+            }
         }
 
-        // ユーザー向けメール送信
-        try {
-            console.log('ユーザー向けメール送信中...');
-            const userResult = await sgMail.send(userMsg);
-            console.log('ユーザー向けメール送信成功:', userResult[0].statusCode);
-        } catch (userError) {
-            console.error('ユーザー向けメール送信エラー:', userError);
-            // ユーザー向けが失敗しても管理者には届いているので継続
+        // ユーザー向けメール送信（管理者向けが成功した場合のみ）
+        if (adminSuccess) {
+            try {
+                console.log('ユーザー向けメール送信中...');
+                const userResult = await sgMail.send(userMsg);
+                console.log('ユーザー向けメール送信成功:', {
+                    statusCode: userResult[0].statusCode,
+                    messageId: userResult[0].headers['x-message-id']
+                });
+                userSuccess = true;
+            } catch (userError) {
+                console.error('ユーザー向けメール送信エラー:', userError);
+                errors.push(`ユーザー向けメール: ${userError.message}`);
+                
+                if (userError.response && userError.response.body) {
+                    console.error('ユーザー向けメール詳細エラー:', userError.response.body);
+                    errors.push(`ユーザー向け詳細: ${JSON.stringify(userError.response.body)}`);
+                }
+                // ユーザー向けが失敗しても管理者には届いているので継続
+            }
+        }
+
+        // 結果の評価
+        if (!adminSuccess && !userSuccess) {
+            throw new Error('すべてのメール送信に失敗しました: ' + errors.join(', '));
         }
 
         return new Response(
             JSON.stringify({ 
                 success: true, 
-                message: 'お問い合わせを受け付けました。ご返信をお待ちください。' 
+                message: 'お問い合わせを受け付けました。ご返信をお待ちください。',
+                debug: {
+                    adminSuccess,
+                    userSuccess,
+                    errors: errors.length > 0 ? errors : undefined,
+                    timestamp: new Date().toISOString()
+                }
             }),
             { 
                 status: 200,
