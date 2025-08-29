@@ -27,21 +27,70 @@ export async function POST({ request }) {
             );
         }
 
-        // Nodemailer設定
-        // 注意: 本番環境では環境変数から取得する必要があります
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        // 環境変数の確認とログ出力
+        console.log('環境変数チェック:', {
+            SMTP_HOST: process.env.SMTP_HOST ? '設定済み' : '未設定',
+            SMTP_PORT: process.env.SMTP_PORT ? '設定済み' : '未設定',
+            SMTP_USER: process.env.SMTP_USER ? '設定済み' : '未設定',
+            SMTP_PASS: process.env.SMTP_PASS ? '設定済み' : '未設定'
+        });
+
+        // 環境変数が設定されていない場合の処理
+        if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+            console.warn('SMTP認証情報が不完全です。');
+            return new Response(
+                JSON.stringify({ 
+                    error: 'メール送信設定が不完全です。管理者にお問い合わせください。',
+                    debug: 'SMTP認証情報が設定されていません'
+                }),
+                { 
+                    status: 500,
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
+        }
+
+        // SendGrid SMTP設定（より確実な設定）
+        const transporter = nodemailer.createTransporter({
+            host: process.env.SMTP_HOST,
             port: parseInt(process.env.SMTP_PORT) || 587,
-            secure: false,
+            secure: false, // SendGridは587ポートでstarttls
             auth: {
                 user: process.env.SMTP_USER,
                 pass: process.env.SMTP_PASS,
             },
+            // SendGrid用の追加設定
+            requireTLS: true,
+            connectionTimeout: 10000,
+            socketTimeout: 10000,
+            logger: true,
+            debug: true
         });
+
+        // SMTP接続テスト
+        try {
+            await transporter.verify();
+            console.log('SMTP接続成功');
+        } catch (error) {
+            console.error('SMTP接続エラー:', error);
+            return new Response(
+                JSON.stringify({ 
+                    error: 'メール送信サーバーに接続できません',
+                    debug: error.message
+                }),
+                { 
+                    status: 500,
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
+        }
+
+        // SendGridでは認証済みの送信者メールアドレスを使用する必要がある
+        const fromEmail = 'support@keiba.link'; // SendGridで認証済みのアドレス
 
         // 管理者向けメール内容
         const adminMailOptions = {
-            from: process.env.SMTP_USER || 'noreply@keiba.link',
+            from: fromEmail,
             to: 'support@keiba.link',
             subject: `【お問い合わせ】${subject}`,
             html: `
@@ -72,7 +121,7 @@ export async function POST({ request }) {
 
         // 送信者への自動返信メール
         const userMailOptions = {
-            from: process.env.SMTP_USER || 'noreply@keiba.link',
+            from: fromEmail,
             to: email,
             subject: '【NANKANアナリティクス】お問い合わせを受け付けました',
             html: `
@@ -117,27 +166,14 @@ export async function POST({ request }) {
             `,
         };
 
-        // 環境変数が設定されていない場合は警告を返す
-        if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-            console.warn('SMTP認証情報が設定されていません。実際のメール送信は行われません。');
-            
-            // 開発環境用のモック成功レスポンス
-            return new Response(
-                JSON.stringify({ 
-                    success: true, 
-                    message: '開発環境: メール送信をシミュレートしました',
-                    data: { name, email, subject, message }
-                }),
-                { 
-                    status: 200,
-                    headers: { 'Content-Type': 'application/json' }
-                }
-            );
-        }
+        // メール送信（順次実行で安全に）
+        console.log('管理者向けメール送信開始');
+        const adminResult = await transporter.sendMail(adminMailOptions);
+        console.log('管理者向けメール送信完了:', adminResult.messageId);
 
-        // メール送信
-        await transporter.sendMail(adminMailOptions);
-        await transporter.sendMail(userMailOptions);
+        console.log('ユーザー向けメール送信開始');
+        const userResult = await transporter.sendMail(userMailOptions);
+        console.log('ユーザー向けメール送信完了:', userResult.messageId);
 
         return new Response(
             JSON.stringify({ success: true, message: 'お問い合わせを送信しました' }),
@@ -152,7 +188,8 @@ export async function POST({ request }) {
         return new Response(
             JSON.stringify({ 
                 error: 'メール送信中にエラーが発生しました',
-                details: process.env.NODE_ENV === 'development' ? error.message : undefined
+                details: error.message,
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
             }),
             { 
                 status: 500,
