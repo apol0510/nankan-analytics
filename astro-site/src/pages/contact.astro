@@ -328,7 +328,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 };
 
                 try {
-                    const response = await fetch('/api/contact', {
+                    // デバッグモード: 一時的にデバッグAPIを使用
+                    const response = await fetch('/api/contact-debug', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
