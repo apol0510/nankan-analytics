@@ -1,9 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { PLANS } from '../lib/billing/plan';
 ---
 
-<Layout title="料金プラン - NANKANアナリティクス">
+<BaseLayout title="料金プラン - NANKANアナリティクス">
     <main class="min-h-screen bg-slate-900 text-white">
         <div class="container mx-auto px-4 py-16">
             <!-- ヘッダー -->
@@ -171,7 +171,7 @@ import { PLANS } from '../lib/billing/plan';
             </div>
         </div>
     </main>
-</Layout>
+</BaseLayout>
 
 <script>
     async function subscribe(planId) {
@@ -187,8 +187,8 @@ import { PLANS } from '../lib/billing/plan';
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    planId,
-                    userEmail,
+                    plan: planId,
+                    email: userEmail,
                     successUrl: window.location.origin + '/payment/success?session_id={CHECKOUT_SESSION_ID}',
                     cancelUrl: window.location.origin + '/pricing'
                 })
@@ -196,7 +196,7 @@ import { PLANS } from '../lib/billing/plan';
 
             const data = await response.json();
 
-            if (data.success) {
+            if (data.url) {
                 // Stripe Checkoutにリダイレクト
                 window.location.href = data.url;
             } else {
