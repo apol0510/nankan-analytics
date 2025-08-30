@@ -9,6 +9,45 @@ if (process.env.SENDGRID_API_KEY) {
 }
 
 /**
+ * SendGrid管理者向けメール送信（Reply-Toトリプル設定）
+ * @param {Object} options - メール送信オプション
+ * @param {string} options.name - 送信者名
+ * @param {string} options.email - 送信者メールアドレス（Reply-To用）
+ * @param {string} options.subject - 件名
+ * @param {string} options.htmlBody - HTML本文
+ * @returns {Promise<Object>} 送信結果
+ */
+async function sendAdmin({ name, email, subject, htmlBody }) {
+    // バリデーション（空・不正なメールを弾く）
+    const customerEmail = (email || '').trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(customerEmail)) {
+        throw new Error('invalid customer email for replyTo');
+    }
+
+    const msg = {
+        from: { email: 'support@keiba.link', name: 'NANKANアナリティクス システム' },
+        to: 'nankan.analytics@gmail.com',
+        subject: `【お問い合わせ】${subject}`,
+        html: htmlBody,
+
+        // ① トップレベル（@sendgrid/mail が正式対応）
+        replyTo: { email: customerEmail, name: name || undefined },
+
+        // ② personalizations 側にも明示（転送系や一部MTA対策の"保険"）
+        personalizations: [{
+            to: [{ email: 'nankan.analytics@gmail.com' }],
+            reply_to: { email: customerEmail, name: name || undefined },
+        }],
+
+        // ③ 生ヘッダにもダブル指定（環境依存の最終保険）
+        headers: { 'Reply-To': customerEmail },
+        trackingSettings: { clickTracking: { enable: false, enableText: false } },
+    };
+
+    await sgMail.send(msg);
+}
+
+/**
  * SendGrid共通送信関数
  * @param {Object} options - メール送信オプション
  * @param {string} options.to - 送信先メールアドレス
@@ -70,13 +109,13 @@ export async function sendEmail({ to, subject, html, replyTo, fromName = "NANKAN
  * @returns {Promise<Object>} 送信結果
  */
 export async function sendContactEmail({ name, email, subject, message }) {
-    // 管理者向けメール
-    const adminResult = await sendEmail({
-        to: 'nankan.analytics@gmail.com',
-        subject: `【お問い合わせ】${subject}`,
-        replyTo: email, // ★お客様のメールに返信が飛ぶ
-        fromName: 'お問い合わせ通知',
-        html: `
+    // 管理者向けメール（トリプル設定で確実なReply-To）
+    try {
+        await sendAdmin({
+            name,
+            email,
+            subject,
+            htmlBody: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #333; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">
                     新しいお問い合わせがありました
@@ -108,16 +147,18 @@ export async function sendContactEmail({ name, email, subject, message }) {
                     </p>
                 </div>
             </div>
-        `
-    });
+            `
+        });
 
-    // お客様向け自動返信
-    const userResult = await sendEmail({
-        to: email,
-        subject: '【自動返信】お問い合わせを受け付けました',
-        replyTo: 'nankan.analytics@gmail.com', // ★管理者に返信が飛ぶ
-        fromName: 'NANKANアナリティクス お問い合わせ窓口',
-        html: `
+        const adminResult = { success: true };
+
+        // お客様向け自動返信
+        const userResult = await sendEmail({
+            to: email,
+            subject: '【自動返信】お問い合わせを受け付けました',
+            replyTo: 'nankan.analytics@gmail.com', // ★管理者に返信が飛ぶ
+            fromName: 'NANKANアナリティクス お問い合わせ窓口',
+            html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #333; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">
                     お問い合わせありがとうございます
@@ -151,14 +192,23 @@ export async function sendContactEmail({ name, email, subject, message }) {
                     </p>
                 </div>
             </div>
-        `
-    });
+            `
+        });
 
-    return {
-        success: adminResult.success && userResult.success,
-        adminResult,
-        userResult
-    };
+        return {
+            success: adminResult.success && userResult.success,
+            adminResult,
+            userResult
+        };
+    } catch (error) {
+        console.error('SendGrid contact email error:', error);
+        return {
+            success: false,
+            error: error.message,
+            adminResult: { success: false, error: error.message },
+            userResult: { success: false, error: 'Admin email failed' }
+        };
+    }
 }
 
 /**
