@@ -92,6 +92,7 @@ export async function POST({ request }) {
         const adminMailOptions = {
             from: fromEmail,
             to: 'support@keiba.link',
+            replyTo: email, // お客様のメールアドレスを返信先に設定
             subject: `【お問い合わせ】${subject}`,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
