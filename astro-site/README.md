@@ -1,140 +1,95 @@
-# NANKANアナリティクス 🏇⚡
+# 🏇 NANKANアナリティクス - AI競馬予想プラットフォーム
 
-> AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム
+南関競馬専門のAI予想システム with Stripe決済システム
 
-[![Astro](https://img.shields.io/badge/Astro-4.0-orange)](https://astro.build/)
-[![Supabase](https://img.shields.io/badge/Supabase-Database-green)](https://supabase.com/)
-[![Stripe](https://img.shields.io/badge/Stripe-Payment-blue)](https://stripe.com/)
-[![Netlify](https://img.shields.io/badge/Netlify-Deploy-00AD9F)](https://netlify.com/)
+## 🚀 クイックスタート
 
-## 🚀 プロジェクト概要
-
-NANKANアナリティクスは、AI・機械学習技術を活用した革新的な競馬予想プラットフォームです。従来の感覚的な予想から科学的・統計的アプローチへの転換を支援し、データサイエンス手法を競馬予想に応用する方法論を提供します。
-
-### ✨ 主な機能
-
-- 🤖 **AI予想システム**: 機械学習モデルによる高精度な予想
-- 📊 **データ分析**: 統計的手法による科学的アプローチ  
-- 🎓 **教育コンテンツ**: Python・機械学習の実践的解説
-- 💳 **多段階会員制**: 無料・スタンダード・プレミアムプラン
-- 📧 **メール配信**: 最新予想・解説の自動配信
-- 🛡️ **セキュリティ**: 堅牢な認証・決済システム
-
-## 🏗️ システム構成
-
-```
-NANKANアナリティクス
-├── Frontend (Astro.js)
-│   ├── 静的サイト生成
-│   ├── コンポーネントベース開発  
-│   └── SEO最適化
-├── Backend (Supabase)
-│   ├── PostgreSQL データベース
-│   ├── 認証・ユーザー管理
-│   └── リアルタイム同期
-├── Payment (Stripe)
-│   ├── サブスクリプション管理
-│   ├── 決済処理
-│   └── カスタマーポータル
-├── Email (Resend)
-│   ├── 自動メール配信
-│   ├── ニュースレター
-│   └── 通知システム
-└── Deploy (Netlify)
-    ├── 自動デプロイ
-    ├── CDN配信
-    └── Edge Functions
-```
-
-## 🔧 技術スタック
-
-### フロントエンド
-- **Astro 4.0**: 高速な静的サイトジェネレーター
-- **TypeScript**: 型安全な開発
-- **Tailwind CSS**: ユーティリティファーストCSS
-- **Alpine.js**: 軽量なJavaScriptフレームワーク
-
-### バックエンド
-- **Supabase**: Firebase代替のBaaS
-- **PostgreSQL**: リレーショナルデータベース
-- **Node.js**: サーバーサイドランタイム
-- **Astro API Routes**: サーバーレス関数
-
-### 決済・認証
-- **Stripe**: 決済処理・サブスクリプション
-- **Supabase Auth**: 認証システム
-- **JWT**: セッション管理
-
-### 外部サービス
-- **Resend**: メール配信
-- **Netlify**: ホスティング・デプロイ
-- **GitHub**: バージョン管理・CI/CD
-
-## 📦 セットアップ
-
-### 必要環境
-- Node.js 18+
-- npm 9+
-- Git
-
-### インストール
-
+### 1. 依存関係のインストール
 ```bash
-# リポジトリクローン
-git clone https://github.com/your-username/nankan-analytics.git
-cd nankan-analytics
-
-# 依存関係インストール
 npm install
+```
 
-# 環境変数設定
+### 2. 環境変数の設定
+```bash
 cp .env.example .env
-# .envファイルを編集して各種APIキーを設定
+# .envを編集してStripe、Supabase、SendGridの設定を入力
+```
 
-# 開発サーバー起動
+### 3. データベースセットアップ
+1. Supabase SQL Editorにアクセス
+2. `supabase/migrations/003_payment_system_upgrade.sql` を実行
+
+### 4. Stripe Webhook（ローカル開発）
+```bash
+# 別ターミナルで実行
+stripe listen --forward-to http://localhost:4321/api/stripe/webhook
+```
+
+### 5. 開発サーバー起動
+```bash
 npm run dev
 ```
 
-### 環境変数設定
+ブラウザで http://localhost:4321 にアクセス
 
-`.env`ファイルに以下の設定が必要です：
+## 📋 プラン構成
 
-```bash
-# 基本設定
-PUBLIC_SITE_URL=https://nankan-analytics.keiba.link
-ADMIN_API_KEY=your-secure-admin-api-key
+| プラン | 料金 | アクセス範囲 |
+|--------|------|--------------|
+| 無料 | ¥0 | メインレース（11R）のみ |
+| スタンダード | ¥5,980/月 | 後半3レース（10R、11R、12R） |
+| プレミアム | ¥9,980/月 | 全レース（1R〜12R） |
 
-# Supabase
-PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+## 🏗️ アーキテクチャ
 
-# Stripe
-STRIPE_SECRET_KEY=sk_test_your-key
-PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your-key
-STRIPE_WEBHOOK_SECRET=whsec_your-secret
+### フロントエンド
+- **Astro** - Static Site Generator with SSR
+- **TypeScript** - 型安全な開発
+- **TailwindCSS** - ユーティリティファーストCSS
 
-# Email
-RESEND_API_KEY=re_your-api-key
-FROM_EMAIL=noreply@nankan-analytics.keiba.link
+### バックエンド
+- **Supabase** - データベース、認証、リアルタイム
+- **Stripe** - 決済処理、サブスクリプション管理
+- **SendGrid** - メール送信
+
+### ホスティング
+- **Netlify** - 自動デプロイ、サーバーレス関数
+
+## 📁 プロジェクト構造
+
+```
+├── docs/
+│   └── stripe-spec.md          # Stripe仕様書
+├── src/
+│   ├── lib/
+│   │   ├── stripe.ts           # Stripe統合
+│   │   ├── supabaseAdmin.ts    # Supabase管理者クライアント
+│   │   ├── billing/
+│   │   │   └── plan.ts         # プラン定義
+│   │   ├── access.ts           # アクセス制御
+│   │   └── mail.ts             # SendGridメール送信
+│   ├── pages/
+│   │   ├── pricing.astro       # 料金プランページ
+│   │   ├── payment/
+│   │   │   └── success.astro   # 決済完了ページ
+│   │   └── api/stripe/
+│   │       ├── create-checkout.ts  # Checkout作成
+│   │       ├── webhook.ts          # Webhook処理
+│   │       └── portal.ts           # Billing Portal
+│   └── layouts/
+│       └── Layout.astro        # 基本レイアウト
+├── supabase/migrations/
+│   └── 003_payment_system_upgrade.sql  # DBマイグレーション
+└── scripts/
+    └── run-migration.js        # マイグレーション実行
 ```
 
-詳細は `.env.example` を参照してください。
-
-## 🚀 デプロイ
-
-### Netlifyデプロイ
-
-1. GitHubリポジトリをNetlifyに接続
-2. ビルド設定:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-3. 環境変数をNetlify管理画面で設定
-4. 自動デプロイが開始されます
-
-### 本番環境設定
+## 🛠️ 開発コマンド
 
 ```bash
+# 開発サーバー起動
+npm run dev
+
 # 本番ビルド
 npm run build
 
@@ -142,162 +97,119 @@ npm run build
 npm run preview
 
 # 型チェック
-npm run astro check
+npm run typecheck
 ```
 
-## 🛡️ セキュリティ
+## 🔧 環境設定
 
-### 認証フロー
-1. Supabaseによるメール認証
-2. JWTトークンによるセッション管理  
-3. 役割ベースのアクセス制御 (RBAC)
-
-### 決済セキュリティ
-1. Stripe Elements による安全な決済フォーム
-2. Webhook署名検証
-3. PCI DSS準拠
-
-### データ保護
-1. PostgreSQLのRow Level Security (RLS)
-2. 環境変数による秘匿情報管理
-3. HTTPS通信の強制
-
-## 📊 管理者機能
-
-### 管理画面アクセス
-```
-https://nankan-analytics.keiba.link/admin/dashboard
-```
-
-### 主な機能
-- 📈 **ユーザー統計**: 会員数・収益分析
-- 💰 **収益管理**: サブスクリプション状況
-- 📧 **メール配信**: 一括配信・テンプレート管理
-- 🔍 **システム監視**: ヘルスチェック・エラー監視
-- 💾 **データバックアップ**: 自動バックアップ・復旧
-
-### バックアップシステム
+### 必須環境変数
 
 ```bash
-# 日次バックアップ
-node scripts/auto-backup.js daily
+# Stripe
+STRIPE_MODE=test
+STRIPE_SECRET_KEY=sk_test_...
+PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_WEBHOOK_SECRET_TEST=whsec_...
+STRIPE_STANDARD_PRICE_ID_TEST=price_...
+STRIPE_PREMIUM_PRICE_ID_TEST=price_...
 
-# 週次バックアップ  
-node scripts/auto-backup.js weekly
+# Supabase
+PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
 
-# バックアップ履歴確認
-node scripts/auto-backup.js history
+# SendGrid
+SENDGRID_API_KEY=SG...
+
+# App
+SITE_URL=http://localhost:4321
 ```
 
-### システム監視
+### Stripeダッシュボード設定
 
-```bash
-# ヘルスチェック実行
-node scripts/system-health.js
+1. **Products/Prices** - Test/Live環境で作成
+2. **Customer Portal** - 有効化（プラン変更・解約許可）
+3. **Webhooks** - Test: `http://localhost:4321/api/stripe/webhook`
+4. **Emails** - Send receipts ON
 
-# 結果をJSONで出力
-# health-check-results.json に保存されます
+### Supabaseセットアップ
+
+1. **SQL実行** - マイグレーションファイルを実行
+2. **RLS有効化** - profiles、subscriptions、stripe_eventsテーブル
+3. **Service Role Key** - サーバーサイドでのみ使用
+
+## 🔄 決済フロー
+
+```
+プラン選択 → Stripe Checkout → 決済完了 → Webhook処理 → DB更新 → メール送信
 ```
 
-## 🔄 開発ワークフロー
+### Webhook処理（冪等性対応）
 
-### ブランチ戦略
-```
-main        # 本番環境
-├── develop # 開発環境  
-└── feature/* # 機能開発
-```
-
-### コミット規約
-```
-feat: 新機能追加
-fix: バグ修正
-docs: ドキュメント更新
-style: コードフォーマット
-refactor: リファクタリング
-test: テスト追加・修正
-chore: その他の変更
-```
-
-## 📈 パフォーマンス
-
-### Lighthouse スコア目標
-- Performance: 95+
-- Accessibility: 100
-- Best Practices: 100
-- SEO: 100
-
-### 最適化施策
-- 🖼️ 画像最適化 (WebP, AVIF)
-- 📦 コード分割・遅延読み込み
-- 🗃️ Service Worker キャッシング
-- ⚡ Critical CSS インライン化
+1. `event_id`で重複チェック
+2. `stripe_events`テーブルに記録
+3. イベント別処理：
+   - `checkout.session.completed` - 初回購入
+   - `invoice.paid` - 定期支払い成功
+   - `invoice.payment_failed` - 支払い失敗
+   - `customer.subscription.updated` - プラン変更
+   - `customer.subscription.deleted` - 解約
 
 ## 🧪 テスト
 
-```bash
-# 単体テスト
-npm run test
+### ローカル開発テスト
 
-# E2Eテスト
-npm run test:e2e
+1. Stripe CLIでWebhookリスニング
+2. テスト決済実行（`/pricing`から）
+3. DB更新確認（profiles/subscriptionsテーブル）
+4. メール送信確認
 
-# 型チェック
-npm run type-check
+### 本番前チェック
 
-# リント
-npm run lint
-```
+1. 環境変数の本番用切り替え
+2. Stripe価格IDの確認
+3. Webhook URLの本番登録
+4. 実際の低額決済テスト
 
-## 📚 ドキュメント
+## 📊 監視・運用
 
-### API仕様
-- [API Documentation](docs/api.md)
-- [Database Schema](docs/database.md)
-- [Deployment Guide](docs/deployment.md)
+### 重要指標
+- Webhook成功率: 100%目標
+- 決済→DB反映時間: 3分以内
+- エラー発生時の自動復旧
 
-### 開発ガイド
-- [Component Guide](docs/components.md)  
-- [Style Guide](docs/styles.md)
-- [Testing Guide](docs/testing.md)
+### トラブルシューティング
+1. Stripeダッシュボードでイベント確認
+2. `stripe_events`テーブルで処理履歴確認
+3. 必要に応じて手動データ同期
 
-## 🤝 コントリビューション
+## 🚢 デプロイ
 
-### 開発参加手順
-1. Issues でタスク確認
-2. feature ブランチ作成
-3. 実装・テスト
-4. Pull Request 作成
-5. レビュー・マージ
+### Netlify設定
+1. GitHubリポジトリ連携
+2. ビルドコマンド: `npm run build`
+3. 出力ディレクトリ: `dist/`
+4. Node.js 18+
+5. 環境変数を本番用に設定
 
-### コードスタイル
-- ESLint + Prettier による自動フォーマット
-- TypeScript strict mode
-- コンポーネント単位の開発
-
-## 📞 サポート
-
-### 連絡先
-- Email: support@nankan-analytics.keiba.link
-- GitHub Issues: [Issues](https://github.com/your-username/nankan-analytics/issues)
-
-### よくある質問
-詳細は [FAQ](docs/faq.md) を参照してください。
+### 本番チェックリスト
+- [ ] Stripe本番キー設定
+- [ ] Supabase本番URL設定
+- [ ] SendGrid本番キー設定
+- [ ] Webhook本番URL登録
+- [ ] DNS設定完了
+- [ ] SSL証明書有効
 
 ## 📄 ライセンス
 
-このプロジェクトは [MIT License](LICENSE) の下で公開されています。
+MIT License
 
-## 🙏 謝辞
+## 🤝 サポート
 
-- [Astro](https://astro.build/) - 優れた静的サイトジェネレーター
-- [Supabase](https://supabase.com/) - 使いやすいBaaS
-- [Stripe](https://stripe.com/) - 信頼できる決済システム
-- [Netlify](https://netlify.com/) - 高速なホスティング
+- Email: support@nankan-analytics.keiba.link
+- Issues: [GitHub Issues](https://github.com/your-repo/issues)
 
 ---
 
-> 🏇 **南関競馬をAIで攻略しよう！** ⚡
-> 
-> 機械学習の力で、従来の勘と経験を超える予想精度を目指します。
-# API修正コミット
+**最終更新**: 2025-08-30  
+**バージョン**: 1.0.0 - 完全自動化対応版

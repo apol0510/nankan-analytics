@@ -1,235 +1,224 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Layout from '../layouts/Layout.astro';
+import { PLANS } from '../lib/billing/plan';
 ---
 
-<BaseLayout title="料金プラン | NANKANアナリティクス" description="AI競馬予想サービスの料金プラン">
-    <div class="pricing-container">
-        <!-- ヘッダー -->
-        <div class="pricing-header">
-            <h1>料金プラン</h1>
-            <p class="subtitle">AI競馬予想サービスの各種プラン</p>
-        </div>
+<Layout title="料金プラン - NANKANアナリティクス">
+    <main class="min-h-screen bg-slate-900 text-white">
+        <div class="container mx-auto px-4 py-16">
+            <!-- ヘッダー -->
+            <div class="text-center mb-16">
+                <h1 class="text-4xl font-bold mb-4">
+                    🚀 <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        AI予想で勝つ
+                    </span>
+                </h1>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                    南関競馬専門のAI予想システム。あなたのスタイルに合わせたプランをお選びください。
+                </p>
+            </div>
 
-        <!-- メンテナンスお知らせ -->
-        <div class="maintenance-notice">
-            <div class="notice-icon">🔧</div>
-            <h2>システムメンテナンス中</h2>
-            <p>現在、決済システムのアップグレード作業を行っております。</p>
-            <p>新規お申し込み・プラン変更は一時的にご利用いただけません。</p>
-            <p class="notice-footer">ご不便をおかけし申し訳ございません。</p>
-        </div>
-
-        <!-- プラン一覧 -->
-        <div class="plans-grid">
-            <!-- 無料プラン -->
-            <div class="plan-card free">
-                <div class="plan-header">
-                    <span class="plan-icon">🎯</span>
-                    <h3>無料プラン</h3>
-                    <div class="price">
-                        <span class="amount">¥0</span>
-                        <span class="period">/月</span>
+            <!-- プラン比較 -->
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- 無料プラン -->
+                <div class="bg-slate-800 rounded-2xl p-8 border border-slate-700 relative">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold mb-2">無料プラン</h3>
+                        <div class="mb-4">
+                            <span class="text-4xl font-bold">¥0</span>
+                            <span class="text-gray-400">/月</span>
+                        </div>
+                        <p class="text-gray-400">メインレースで試してみる</p>
                     </div>
+
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>メインレース（11R）の予想</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>基本的な競馬情報</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>予想結果の確認</span>
+                        </li>
+                    </ul>
+
+                    <button 
+                        class="w-full py-3 px-6 bg-slate-600 hover:bg-slate-500 rounded-lg font-medium transition-colors"
+                        disabled
+                    >
+                        現在のプラン
+                    </button>
                 </div>
-                <ul class="features">
-                    <li>✅ メインレース（11R）予想</li>
-                    <li>✅ 基本的な分析データ</li>
-                    <li>✅ 週1回のメールマガジン</li>
-                </ul>
-                <div class="plan-footer">
-                    <button class="plan-btn disabled" disabled>現在のプラン</button>
+
+                <!-- スタンダードプラン -->
+                <div class="bg-slate-800 rounded-2xl p-8 border-2 border-blue-500 relative transform scale-105">
+                    <!-- 人気バッジ -->
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                            おすすめ
+                        </span>
+                    </div>
+
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold mb-2">スタンダード</h3>
+                        <div class="mb-4">
+                            <span class="text-4xl font-bold">¥5,980</span>
+                            <span class="text-gray-400">/月</span>
+                        </div>
+                        <p class="text-gray-400">後半戦で勝負したい方に</p>
+                    </div>
+
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>後半3レース（10R、11R、12R）</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>AI予想の詳細分析</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>投資戦略の提案</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>メール通知</span>
+                        </li>
+                    </ul>
+
+                    <button 
+                        class="w-full py-3 px-6 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors"
+                        onclick="subscribe('standard')"
+                    >
+                        スタンダードプランを始める
+                    </button>
+                </div>
+
+                <!-- プレミアムプラン -->
+                <div class="bg-slate-800 rounded-2xl p-8 border border-purple-500 relative">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold mb-2">プレミアム</h3>
+                        <div class="mb-4">
+                            <span class="text-4xl font-bold">¥9,980</span>
+                            <span class="text-gray-400">/月</span>
+                        </div>
+                        <p class="text-gray-400">全レース制覇を目指す方に</p>
+                    </div>
+
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span><strong>全レース（1R〜12R）の予想</strong></span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>高精度AI予想</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>詳細な投資戦略</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>優先サポート</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-3">✓</span>
+                            <span>データエクスポート機能</span>
+                        </li>
+                    </ul>
+
+                    <button 
+                        class="w-full py-3 px-6 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition-colors"
+                        onclick="subscribe('premium')"
+                    >
+                        プレミアムプランを始める
+                    </button>
                 </div>
             </div>
 
-            <!-- スタンダードプラン -->
-            <div class="plan-card standard">
-                <div class="plan-header">
-                    <span class="plan-icon">⭐</span>
-                    <h3>スタンダード</h3>
-                    <div class="price">
-                        <span class="amount">¥2,980</span>
-                        <span class="period">/月</span>
+            <!-- FAQ -->
+            <div class="max-w-4xl mx-auto mt-20">
+                <h2 class="text-3xl font-bold text-center mb-12">よくある質問</h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-slate-800 rounded-lg p-6">
+                        <h3 class="font-bold mb-2">Q: いつでもプランを変更できますか？</h3>
+                        <p class="text-gray-300">
+                            はい。ダッシュボードの「課金管理」からいつでもプランの変更、キャンセルが可能です。
+                        </p>
                     </div>
-                </div>
-                <ul class="features">
-                    <li>✅ 後半3レース（10-12R）予想</li>
-                    <li>✅ AI信頼度スコア表示</li>
-                    <li>✅ 過去30日間のデータ</li>
-                    <li>✅ 週2回のメールマガジン</li>
-                </ul>
-                <div class="plan-footer">
-                    <button class="plan-btn disabled" disabled>メンテナンス中</button>
-                </div>
-            </div>
 
-            <!-- プレミアムプラン -->
-            <div class="plan-card premium">
-                <div class="plan-header">
-                    <span class="plan-icon">👑</span>
-                    <h3>プレミアム</h3>
-                    <div class="price">
-                        <span class="amount">¥5,980</span>
-                        <span class="period">/月</span>
+                    <div class="bg-slate-800 rounded-lg p-6">
+                        <h3 class="font-bold mb-2">Q: 無料プランでも予想は見れますか？</h3>
+                        <p class="text-gray-300">
+                            はい。無料プランでもメインレース（11R）の予想をご利用いただけます。
+                        </p>
                     </div>
-                </div>
-                <ul class="features">
-                    <li>✅ 全12レース完全予想</li>
-                    <li>✅ XGBoost×LSTM詳細分析</li>
-                    <li>✅ 全期間データアクセス</li>
-                    <li>✅ 毎日のメールマガジン</li>
-                    <li>✅ 優先サポート</li>
-                </ul>
-                <div class="plan-footer">
-                    <button class="plan-btn disabled" disabled>メンテナンス中</button>
+
+                    <div class="bg-slate-800 rounded-lg p-6">
+                        <h3 class="font-bold mb-2">Q: 支払い方法は何が利用できますか？</h3>
+                        <p class="text-gray-300">
+                            クレジットカード（Visa、MasterCard、JCB、American Express）がご利用いただけます。
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</BaseLayout>
+    </main>
+</Layout>
+
+<script>
+    async function subscribe(planId) {
+        try {
+            // ユーザー認証チェック（仮実装）
+            const userEmail = prompt('メールアドレスを入力してください（本来は認証システムから取得）');
+            if (!userEmail) return;
+
+            // Checkout Session作成
+            const response = await fetch('/api/stripe/create-checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    planId,
+                    userEmail,
+                    successUrl: window.location.origin + '/payment/success?session_id={CHECKOUT_SESSION_ID}',
+                    cancelUrl: window.location.origin + '/pricing'
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Stripe Checkoutにリダイレクト
+                window.location.href = data.url;
+            } else {
+                alert('エラーが発生しました: ' + (data.error || '不明なエラー'));
+            }
+
+        } catch (error) {
+            console.error('Subscription error:', error);
+            alert('エラーが発生しました。しばらくしてからお試しください。');
+        }
+    }
+</script>
 
 <style>
-    .pricing-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 40px 20px;
+    /* グラデーション背景 */
+    .bg-gradient-to-r {
+        background: linear-gradient(to right, #3b82f6, #8b5cf6);
     }
 
-    .pricing-header {
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .pricing-header h1 {
-        font-size: 48px;
-        font-weight: 700;
-        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 16px;
-    }
-
-    .subtitle {
-        font-size: 20px;
-        color: #94a3b8;
-    }
-
-    .maintenance-notice {
-        background: rgba(245, 158, 11, 0.1);
-        border: 2px solid rgba(245, 158, 11, 0.3);
-        border-radius: 16px;
-        padding: 40px;
-        text-align: center;
-        margin-bottom: 60px;
-        backdrop-filter: blur(10px);
-    }
-
-    .notice-icon {
-        font-size: 64px;
-        margin-bottom: 20px;
-    }
-
-    .maintenance-notice h2 {
-        color: #f59e0b;
-        font-size: 28px;
-        margin-bottom: 20px;
-    }
-
-    .maintenance-notice p {
-        color: #fbbf24;
-        font-size: 18px;
-        line-height: 1.6;
-        margin: 10px 0;
-    }
-
-    .notice-footer {
-        margin-top: 20px;
-        font-size: 16px !important;
-    }
-
-    .plans-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 30px;
-    }
-
-    .plan-card {
-        background: rgba(30, 41, 59, 0.8);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        border-radius: 16px;
-        padding: 32px;
-        position: relative;
-        opacity: 0.7;
-    }
-
-    .plan-header {
-        text-align: center;
-        margin-bottom: 32px;
-    }
-
-    .plan-icon {
-        font-size: 48px;
-        display: block;
-        margin-bottom: 16px;
-    }
-
-    .plan-card h3 {
-        font-size: 24px;
-        margin-bottom: 16px;
-        color: #f1f5f9;
-    }
-
-    .price {
-        display: flex;
-        align-items: baseline;
-        justify-content: center;
-        gap: 4px;
-    }
-
-    .amount {
-        font-size: 36px;
-        font-weight: 700;
-        color: #94a3b8;
-    }
-
-    .period {
-        color: #64748b;
-        font-size: 16px;
-    }
-
-    .features {
-        list-style: none;
-        margin-bottom: 32px;
-    }
-
-    .features li {
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        color: #cbd5e1;
-        font-size: 15px;
-    }
-
-    .plan-btn {
-        display: block;
-        width: 100%;
-        padding: 14px 24px;
-        border-radius: 8px;
-        text-align: center;
-        font-weight: 600;
-        cursor: not-allowed;
-        border: none;
-        background: rgba(148, 163, 184, 0.2);
-        color: #64748b;
-    }
-
-    @media (max-width: 768px) {
-        .plans-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .pricing-header h1 {
-            font-size: 36px;
-        }
+    /* ホバー効果 */
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 </style>
