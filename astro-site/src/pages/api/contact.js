@@ -91,7 +91,7 @@ export async function POST({ request }) {
         // 管理者向けメール内容
         const adminMailOptions = {
             from: fromEmail,
-            to: 'support@keiba.link',
+            to: 'nankan.analytics@gmail.com',
             replyTo: email, // お客様のメールアドレスを返信先に設定
             subject: `【お問い合わせ】${subject}`,
             html: `
