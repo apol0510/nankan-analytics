@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { stripe } from '../../../lib/stripe';
+import { stripe } from '../../../lib/stripe.ts';
 import { PLANS, type PlanType } from '../../../lib/billing/plan';
 
 function badRequest(msg: string, extra?: any) {

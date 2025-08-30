@@ -1,5 +1,5 @@
 // Stripe Webhook処理（冪等性対応版）
-import { verifyWebhookSignature, getSubscription, getPlanFromPriceId } from '../../../lib/stripe.js';
+import { verifyWebhookSignature, getSubscription, getPlanFromPriceId } from '../../../lib/stripe.ts';
 import { createClient } from '@supabase/supabase-js';
 import { sendWelcomeEmail } from '../../../lib/sendgrid-utils.js';
 
