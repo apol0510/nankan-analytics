@@ -88,11 +88,26 @@ export async function POST({ request }) {
         // SendGridでは認証済みの送信者メールアドレスを使用する必要がある
         const fromEmail = 'support@keiba.link'; // SendGridで認証済みのアドレス
 
-        // 管理者向けメール内容
+        // email変数の確認（重要）
+        if (!email) {
+            console.error('Reply-To用 email が空です:', email);
+            return new Response(
+                JSON.stringify({ error: 'メールアドレスが正しく取得できませんでした' }),
+                { 
+                    status: 400,
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
+        }
+        
+        console.log('Reply-To設定用email確認:', email);
+
+        // 管理者向けメール内容（鉄板設定）
         const adminMailOptions = {
-            from: fromEmail,
+            from: `"お問い合わせ通知" <${fromEmail}>`,
             to: 'nankan.analytics@gmail.com',
-            replyTo: email, // お客様のメールアドレスを返信先に設定
+            replyTo: email,                      // ★お客様のメール
+            headers: { 'Reply-To': email },      // ★保険として明示
             subject: `【お問い合わせ】${subject}`,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
