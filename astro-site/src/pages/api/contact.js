@@ -124,6 +124,7 @@ export async function POST({ request }) {
         const userMailOptions = {
             from: fromEmail,
             to: email,
+            replyTo: 'nankan.analytics@gmail.com', // 管理者のメールアドレスを返信先に設定
             subject: '【NANKANアナリティクス】お問い合わせを受け付けました',
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
