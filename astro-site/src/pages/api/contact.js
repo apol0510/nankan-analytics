@@ -1,13 +1,15 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export async function POST({ request }) {
     try {
         const { name, email, subject, message } = await request.json();
 
-        // 入力値の検証
-        if (!name || !email || !subject || !message) {
+        // 入力バリデーション（最低限）
+        if (!email || !subject || !message) {
             return new Response(
-                JSON.stringify({ error: '必須項目を入力してください' }),
+                JSON.stringify({ ok: false, error: 'Missing required fields' }),
                 { 
                     status: 400,
                     headers: { 'Content-Type': 'application/json' }
@@ -19,7 +21,7 @@ export async function POST({ request }) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return new Response(
-                JSON.stringify({ error: '有効なメールアドレスを入力してください' }),
+                JSON.stringify({ ok: false, error: '有効なメールアドレスを入力してください' }),
                 { 
                     status: 400,
                     headers: { 'Content-Type': 'application/json' }
@@ -27,21 +29,13 @@ export async function POST({ request }) {
             );
         }
 
-        // 環境変数の確認とログ出力
-        console.log('環境変数チェック:', {
-            SMTP_HOST: process.env.SMTP_HOST ? '設定済み' : '未設定',
-            SMTP_PORT: process.env.SMTP_PORT ? '設定済み' : '未設定',
-            SMTP_USER: process.env.SMTP_USER ? '設定済み' : '未設定',
-            SMTP_PASS: process.env.SMTP_PASS ? '設定済み' : '未設定'
-        });
-
-        // 環境変数が設定されていない場合の処理
-        if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-            console.warn('SMTP認証情報が不完全です。');
+        // SendGrid API Key の確認
+        if (!process.env.SENDGRID_API_KEY) {
+            console.error('SENDGRID_API_KEY is not configured');
             return new Response(
                 JSON.stringify({ 
-                    error: 'メール送信設定が不完全です。管理者にお問い合わせください。',
-                    debug: 'SMTP認証情報が設定されていません'
+                    ok: false,
+                    error: 'メール送信設定が不完全です。管理者にお問い合わせください。'
                 }),
                 { 
                     status: 500,
@@ -50,64 +44,13 @@ export async function POST({ request }) {
             );
         }
 
-        // SendGrid SMTP設定（より確実な設定）
-        const transporter = nodemailer.createTransporter({
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT) || 587,
-            secure: false, // SendGridは587ポートでstarttls
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-            // SendGrid用の追加設定
-            requireTLS: true,
-            connectionTimeout: 10000,
-            socketTimeout: 10000,
-            logger: true,
-            debug: true
-        });
-
-        // SMTP接続テスト
-        try {
-            await transporter.verify();
-            console.log('SMTP接続成功');
-        } catch (error) {
-            console.error('SMTP接続エラー:', error);
-            return new Response(
-                JSON.stringify({ 
-                    error: 'メール送信サーバーに接続できません',
-                    debug: error.message
-                }),
-                { 
-                    status: 500,
-                    headers: { 'Content-Type': 'application/json' }
-                }
-            );
-        }
-
-        // SendGridでは認証済みの送信者メールアドレスを使用する必要がある
-        const fromEmail = 'support@keiba.link'; // SendGridで認証済みのアドレス
-
-        // email変数の確認（重要）
-        if (!email) {
-            console.error('Reply-To用 email が空です:', email);
-            return new Response(
-                JSON.stringify({ error: 'メールアドレスが正しく取得できませんでした' }),
-                { 
-                    status: 400,
-                    headers: { 'Content-Type': 'application/json' }
-                }
-            );
-        }
-        
         console.log('Reply-To設定用email確認:', email);
 
-        // 管理者向けメール内容（鉄板設定）
-        const adminMailOptions = {
-            from: `"お問い合わせ通知" <${fromEmail}>`,
-            to: 'nankan.analytics@gmail.com',
-            replyTo: email,                      // ★お客様のメール
-            headers: { 'Reply-To': email },      // ★保険として明示
+        // ここを「自ドメインの送信元 + お客様をReply-To」にするのが肝
+        // ※ support@keiba.link は SendGrid側で「シングルセンダー」または「ドメイン認証」済みに
+        const adminMsg = {
+            to: 'nankan.analytics@gmail.com',             // 管理者宛
+            from: { email: 'support@keiba.link', name: 'お問い合わせ通知' }, // 送信元は自ドメイン
             subject: `【お問い合わせ】${subject}`,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
@@ -116,14 +59,14 @@ export async function POST({ request }) {
                     </h2>
                     
                     <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                        <p style="margin: 10px 0;"><strong>お名前:</strong> ${name}</p>
+                        <p style="margin: 10px 0;"><strong>お名前:</strong> ${name || '(未入力)'}</p>
                         <p style="margin: 10px 0;"><strong>メールアドレス:</strong> ${email}</p>
                         <p style="margin: 10px 0;"><strong>件名:</strong> ${subject}</p>
                     </div>
                     
                     <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
                         <h3 style="color: #333; margin-top: 0;">お問い合わせ内容:</h3>
-                        <p style="white-space: pre-wrap; color: #555; line-height: 1.6;">${message}</p>
+                        <pre style="white-space: pre-wrap; color: #555; line-height: 1.6; font-family: inherit; margin: 0;">${message}</pre>
                     </div>
                     
                     <div style="margin-top: 30px; padding: 15px; background: #e6f2ff; border-radius: 8px;">
@@ -133,14 +76,18 @@ export async function POST({ request }) {
                     </div>
                 </div>
             `,
+            // ★ 返信先を「お客様のメール」に固定
+            replyTo: { email, name: name || undefined },
+
+            // 念のための保険（なくてもOKだが、環境やゲートウェイ次第で役立つことがある）
+            headers: { 'Reply-To': email },
         };
 
-        // 送信者への自動返信メール
-        const userMailOptions = {
-            from: fromEmail,
+        // （任意）お客様への自動返信
+        const userMsg = {
             to: email,
-            replyTo: 'nankan.analytics@gmail.com', // 管理者のメールアドレスを返信先に設定
-            subject: '【NANKANアナリティクス】お問い合わせを受け付けました',
+            from: { email: 'support@keiba.link', name: 'NANKANアナリティクス お問い合わせ窓口' },
+            subject: `【自動返信】お問い合わせを受け付けました`,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #333; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">
@@ -148,7 +95,7 @@ export async function POST({ request }) {
                     </h2>
                     
                     <p style="color: #555; line-height: 1.6;">
-                        ${name} 様
+                        ${name || 'お客様'} 様
                     </p>
                     
                     <p style="color: #555; line-height: 1.6;">
@@ -159,13 +106,12 @@ export async function POST({ request }) {
                     <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         <p style="margin: 10px 0;"><strong>件名:</strong> ${subject}</p>
                         <div style="background: #fff; padding: 15px; border-radius: 4px; margin-top: 10px;">
-                            <p style="white-space: pre-wrap; color: #555; line-height: 1.6; margin: 0;">${message}</p>
+                            <pre style="white-space: pre-wrap; color: #555; line-height: 1.6; font-family: inherit; margin: 0;">${message}</pre>
                         </div>
                     </div>
                     
                     <p style="color: #555; line-height: 1.6;">
-                        担当者より2営業日以内にご返信させていただきます。<br>
-                        今しばらくお待ちくださいますようお願い申し上げます。
+                        担当者より2営業日以内にご返信させていただきます。順次ご返信いたします。
                     </p>
                     
                     <div style="margin-top: 30px; padding: 15px; background: #f0f0f0; border-radius: 8px;">
@@ -175,38 +121,34 @@ export async function POST({ request }) {
                             営業時間: 平日 10:00 - 18:00
                         </p>
                     </div>
-                    
-                    <p style="color: #999; font-size: 12px; margin-top: 20px;">
-                        ※このメールは自動送信されています。このメールに返信いただいても対応できませんのでご了承ください。
-                    </p>
                 </div>
             `,
+            replyTo: { email: 'nankan.analytics@gmail.com', name: 'NANKANアナリティクス サポート' }
         };
 
-        // メール送信（順次実行で安全に）
+        // SendGrid でメール送信
         console.log('管理者向けメール送信開始');
-        const adminResult = await transporter.sendMail(adminMailOptions);
-        console.log('管理者向けメール送信完了:', adminResult.messageId);
+        await sgMail.send(adminMsg);
+        console.log('管理者向けメール送信完了');
 
         console.log('ユーザー向けメール送信開始');
-        const userResult = await transporter.sendMail(userMailOptions);
-        console.log('ユーザー向けメール送信完了:', userResult.messageId);
+        await sgMail.send(userMsg);
+        console.log('ユーザー向けメール送信完了');
 
         return new Response(
-            JSON.stringify({ success: true, message: 'お問い合わせを送信しました' }),
+            JSON.stringify({ ok: true, message: 'お問い合わせを送信しました' }),
             { 
                 status: 200,
                 headers: { 'Content-Type': 'application/json' }
             }
         );
-    } catch (error) {
-        console.error('メール送信エラー:', error);
-        
+    } catch (err) {
+        console.error('SendGrid error', err?.response?.body || err);
         return new Response(
             JSON.stringify({ 
-                error: 'メール送信中にエラーが発生しました',
-                details: error.message,
-                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+                ok: false, 
+                error: 'Internal Server Error',
+                details: process.env.NODE_ENV === 'development' ? err.message : undefined
             }),
             { 
                 status: 500,
@@ -219,7 +161,7 @@ export async function POST({ request }) {
 // その他のHTTPメソッドは許可しない
 export function GET() {
     return new Response(
-        JSON.stringify({ error: 'Method not allowed' }),
+        JSON.stringify({ ok: false, error: 'Method not allowed' }),
         { 
             status: 405,
             headers: { 'Content-Type': 'application/json' }
