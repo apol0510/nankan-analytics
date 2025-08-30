@@ -82,6 +82,15 @@ export async function sendContactEmail({ name, email, subject, message }) {
                     新しいお問い合わせがありました
                 </h2>
                 
+                <div style="background: #ff4444; color: white; padding: 15px; border-radius: 8px; margin: 10px 0; text-align: center;">
+                    <p style="margin: 0; font-size: 16px; font-weight: bold;">
+                        📧 返信先: ${email}
+                    </p>
+                    <p style="margin: 5px 0 0; font-size: 14px;">
+                        このメールアドレスにコピー&ペーストして返信してください
+                    </p>
+                </div>
+                
                 <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
                     <p style="margin: 10px 0;"><strong>お名前:</strong> ${name || '(未入力)'}</p>
                     <p style="margin: 10px 0;"><strong>メールアドレス:</strong> ${email}</p>
