@@ -1,4 +1,4 @@
-import { sendContactEmail } from '../lib/sendgrid-utils.js';
+import { sendContactEmail } from '../../lib/sendgrid-utils.js';
 
 export async function POST({ request }) {
     try {
