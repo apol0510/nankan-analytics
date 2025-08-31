@@ -23,7 +23,8 @@
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data?.error || 'Checkout作成に失敗しました');
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.details || data.error || response.statusText);
       }
 
       if (!data.url) {

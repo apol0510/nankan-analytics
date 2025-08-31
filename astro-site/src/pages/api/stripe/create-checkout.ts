@@ -1,5 +1,6 @@
+// src/pages/api/stripe/create-checkout.ts
 import type { APIRoute } from 'astro';
-import { stripe } from '../../../lib/stripe.ts';
+import { stripe } from '../../../lib/stripe';
 import { PLANS, type PlanType } from '../../../lib/billing/plan';
 
 function badRequest(msg: string, extra?: any) {
@@ -10,73 +11,52 @@ function badRequest(msg: string, extra?: any) {
   });
 }
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, url }) => {
   try {
     const body = await request.json().catch(() => ({}));
-    console.log('[create-checkout] Request body:', body);
-    
-    let { planId, plan, userId, userEmail, email } = (body ?? {}) as {
-      planId?: string;
-      plan?: string;
-      userId?: string;
-      userEmail?: string;
-      email?: string;
-    };
+    let { plan, planId, email, userEmail } = body ?? {};
+    plan = (plan || planId || '').toString().trim().toLowerCase();
+    email = (email || userEmail || '').toString().trim();
 
-    // planId または plan の両方をサポート
-    plan = plan || planId;
-    email = email || userEmail;
-
-    plan = (plan ?? '').toString().trim().toLowerCase();
-    if (!['standard', 'premium'].includes(plan)) {
-      return badRequest('Invalid plan param. Use "standard" or "premium".', { plan });
-    }
+    if (!['standard','premium'].includes(plan)) return badRequest('Invalid plan');
     if (!email) return badRequest('Missing email');
 
-    const selectedPlan = PLANS[plan as PlanType];
-    const priceId = selectedPlan?.priceId;
-    
+    const selected = PLANS[plan as PlanType];
+    const priceId = selected?.priceId || '';
     if (!priceId) {
-      const mode = import.meta.env.STRIPE_MODE ?? 'test';
-      const requiredEnv =
+      const mode = (import.meta.env.STRIPE_MODE ?? 'test').toLowerCase();
+      const required =
         plan === 'standard'
-          ? mode === 'live'
-            ? 'STRIPE_STANDARD_PRICE_ID_LIVE'
-            : 'STRIPE_STANDARD_PRICE_ID_TEST'
-          : mode === 'live'
-            ? 'STRIPE_PREMIUM_PRICE_ID_LIVE'
-            : 'STRIPE_PREMIUM_PRICE_ID_TEST';
-      return badRequest(`Price not configured for plan=${plan}. Set ${requiredEnv} in .env and restart server.`);
+          ? (mode === 'live' ? 'STRIPE_STANDARD_PRICE_ID_LIVE' : 'STRIPE_STANDARD_PRICE_ID_TEST')
+          : (mode === 'live' ? 'STRIPE_PREMIUM_PRICE_ID_LIVE' : 'STRIPE_PREMIUM_PRICE_ID_TEST');
+      return badRequest(`Price not configured for plan=${plan}. Set ${required}`);
     }
 
-    console.log('[create-checkout] Plan:', plan, 'Price ID:', priceId);
-
-    const sessionParams: any = {
-      mode: 'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${import.meta.env.SITE_URL || 'http://localhost:4321'}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${import.meta.env.SITE_URL || 'http://localhost:4321'}/payment/cancel`,
-      allow_promotion_codes: true,
-      subscription_data: {
-        metadata: { plan, email },
-      },
-      metadata: { plan, email },
-    };
-
-    sessionParams.customer_email = email;
+    const successUrl = `${url.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl  = `${url.origin}/pricing`;
 
     const session = await stripe.checkout.sessions.create(
-      sessionParams,
+      {
+        mode: 'subscription',
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        allow_promotion_codes: true,
+        customer_email: email,
+        subscription_data: { metadata: { plan, email } },
+        metadata: { plan, email },
+      },
       { idempotencyKey: `checkout:${email}:${plan}:${Date.now()}` }
     );
 
-    console.log('[create-checkout] Success! Checkout URL:', session.url);
     return new Response(JSON.stringify({ url: session.url }), { status: 200 });
   } catch (e: any) {
-    console.error('[create-checkout] 500', e?.message ?? e, e?.stack ?? '');
-    return new Response(
-      JSON.stringify({ error: 'Internal Server Error', details: e?.message ?? 'unknown' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    // ← ここで Stripe の詳細を返す（フロントで見えるように）
+    const details = e?.raw?.message || e?.message || 'unknown';
+    console.error('[create-checkout] 500', details);
+    const code = Number.isInteger(e?.statusCode) ? e.statusCode : 500;
+    return new Response(JSON.stringify({ error: 'create_session_failed', details }), {
+      status: code, headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
