@@ -71,7 +71,7 @@ exports.handler = async (event) => {
         updatedAt: Date.now(),
       };
       
-      await store.set(`users/${encodeURIComponent(email)}.json`, JSON.stringify(body), { 
+      await store.set(`users/${encodeURIComponent(email.toLowerCase())}.json`, JSON.stringify(body), { 
         contentType: 'application/json' 
       });
       

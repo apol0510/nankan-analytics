@@ -415,54 +415,89 @@
             }
         }
 
+        // メンバーシップAPIからデータを取得
+        async function getMembershipFromAPI() {
+            try {
+                console.log('[Dashboard] Checking membership API for user:', currentUser.email);
+                const response = await fetch(`/api/membership?email=${encodeURIComponent(currentUser.email)}`);
+                const data = await response.json();
+                
+                if (response.ok && data.plan && data.plan !== 'free') {
+                    console.log('[Dashboard] Membership API returned data:', data);
+                    return {
+                        subscription_status: data.status,
+                        subscription_plan: data.plan,
+                        subscription_end_date: data.currentPeriodEnd ? new Date(data.currentPeriodEnd * 1000).toISOString() : null
+                    };
+                }
+                
+                console.log('[Dashboard] No active membership found in API');
+                return null;
+            } catch (error) {
+                console.error('[Dashboard] Membership API error:', error);
+                return null;
+            }
+        }
+
         // ユーザープロフィール読み込み
         async function loadUserProfile() {
             const subscriptionInfo = document.getElementById('subscription-info');
             const upgradeSection = document.getElementById('upgrade-section');
             
             try {
-                // テスト決済・デモモードのローカルストレージをチェック
-                const testSubscription = localStorage.getItem('test_subscription_' + currentUser.id);
-                const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
-                
                 let isActive, planName, profile = null;
                 
-                if (testSubscription) {
-                    const testData = JSON.parse(testSubscription);
-                    console.log('Test subscription found:', testData);
-                    isActive = testData.status === 'active';
-                    planName = testData.planType.toLowerCase();
-                    // テスト決済用のプロファイル作成
-                    profile = {
-                        subscription_status: testData.status,
-                        subscription_plan: planName,
-                        subscription_end_date: null
-                    };
-                } else if (demoSubscription) {
-                    const demoData = JSON.parse(demoSubscription);
-                    console.log('Demo subscription found:', demoData);
-                    isActive = true;
-                    planName = demoData.planType.toLowerCase();
-                    // デモモード用のプロファイル作成
-                    profile = {
-                        subscription_status: 'active',
-                        subscription_plan: planName,
-                        subscription_end_date: null // デモなので終了日なし
-                    };
+                // 1. メンバーシップAPI（Netlify Blobs）から取得
+                profile = await getMembershipFromAPI();
+                
+                if (profile) {
+                    console.log('[Dashboard] Using membership API data');
+                    isActive = profile.subscription_status === 'active';
+                    planName = profile.subscription_plan;
                 } else {
-                    const { data: profileData, error } = await client
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', currentUser.id)
-                        .maybeSingle();
+                    // 2. テスト決済・デモモードのローカルストレージをチェック
+                    const testSubscription = localStorage.getItem('test_subscription_' + currentUser.id);
+                    const demoSubscription = localStorage.getItem('demo_subscription_' + currentUser.id);
                     
-                    if (error) {
-                        throw error;
-                    }
+                    if (testSubscription) {
+                        const testData = JSON.parse(testSubscription);
+                        console.log('[Dashboard] Test subscription found:', testData);
+                        isActive = testData.status === 'active';
+                        planName = testData.planType.toLowerCase();
+                        // テスト決済用のプロファイル作成
+                        profile = {
+                            subscription_status: testData.status,
+                            subscription_plan: planName,
+                            subscription_end_date: null
+                        };
+                    } else if (demoSubscription) {
+                        const demoData = JSON.parse(demoSubscription);
+                        console.log('[Dashboard] Demo subscription found:', demoData);
+                        isActive = true;
+                        planName = demoData.planType.toLowerCase();
+                        // デモモード用のプロファイル作成
+                        profile = {
+                            subscription_status: 'active',
+                            subscription_plan: planName,
+                            subscription_end_date: null // デモなので終了日なし
+                        };
+                    } else {
+                        // 3. Supabase profiles（フォールバック）
+                        console.log('[Dashboard] Falling back to Supabase profiles');
+                        const { data: profileData, error } = await client
+                            .from('profiles')
+                            .select('*')
+                            .eq('id', currentUser.id)
+                            .maybeSingle();
+                        
+                        if (error) {
+                            throw error;
+                        }
 
-                    profile = profileData;
-                    isActive = profile?.subscription_status === 'active';
-                    planName = profile?.subscription_plan || 'なし';
+                        profile = profileData;
+                        isActive = profile?.subscription_status === 'active';
+                        planName = profile?.subscription_plan || 'なし';
+                    }
                 }
                 
                 subscriptionInfo.innerHTML = `
