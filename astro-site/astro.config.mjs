@@ -50,7 +50,7 @@ export default defineConfig({
       }
     },
     define: {
-      __DEFINES__: '{}'
+      __DEFINES__: JSON.stringify({})
     },
     optimizeDeps: {
       exclude: []
