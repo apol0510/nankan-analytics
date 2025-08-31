@@ -361,7 +361,8 @@
                             errorMessage += `（残り${MAX_ATTEMPTS - attempts}回）`;
                         }
                     } else if (error.message.includes('Email not confirmed')) {
-                        errorMessage = 'メールアドレスの確認が完了していません。確認メールをご確認ください。';
+                        showEmailConfirmationError(email);
+                        return; // エラー表示を特別に処理するのでreturn
                     } else if (error.message.includes('Invalid email')) {
                         errorMessage = '有効なメールアドレスを入力してください。';
                     }
@@ -440,6 +441,86 @@
 
         function clearMessages() {
             messageContainer.innerHTML = '';
+        }
+
+        // メール確認エラー用の特別な表示関数
+        function showEmailConfirmationError(email) {
+            clearMessages();
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.style.cssText = `
+                background: rgba(239, 68, 68, 0.1);
+                border: 1px solid rgba(239, 68, 68, 0.3);
+                color: #fecaca;
+                padding: 16px;
+                border-radius: 8px;
+                margin-bottom: 16px;
+                text-align: center;
+            `;
+            
+            errorDiv.innerHTML = `
+                <div style="margin-bottom: 12px;">
+                    <strong>メールアドレスの確認が完了していません</strong>
+                </div>
+                <div style="margin-bottom: 16px; font-size: 14px; color: #cbd5e1;">
+                    確認メールをご確認いただくか、下のボタンで再送信してください
+                </div>
+                <button id="resend-btn" style="
+                    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 6px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-size: 14px;
+                ">
+                    確認メールを再送信
+                </button>
+                <div id="resend-status" style="margin-top: 12px; font-size: 13px;"></div>
+            `;
+            
+            messageContainer.appendChild(errorDiv);
+            
+            // 再送信ボタンのイベントリスナー
+            document.getElementById('resend-btn').addEventListener('click', async function() {
+                const resendBtn = this;
+                const statusDiv = document.getElementById('resend-status');
+                
+                resendBtn.disabled = true;
+                resendBtn.textContent = '送信中...';
+                statusDiv.textContent = '';
+                
+                try {
+                    const response = await fetch('/api/auth/resend-confirmation', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        statusDiv.innerHTML = `<div style="color: #10b981;">✅ ${result.message}</div>`;
+                        resendBtn.textContent = '送信完了';
+                        setTimeout(() => {
+                            resendBtn.disabled = false;
+                            resendBtn.textContent = '確認メールを再送信';
+                        }, 5000);
+                    } else {
+                        statusDiv.innerHTML = `<div style="color: #ef4444;">❌ ${result.error}</div>`;
+                        resendBtn.disabled = false;
+                        resendBtn.textContent = '確認メールを再送信';
+                    }
+                } catch (error) {
+                    console.error('再送信エラー:', error);
+                    statusDiv.innerHTML = `<div style="color: #ef4444;">❌ 通信エラーが発生しました</div>`;
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = '確認メールを再送信';
+                }
+            });
         }
     </script>
 </body>
