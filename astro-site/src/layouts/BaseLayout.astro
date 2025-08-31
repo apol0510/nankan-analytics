@@ -1,25 +1,867 @@
 ---
-const { title = 'NANKAN Analytics', description = '' } = Astro.props;
+import UserStatus from '../components/UserStatus.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+}
+
+const { title, description = 'AI技術で実現する競馬予想の未来。XGBoost・LSTMによる高精度分析で的中率87%、回収率156%を実現。', image, type = 'website' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    {import.meta.env.PROD && (
-        <meta http-equiv="Content-Security-Policy"
-            content="default-src 'self';
-                     script-src 'self' https://js.stripe.com https://cdn.skypack.dev;
-                     connect-src 'self' https://api.stripe.com;
-                     frame-src https://js.stripe.com https://hooks.stripe.com;
-                     img-src 'self' data:;
-                     style-src 'self' 'unsafe-inline'"/>
-    )}
+    <meta name="description" content={description}>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- SEO -->
+    <meta name="keywords" content="競馬,AI,機械学習,南関競馬,データサイエンス,Python,予想,分析" />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    {image && <meta property="twitter:image" content={new URL(image, Astro.site)} />}
+
+    <!-- 構造化データ -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "NANKANアナリティクス",
+      "description": description,
+      "url": "https://nankan-analytics.keiba.link"
+    })} />
+    
+    <!-- Tailwind CSS - ビルド済みCSS使用（CDN削除でCSPエラー解消） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --card-background: rgba(255, 255, 255, 0.1);
+            --body-background: #0f172a;
+            --accent-color: #3b82f6;
+            --accent-color-darker: #1d4ed8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --card-border-radius: 10px;
+            --tag-border-radius: 6px;
+            --card-padding: 20px;
+            --main-top-padding: 30px;
+            --body-text-color: #e2e8f0;
+            --accent-text-color: #64748b;
+            --border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--body-text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-menu li.hidden {
+            display: none;
+        }
+
+        .nav-menu a {
+            color: var(--body-text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            position: relative;
+            padding: 8px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+
+        .nav-menu a:hover {
+            color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+
+        .nav-icon {
+            font-size: 1rem;
+            filter: drop-shadow(0 1px 2px rgba(59, 130, 246, 0.2));
+            flex-shrink: 0;
+        }
+
+        .pricing-link {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%) !important;
+            color: white !important;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.4) !important;
+        }
+
+        .pricing-link:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #4f94ff 0%, #9d6cff 100%) !important;
+            border-color: rgba(139, 92, 246, 0.6) !important;
+        }
+
+        .pricing-link::after {
+            display: none;
+        }
+
+        /* Mobile Menu */
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--body-text-color);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .mobile-menu-toggle:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        /* ハンバーガーアイコン */
+        .hamburger-lines {
+            width: 24px;
+            height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .hamburger-lines span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--body-text-color);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+
+        .mobile-menu-toggle.active .hamburger-lines span:nth-child(1) {
+            transform: translateY(7.5px) rotate(45deg);
+        }
+
+        .mobile-menu-toggle.active .hamburger-lines span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .mobile-menu-toggle.active .hamburger-lines span:nth-child(3) {
+            transform: translateY(-7.5px) rotate(-45deg);
+        }
+
+        .mobile-nav-menu {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        /* アクティブ時にメニュー表示 */
+        .mobile-nav-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            max-height: 600px;
+            padding: 20px 0;
+        }
+
+        .mobile-nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-nav-menu li {
+            margin: 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .mobile-nav-menu li:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            color: var(--body-text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mobile-nav-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent-color);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-nav-menu a:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--accent-color);
+            padding-left: 30px;
+        }
+
+        .mobile-nav-menu a:hover::before {
+            transform: translateX(0);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.2rem;
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-nav-menu a:hover .mobile-nav-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .mobile-nav-menu .pricing-link {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%);
+            color: white !important;
+            margin: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .mobile-nav-menu .pricing-link:hover {
+            background: linear-gradient(135deg, #4f94ff 0%, #9d6cff 100%);
+        }
+
+        .mobile-nav-separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 10px 0;
+        }
+
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding-top: var(--main-top-padding);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 1));
+            border-top: 2px solid var(--accent-color);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+            color: var(--body-text-color);
+            position: relative;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-color), #8b5cf6, var(--accent-color));
+            animation: gradient-animation 3s linear infinite;
+        }
+        
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-section {
+            text-align: left;
+        }
+        
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--body-text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-icon {
+            font-size: 1.2rem;
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: var(--accent-text-color);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 12px;
+        }
+        
+        .footer-links a::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+            padding-left: 18px;
+        }
+        
+        .footer-links a:hover::before {
+            opacity: 1;
+        }
+        
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .footer-tagline {
+            font-size: 0.95rem;
+            color: var(--accent-text-color);
+            margin-bottom: 8px;
+        }
+        
+        .footer-copyright {
+            font-size: 0.85rem;
+            color: var(--accent-text-color);
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .footer-section {
+                text-align: center;
+            }
+            
+            .footer-title {
+                justify-content: center;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-menu {
+                gap: 10px;
+            }
+            
+            .nav-menu a {
+                font-size: 0.85rem;
+                padding: 6px 8px;
+            }
+            
+            .nav-wrapper {
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .nav-menu a .nav-text {
+                display: none;
+            }
+            
+            .nav-menu a {
+                gap: 0;
+                padding: 8px;
+                min-width: 40px;
+                justify-content: center;
+            }
+            
+            .pricing-link .nav-text {
+                display: inline !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .logo-icon {
+                font-size: 24px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .header-content {
+                padding: 12px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 18px;
+            }
+            
+            .logo-icon {
+                font-size: 20px;
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-slate-900 text-white">
-    <slot />
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">🤖</span>
+                    NANKANアナリティクス
+                </a>
+                <nav class="nav-wrapper">
+                    <ul class="nav-menu" id="nav-menu">
+                        <li><a href="/"><span class="nav-icon">🏠</span> <span class="nav-text">ホーム</span></a></li>
+                        <li><a href="/free-prediction/"><span class="nav-icon">🎁</span> <span class="nav-text">無料予想</span></a></li>
+                        <li><a href="/technology/"><span class="nav-icon">🤖</span> <span class="nav-text">AI技術</span></a></li>
+                        <li><a href="/blog/"><span class="nav-icon">📰</span> <span class="nav-text">ブログ</span></a></li>
+                        <li><a href="/contact/"><span class="nav-icon">📧</span> <span class="nav-text">お問い合わせ</span></a></li>
+                        <li><a href="/pricing/" class="pricing-link"><span class="nav-icon">💎</span> <span class="nav-text">料金プラン</span></a></li>
+                    </ul>
+                    
+                    <UserStatus />
+                    
+                    <!-- Mobile Menu Toggle (Simple) -->
+                    <button class="mobile-menu-toggle" onclick="this.classList.toggle('active'); document.getElementById('mobile-nav-menu').classList.toggle('active')">
+                        <div class="hamburger-lines">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav-menu" id="mobile-nav-menu">
+            <div class="container">
+                <ul>
+                    <li><a href="/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">🏠</span> ホーム</a></li>
+                    <li><a href="/free-prediction/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">🎁</span> 無料予想</a></li>
+                    <li><a href="/technology/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">🤖</span> AI技術</a></li>
+                    <li><a href="/blog/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">📰</span> ブログ</a></li>
+                    <li><a href="/contact/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">📧</span> お問い合わせ</a></li>
+                    <li><a href="/pricing/" class="pricing-link" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">💎</span> 料金プラン</a></li>
+                    <li class="mobile-nav-separator"></li>
+                    <li><a href="/auth/login" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">🔐</span> ログイン</a></li>
+                    <li><a href="/dashboard" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">📊</span> ダッシュボード</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <slot />
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">⚡</span>
+                        コース攻略
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="/course/ooi">大井競馬場</a></li>
+                        <li><a href="/course/kawasaki">川崎競馬場</a></li>
+                        <li><a href="/course/funabashi">船橋競馬場</a></li>
+                        <li><a href="/course/urawa">浦和競馬場</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">📚</span>
+                        初心者ガイド
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="/beginner">南関競馬入門</a></li>
+                        <li><a href="/beginner/lesson-01">Lesson 1: 基本を学ぶ</a></li>
+                        <li><a href="/beginner/lesson-02">Lesson 2: 馬券の種類</a></li>
+                        <li><a href="/beginner/lesson-03">Lesson 3: 予想の基本</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">🤖</span>
+                        AI技術
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="/technology">技術解説</a></li>
+                        <li><a href="/free-prediction">無料予想</a></li>
+                        <li><a href="/premium">有料予想</a></li>
+                        <li><a href="#results">実績</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">
+                        <span class="footer-icon">📊</span>
+                        データ分析
+                    </h3>
+                    <ul class="footer-links">
+                        <li><a href="#predictions">本日の予想</a></li>
+                        <li><a href="#reports">分析レポート</a></li>
+                        <li><a href="#stats">統計データ</a></li>
+                        <li><a href="#contact">お問い合わせ</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-logo">
+                    <span class="logo-icon">🤖</span>
+                    NANKANアナリティクス
+                </div>
+                <p class="footer-tagline">AI技術による科学的競馬投資プラットフォーム</p>
+                <p class="footer-copyright">&copy; 2025 NANKANアナリティクス. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 認証機能は一時的に無効化（MIMEエラー回避）
+        // import { getUserWithPlan } from '../lib/auth-utils.js';
+        
+        // プラン別ナビゲーション表示（一時無効化）
+        // async function updateNavigation() {
+        //     const { user, plan } = await getUserWithPlan();
+        //     
+        //     const navStandard = document.querySelectorAll('.nav-standard');
+        //     const navPremium = document.querySelectorAll('.nav-premium');
+        //     
+        //     if (plan === 'standard' || plan === 'premium') {
+        //         navStandard.forEach(el => el.classList.remove('hidden'));
+        //     }
+        //     
+        //     if (plan === 'premium') {
+        //         navPremium.forEach(el => el.classList.remove('hidden'));
+        //     }
+        // }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // updateNavigation();
+        });
+        
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // アニメーション効果
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 要素にアニメーションを適用
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tech-card, .article-card, .stats-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+
+            // カウントアップアニメーション（改良版）
+            function animateValue(element, start, end, duration, suffix = '') {
+                if (!element || !element.getAttribute) return;
+                
+                // 初期値をゼロに設定
+                element.innerHTML = '0' + suffix;
+                
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    
+                    let current;
+                    try {
+                        if (end >= 1000) {
+                            current = Math.floor(progress * (end - start) + start);
+                            element.innerHTML = current.toLocaleString() + suffix;
+                        } else {
+                            current = (progress * (end - start) + start);
+                            element.innerHTML = current.toFixed(1) + suffix;
+                        }
+                        
+                        if (progress < 1) {
+                            window.requestAnimationFrame(step);
+                        }
+                    } catch (error) {
+                        console.error('カウントアップエラー:', error);
+                        element.innerHTML = end + suffix;
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+
+            // Stats section のカウントアップを観察（改良版）
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
+                        const targetAttr = entry.target.getAttribute('data-target');
+                        const suffixAttr = entry.target.getAttribute('data-suffix') || '';
+                        
+                        if (!targetAttr) {
+                            console.warn('data-target属性が見つかりません:', entry.target);
+                            return;
+                        }
+                        
+                        const target = parseFloat(targetAttr);
+                        if (isNaN(target)) {
+                            console.warn('無効なdata-target値:', targetAttr);
+                            return;
+                        }
+                        
+                        console.log('カウントアップ開始:', target, suffixAttr);
+                        animateValue(entry.target, 0, target, 2000, suffixAttr);
+                        entry.target.setAttribute('data-animated', 'true');
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            // stats-number要素の監視開始
+            const statsElements = document.querySelectorAll('.stats-number');
+            console.log('stats-number要素を発見:', statsElements.length);
+            
+            statsElements.forEach(el => {
+                console.log('要素の監視開始:', el.getAttribute('data-target'));
+                statsObserver.observe(el);
+            });
+
+            // Stats cards hover effect
+            document.querySelectorAll('.stats-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                    this.style.boxShadow = '0 15px 40px rgba(59, 130, 246, 0.2)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

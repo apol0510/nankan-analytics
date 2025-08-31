@@ -2,31 +2,310 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="ダッシュボード">
+<BaseLayout title="ダッシュボード - NANKANアナリティクス">
     <div class="container mx-auto px-4 py-12">
-        <h1 class="text-3xl font-bold mb-6">ダッシュボード</h1>
-        <div class="bg-slate-800 p-6 rounded-xl">
-            <h2 class="text-xl font-semibold mb-4">会員ステータス</h2>
-            <div id="status">読み込み中...</div>
+        <div class="dashboard-header mb-8">
+            <h1 class="text-4xl font-bold mb-4 text-white">ダッシュボード</h1>
+            <p class="text-gray-300">あなたの競馬投資パフォーマンスと予想データを確認できます</p>
+        </div>
+
+        <!-- 会員ステータスカード -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="membership-status-card bg-slate-800/50 backdrop-blur-lg p-6 rounded-xl border border-blue-500/20">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-white">会員ステータス</h3>
+                    <span class="status-icon">👤</span>
+                </div>
+                <div id="membership-status" class="text-xl font-bold text-blue-400">
+                    読み込み中...
+                </div>
+                <div id="membership-details" class="text-sm text-gray-400 mt-2">
+                    <!-- 会員詳細情報 -->
+                </div>
+            </div>
+
+            <div class="stats-card bg-slate-800/50 backdrop-blur-lg p-6 rounded-xl border border-green-500/20">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-white">今月の成績</h3>
+                    <span class="status-icon">📊</span>
+                </div>
+                <div class="text-xl font-bold text-green-400">
+                    +15.2%
+                </div>
+                <div class="text-sm text-gray-400 mt-2">
+                    前月比
+                </div>
+            </div>
+
+            <div class="stats-card bg-slate-800/50 backdrop-blur-lg p-6 rounded-xl border border-purple-500/20">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-white">的中率</h3>
+                    <span class="status-icon">🎯</span>
+                </div>
+                <div class="text-xl font-bold text-purple-400">
+                    87.3%
+                </div>
+                <div class="text-sm text-gray-400 mt-2">
+                    今月平均
+                </div>
+            </div>
+        </div>
+
+        <!-- アクションボタン -->
+        <div class="action-buttons grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <a href="/free-prediction/" class="action-btn bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 p-4 rounded-lg text-center transition-all duration-300 hover:-translate-y-1">
+                <div class="text-2xl mb-2">🎁</div>
+                <div class="font-semibold text-white">無料予想</div>
+                <div class="text-sm text-blue-200">本日のメインレース</div>
+            </a>
+
+            <a href="/standard-predictions/" class="action-btn bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 p-4 rounded-lg text-center transition-all duration-300 hover:-translate-y-1" id="standard-predictions-btn" style="display: none;">
+                <div class="text-2xl mb-2">⚡</div>
+                <div class="font-semibold text-white">Standard予想</div>
+                <div class="text-sm text-green-200">後半3レースの予想</div>
+            </a>
+
+            <a href="/premium-predictions/" class="action-btn bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 p-4 rounded-lg text-center transition-all duration-300 hover:-translate-y-1" id="premium-predictions-btn" style="display: none;">
+                <div class="text-2xl mb-2">💎</div>
+                <div class="font-semibold text-white">Premium予想</div>
+                <div class="text-sm text-purple-200">全レースの詳細予想</div>
+            </a>
+
+            <a href="/account/" class="action-btn bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 p-4 rounded-lg text-center transition-all duration-300 hover:-translate-y-1">
+                <div class="text-2xl mb-2">⚙️</div>
+                <div class="font-semibold text-white">アカウント管理</div>
+                <div class="text-sm text-gray-200">設定・課金情報</div>
+            </a>
+        </div>
+
+        <!-- 最近の予想結果 -->
+        <div class="recent-results bg-slate-800/30 backdrop-blur-lg p-6 rounded-xl border border-slate-700/50 mb-8">
+            <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                <span>📈</span>
+                最近の予想結果
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-slate-700">
+                            <th class="text-left py-2 text-gray-300">日付</th>
+                            <th class="text-left py-2 text-gray-300">競馬場</th>
+                            <th class="text-left py-2 text-gray-300">レース</th>
+                            <th class="text-left py-2 text-gray-300">結果</th>
+                            <th class="text-right py-2 text-gray-300">回収率</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-results-body">
+                        <tr class="border-b border-slate-700/30">
+                            <td class="py-3 text-gray-300">2024-08-30</td>
+                            <td class="py-3 text-gray-300">大井</td>
+                            <td class="py-3 text-gray-300">11R</td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 bg-green-600/20 text-green-400 rounded-full text-sm">的中</span>
+                            </td>
+                            <td class="py-3 text-right text-green-400 font-semibold">156%</td>
+                        </tr>
+                        <tr class="border-b border-slate-700/30">
+                            <td class="py-3 text-gray-300">2024-08-29</td>
+                            <td class="py-3 text-gray-300">川崎</td>
+                            <td class="py-3 text-gray-300">12R</td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 bg-red-600/20 text-red-400 rounded-full text-sm">不的中</span>
+                            </td>
+                            <td class="py-3 text-right text-red-400 font-semibold">0%</td>
+                        </tr>
+                        <tr class="border-b border-slate-700/30">
+                            <td class="py-3 text-gray-300">2024-08-28</td>
+                            <td class="py-3 text-gray-300">大井</td>
+                            <td class="py-3 text-gray-300">10R</td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 bg-green-600/20 text-green-400 rounded-full text-sm">的中</span>
+                            </td>
+                            <td class="py-3 text-right text-green-400 font-semibold">203%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- プランアップグレード促進 -->
+        <div id="upgrade-promotion" class="upgrade-card bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-lg p-6 rounded-xl border border-blue-500/30" style="display: none;">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-semibold text-white mb-2">🚀 さらなる投資効率アップを目指しませんか？</h3>
+                    <p class="text-gray-300">Premium会員なら全レースの詳細予想と高度な分析データにアクセスできます</p>
+                </div>
+                <a href="/pricing/" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 py-3 rounded-lg text-white font-semibold transition-all duration-300 hover:-translate-y-1">
+                    プランをアップグレード
+                </a>
+            </div>
         </div>
     </div>
-    
+
+    <!-- 認証・会員情報取得スクリプト -->
     <script type="module">
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
-        const client = createClient(
+
+        // Supabase client
+        const supabase = createClient(
             'https://qysycsrhaatudnksbpqe.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU'
         );
-        
-        document.addEventListener('DOMContentLoaded', async () => {
-            const status = document.getElementById('status');
-            const { data: { user }, error } = await client.auth.getUser();
+
+        // DOM要素
+        const membershipStatusEl = document.getElementById('membership-status');
+        const membershipDetailsEl = document.getElementById('membership-details');
+        const standardBtn = document.getElementById('standard-predictions-btn');
+        const premiumBtn = document.getElementById('premium-predictions-btn');
+        const upgradePromotion = document.getElementById('upgrade-promotion');
+
+        // 会員ステータス表示用の関数
+        function displayMembershipStatus(user, plan) {
+            if (!user) {
+                membershipStatusEl.innerHTML = '未ログイン';
+                membershipDetailsEl.innerHTML = '<a href="/auth/login" class="text-blue-400 hover:text-blue-300">ログインして予想を見る</a>';
+                return;
+            }
+
+            const planNames = {
+                'free': '無料会員',
+                'standard': 'Standard会員',
+                'premium': 'Premium会員'
+            };
+
+            const planColors = {
+                'free': 'text-gray-400',
+                'standard': 'text-green-400',
+                'premium': 'text-purple-400'
+            };
+
+            membershipStatusEl.innerHTML = planNames[plan] || '確認中...';
+            membershipStatusEl.className = planColors[plan] || 'text-blue-400';
             
-            if (user) {
-                status.innerHTML = `ログイン中: ${user.email}`;
-            } else {
-                status.innerHTML = '未ログイン - <a href="/auth/login">ログインする</a>';
+            membershipDetailsEl.innerHTML = `
+                <div>${user.email}</div>
+                <div class="text-xs">登録日: ${new Date(user.created_at).toLocaleDateString('ja-JP')}</div>
+            `;
+
+            // プランに応じてボタン表示
+            if (plan === 'standard' || plan === 'premium') {
+                standardBtn.style.display = 'block';
+            }
+            
+            if (plan === 'premium') {
+                premiumBtn.style.display = 'block';
+            } else if (plan === 'standard') {
+                upgradePromotion.style.display = 'block';
+            }
+        }
+
+        // 会員情報を取得する関数
+        async function fetchMembershipData() {
+            try {
+                console.log('[dashboard] 認証状態を確認中...');
+                
+                const { data: { user }, error: authError } = await supabase.auth.getUser();
+                
+                if (authError) {
+                    console.error('[dashboard] 認証エラー:', authError);
+                    displayMembershipStatus(null, null);
+                    return;
+                }
+
+                if (!user) {
+                    console.log('[dashboard] 未ログイン');
+                    displayMembershipStatus(null, null);
+                    return;
+                }
+
+                console.log('[dashboard] ログイン済みユーザー:', user.email);
+
+                // 会員情報を取得
+                console.log('[dashboard] 会員情報を取得中...');
+                const membershipResponse = await fetch(`/api/membership/get?email=${encodeURIComponent(user.email)}`);
+                console.log('[dashboard] API レスポンス:', membershipResponse.status);
+
+                if (membershipResponse.ok) {
+                    const membershipData = await membershipResponse.json();
+                    console.log('[dashboard] 会員データ:', membershipData);
+                    
+                    const plan = membershipData?.plan || 'free';
+                    displayMembershipStatus(user, plan);
+                } else {
+                    console.log('[dashboard] 会員データ取得失敗、無料会員として表示');
+                    displayMembershipStatus(user, 'free');
+                }
+
+            } catch (error) {
+                console.error('[dashboard] 会員情報取得エラー:', error);
+                membershipStatusEl.innerHTML = 'エラーが発生しました';
+                membershipStatusEl.className = 'text-red-400';
+            }
+        }
+
+        // ページ読み込み時に実行
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[dashboard] ページ読み込み完了、会員情報取得開始');
+            fetchMembershipData();
+        });
+
+        // 認証状態変更の監視
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('[dashboard] 認証状態変更:', event);
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                fetchMembershipData();
             }
         });
     </script>
+
+    <style>
+        /* カスタムスタイル */
+        .action-btn {
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .action-btn:hover {
+            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .membership-status-card, .stats-card {
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .recent-results table th {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .recent-results table td {
+            font-size: 0.9rem;
+        }
+
+        .upgrade-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            
+            .recent-results {
+                overflow-x: auto;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </BaseLayout>

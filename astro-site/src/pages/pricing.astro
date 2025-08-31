@@ -2,29 +2,506 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="料金プラン">
-    <main class="container mx-auto px-4 py-12">
-        <h1 class="text-3xl font-bold mb-6">プラン選択</h1>
-        <div class="grid md:grid-cols-2 gap-6">
-            <div class="p-6 rounded-xl bg-slate-800">
-                <h2 class="text-xl font-semibold mb-2">スタンダード</h2>
-                <p class="mb-4 opacity-80">基本の予想</p>
-                <button type="button" data-subscribe data-plan="standard"
-                    class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600">
-                    スタンダードを始める
+<BaseLayout title="料金プラン - NANKANアナリティクス">
+    <div class="pricing-page">
+        <!-- ヘッダー -->
+        <div class="pricing-header">
+            <h1 class="pricing-title">
+                🚀 <span class="gradient-text">AI予想で勝つ</span>
+            </h1>
+            <p class="pricing-subtitle">
+                南関競馬専門のAI予想システム。あなたのスタイルに合わせたプランをお選びください。
+            </p>
+        </div>
+
+        <!-- プラン比較カード -->
+        <div class="plans-container">
+            <!-- 無料プラン -->
+            <div class="plan-card">
+                <div class="plan-header">
+                    <h3 class="plan-name">無料プラン</h3>
+                    <div class="plan-price">
+                        <span class="price-amount">¥0</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                    <p class="plan-description">メインレースで試してみる</p>
+                </div>
+
+                <ul class="plan-features">
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>メインレース（11R）の予想</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>基本的な競馬情報</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>予想結果の確認</span>
+                    </li>
+                </ul>
+
+                <a href="/free-prediction/" class="plan-button plan-button-free">
+                    無料で試す
+                </a>
+            </div>
+
+            <!-- スタンダードプラン -->
+            <div class="plan-card plan-card-recommended">
+                <!-- 人気バッジ -->
+                <div class="recommended-badge">
+                    <span>おすすめ</span>
+                </div>
+
+                <div class="plan-header">
+                    <h3 class="plan-name">スタンダード</h3>
+                    <div class="plan-price">
+                        <span class="price-amount">¥5,980</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                    <p class="plan-description">後半戦で勝負したい方に</p>
+                </div>
+
+                <ul class="plan-features">
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>後半3レース（10R、11R、12R）</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>AI予想の詳細分析</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>投資戦略の提案</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>メール通知</span>
+                    </li>
+                </ul>
+
+                <button class="plan-button plan-button-standard" data-plan="standard" id="btn-standard">
+                    スタンダードプランを始める
                 </button>
             </div>
-            <div class="p-6 rounded-xl bg-slate-800">
-                <h2 class="text-xl font-semibold mb-2">プレミアム</h2>
-                <p class="mb-4 opacity-80">より的確な予想</p>
-                <button type="button" data-subscribe data-plan="premium"
-                    class="px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600">
-                    プレミアムを始める
+
+            <!-- プレミアムプラン -->
+            <div class="plan-card">
+                <div class="plan-header">
+                    <h3 class="plan-name">プレミアム</h3>
+                    <div class="plan-price">
+                        <span class="price-amount">¥9,980</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                    <p class="plan-description">全レース制覇を目指す方に</p>
+                </div>
+
+                <ul class="plan-features">
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>全レース（1R〜12R）の予想</strong></span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>高精度AI予想</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>詳細な投資戦略</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>優先サポート</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>データエクスポート機能</span>
+                    </li>
+                </ul>
+
+                <button class="plan-button plan-button-premium" data-plan="premium" id="btn-premium">
+                    プレミアムプランを始める
                 </button>
             </div>
         </div>
-    </main>
 
-    <!-- ✅ 自作の外部JSのみ -->
-    <script src="/js/pricing-checkout.js" defer></script>
+        <!-- FAQ -->
+        <div class="faq-section">
+            <h2 class="faq-title">よくある質問</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h3 class="faq-question">Q: いつでもプランを変更できますか？</h3>
+                    <p class="faq-answer">
+                        はい。ダッシュボードの「アカウント管理」からいつでもプランの変更、キャンセルが可能です。
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">Q: 無料プランでも予想は見れますか？</h3>
+                    <p class="faq-answer">
+                        はい。無料プランでもメインレース（11R）の予想をご利用いただけます。
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">Q: 支払い方法は何が利用できますか？</h3>
+                    <p class="faq-answer">
+                        クレジットカード（Visa、MasterCard、JCB、American Express）がご利用いただけます。
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">Q: 解約はいつでもできますか？</h3>
+                    <p class="faq-answer">
+                        はい。月額制のため、いつでも解約できます。解約後も次回課金日まではサービスをご利用いただけます。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </BaseLayout>
+
+<script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+
+    const supabase = createClient(
+        'https://qysycsrhaatudnksbpqe.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU'
+    );
+
+    // イベントリスナーで処理
+    async function subscribe(planId) {
+        try {
+            console.log('[pricing] プラン購入開始:', planId);
+
+            // 認証確認
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+            
+            if (authError || !user) {
+                console.log('[pricing] 未ログイン、ログインページへリダイレクト');
+                localStorage.setItem('selectedPlan', planId);
+                window.location.href = '/auth/login?redirect=/pricing&plan=' + planId;
+                return;
+            }
+
+            console.log('[pricing] ログイン済み:', user.email);
+
+            // Stripe Checkout作成
+            const response = await fetch('/api/stripe/create-checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    plan: planId,
+                    email: user.email
+                })
+            });
+
+            console.log('[pricing] API レスポンス:', response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('[pricing] エラー:', errorData);
+                alert('決済処理の開始に失敗しました: ' + (errorData.details || errorData.error));
+                return;
+            }
+
+            const data = await response.json();
+
+            if (data.url) {
+                console.log('[pricing] Checkoutへリダイレクト');
+                window.location.href = data.url;
+            } else {
+                throw new Error('Checkout URLが取得できませんでした');
+            }
+
+        } catch (error) {
+            console.error('[pricing] エラー:', error);
+            alert('エラーが発生しました: ' + error.message);
+        }
+    }
+
+    // ボタンにイベントリスナーを追加
+    document.addEventListener('DOMContentLoaded', function() {
+        const standardBtn = document.getElementById('btn-standard');
+        const premiumBtn = document.getElementById('btn-premium');
+
+        if (standardBtn) {
+            standardBtn.addEventListener('click', () => subscribe('standard'));
+        }
+
+        if (premiumBtn) {
+            premiumBtn.addEventListener('click', () => subscribe('premium'));
+        }
+    });
+</script>
+
+<style>
+    .pricing-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #e2e8f0;
+        padding: 2rem 1rem;
+    }
+
+    /* ヘッダー */
+    .pricing-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .pricing-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .gradient-text {
+        background: linear-gradient(to right, #3b82f6, #8b5cf6);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    .pricing-subtitle {
+        font-size: 1.25rem;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    /* プランカード */
+    .plans-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto 5rem auto;
+    }
+
+    .plan-card {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        position: relative;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .plan-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .plan-card-recommended {
+        border: 2px solid #3b82f6;
+        transform: scale(1.05);
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .recommended-badge {
+        position: absolute;
+        top: -1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #3b82f6;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    /* プランヘッダー */
+    .plan-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .plan-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .plan-price {
+        margin-bottom: 1rem;
+    }
+
+    .price-amount {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #f1f5f9;
+    }
+
+    .price-period {
+        color: #94a3b8;
+        font-size: 1rem;
+    }
+
+    .plan-description {
+        color: #94a3b8;
+        font-size: 1rem;
+    }
+
+    /* 機能リスト */
+    .plan-features {
+        list-style: none;
+        margin: 0 0 2rem 0;
+        padding: 0;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+    }
+
+    .check-icon {
+        color: #10b981;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+    }
+
+    /* ボタン */
+    .plan-button {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        border: none;
+    }
+
+    .plan-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .plan-button-free {
+        background: #475569;
+        color: #e2e8f0;
+    }
+
+    .plan-button-free:hover {
+        background: #64748b;
+    }
+
+    .plan-button-standard {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+    }
+
+    .plan-button-standard:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    }
+
+    .plan-button-premium {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: white;
+    }
+
+    .plan-button-premium:hover {
+        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    }
+
+    /* FAQ */
+    .faq-section {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .faq-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .faq-item {
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(51, 65, 85, 0.3);
+    }
+
+    .faq-question {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #f1f5f9;
+    }
+
+    .faq-answer {
+        color: #94a3b8;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+        .pricing-title {
+            font-size: 2rem;
+        }
+
+        .pricing-subtitle {
+            font-size: 1.125rem;
+        }
+
+        .plan-card-recommended {
+            transform: scale(1);
+        }
+
+        .plans-container {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .plan-card {
+            padding: 1.5rem;
+        }
+
+        .price-amount {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .pricing-page {
+            padding: 1rem 0.5rem;
+        }
+
+        .pricing-header {
+            margin-bottom: 2rem;
+        }
+
+        .pricing-title {
+            font-size: 1.75rem;
+        }
+
+        .pricing-subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
