@@ -438,25 +438,32 @@
             try {
                 console.log('[Dashboard] Checking membership API for user:', currentUser.email);
                 const response = await fetch(`/api/membership?email=${encodeURIComponent(currentUser.email)}`);
-                const data = await response.json();
                 
-                // 200: found=true/false, 404: 未契約, 500: エラー
-                if (response.status === 200 && data.found && data.data) {
-                    console.log('[Dashboard] ✅ Membership API returned data:', data.data);
-                    return {
-                        subscription_status: data.data.status,
-                        subscription_plan: data.data.plan,
-                        subscription_end_date: data.data.currentPeriodEnd ? new Date(data.data.currentPeriodEnd * 1000).toISOString() : null
-                    };
+                let membership = null;
+                if (response.status === 200) {
+                    const j = await response.json();
+                    if (j.found && j.data) {
+                        console.log('[Dashboard] ✅ Membership API returned data:', j.data);
+                        membership = {
+                            subscription_status: j.data.status,
+                            subscription_plan: j.data.plan,
+                            subscription_end_date: j.data.currentPeriodEnd ? new Date(j.data.currentPeriodEnd * 1000).toISOString() : null
+                        };
+                    }
                 } else if (response.status === 404) {
-                    console.log('[Dashboard] 404: No membership data found');
-                    return null;
+                    // 404は正常な「未契約」状態として扱う（エラーにしない）
+                    console.info('[Dashboard] Membership not found (404) - treating as no subscription');
+                    membership = null;
                 } else {
-                    console.log('[Dashboard] API response:', response.status, data);
-                    return null;
+                    // 500系エラーのみエラーとして扱う
+                    const j = await response.json().catch(() => ({}));
+                    console.error('[Dashboard] Membership API error:', response.status, j);
+                    // UIには簡潔なメッセージを表示するが、処理は続行
                 }
+                
+                return membership;
             } catch (error) {
-                console.error('[Dashboard] ❌ Membership API error:', error);
+                console.error('[Dashboard] ❌ Membership API network error:', error);
                 return null;
             }
         }
