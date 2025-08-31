@@ -46,6 +46,12 @@
   to = "/standard-predictions"
   status = 301
 
+# Stripe Webhook - Exact match (先に処理)
+[[redirects]]
+  from = "/api/stripe/webhook"
+  to = "/api/stripe/webhook"
+  status = 200
+
 # API Routes - Server function handling
 [[redirects]]
   from = "/api/*"
