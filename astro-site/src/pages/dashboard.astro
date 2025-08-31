@@ -433,26 +433,30 @@
             `;
         }
 
-        // メンバーシップAPIからデータを取得
+        // メンバーシップAPIからデータを取得（新形式対応）
         async function getMembershipFromAPI() {
             try {
                 console.log('[Dashboard] Checking membership API for user:', currentUser.email);
                 const response = await fetch(`/api/membership?email=${encodeURIComponent(currentUser.email)}`);
                 const data = await response.json();
                 
-                if (response.ok && data.plan && data.plan !== 'free') {
-                    console.log('[Dashboard] Membership API returned data:', data);
+                // 200: found=true/false, 404: 未契約, 500: エラー
+                if (response.status === 200 && data.found && data.data) {
+                    console.log('[Dashboard] ✅ Membership API returned data:', data.data);
                     return {
-                        subscription_status: data.status,
-                        subscription_plan: data.plan,
-                        subscription_end_date: data.currentPeriodEnd ? new Date(data.currentPeriodEnd * 1000).toISOString() : null
+                        subscription_status: data.data.status,
+                        subscription_plan: data.data.plan,
+                        subscription_end_date: data.data.currentPeriodEnd ? new Date(data.data.currentPeriodEnd * 1000).toISOString() : null
                     };
+                } else if (response.status === 404) {
+                    console.log('[Dashboard] 404: No membership data found');
+                    return null;
+                } else {
+                    console.log('[Dashboard] API response:', response.status, data);
+                    return null;
                 }
-                
-                console.log('[Dashboard] No active membership found in API');
-                return null;
             } catch (error) {
-                console.error('[Dashboard] Membership API error:', error);
+                console.error('[Dashboard] ❌ Membership API error:', error);
                 return null;
             }
         }
