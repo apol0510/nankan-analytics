@@ -46,10 +46,10 @@
   to = "/standard-predictions"
   status = 301
 
-# Stripe Webhook - Exact match (先に処理)
+# Stripe Webhook - 必ずNetlify Functionに転送（最優先）
 [[redirects]]
   from = "/api/stripe/webhook"
-  to = "/api/stripe/webhook"
+  to = "/.netlify/functions/stripe-webhook"
   status = 200
 
 # API Routes - Server function handling
