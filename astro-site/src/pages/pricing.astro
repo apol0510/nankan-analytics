@@ -93,7 +93,8 @@ import { PLANS } from '../lib/billing/plan';
 
                     <button 
                         class="w-full py-3 px-6 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors"
-                        onclick="subscribe('standard')"
+                        data-subscribe
+                        data-plan="standard"
                     >
                         スタンダードプランを始める
                     </button>
@@ -135,7 +136,8 @@ import { PLANS } from '../lib/billing/plan';
 
                     <button 
                         class="w-full py-3 px-6 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition-colors"
-                        onclick="subscribe('premium')"
+                        data-subscribe
+                        data-plan="premium"
                     >
                         プレミアムプランを始める
                     </button>
@@ -173,42 +175,7 @@ import { PLANS } from '../lib/billing/plan';
     </main>
 </BaseLayout>
 
-<script>
-    async function subscribe(planId) {
-        try {
-            // ユーザー認証チェック（仮実装）
-            const userEmail = prompt('メールアドレスを入力してください（本来は認証システムから取得）');
-            if (!userEmail) return;
-
-            // Checkout Session作成
-            const response = await fetch('/api/stripe/create-checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    plan: planId,
-                    email: userEmail,
-                    successUrl: window.location.origin + '/payment/success?session_id={CHECKOUT_SESSION_ID}',
-                    cancelUrl: window.location.origin + '/pricing'
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.url) {
-                // Stripe Checkoutにリダイレクト
-                window.location.href = data.url;
-            } else {
-                alert('エラーが発生しました: ' + (data.error || '不明なエラー'));
-            }
-
-        } catch (error) {
-            console.error('Subscription error:', error);
-            alert('エラーが発生しました。しばらくしてからお試しください。');
-        }
-    }
-</script>
+<script src="/js/pricing-checkout.js" defer></script>
 
 <style>
     /* グラデーション背景 */
