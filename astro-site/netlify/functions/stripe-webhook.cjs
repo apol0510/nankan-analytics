@@ -46,14 +46,72 @@ exports.handler = async (event) => {
       };
     }
 
-    // イベント処理（基本ログ）
+    // Netlify Blobs動的インポート
+    const { getStore } = await import('@netlify/blobs');
+
+    // メンバーシップ保存関数
+    async function saveMembership({ email, priceId, subscription, customerId }) {
+      const store = getStore('membership');
+      
+      // plan 判定（priceId → plan）
+      const mode = (process.env.STRIPE_MODE || 'test').toLowerCase();
+      const std = mode === 'live' ? process.env.STRIPE_STANDARD_PRICE_ID_LIVE : process.env.STRIPE_STANDARD_PRICE_ID_TEST;
+      const prm = mode === 'live' ? process.env.STRIPE_PREMIUM_PRICE_ID_LIVE : process.env.STRIPE_PREMIUM_PRICE_ID_TEST;
+      const plan = priceId === prm ? 'premium' : 'standard';
+
+      const body = {
+        email,
+        plan,
+        priceId,
+        subscriptionId: subscription.id,
+        customerId,
+        status: subscription.status,
+        currentPeriodStart: subscription.current_period_start,
+        currentPeriodEnd: subscription.current_period_end,
+        updatedAt: Date.now(),
+      };
+      
+      await store.set(`users/${encodeURIComponent(email)}.json`, JSON.stringify(body), { 
+        contentType: 'application/json' 
+      });
+      
+      console.log('[netlify-webhook] 💾 Saved membership for:', email, 'plan:', plan);
+    }
+
+    // イベント処理
     console.log('[netlify-webhook] Processing event type:', evt.type);
     
-    // TODO: ここで実際のビジネスロジック処理
-    // - checkout.session.completed
-    // - invoice.paid
-    // - customer.subscription.updated
-    // etc.
+    // checkout.session.completed処理
+    if (evt.type === 'checkout.session.completed') {
+      const s = evt.data.object;
+      const subId = String(s.subscription || '');
+      const subscription = subId ? await stripe.subscriptions.retrieve(subId) : null;
+      const customerId = String(s.customer || (subscription && subscription.customer) || '');
+      let email = s.customer_details?.email || '';
+      
+      if (!email && customerId) {
+        const c = await stripe.customers.retrieve(customerId);
+        if (!c.deleted) email = c.email || '';
+      }
+      
+      const priceId = subscription?.items?.data?.[0]?.price?.id || '';
+      
+      if (email && priceId && subscription) {
+        await saveMembership({ email, priceId, subscription, customerId });
+      }
+    } 
+    // customer.subscription.*処理
+    else if (evt.type.startsWith('customer.subscription.')) {
+      const sub = evt.data.object;
+      const customerId = String(sub.customer);
+      const c = await stripe.customers.retrieve(customerId);
+      const email = c.deleted ? '' : (c.email || '');
+      const priceId = sub.items?.data?.[0]?.price?.id || '';
+      
+      if (email && priceId) {
+        await saveMembership({ email, priceId, subscription: sub, customerId });
+      }
+    }
     
     return {
       statusCode: 200,
