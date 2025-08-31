@@ -1,191 +1,30 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { PLANS } from '../lib/billing/plan';
 ---
 
-<BaseLayout title="料金プラン - NANKANアナリティクス">
-    <main class="min-h-screen bg-slate-900 text-white">
-        <div class="container mx-auto px-4 py-16">
-            <!-- ヘッダー -->
-            <div class="text-center mb-16">
-                <h1 class="text-4xl font-bold mb-4">
-                    🚀 <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        AI予想で勝つ
-                    </span>
-                </h1>
-                <p class="text-xl text-gray-300 max-w-2xl mx-auto">
-                    南関競馬専門のAI予想システム。あなたのスタイルに合わせたプランをお選びください。
-                </p>
+<BaseLayout title="料金プラン">
+    <main class="container mx-auto px-4 py-12">
+        <h1 class="text-3xl font-bold mb-6">プラン選択</h1>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="p-6 rounded-xl bg-slate-800">
+                <h2 class="text-xl font-semibold mb-2">スタンダード</h2>
+                <p class="mb-4 opacity-80">基本の予想</p>
+                <button type="button" data-subscribe data-plan="standard"
+                    class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600">
+                    スタンダードを始める
+                </button>
             </div>
-
-            <!-- プラン比較 -->
-            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- 無料プラン -->
-                <div class="bg-slate-800 rounded-2xl p-8 border border-slate-700 relative">
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-bold mb-2">無料プラン</h3>
-                        <div class="mb-4">
-                            <span class="text-4xl font-bold">¥0</span>
-                            <span class="text-gray-400">/月</span>
-                        </div>
-                        <p class="text-gray-400">メインレースで試してみる</p>
-                    </div>
-
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>メインレース（11R）の予想</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>基本的な競馬情報</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>予想結果の確認</span>
-                        </li>
-                    </ul>
-
-                    <button 
-                        class="w-full py-3 px-6 bg-slate-600 hover:bg-slate-500 rounded-lg font-medium transition-colors"
-                        disabled
-                    >
-                        現在のプラン
-                    </button>
-                </div>
-
-                <!-- スタンダードプラン -->
-                <div class="bg-slate-800 rounded-2xl p-8 border-2 border-blue-500 relative transform scale-105">
-                    <!-- 人気バッジ -->
-                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                        <span class="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium">
-                            おすすめ
-                        </span>
-                    </div>
-
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-bold mb-2">スタンダード</h3>
-                        <div class="mb-4">
-                            <span class="text-4xl font-bold">¥5,980</span>
-                            <span class="text-gray-400">/月</span>
-                        </div>
-                        <p class="text-gray-400">後半戦で勝負したい方に</p>
-                    </div>
-
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>後半3レース（10R、11R、12R）</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>AI予想の詳細分析</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>投資戦略の提案</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>メール通知</span>
-                        </li>
-                    </ul>
-
-                    <button 
-                        class="w-full py-3 px-6 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors"
-                        data-subscribe
-                        data-plan="standard"
-                    >
-                        スタンダードプランを始める
-                    </button>
-                </div>
-
-                <!-- プレミアムプラン -->
-                <div class="bg-slate-800 rounded-2xl p-8 border border-purple-500 relative">
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-bold mb-2">プレミアム</h3>
-                        <div class="mb-4">
-                            <span class="text-4xl font-bold">¥9,980</span>
-                            <span class="text-gray-400">/月</span>
-                        </div>
-                        <p class="text-gray-400">全レース制覇を目指す方に</p>
-                    </div>
-
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span><strong>全レース（1R〜12R）の予想</strong></span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>高精度AI予想</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>詳細な投資戦略</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>優先サポート</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-green-400 mr-3">✓</span>
-                            <span>データエクスポート機能</span>
-                        </li>
-                    </ul>
-
-                    <button 
-                        class="w-full py-3 px-6 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition-colors"
-                        data-subscribe
-                        data-plan="premium"
-                    >
-                        プレミアムプランを始める
-                    </button>
-                </div>
-            </div>
-
-            <!-- FAQ -->
-            <div class="max-w-4xl mx-auto mt-20">
-                <h2 class="text-3xl font-bold text-center mb-12">よくある質問</h2>
-                
-                <div class="space-y-6">
-                    <div class="bg-slate-800 rounded-lg p-6">
-                        <h3 class="font-bold mb-2">Q: いつでもプランを変更できますか？</h3>
-                        <p class="text-gray-300">
-                            はい。ダッシュボードの「課金管理」からいつでもプランの変更、キャンセルが可能です。
-                        </p>
-                    </div>
-
-                    <div class="bg-slate-800 rounded-lg p-6">
-                        <h3 class="font-bold mb-2">Q: 無料プランでも予想は見れますか？</h3>
-                        <p class="text-gray-300">
-                            はい。無料プランでもメインレース（11R）の予想をご利用いただけます。
-                        </p>
-                    </div>
-
-                    <div class="bg-slate-800 rounded-lg p-6">
-                        <h3 class="font-bold mb-2">Q: 支払い方法は何が利用できますか？</h3>
-                        <p class="text-gray-300">
-                            クレジットカード（Visa、MasterCard、JCB、American Express）がご利用いただけます。
-                        </p>
-                    </div>
-                </div>
+            <div class="p-6 rounded-xl bg-slate-800">
+                <h2 class="text-xl font-semibold mb-2">プレミアム</h2>
+                <p class="mb-4 opacity-80">より的確な予想</p>
+                <button type="button" data-subscribe data-plan="premium"
+                    class="px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600">
+                    プレミアムを始める
+                </button>
             </div>
         </div>
     </main>
+
+    <!-- ✅ 自作の外部JSのみ -->
+    <script src="/js/pricing-checkout.js" defer></script>
 </BaseLayout>
-
-<script src="/js/pricing-checkout.js" defer></script>
-
-<style>
-    /* グラデーション背景 */
-    .bg-gradient-to-r {
-        background: linear-gradient(to right, #3b82f6, #8b5cf6);
-    }
-
-    /* ホバー効果 */
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    }
-</style>
