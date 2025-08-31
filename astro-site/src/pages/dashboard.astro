@@ -308,9 +308,9 @@
                     <a href="/premium-predictions" class="action-btn" id="prediction-link">
                         有料予想を見る
                     </a>
-                    <a href="/account" class="action-btn">
+                    <button class="action-btn" id="account-management-btn" style="border: none; cursor: pointer;">
                         アカウント管理
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -567,6 +567,14 @@
                 return demoData.planType.toLowerCase();
             }
 
+            // メンバーシップAPIから最新データを取得
+            const membershipData = await getMembershipFromAPI();
+            if (membershipData && membershipData.subscription_plan) {
+                const planName = membershipData.subscription_plan.toLowerCase();
+                console.log('[Dashboard] Using membership API plan:', planName);
+                return planName;
+            }
+
             try {
                 const { data: profile, error } = await client
                     .from('profiles')
@@ -695,6 +703,37 @@
                 predictionLink.textContent = '無料予想を見る';
             }
         }
+
+        // アカウント管理（Stripe Customer Portal）
+        document.getElementById('account-management-btn').addEventListener('click', async () => {
+            try {
+                console.log('[Dashboard] Creating customer portal session...');
+                const response = await fetch('/api/stripe/create-portal-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        returnUrl: window.location.origin + '/dashboard'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('ポータルセッションの作成に失敗しました');
+                }
+
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('ポータルURLが取得できませんでした');
+                }
+            } catch (error) {
+                console.error('Account management error:', error);
+                alert('アカウント管理ページの表示に失敗しました: ' + error.message);
+            }
+        });
 
         // ログアウト処理
         document.getElementById('logout-btn').addEventListener('click', async () => {
