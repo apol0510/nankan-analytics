@@ -1,10 +1,10 @@
-// Stripe決済システム（サーバーサイド）
+// src/lib/stripe.ts
 import Stripe from 'stripe';
 
-// Stripe初期化
-export const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2024-04-10',
-});
+export const stripe = new Stripe(
+  import.meta.env.STRIPE_SECRET_KEY as string,
+  { apiVersion: '2024-04-10' }
+);
 
 /**
  * プラン定義
