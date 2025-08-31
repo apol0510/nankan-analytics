@@ -144,24 +144,37 @@
         if (sessionId) {
             console.log('Checkout Session ID:', sessionId);
             
-            // 30秒後にダッシュボードにリダイレクト（実際のプロジェクトでは適切な完了チェックを実装）
+            // 【重要】フォールバックAPI実行でメンバーシップ確実保存
+            (async () => {
+                try {
+                    console.log('[success] Calling ensure API...');
+                    const response = await fetch(`/api/membership/ensure?session_id=${encodeURIComponent(sessionId)}`, { method: 'GET' });
+                    console.log('[success] Ensure API response:', response.status);
+                    if (response.status === 204) {
+                        console.log('[success] ✅ Membership saved successfully');
+                    }
+                } catch (e) {
+                    console.error('[success] ❌ Ensure failed:', e);
+                }
+            })();
+            
+            // 10秒後にダッシュボードにリダイレクト（短縮）
             setTimeout(() => {
                 window.location.href = '/dashboard';
-            }, 30000);
+            }, 10000);
             
             // 5秒ごとにページを更新して状態確認（簡易実装）
             let checkCount = 0;
             const checkInterval = setInterval(() => {
                 checkCount++;
                 
-                // 最大6回（30秒）チェック
-                if (checkCount >= 6) {
+                // 最大2回（10秒）チェック
+                if (checkCount >= 2) {
                     clearInterval(checkInterval);
                     window.location.href = '/dashboard';
                 }
                 
-                // 実際のプロジェクトでは、ここでAPIを呼び出してユーザーの状態を確認
-                console.log(`状態確認 ${checkCount}/6`);
+                console.log(`状態確認 ${checkCount}/2`);
                 
             }, 5000);
         } else {

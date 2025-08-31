@@ -396,14 +396,16 @@
             }
         });
 
-        // 認証チェック
+        // 認証チェック（緩和版：未ログインでも続行、中で案内表示）
         async function checkAuth() {
             try {
                 const { data: { user }, error } = await client.auth.getUser();
                 
                 if (error || !user) {
-                    // 未認証の場合はログインページへリダイレクト
-                    window.location.href = '/auth/login?redirect=' + encodeURIComponent(window.location.pathname);
+                    // 未ログイン時は案内表示（リダイレクトしない）
+                    currentUser = null;
+                    document.getElementById('user-email').textContent = '未ログイン';
+                    showLoginPrompt();
                     return;
                 }
                 
@@ -411,8 +413,24 @@
                 document.getElementById('user-email').textContent = user.email;
             } catch (error) {
                 console.error('Auth check error:', error);
-                window.location.href = '/auth/login';
+                currentUser = null;
+                document.getElementById('user-email').textContent = '認証エラー';
+                showLoginPrompt();
             }
+        }
+
+        // 未ログイン時の案内表示
+        function showLoginPrompt() {
+            const subscriptionInfo = document.getElementById('subscription-info');
+            subscriptionInfo.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <p style="color: #fca5a5; margin-bottom: 15px;">ダッシュボードを利用するにはログインが必要です</p>
+                    <a href="/auth/login?redirect=${encodeURIComponent(window.location.pathname)}" 
+                       style="background: #3b82f6; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
+                        ログインする
+                    </a>
+                </div>
+            `;
         }
 
         // メンバーシップAPIからデータを取得
