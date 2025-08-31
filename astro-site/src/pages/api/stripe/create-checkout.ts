@@ -60,3 +60,17 @@ export const POST: APIRoute = async ({ request, url }) => {
     });
   }
 };
+
+// JSフォールバック（JSなしでもAPIを試せるように）
+export const GET: APIRoute = async (ctx) =>
+  POST({
+    ...ctx,
+    request: new Request(ctx.request.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan: ctx.url.searchParams.get('plan'),
+        email: ctx.url.searchParams.get('email')
+      })
+    })
+  } as any);
