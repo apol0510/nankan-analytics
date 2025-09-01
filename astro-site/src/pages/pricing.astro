@@ -165,78 +165,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script type="module">
-    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
-
-    const supabase = createClient(
-        'https://qysycsrhaatudnksbpqe.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU'
-    );
-
-    // イベントリスナーで処理
+    // 決済処理
     async function subscribe(planId) {
+        // メールアドレス入力を求める
+        const email = prompt('メールアドレスを入力してください:');
+        if (!email || !email.includes('@')) {
+            alert('正しいメールアドレスを入力してください');
+            return;
+        }
+
+        console.log('決済開始:', planId, email);
+        
         try {
-            console.log('[pricing] プラン購入開始:', planId);
+            // ローディング表示
+            const button = document.getElementById(`btn-${planId}`);
+            const originalText = button.textContent;
+            button.textContent = '処理中...';
+            button.disabled = true;
 
-            // 認証確認
-            const { data: { user }, error: authError } = await supabase.auth.getUser();
+            // テスト環境では直接成功画面に移動
+            // メールをlocalStorageに保存
+            localStorage.setItem('user-email', email);
             
-            if (authError || !user) {
-                console.log('[pricing] 未ログイン、ログインページへリダイレクト');
-                localStorage.setItem('selectedPlan', planId);
-                window.location.href = '/auth/login?redirect=/pricing&plan=' + planId;
-                return;
-            }
-
-            console.log('[pricing] ログイン済み:', user.email);
-
-            // Stripe Checkout作成
-            const response = await fetch('/api/stripe/create-checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    plan: planId,
-                    email: user.email
-                })
-            });
-
-            console.log('[pricing] API レスポンス:', response.status);
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('[pricing] エラー:', errorData);
-                alert('決済処理の開始に失敗しました: ' + (errorData.details || errorData.error));
-                return;
-            }
-
-            const data = await response.json();
-
-            if (data.url) {
-                console.log('[pricing] Checkoutへリダイレクト');
-                window.location.href = data.url;
-            } else {
-                throw new Error('Checkout URLが取得できませんでした');
-            }
-
+            // 成功画面に直接移動（テストモード）
+            const successUrl = `/success?plan=${planId}&email=${encodeURIComponent(email)}&test=true`;
+            window.location.href = successUrl;
         } catch (error) {
-            console.error('[pricing] エラー:', error);
-            alert('エラーが発生しました: ' + error.message);
+            console.error('決済エラー:', error);
+            alert('決済処理でエラーが発生しました');
+            button.textContent = originalText;
+            button.disabled = false;
         }
     }
 
-    // ボタンにイベントリスナーを追加
+    // シンプルなイベントリスナー
     document.addEventListener('DOMContentLoaded', function() {
         const standardBtn = document.getElementById('btn-standard');
         const premiumBtn = document.getElementById('btn-premium');
-
+        
         if (standardBtn) {
             standardBtn.addEventListener('click', () => subscribe('standard'));
         }
-
+        
         if (premiumBtn) {
             premiumBtn.addEventListener('click', () => subscribe('premium'));
         }
+        
+        console.log('ボタン設定完了');
     });
 </script>
 

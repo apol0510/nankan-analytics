@@ -1,6 +1,5 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import { fileURLToPath, URL } from 'node:url';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import netlify from '@astrojs/netlify';
@@ -40,23 +39,5 @@ export default defineConfig({
   i18n: {
     defaultLocale: 'ja',
     locales: ['ja']
-  },
-
-  // ビルド設定
-  vite: {
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      }
-    },
-    define: {
-      __DEFINES__: JSON.stringify({})
-    },
-    optimizeDeps: {
-      exclude: []
-    },
-    ssr: {
-      noExternal: []
-    }
   }
 });
