@@ -87,8 +87,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
     </div>
 
-    <!-- プラン確認・ダッシュボード制御スクリプト -->
-    <script>
+    <!-- プラン確認・ダッシュボード制御スクリプト（LocalStorage方式） -->
+    <script type="module">
+        // PlanStorageをインポート
+        import { PlanStorage } from '../lib/plan-storage.js';
+
         // DOM要素
         const membershipStatusEl = document.getElementById('membership-status');
         const membershipDetailsEl = document.getElementById('membership-details');
@@ -97,65 +100,60 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const upgradePromotion = document.getElementById('upgrade-promotion');
 
         // プラン確認とダッシュボード更新
-        async function checkPlanAndUpdateDashboard() {
+        function checkPlanAndUpdateDashboard() {
             try {
-                const savedEmail = localStorage.getItem('user-email');
+                const plan = PlanStorage.getPlan();
+                const userData = PlanStorage.getUserData();
                 
-                if (!savedEmail) {
-                    membershipStatusEl.innerHTML = '未登録';
-                    membershipDetailsEl.innerHTML = `
-                        <div>メールアドレスを入力してプランを確認してください</div>
-                        <button onclick="promptForEmail()" class="email-input-btn">
-                            メールアドレス入力
-                        </button>
-                    `;
-                    return;
-                }
-
-                console.log(`[dashboard] プラン確認中: ${savedEmail}`);
+                console.log('[dashboard] プラン確認結果:', { plan, userData });
                 
-                const response = await fetch(`/api/check-plan?email=${encodeURIComponent(savedEmail)}`);
-                
-                if (!response.ok) {
-                    throw new Error(`プラン確認エラー: ${response.status}`);
-                }
-
-                const planData = await response.json();
-                console.log('[dashboard] プラン確認結果:', planData);
-                
-                updateDashboard(savedEmail, planData);
+                updateDashboard(plan, userData);
 
             } catch (error) {
                 console.error('[dashboard] エラー:', error);
-                membershipStatusEl.innerHTML = 'エラーが発生しました';
+                membershipStatusEl.innerHTML = '⚠️ エラーが発生しました';
                 membershipDetailsEl.innerHTML = `
-                    <div class="error">${error.message}</div>
-                    <button onclick="promptForEmail()" class="email-input-btn">
-                        再試行
+                    <div class="error">プラン情報の読み込みに失敗しました</div>
+                    <button onclick="setupDemoMode()" class="email-input-btn">
+                        デモモードで確認
                     </button>
                 `;
             }
         }
 
         // ダッシュボード更新
-        function updateDashboard(email, planData) {
+        function updateDashboard(plan, userData) {
             const planNames = {
-                'free': '無料会員',
-                'standard': 'Standard会員',
-                'premium': 'Premium会員'
+                'free': '🎁 無料会員',
+                'standard': '⚡ Standard会員',
+                'premium': '💎 Premium会員'
             };
 
-            const plan = planData.plan || 'free';
+            const planName = planNames[plan] || planNames['free'];
+            membershipStatusEl.innerHTML = planName;
             
-            membershipStatusEl.innerHTML = planNames[plan];
+            // 詳細情報表示
+            let detailsHtml = '';
+            if (userData && userData.registeredAt) {
+                detailsHtml += `<div class="created-date">登録日: ${new Date(userData.registeredAt).toLocaleDateString('ja-JP')}</div>`;
+            }
+            if (userData && userData.expiresAt && plan !== 'free') {
+                const expiryDate = new Date(userData.expiresAt);
+                const isExpired = expiryDate < new Date();
+                detailsHtml += `<div class="expires-date ${isExpired ? 'expired' : ''}">
+                    ${isExpired ? '有効期限切れ' : '次回更新'}: ${expiryDate.toLocaleDateString('ja-JP')}
+                </div>`;
+            }
             
-            let detailsHtml = `<div class="user-email">${email}</div>`;
-            if (planData.createdAt) {
-                detailsHtml += `<div class="created-date">登録日: ${new Date(planData.createdAt).toLocaleDateString('ja-JP')}</div>`;
+            // プラン別機能説明
+            if (plan === 'free') {
+                detailsHtml += '<div class="plan-features">• メインレース（11R）の予想が利用可能</div>';
+            } else if (plan === 'standard') {
+                detailsHtml += '<div class="plan-features">• 後半3レース（10R-12R）の予想が利用可能</div>';
+            } else if (plan === 'premium') {
+                detailsHtml += '<div class="plan-features">• 全レース（1R-12R）の予想が利用可能</div>';
             }
-            if (planData.expiresAt && planData.plan !== 'free') {
-                detailsHtml += `<div class="expires-date">次回更新: ${new Date(planData.expiresAt).toLocaleDateString('ja-JP')}</div>`;
-            }
+
             membershipDetailsEl.innerHTML = detailsHtml;
 
             // プランに応じて表示切り替え
@@ -168,22 +166,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             } else if (plan === 'free' || plan === 'standard') {
                 upgradePromotion.style.display = 'block';
             }
+
+            // プラン管理ボタン更新
+            updatePlanActions(plan);
         }
 
-        // メールアドレス入力プロンプト
-        function promptForEmail() {
-            const email = prompt('メールアドレスを入力してください：');
-            if (email && email.includes('@')) {
-                localStorage.setItem('user-email', email);
-                checkPlanAndUpdateDashboard();
-            } else if (email) {
-                alert('正しいメールアドレスを入力してください。');
+        // プラン管理ボタンの更新
+        function updatePlanActions(plan) {
+            const planSection = document.querySelector('.plan-actions');
+            
+            let actionsHtml = '<a href="/pricing/" class="action-btn upgrade">プランをアップグレード</a>';
+            
+            if (plan !== 'free') {
+                actionsHtml += '<button onclick="showCustomerPortal()" class="action-btn manage">プラン管理</button>';
             }
+            
+            actionsHtml += '<button onclick="clearPlanData()" class="action-btn reset">プランリセット</button>';
+            actionsHtml += '<button onclick="setupDemoMode()" class="action-btn demo">デモモード</button>';
+            
+            planSection.innerHTML = actionsHtml;
+        }
+
+        // デモモード設定
+        window.setupDemoMode = function() {
+            const plans = ['standard', 'premium'];
+            const randomPlan = plans[Math.floor(Math.random() * plans.length)];
+            PlanStorage.setDemoMode(randomPlan);
+            alert(`🎯 ${randomPlan}会員のデモモードを設定しました`);
+            checkPlanAndUpdateDashboard();
+        }
+
+        // プランデータクリア
+        window.clearPlanData = function() {
+            if (confirm('プランデータをクリアしますか？')) {
+                PlanStorage.clearPlan();
+                alert('プランデータをクリアしました');
+                checkPlanAndUpdateDashboard();
+            }
+        }
+
+        // カスタマーポータル（Stripeの顧客管理画面）
+        window.showCustomerPortal = function() {
+            alert('Stripe Payment LinksのカスタマーポータルはURL内で管理されます。\n決済時のメールからアクセスしてください。');
         }
 
         // ページ読み込み時に実行
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('[dashboard] NANKANアナリティクス ダッシュボード読み込み');
+            console.log('[dashboard] NANKANアナリティクス ダッシュボード読み込み（LocalStorage方式）');
             checkPlanAndUpdateDashboard();
         });
     </script>
@@ -466,6 +495,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .error {
             color: #ef4444;
             margin-bottom: 0.5rem;
+        }
+
+        .expired {
+            color: #ef4444 !important;
+        }
+
+        .plan-features {
+            color: #10b981;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .action-btn.manage {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .action-btn.reset {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .action-btn.demo {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(249, 115, 22, 0.3);
         }
 
         /* レスポンシブ */
