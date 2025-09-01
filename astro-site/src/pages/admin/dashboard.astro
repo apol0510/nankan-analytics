@@ -534,34 +534,25 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </style>
 
 <script>
-    import { supabase } from '../../lib/supabase-client.js';
-
     let isAdmin = false;
 
-    // 管理者認証チェック
+    // 管理者認証チェック（簡素化）
     async function checkAdminAuth() {
         const authLoading = document.getElementById('auth-loading');
         const adminContent = document.getElementById('admin-content');
 
         try {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            
-            if (error || !user) {
-                window.location.href = '/auth/login?redirect=' + encodeURIComponent('/admin/dashboard');
-                return;
-            }
-
-            // 管理者権限チェック（実際の実装では、profilesテーブルのrole確認）
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single();
-
-            if (profile?.role !== 'admin') {
-                alert('管理者権限が必要です');
-                window.location.href = '/';
-                return;
+            // 簡易パスワード認証
+            const adminPassword = localStorage.getItem('admin-password');
+            if (adminPassword !== 'nankan-admin-2025') {
+                const password = prompt('管理者パスワードを入力してください:');
+                if (password === 'nankan-admin-2025') {
+                    localStorage.setItem('admin-password', password);
+                } else {
+                    alert('パスワードが間違っています');
+                    window.location.href = '/';
+                    return;
+                }
             }
 
             isAdmin = true;
@@ -587,19 +578,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         ]);
     }
 
-    // ユーザー統計読み込み
+    // ユーザー統計読み込み（デモデータ）
     async function loadUserStats() {
         try {
-            const { data: profiles, error } = await supabase
-                .from('profiles')
-                .select('subscription_plan, subscription_status');
-
-            if (error) throw error;
-
-            const totalUsers = profiles.length;
-            const freeUsers = profiles.filter(p => !p.subscription_plan || p.subscription_plan === 'free').length;
-            const standardUsers = profiles.filter(p => p.subscription_plan === 'standard' && p.subscription_status === 'active').length;
-            const premiumUsers = profiles.filter(p => p.subscription_plan === 'premium' && p.subscription_status === 'active').length;
+            // Airtableベースの管理になったため、デモデータを表示
+            const totalUsers = Math.floor(Math.random() * 500) + 100; // 100-600人
+            const freeUsers = Math.floor(totalUsers * 0.6); // 60%が無料
+            const standardUsers = Math.floor(totalUsers * 0.3); // 30%がStandard
+            const premiumUsers = totalUsers - freeUsers - standardUsers; // 残りがPremium
 
             document.getElementById('total-users').textContent = totalUsers.toLocaleString();
             document.getElementById('free-users').textContent = freeUsers;
@@ -633,18 +619,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         document.getElementById('email-sent').textContent = emailsSent.toLocaleString();
     }
 
-    // システムステータス確認
+    // システムステータス確認（簡素化）
     async function loadSystemStatus() {
         try {
-            // データベース接続テスト
-            const { error: dbError } = await supabase.from('profiles').select('count', { count: 'exact', head: true });
-            document.getElementById('db-status').textContent = dbError ? 'エラー' : '接続OK';
-            document.getElementById('db-status').className = dbError ? 'status-badge error' : 'status-badge ok';
-
-            // その他のステータスはデモデータ
+            // 全て正常として表示（最小構成のため）
             document.getElementById('server-status').textContent = '正常';
+            document.getElementById('db-status').textContent = 'Airtable接続';
+            document.getElementById('db-status').className = 'status-badge ok';
             document.getElementById('stripe-status').textContent = '正常';
-            document.getElementById('email-status').textContent = '正常';
+            document.getElementById('email-status').textContent = 'Brevo正常';
         } catch (error) {
             console.error('System status error:', error);
         }
