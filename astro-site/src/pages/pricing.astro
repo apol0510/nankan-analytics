@@ -57,7 +57,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="plan-header">
                     <h3 class="plan-name">スタンダード</h3>
                     <div class="plan-price">
-                        <span class="price-amount">¥5,980</span>
+                        <span class="price-amount">¥2,980</span>
                         <span class="price-period">/月</span>
                     </div>
                     <p class="plan-description">後半戦で勝負したい方に</p>
@@ -82,9 +82,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </li>
                 </ul>
 
-                <button class="plan-button plan-button-standard" data-plan="standard" id="btn-standard">
+                <a href="https://buy.stripe.com/4gM3cvdh758kfcvdJ9dby0J" class="plan-button plan-button-standard">
                     スタンダードプランを始める
-                </button>
+                </a>
             </div>
 
             <!-- プレミアムプラン -->
@@ -121,9 +121,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </li>
                 </ul>
 
-                <button class="plan-button plan-button-premium" data-plan="premium" id="btn-premium">
+                <a href="https://buy.stripe.com/28E00j5OF1W8d4n48zdby0K" class="plan-button plan-button-premium">
                     プレミアムプランを始める
-                </button>
+                </a>
             </div>
         </div>
 
@@ -164,56 +164,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 </BaseLayout>
 
-<script type="module">
-    // 決済処理
-    async function subscribe(planId) {
-        // メールアドレス入力を求める
-        const email = prompt('メールアドレスを入力してください:');
-        if (!email || !email.includes('@')) {
-            alert('正しいメールアドレスを入力してください');
-            return;
-        }
-
-        console.log('決済開始:', planId, email);
-        
-        try {
-            // ローディング表示
-            const button = document.getElementById(`btn-${planId}`);
-            const originalText = button.textContent;
-            button.textContent = '処理中...';
-            button.disabled = true;
-
-            // テスト環境では直接成功画面に移動
-            // メールをlocalStorageに保存
-            localStorage.setItem('user-email', email);
-            
-            // 成功画面に直接移動（テストモード）
-            const successUrl = `/success?plan=${planId}&email=${encodeURIComponent(email)}&test=true`;
-            window.location.href = successUrl;
-        } catch (error) {
-            console.error('決済エラー:', error);
-            alert('決済処理でエラーが発生しました');
-            button.textContent = originalText;
-            button.disabled = false;
-        }
-    }
-
-    // シンプルなイベントリスナー
-    document.addEventListener('DOMContentLoaded', function() {
-        const standardBtn = document.getElementById('btn-standard');
-        const premiumBtn = document.getElementById('btn-premium');
-        
-        if (standardBtn) {
-            standardBtn.addEventListener('click', () => subscribe('standard'));
-        }
-        
-        if (premiumBtn) {
-            premiumBtn.addEventListener('click', () => subscribe('premium'));
-        }
-        
-        console.log('ボタン設定完了');
-    });
-</script>
+<!-- Payment LinksはStripeが全て処理するため、JavaScriptは不要 -->
 
 <style>
     .pricing-page {

@@ -1,0 +1,300 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="ご登録ありがとうございます - NANKANアナリティクス">
+    <div class="welcome-page">
+        <div class="welcome-container">
+            <!-- 成功アイコン -->
+            <div class="success-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+
+            <!-- メインメッセージ -->
+            <h1 class="welcome-title">
+                🎉 ご登録ありがとうございます！
+            </h1>
+
+            <p class="welcome-message">
+                NANKANアナリティクスへようこそ！<br>
+                決済が正常に完了しました。
+            </p>
+
+            <!-- プラン情報 -->
+            <div class="plan-info">
+                <div class="plan-label">ご登録プラン</div>
+                <div class="plan-name" id="plan-name">読み込み中...</div>
+            </div>
+
+            <!-- 次のステップ -->
+            <div class="next-steps">
+                <h2>📋 次のステップ</h2>
+                <ol>
+                    <li>
+                        <strong>確認メールをチェック</strong><br>
+                        ご登録のメールアドレスに、ログイン情報をお送りしました。
+                    </li>
+                    <li>
+                        <strong>会員ダッシュボードへアクセス</strong><br>
+                        メール内のリンクから会員専用ページにアクセスできます。
+                    </li>
+                    <li>
+                        <strong>予想データを確認</strong><br>
+                        最新のAI予想データをご確認ください。
+                    </li>
+                </ol>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="action-buttons">
+                <a href="/" class="btn btn-primary">
+                    ホームに戻る
+                </a>
+                <a href="/dashboard" class="btn btn-secondary">
+                    ダッシュボードへ
+                </a>
+            </div>
+
+            <!-- サポート情報 -->
+            <div class="support-info">
+                <p>
+                    ご不明な点がございましたら、<br>
+                    <a href="mailto:support@nankan-analytics.keiba.link">support@nankan-analytics.keiba.link</a><br>
+                    までお問い合わせください。
+                </p>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
+
+<script>
+    // URLパラメータからプラン情報を取得
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    
+    // プラン判定（URLから推測）
+    let plan = 'Standard';
+    if (window.location.href.includes('premium')) {
+        plan = 'Premium';
+    }
+    
+    // LocalStorageに保存（簡易的なセッション管理）
+    if (sessionId) {
+        const userData = {
+            plan: plan.toLowerCase(),
+            sessionId: sessionId,
+            registeredAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        
+        localStorage.setItem('userPlan', plan.toLowerCase());
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        console.log('ユーザーデータ保存:', userData);
+    }
+    
+    // プラン名を表示
+    const planNameEl = document.getElementById('plan-name');
+    if (planNameEl) {
+        planNameEl.textContent = `${plan}会員`;
+    }
+    
+    // 3秒後に自動的にホームへリダイレクト（オプション）
+    // setTimeout(() => {
+    //     window.location.href = '/';
+    // }, 10000);
+</script>
+
+<style>
+    .welcome-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+    
+    .welcome-container {
+        max-width: 600px;
+        width: 100%;
+        background: rgba(30, 41, 59, 0.9);
+        border-radius: 1.5rem;
+        padding: 3rem 2rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .success-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        margin-bottom: 1.5rem;
+        animation: pulse 2s infinite;
+    }
+    
+    .success-icon svg {
+        color: white;
+    }
+    
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 20px rgba(16, 185, 129, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        margin-bottom: 1rem;
+    }
+    
+    .welcome-message {
+        font-size: 1.125rem;
+        color: #94a3b8;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+    
+    .plan-info {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .plan-label {
+        font-size: 0.875rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .plan-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #3b82f6;
+    }
+    
+    .next-steps {
+        text-align: left;
+        margin-bottom: 2rem;
+    }
+    
+    .next-steps h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .next-steps ol {
+        padding-left: 1.5rem;
+        color: #94a3b8;
+    }
+    
+    .next-steps li {
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+    
+    .next-steps strong {
+        color: #e2e8f0;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    }
+    
+    .btn-secondary {
+        background: rgba(51, 65, 85, 0.8);
+        color: #e2e8f0;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(71, 85, 105, 0.8);
+    }
+    
+    .support-info {
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(51, 65, 85, 0.5);
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+    
+    .support-info a {
+        color: #3b82f6;
+        text-decoration: none;
+    }
+    
+    .support-info a:hover {
+        text-decoration: underline;
+    }
+    
+    /* レスポンシブ */
+    @media (max-width: 640px) {
+        .welcome-container {
+            padding: 2rem 1.5rem;
+        }
+        
+        .welcome-title {
+            font-size: 1.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
