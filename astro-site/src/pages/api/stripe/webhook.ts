@@ -1,32 +1,15 @@
-// Stripe Webhook処理（冪等性対応版）
+// Stripe Webhook処理（Netlify Blobs対応版）
 import type { APIRoute } from 'astro';
 import Stripe from 'stripe';
-import { createClient } from '@supabase/supabase-js';
-import { sendWelcomeEmail } from '../../../lib/sendgrid-utils.js';
+import { saveMembershipData } from '../../../lib/membership/store.js';
 
 const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' });
 
-const supabase = createClient(
-    import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.SUPABASE_SERVICE_ROLE_KEY
-);
 
 export const POST: APIRoute = async ({ request }) => {
     try {
         console.log('[webhook] Received request');
         
-        // 一時的に署名検証をスキップして基本動作を確認
-        console.log('[webhook] Returning success without processing');
-        return new Response(JSON.stringify({ 
-            received: true, 
-            message: 'webhook received' 
-        }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        // TODO: 以下は一時的にコメントアウト
-        /*
         // Webhook署名検証
         const sig = request.headers.get('stripe-signature');
         if (!sig) {
@@ -42,8 +25,46 @@ export const POST: APIRoute = async ({ request }) => {
 
         // ❗ここは必ず raw body。json() や formData() は使わない
         const raw = await request.text();
-
-        */
+        
+        // 署名検証とイベント処理
+        const event = stripe.webhooks.constructEvent(raw, sig, secret);
+        console.log('[webhook] Event type:', event.type);
+        
+        // イベントタイプに応じた処理
+        switch (event.type) {
+            case 'checkout.session.completed':
+                console.log('[webhook] Processing checkout.session.completed');
+                await handleCheckoutCompleted(event.data.object);
+                break;
+                
+            case 'invoice.payment_succeeded':
+                console.log('[webhook] Processing invoice.payment_succeeded');
+                await handlePaymentSucceeded(event.data.object);
+                break;
+                
+            case 'invoice.payment_failed':
+                console.log('[webhook] Processing invoice.payment_failed');
+                await handlePaymentFailed(event.data.object);
+                break;
+                
+            case 'customer.subscription.updated':
+                console.log('[webhook] Processing customer.subscription.updated');
+                await handleSubscriptionUpdated(event.data.object);
+                break;
+                
+            case 'customer.subscription.deleted':
+                console.log('[webhook] Processing customer.subscription.deleted');
+                await handleSubscriptionDeleted(event.data.object);
+                break;
+                
+            default:
+                console.log(`[webhook] Unhandled event type: ${event.type}`);
+        }
+        
+        return new Response(JSON.stringify({ received: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
 
     } catch (error) {
         console.error('Webhook error:', error);
@@ -51,12 +72,12 @@ export const POST: APIRoute = async ({ request }) => {
     }
 }
 
-// Checkoutセッション完了処理（新仕様対応版）
+// Checkoutセッション完了処理（Netlify Blobs版）
 async function handleCheckoutCompleted(session) {
     try {
         const customerId = session.customer;
         const subscriptionId = session.subscription;
-        const customerEmail = session.customer_details?.email;
+        const customerEmail = session.customer_details?.email || session.customer_email;
 
         if (!customerId || !subscriptionId) {
             console.error('Missing customer or subscription ID');
@@ -73,53 +94,34 @@ async function handleCheckoutCompleted(session) {
         const priceId = subscription.items.data[0]?.price?.id;
         const planName = getPlanFromPriceId(priceId);
 
-        // ユーザープロファイルを取得（email で検索）
-        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-        if (authError || !authUsers?.users) {
-            console.error('Failed to list users:', authError);
-            return;
-        }
-
-        const user = authUsers.users.find(u => u.email === customerEmail);
-        if (!user) {
-            console.error('Unable to find user profile for email:', customerEmail);
-            return;
-        }
-
-        // subscriptionsテーブルとprofilesテーブルを同期更新
-        await upsertSubscriptionAndSnapshot({
-            subscriptionId: subscription.id,
-            profileId: user.id,
-            customerId,
-            priceId,
+        // Netlify Blobsに会員情報を保存
+        await saveMembershipData(customerEmail, {
             plan: planName,
             status: subscription.status,
-            currentPeriodStart: subscription.current_period_start,
-            currentPeriodEnd: subscription.current_period_end,
-            cancelAt: subscription.cancel_at,
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId: priceId,
+            currentPeriodStart: subscription.current_period_start ? new Date(subscription.current_period_start * 1000).toISOString() : null,
+            currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+            cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000).toISOString() : null,
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
-            defaultPaymentMethod: subscription.default_payment_method,
-            latestInvoice: subscription.latest_invoice
+            createdAt: new Date().toISOString()
         });
 
-        // ウェルカムメール送信（新規登録の場合）
-        if (customerEmail && planName !== 'free') {
-            await sendWelcomeEmail(customerEmail);
-        }
-
-        console.log(`Subscription activated for ${customerEmail}: ${planName}`);
+        console.log(`[webhook] Subscription activated for ${customerEmail}: ${planName}`);
     } catch (error) {
         console.error('Error handling checkout completion:', error);
     }
 }
 
-// 決済成功処理（新仕様対応版）
+// 決済成功処理（Netlify Blobs版）
 async function handlePaymentSucceeded(invoice) {
     try {
         const customerId = invoice.customer;
         const subscriptionId = invoice.subscription;
+        const customerEmail = invoice.customer_email;
 
-        if (!subscriptionId) return;
+        if (!subscriptionId || !customerEmail) return;
 
         const subscription = await getSubscription(subscriptionId);
         if (!subscription) return;
@@ -127,32 +129,32 @@ async function handlePaymentSucceeded(invoice) {
         const priceId = subscription.items.data[0]?.price?.id;
         const planName = getPlanFromPriceId(priceId);
 
-        // subscriptionsとprofilesを同期更新
-        await upsertSubscriptionAndSnapshot({
-            subscriptionId: subscription.id,
-            customerId,
-            priceId,
+        // Netlify Blobsに会員情報を更新
+        await saveMembershipData(customerEmail, {
             plan: planName,
-            status: 'active', // 決済成功なのでactive
-            currentPeriodStart: subscription.current_period_start,
-            currentPeriodEnd: subscription.current_period_end,
-            cancelAt: subscription.cancel_at,
-            cancelAtPeriodEnd: subscription.cancel_at_period_end,
-            defaultPaymentMethod: subscription.default_payment_method,
-            latestInvoice: subscription.latest_invoice
+            status: 'active',
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId: priceId,
+            currentPeriodStart: subscription.current_period_start ? new Date(subscription.current_period_start * 1000).toISOString() : null,
+            currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+            lastPaymentDate: new Date().toISOString()
         });
 
-        console.log(`Payment succeeded for customer: ${customerId}`);
+        console.log(`[webhook] Payment succeeded for ${customerEmail}: ${planName}`);
     } catch (error) {
         console.error('Error handling payment success:', error);
     }
 }
 
-// 決済失敗処理（新仕様対応版）
+// 決済失敗処理（Netlify Blobs版）
 async function handlePaymentFailed(invoice) {
     try {
         const customerId = invoice.customer;
         const subscriptionId = invoice.subscription;
+        const customerEmail = invoice.customer_email;
+
+        if (!customerEmail) return;
 
         if (subscriptionId) {
             const subscription = await getSubscription(subscriptionId);
@@ -160,86 +162,83 @@ async function handlePaymentFailed(invoice) {
                 const priceId = subscription.items.data[0]?.price?.id;
                 const planName = getPlanFromPriceId(priceId);
 
-                // subscriptionsとprofilesを同期更新（past_due状態）
-                await upsertSubscriptionAndSnapshot({
-                    subscriptionId: subscription.id,
-                    customerId,
-                    priceId,
+                // Netlify Blobsに会員情報を更新（past_due状態）
+                await saveMembershipData(customerEmail, {
                     plan: planName,
-                    status: 'past_due', // 決済失敗なのでpast_due
-                    currentPeriodStart: subscription.current_period_start,
-                    currentPeriodEnd: subscription.current_period_end,
-                    cancelAt: subscription.cancel_at,
-                    cancelAtPeriodEnd: subscription.cancel_at_period_end,
-                    defaultPaymentMethod: subscription.default_payment_method,
-                    latestInvoice: subscription.latest_invoice
+                    status: 'past_due',
+                    stripeCustomerId: customerId,
+                    stripeSubscriptionId: subscriptionId,
+                    stripePriceId: priceId,
+                    paymentFailedAt: new Date().toISOString()
                 });
             }
-        } else {
-            // サブスクリプションIDがない場合は profiles のみ更新
-            await supabase
-                .from('profiles')
-                .update({
-                    active_status: 'past_due'
-                })
-                .eq('stripe_customer_id', customerId);
         }
 
-        console.log(`Payment failed for customer: ${customerId}`);
+        console.log(`[webhook] Payment failed for ${customerEmail}`);
     } catch (error) {
         console.error('Error handling payment failure:', error);
     }
 }
 
-// サブスクリプション更新処理（新仕様対応版）
+// サブスクリプション更新処理（Netlify Blobs版）
 async function handleSubscriptionUpdated(subscription) {
     try {
         const customerId = subscription.customer;
         const priceId = subscription.items.data[0]?.price?.id;
         const planName = getPlanFromPriceId(priceId);
+        
+        // Stripe APIから顧客のメールアドレスを取得
+        const customer = await stripe.customers.retrieve(customerId);
+        const customerEmail = customer.email;
+        
+        if (!customerEmail) {
+            console.error('[webhook] No email found for customer:', customerId);
+            return;
+        }
 
-        // subscriptionsとprofilesを同期更新
-        await upsertSubscriptionAndSnapshot({
-            subscriptionId: subscription.id,
-            customerId,
-            priceId,
+        // Netlify Blobsに会員情報を更新
+        await saveMembershipData(customerEmail, {
             plan: planName,
             status: subscription.status,
-            currentPeriodStart: subscription.current_period_start,
-            currentPeriodEnd: subscription.current_period_end,
-            cancelAt: subscription.cancel_at,
-            cancelAtPeriodEnd: subscription.cancel_at_period_end,
-            defaultPaymentMethod: subscription.default_payment_method,
-            latestInvoice: subscription.latest_invoice
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscription.id,
+            stripePriceId: priceId,
+            currentPeriodStart: subscription.current_period_start ? new Date(subscription.current_period_start * 1000).toISOString() : null,
+            currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+            cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000).toISOString() : null,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end
         });
 
-        console.log(`Subscription updated for customer: ${customerId}`);
+        console.log(`[webhook] Subscription updated for ${customerEmail}: ${planName}`);
     } catch (error) {
         console.error('Error handling subscription update:', error);
     }
 }
 
-// サブスクリプション削除処理（新仕様対応版）
+// サブスクリプション削除処理（Netlify Blobs版）
 async function handleSubscriptionDeleted(subscription) {
     try {
         const customerId = subscription.customer;
+        
+        // Stripe APIから顧客のメールアドレスを取得
+        const customer = await stripe.customers.retrieve(customerId);
+        const customerEmail = customer.email;
+        
+        if (!customerEmail) {
+            console.error('[webhook] No email found for customer:', customerId);
+            return;
+        }
 
-        // subscriptionsとprofilesを同期更新（キャンセル状態）
-        await upsertSubscriptionAndSnapshot({
-            subscriptionId: subscription.id,
-            customerId,
-            priceId: subscription.items.data[0]?.price?.id || null,
-            plan: 'free', // キャンセル時は free プランに戻す
+        // Netlify Blobsに会員情報を更新（キャンセル状態）
+        await saveMembershipData(customerEmail, {
+            plan: 'free',
             status: 'canceled',
-            currentPeriodStart: subscription.current_period_start,
-            currentPeriodEnd: subscription.current_period_end,
-            cancelAt: subscription.cancel_at,
-            cancelAtPeriodEnd: subscription.cancel_at_period_end,
-            defaultPaymentMethod: subscription.default_payment_method,
-            latestInvoice: subscription.latest_invoice
+            stripeCustomerId: customerId,
+            canceledAt: new Date().toISOString(),
+            previousPlan: getPlanFromPriceId(subscription.items.data[0]?.price?.id)
         });
 
-        console.log(`Subscription canceled for customer: ${customerId}`);
+        console.log(`[webhook] Subscription canceled for ${customerEmail}`);
     } catch (error) {
         console.error('Error handling subscription deletion:', error);
     }
@@ -266,7 +265,8 @@ function getPlanFromPriceId(priceId: string): string {
     return 'free';
 }
 
-// subscriptionsテーブルとprofilesテーブルを同期更新する共通関数
+// 削除: Supabase関連の関数は不要
+/*
 async function upsertSubscriptionAndSnapshot({
     subscriptionId,
     profileId = null,
@@ -342,3 +342,4 @@ async function upsertSubscriptionAndSnapshot({
         console.error('Error in upsertSubscriptionAndSnapshot:', error);
     }
 }
+*/
