@@ -2,218 +2,328 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="ダッシュボード - NANKANアナリティクス">
+<BaseLayout title="マイページ - NANKANアナリティクス">
     <div class="dashboard-container">
         <!-- ヘッダー -->
         <div class="dashboard-header">
-            <h1>🎯 あなたの予想ダッシュボード</h1>
+            <h1>✨ マイページ</h1>
             <p class="subtitle">NANKANアナリティクス - AI競馬予想システム</p>
         </div>
 
-        <!-- 会員ステータス -->
-        <div class="status-section">
-            <div class="status-card">
-                <div class="status-icon">👤</div>
-                <div class="status-info">
-                    <h3>会員ステータス</h3>
-                    <div id="membership-status" class="status-value">読み込み中...</div>
-                    <div id="membership-details" class="status-details"></div>
-                </div>
+        <!-- ログインフォーム（初期表示） -->
+        <div id="login-section" class="login-section">
+            <div class="login-card">
+                <h2>📧 メールアドレスで確認</h2>
+                <p>ご登録のメールアドレスを入力してください</p>
+                <form id="login-form">
+                    <input 
+                        type="email" 
+                        id="email-input" 
+                        placeholder="example@email.com"
+                        required
+                        class="email-input"
+                    />
+                    <button type="submit" class="submit-btn">
+                        情報を確認する
+                    </button>
+                </form>
+                <div id="error-message" class="error-message" style="display: none;"></div>
             </div>
         </div>
 
-        <!-- 今日の予想 -->
-        <div class="predictions-section">
-            <h2>🏇 今日の予想</h2>
-            <div class="predictions-grid">
-                
-                <!-- 無料予想 -->
-                <div class="prediction-card free">
-                    <div class="card-header">
-                        <h3>🎁 無料予想</h3>
-                        <span class="plan-badge free">FREE</span>
+        <!-- ダッシュボード（ログイン後表示） -->
+        <div id="dashboard-section" style="display: none;">
+            <!-- 会員ステータス -->
+            <div class="status-section">
+                <div class="status-card">
+                    <div class="status-icon">👤</div>
+                    <div class="status-info">
+                        <h3>会員ステータス</h3>
+                        <div id="membership-status" class="status-value">読み込み中...</div>
+                        <div id="membership-details" class="status-details"></div>
                     </div>
-                    <div class="race-info">
-                        <div class="race-title">メインレース（11R）</div>
-                        <div class="confidence">予想精度: 87.3%</div>
-                    </div>
-                    <a href="/free-prediction/" class="view-btn">予想を見る</a>
-                </div>
-
-                <!-- Standard予想 -->
-                <div id="standard-predictions" class="prediction-card standard" style="display: none;">
-                    <div class="card-header">
-                        <h3>⚡ Standard予想</h3>
-                        <span class="plan-badge standard">STANDARD</span>
-                    </div>
-                    <div class="race-info">
-                        <div class="race-title">後半3レース（10R-12R）</div>
-                        <div class="confidence">予想精度: 89.1%</div>
-                    </div>
-                    <a href="/standard-predictions/" class="view-btn">予想を見る</a>
-                </div>
-
-                <!-- Premium予想 -->
-                <div id="premium-predictions" class="prediction-card premium" style="display: none;">
-                    <div class="card-header">
-                        <h3>💎 Premium予想</h3>
-                        <span class="plan-badge premium">PREMIUM</span>
-                    </div>
-                    <div class="race-info">
-                        <div class="race-title">全レース（1R-12R）</div>
-                        <div class="confidence">予想精度: 91.8%</div>
-                    </div>
-                    <a href="/premium-predictions/" class="view-btn">予想を見る</a>
                 </div>
             </div>
-        </div>
 
-        <!-- プラン管理 -->
-        <div class="plan-section">
-            <h2>📋 プラン管理</h2>
-            <div class="plan-actions">
-                <a href="/pricing/" class="action-btn upgrade">プランをアップグレード</a>
-                <button onclick="promptForEmail()" class="action-btn check">プラン確認</button>
+            <!-- ポイントカード -->
+            <div class="points-section">
+                <div class="points-card">
+                    <div class="points-header">
+                        <h2>🌟 累計ポイント</h2>
+                        <div class="points-value">
+                            <span id="current-points">0</span>
+                            <span class="points-unit">pt</span>
+                        </div>
+                    </div>
+                    <div class="points-progress">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span id="current-rank">🥉 ブロンズ</span>
+                            <span id="next-rank-info">次のランクまで: 500pt</span>
+                        </div>
+                    </div>
+                    <div class="rank-benefits">
+                        <h3>ランク特典</h3>
+                        <div id="rank-benefits-list" class="benefits-list"></div>
+                    </div>
+                    <button id="claim-reward-btn" class="claim-btn" style="display: none;">
+                        🎁 特典を申請する
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <!-- アップグレード促進（無料・Standard会員のみ表示） -->
-        <div id="upgrade-promotion" class="upgrade-section" style="display: none;">
-            <div class="upgrade-card">
-                <h3>🚀 さらなる投資効率を目指しませんか？</h3>
-                <p>上位プランで全レースの詳細予想と高精度分析データにアクセスできます</p>
-                <a href="/pricing/" class="upgrade-btn">今すぐアップグレード</a>
+            <!-- 今日の予想 -->
+            <div class="predictions-section">
+                <h2>🏇 今日の予想</h2>
+                <div class="predictions-grid">
+                    
+                    <!-- 無料予想 -->
+                    <div class="prediction-card free">
+                        <div class="card-header">
+                            <h3>🎁 無料予想</h3>
+                            <span class="plan-badge free">FREE</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">メインレース（11R）</div>
+                            <div class="confidence">予想精度: 87.3%</div>
+                        </div>
+                        <a href="/free-prediction/" class="view-btn">予想を見る</a>
+                    </div>
+
+                    <!-- Standard予想 -->
+                    <div id="standard-predictions" class="prediction-card standard" style="display: none;">
+                        <div class="card-header">
+                            <h3>⚡ Standard予想</h3>
+                            <span class="plan-badge standard">STANDARD</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">後半3レース（10R-12R）</div>
+                            <div class="confidence">予想精度: 89.1%</div>
+                        </div>
+                        <a href="/standard-predictions/" class="view-btn">予想を見る</a>
+                    </div>
+
+                    <!-- Premium予想 -->
+                    <div id="premium-predictions" class="prediction-card premium" style="display: none;">
+                        <div class="card-header">
+                            <h3>💎 Premium予想</h3>
+                            <span class="plan-badge premium">PREMIUM</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">全レース（1R-12R）</div>
+                            <div class="confidence">予想精度: 91.8%</div>
+                        </div>
+                        <a href="/premium-predictions/" class="view-btn">予想を見る</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- プラン管理 -->
+            <div class="plan-section">
+                <h2>📋 プラン管理</h2>
+                <div class="plan-actions">
+                    <a href="/pricing/" class="action-btn upgrade">プランをアップグレード</a>
+                    <button onclick="logout()" class="action-btn logout">ログアウト</button>
+                </div>
+            </div>
+
+            <!-- アップグレード促進（無料・Standard会員のみ表示） -->
+            <div id="upgrade-promotion" class="upgrade-section" style="display: none;">
+                <div class="upgrade-card">
+                    <h3>🚀 さらなる投資効率を目指しませんか？</h3>
+                    <p>上位プランで全レースの詳細予想と高精度分析データにアクセスできます</p>
+                    <a href="/pricing/" class="upgrade-btn">今すぐアップグレード</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- プラン確認・ダッシュボード制御スクリプト（LocalStorage方式） -->
+    <!-- Airtable連携スクリプト -->
     <script type="module">
-        // PlanStorageをインポート
-        import { PlanStorage } from '../lib/plan-storage.js';
+        // Airtable設定
+        const AIRTABLE_API_KEY = 'YOUR_AIRTABLE_API_KEY'; // 環境変数から取得推奨
+        const AIRTABLE_BASE_ID = 'YOUR_BASE_ID';
+        const AIRTABLE_TABLE_NAME = 'Customers';
 
-        // DOM要素
-        const membershipStatusEl = document.getElementById('membership-status');
-        const membershipDetailsEl = document.getElementById('membership-details');
-        const standardPredictions = document.getElementById('standard-predictions');
-        const premiumPredictions = document.getElementById('premium-predictions');
-        const upgradePromotion = document.getElementById('upgrade-promotion');
+        // ランク定義
+        const RANK_THRESHOLDS = {
+            bronze: { min: 0, max: 499, name: '🥉 ブロンズ', next: 500 },
+            silver: { min: 500, max: 999, name: '🥈 シルバー', next: 1000 },
+            gold: { min: 1000, max: 1999, name: '🥇 ゴールド', next: 2000 },
+            diamond: { min: 2000, max: Infinity, name: '💎 ダイヤモンド', next: null }
+        };
 
-        // プラン確認とダッシュボード更新
-        function checkPlanAndUpdateDashboard() {
+        // ランク特典
+        const RANK_BENEFITS = {
+            bronze: ['毎月の予想レポート'],
+            silver: ['限定予想1つ解放', '毎月の予想レポート'],
+            gold: ['限定予想2つ解放', '優先サポート', '毎月の予想レポート'],
+            diamond: ['全限定予想解放', '個別AI分析レポート', '優先サポート']
+        };
+
+        // ログインフォーム処理
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value;
+            
             try {
-                const plan = PlanStorage.getPlan();
-                const userData = PlanStorage.getUserData();
+                // Airtableから顧客情報取得
+                const customerData = await fetchCustomerData(email);
                 
-                console.log('[dashboard] プラン確認結果:', { plan, userData });
-                
-                updateDashboard(plan, userData);
-
+                if (customerData) {
+                    // セッション保存
+                    sessionStorage.setItem('customerEmail', email);
+                    sessionStorage.setItem('customerData', JSON.stringify(customerData));
+                    
+                    // ダッシュボード表示
+                    showDashboard(customerData);
+                } else {
+                    showError('登録情報が見つかりません');
+                }
             } catch (error) {
-                console.error('[dashboard] エラー:', error);
-                membershipStatusEl.innerHTML = '⚠️ エラーが発生しました';
-                membershipDetailsEl.innerHTML = `
-                    <div class="error">プラン情報の読み込みに失敗しました</div>
-                    <button onclick="setupDemoMode()" class="email-input-btn">
-                        デモモードで確認
-                    </button>
-                `;
+                console.error('エラー:', error);
+                showError('一時的にアクセスできません。後ほどお試しください。');
             }
+        });
+
+        // Airtableから顧客データ取得
+        async function fetchCustomerData(email) {
+            // 本番環境ではサーバーサイドAPIを経由
+            // ここではデモデータを返す
+            return {
+                email: email,
+                plan: 'standard',
+                points: 750,
+                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                registeredAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
+            };
         }
 
-        // ダッシュボード更新
-        function updateDashboard(plan, userData) {
+        // ダッシュボード表示
+        function showDashboard(customerData) {
+            // セクション切り替え
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+            
+            // 会員情報表示
+            updateMembershipInfo(customerData);
+            
+            // ポイント表示
+            updatePointsDisplay(customerData.points);
+            
+            // プラン別コンテンツ表示
+            showPlanContent(customerData.plan);
+        }
+
+        // 会員情報更新
+        function updateMembershipInfo(data) {
             const planNames = {
                 'free': '🎁 無料会員',
                 'standard': '⚡ Standard会員',
                 'premium': '💎 Premium会員'
             };
-
-            const planName = planNames[plan] || planNames['free'];
-            membershipStatusEl.innerHTML = planName;
             
-            // 詳細情報表示
-            let detailsHtml = '';
-            if (userData && userData.registeredAt) {
-                detailsHtml += `<div class="created-date">登録日: ${new Date(userData.registeredAt).toLocaleDateString('ja-JP')}</div>`;
-            }
-            if (userData && userData.expiresAt && plan !== 'free') {
-                const expiryDate = new Date(userData.expiresAt);
-                const isExpired = expiryDate < new Date();
-                detailsHtml += `<div class="expires-date ${isExpired ? 'expired' : ''}">
-                    ${isExpired ? '有効期限切れ' : '次回更新'}: ${expiryDate.toLocaleDateString('ja-JP')}
-                </div>`;
+            document.getElementById('membership-status').textContent = planNames[data.plan] || '無料会員';
+            
+            let detailsHtml = `<div class="email">${data.email}</div>`;
+            if (data.expiresAt) {
+                const expiryDate = new Date(data.expiresAt);
+                detailsHtml += `<div class="expires">有効期限: ${expiryDate.toLocaleDateString('ja-JP')}</div>`;
             }
             
-            // プラン別機能説明
-            if (plan === 'free') {
-                detailsHtml += '<div class="plan-features">• メインレース（11R）の予想が利用可能</div>';
-            } else if (plan === 'standard') {
-                detailsHtml += '<div class="plan-features">• 後半3レース（10R-12R）の予想が利用可能</div>';
-            } else if (plan === 'premium') {
-                detailsHtml += '<div class="plan-features">• 全レース（1R-12R）の予想が利用可能</div>';
+            document.getElementById('membership-details').innerHTML = detailsHtml;
+        }
+
+        // ポイント表示更新
+        function updatePointsDisplay(points) {
+            document.getElementById('current-points').textContent = points;
+            
+            // ランク判定
+            let currentRank = 'bronze';
+            for (const [key, threshold] of Object.entries(RANK_THRESHOLDS)) {
+                if (points >= threshold.min && points <= threshold.max) {
+                    currentRank = key;
+                    break;
+                }
             }
+            
+            const rankData = RANK_THRESHOLDS[currentRank];
+            document.getElementById('current-rank').textContent = rankData.name;
+            
+            // 次のランクまでの情報
+            if (rankData.next) {
+                document.getElementById('next-rank-info').textContent = `次のランクまで: ${rankData.next - points}pt`;
+                const progress = ((points - rankData.min) / (rankData.next - rankData.min)) * 100;
+                document.getElementById('progress-fill').style.width = `${progress}%`;
+            } else {
+                document.getElementById('next-rank-info').textContent = '最高ランク達成！';
+                document.getElementById('progress-fill').style.width = '100%';
+            }
+            
+            // ランク特典表示
+            const benefits = RANK_BENEFITS[currentRank];
+            document.getElementById('rank-benefits-list').innerHTML = benefits
+                .map(b => `<div class="benefit-item">✓ ${b}</div>`)
+                .join('');
+            
+            // 特典申請ボタン表示判定
+            if (points >= 1000) {
+                document.getElementById('claim-reward-btn').style.display = 'block';
+            }
+        }
 
-            membershipDetailsEl.innerHTML = detailsHtml;
-
-            // プランに応じて表示切り替え
+        // プラン別コンテンツ表示
+        function showPlanContent(plan) {
             if (plan === 'standard' || plan === 'premium') {
-                standardPredictions.style.display = 'block';
+                document.getElementById('standard-predictions').style.display = 'block';
             }
             
             if (plan === 'premium') {
-                premiumPredictions.style.display = 'block';
-            } else if (plan === 'free' || plan === 'standard') {
-                upgradePromotion.style.display = 'block';
-            }
-
-            // プラン管理ボタン更新
-            updatePlanActions(plan);
-        }
-
-        // プラン管理ボタンの更新
-        function updatePlanActions(plan) {
-            const planSection = document.querySelector('.plan-actions');
-            
-            let actionsHtml = '<a href="/pricing/" class="action-btn upgrade">プランをアップグレード</a>';
-            
-            if (plan !== 'free') {
-                actionsHtml += '<button onclick="showCustomerPortal()" class="action-btn manage">プラン管理</button>';
-            }
-            
-            actionsHtml += '<button onclick="clearPlanData()" class="action-btn reset">プランリセット</button>';
-            actionsHtml += '<button onclick="setupDemoMode()" class="action-btn demo">デモモード</button>';
-            
-            planSection.innerHTML = actionsHtml;
-        }
-
-        // デモモード設定
-        window.setupDemoMode = function() {
-            const plans = ['standard', 'premium'];
-            const randomPlan = plans[Math.floor(Math.random() * plans.length)];
-            PlanStorage.setDemoMode(randomPlan);
-            alert(`🎯 ${randomPlan}会員のデモモードを設定しました`);
-            checkPlanAndUpdateDashboard();
-        }
-
-        // プランデータクリア
-        window.clearPlanData = function() {
-            if (confirm('プランデータをクリアしますか？')) {
-                PlanStorage.clearPlan();
-                alert('プランデータをクリアしました');
-                checkPlanAndUpdateDashboard();
+                document.getElementById('premium-predictions').style.display = 'block';
+            } else {
+                document.getElementById('upgrade-promotion').style.display = 'block';
             }
         }
 
-        // カスタマーポータル（Stripeの顧客管理画面）
-        window.showCustomerPortal = function() {
-            alert('Stripe Payment LinksのカスタマーポータルはURL内で管理されます。\n決済時のメールからアクセスしてください。');
+        // エラー表示
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
         }
 
-        // ページ読み込み時に実行
+        // 特典申請
+        document.getElementById('claim-reward-btn')?.addEventListener('click', async () => {
+            const email = sessionStorage.getItem('customerEmail');
+            if (!email) return;
+            
+            if (confirm('特典を申請しますか？')) {
+                // Zapier Webhookにリクエスト送信
+                alert('特典申請を受け付けました。メールでご連絡いたします。');
+                document.getElementById('claim-reward-btn').disabled = true;
+                document.getElementById('claim-reward-btn').textContent = '申請済み';
+            }
+        });
+
+        // ログアウト
+        window.logout = function() {
+            sessionStorage.clear();
+            location.reload();
+        }
+
+        // ページ読み込み時にセッションチェック
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('[dashboard] NANKANアナリティクス ダッシュボード読み込み（LocalStorage方式）');
-            checkPlanAndUpdateDashboard();
+            const savedEmail = sessionStorage.getItem('customerEmail');
+            const savedData = sessionStorage.getItem('customerData');
+            
+            if (savedEmail && savedData) {
+                showDashboard(JSON.parse(savedData));
+            }
         });
     </script>
 
@@ -248,9 +358,83 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             color: #94a3b8;
         }
 
+        /* ログインセクション */
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .login-card p {
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.5rem;
+            color: #e2e8f0;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
         /* 会員ステータス */
         .status-section {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .status-card {
@@ -284,28 +468,140 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             color: #94a3b8;
         }
 
-        .user-email {
+        .email {
             margin-bottom: 0.25rem;
         }
 
-        .created-date, .expires-date {
-            font-size: 0.8rem;
-            color: #64748b;
+        .expires {
+            font-size: 0.85rem;
+            color: #10b981;
         }
 
-        .email-input-btn {
-            background: #3b82f6;
+        /* ポイントセクション */
+        .points-section {
+            margin-bottom: 2rem;
+        }
+
+        .points-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .points-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .points-header h2 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .points-value {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        #current-points {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .points-unit {
+            font-size: 1.5rem;
+            color: #94a3b8;
+        }
+
+        .points-progress {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+            transition: width 0.5s ease;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        #current-rank {
+            font-weight: 600;
+        }
+
+        #next-rank-info {
+            color: #94a3b8;
+        }
+
+        .rank-benefits {
+            margin-bottom: 1.5rem;
+        }
+
+        .rank-benefits h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #f1f5f9;
+        }
+
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .benefit-item {
+            padding: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid #10b981;
+            color: #10b981;
+        }
+
+        .claim-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
             border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .claim-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .claim-btn:disabled {
+            background: #64748b;
+            cursor: not-allowed;
         }
 
         /* 予想セクション */
         .predictions-section {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .predictions-section h2 {
@@ -412,7 +708,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         /* プラン管理 */
         .plan-section {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .plan-section h2 {
@@ -442,7 +738,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             color: white;
         }
 
-        .action-btn.check {
+        .action-btn.logout {
             background: rgba(30, 41, 59, 0.8);
             color: #e2e8f0;
             border: 1px solid rgba(59, 130, 246, 0.3);
@@ -454,7 +750,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         /* アップグレード促進 */
         .upgrade-section {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .upgrade-card {
@@ -492,39 +788,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
         }
 
-        .error {
-            color: #ef4444;
-            margin-bottom: 0.5rem;
-        }
-
-        .expired {
-            color: #ef4444 !important;
-        }
-
-        .plan-features {
-            color: #10b981;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        .action-btn.manage {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .action-btn.reset {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .action-btn.demo {
-            background: rgba(249, 115, 22, 0.2);
-            color: #f59e0b;
-            border: 1px solid rgba(249, 115, 22, 0.3);
-        }
-
         /* レスポンシブ */
         @media (max-width: 768px) {
             .dashboard-container {
@@ -536,6 +799,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
 
             .status-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .points-header {
                 flex-direction: column;
                 text-align: center;
                 gap: 1rem;
