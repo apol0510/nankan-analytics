@@ -190,12 +190,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         // Airtableから顧客データ取得
         async function fetchCustomerData(email) {
-            // 本番環境ではサーバーサイドAPIを経由
-            // ここではデモデータを返す
+            try {
+                // 実際のAirtableAPIで顧客データ取得
+                const response = await fetch('/.netlify/functions/test-read-only');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    // 該当するメールアドレスを探す
+                    const customer = data.data.find(c => c.email === email);
+                    if (customer) {
+                        return {
+                            email: customer.email,
+                            plan: customer.plan.toLowerCase(),
+                            points: customer.points || 0,
+                            rank: customer.rank,
+                            name: customer.name,
+                            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                            registeredAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Airtable取得エラー:', error);
+            }
+            
+            // フォールバック：デモデータ
             return {
                 email: email,
                 plan: 'standard',
-                points: 750,
+                points: 1250, // テスト用に1000pt以上に変更
                 expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
                 registeredAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
             };
@@ -269,8 +292,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 .join('');
             
             // 特典申請ボタン表示判定
+            console.log(`ポイント判定: ${points}pt >= 1000?`, points >= 1000);
             if (points >= 1000) {
-                document.getElementById('claim-reward-btn').style.display = 'block';
+                console.log('特典申請ボタンを表示');
+                const button = document.getElementById('claim-reward-btn');
+                if (button) {
+                    button.style.display = 'block';
+                    console.log('ボタン表示設定完了');
+                } else {
+                    console.error('claim-reward-btnが見つかりません');
+                }
+            } else {
+                console.log(`ポイント不足のため非表示: ${points}pt < 1000pt`);
             }
         }
 
@@ -300,13 +333,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // 特典申請
         document.getElementById('claim-reward-btn')?.addEventListener('click', async () => {
             const email = sessionStorage.getItem('customerEmail');
-            if (!email) return;
+            if (!email) {
+                showError('メールアドレスが取得できません');
+                return;
+            }
             
-            if (confirm('特典を申請しますか？')) {
-                // Zapier Webhookにリクエスト送信
-                alert('特典申請を受け付けました。メールでご連絡いたします。');
-                document.getElementById('claim-reward-btn').disabled = true;
-                document.getElementById('claim-reward-btn').textContent = '申請済み';
+            if (confirm('特典を申請しますか？\n\n申請後は取り消しできません。')) {
+                const button = document.getElementById('claim-reward-btn');
+                button.disabled = true;
+                button.textContent = '申請中...';
+                
+                try {
+                    const response = await fetch('/.netlify/functions/claim-reward', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        button.textContent = '✅ 申請済み';
+                        button.style.background = '#64748b';
+                        alert('特典申請を受け付けました！\n3営業日以内にメールでご連絡いたします。');
+                    } else {
+                        throw new Error(data.error || '申請に失敗しました');
+                    }
+                    
+                } catch (error) {
+                    console.error('特典申請エラー:', error);
+                    button.disabled = false;
+                    button.textContent = '🎁 特典を申請する';
+                    alert('申請に失敗しました: ' + error.message);
+                }
             }
         });
 
