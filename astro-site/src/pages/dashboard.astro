@@ -13,9 +13,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- ログインフォーム（初期表示） -->
         <div id="login-section" class="login-section">
             <div class="login-card">
-                <h2>📧 メールアドレスで確認</h2>
-                <p>ご登録のメールアドレスを入力してください</p>
-                <form id="login-form">
+                <h2>🔐 マジックリンクログイン</h2>
+                <p>メールアドレスを入力すると、ログインリンクをお送りします</p>
+                <form id="magic-link-form">
                     <input 
                         type="email" 
                         id="email-input" 
@@ -23,10 +23,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         required
                         class="email-input"
                     />
-                    <button type="submit" class="submit-btn">
-                        情報を確認する
+                    <button type="submit" class="submit-btn" id="magic-link-btn">
+                        ログインリンクを送信
                     </button>
                 </form>
+                <div id="success-message" class="success-message" style="display: none;"></div>
                 <div id="error-message" class="error-message" style="display: none;"></div>
             </div>
         </div>
@@ -140,88 +141,94 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
     </div>
 
-    <!-- Airtable連携スクリプト -->
+    <!-- マジックリンク認証システム -->
     <script type="module">
-        // Airtable設定
-        const AIRTABLE_API_KEY = 'YOUR_AIRTABLE_API_KEY'; // 環境変数から取得推奨
-        const AIRTABLE_BASE_ID = 'YOUR_BASE_ID';
-        const AIRTABLE_TABLE_NAME = 'Customers';
+        import { SessionManager, authenticateWithMagicLink, logout as logoutFunction } from '/src/lib/session.js';
+
+        // セッションマネージャー初期化
+        const sessionManager = new SessionManager();
 
         // ランク定義
         const RANK_THRESHOLDS = {
-            bronze: { min: 0, max: 499, name: '🥉 ブロンズ', next: 500 },
-            silver: { min: 500, max: 999, name: '🥈 シルバー', next: 1000 },
-            gold: { min: 1000, max: 1999, name: '🥇 ゴールド', next: 2000 },
-            diamond: { min: 2000, max: Infinity, name: '💎 ダイヤモンド', next: null }
+            ビギナー: { min: 0, max: 499, name: '🌱 ビギナー', next: 500 },
+            ブロンズ: { min: 500, max: 999, name: '🥉 ブロンズ', next: 1000 },
+            シルバー: { min: 1000, max: 1999, name: '🥈 シルバー', next: 2000 },
+            ゴールド: { min: 2000, max: 4999, name: '🥇 ゴールド', next: 5000 },
+            プラチナ: { min: 5000, max: 9999, name: '🏆 プラチナ', next: 10000 },
+            ダイヤモンド: { min: 10000, max: Infinity, name: '💎 ダイヤモンド', next: null }
         };
 
         // ランク特典
         const RANK_BENEFITS = {
-            bronze: ['毎月の予想レポート'],
-            silver: ['限定予想1つ解放', '毎月の予想レポート'],
-            gold: ['限定予想2つ解放', '優先サポート', '毎月の予想レポート'],
-            diamond: ['全限定予想解放', '個別AI分析レポート', '優先サポート']
+            ビギナー: ['毎日のポイント獲得'],
+            ブロンズ: ['毎日のポイント獲得', '月間レポート'],
+            シルバー: ['毎日のポイント獲得', '月間レポート', '特典申請可能'],
+            ゴールド: ['毎日のポイント獲得', '優先サポート', '月間レポート', '特典申請可能'],
+            プラチナ: ['毎日のポイント獲得', '優先サポート', '詳細分析レポート', '特典申請可能'],
+            ダイヤモンド: ['毎日のポイント獲得', '個別AI分析', 'VIPサポート', '特典申請可能']
         };
 
-        // ログインフォーム処理
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
+        // マジックリンクフォーム処理
+        document.getElementById('magic-link-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email-input').value;
+            const button = document.getElementById('magic-link-btn');
+            
+            button.disabled = true;
+            button.textContent = '送信中...';
             
             try {
-                // Airtableから顧客情報取得
-                const customerData = await fetchCustomerData(email);
+                const response = await fetch('/.netlify/functions/send-magic-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
                 
-                if (customerData) {
-                    // セッション保存
-                    sessionStorage.setItem('customerEmail', email);
-                    sessionStorage.setItem('customerData', JSON.stringify(customerData));
-                    
-                    // ダッシュボード表示
-                    showDashboard(customerData);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('ログインリンクをメールで送信しました。メールをご確認ください。');
+                    document.getElementById('email-input').value = '';
                 } else {
-                    showError('登録情報が見つかりません');
+                    showError(data.error || 'メール送信に失敗しました');
                 }
+                
             } catch (error) {
-                console.error('エラー:', error);
+                console.error('マジックリンク送信エラー:', error);
                 showError('一時的にアクセスできません。後ほどお試しください。');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'ログインリンクを送信';
             }
         });
 
-        // Airtableから顧客データ取得
-        async function fetchCustomerData(email) {
-            try {
-                // 実際のAirtableAPIで顧客データ取得
-                const response = await fetch('/.netlify/functions/test-read-only');
-                const data = await response.json();
-                
-                if (data.success && data.data) {
-                    // 該当するメールアドレスを探す
-                    const customer = data.data.find(c => c.email === email);
-                    if (customer) {
-                        return {
-                            email: customer.email,
-                            plan: customer.plan.toLowerCase(),
-                            points: customer.points || 0,
-                            rank: customer.rank,
-                            name: customer.name,
-                            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                            registeredAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
-                        };
-                    }
-                }
-            } catch (error) {
-                console.error('Airtable取得エラー:', error);
-            }
+        // URLパラメータからトークン認証処理
+        async function handleTokenAuth() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const email = urlParams.get('email');
             
-            // フォールバック：デモデータ
-            return {
-                email: email,
-                plan: 'standard',
-                points: 1250, // テスト用に1000pt以上に変更
-                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                registeredAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
-            };
+            if (token && email) {
+                console.log('マジックリンク認証開始:', email);
+                
+                try {
+                    const result = await authenticateWithMagicLink(token, email);
+                    
+                    if (result.success) {
+                        console.log('認証成功:', result.customer);
+                        // URLからパラメータを削除
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        // ダッシュボード表示
+                        showDashboard(result.customer);
+                    } else {
+                        showError(result.error || '認証に失敗しました');
+                    }
+                    
+                } catch (error) {
+                    console.error('認証エラー:', error);
+                    showError('認証に失敗しました');
+                }
+            }
         }
 
         // ダッシュボード表示
@@ -234,7 +241,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             updateMembershipInfo(customerData);
             
             // ポイント表示
-            updatePointsDisplay(customerData.points);
+            updatePointsDisplay(customerData.points, customerData.hasClaimedReward);
             
             // プラン別コンテンツ表示
             showPlanContent(customerData.plan);
@@ -248,62 +255,58 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 'premium': '💎 Premium会員'
             };
             
-            document.getElementById('membership-status').textContent = planNames[data.plan] || '無料会員';
+            document.getElementById('membership-status').textContent = planNames[data.plan] || '🎁 無料会員';
             
             let detailsHtml = `<div class="email">${data.email}</div>`;
-            if (data.expiresAt) {
-                const expiryDate = new Date(data.expiresAt);
-                detailsHtml += `<div class="expires">有効期限: ${expiryDate.toLocaleDateString('ja-JP')}</div>`;
+            if (data.name && data.name !== 'お客様') {
+                detailsHtml += `<div class="name">お名前: ${data.name}</div>`;
+            }
+            if (data.registrationDate) {
+                const regDate = new Date(data.registrationDate);
+                detailsHtml += `<div class="registered">登録日: ${regDate.toLocaleDateString('ja-JP')}</div>`;
             }
             
             document.getElementById('membership-details').innerHTML = detailsHtml;
         }
 
         // ポイント表示更新
-        function updatePointsDisplay(points) {
+        function updatePointsDisplay(points, hasClaimedReward = false) {
             document.getElementById('current-points').textContent = points;
             
             // ランク判定
-            let currentRank = 'bronze';
+            let currentRankKey = 'ビギナー';
             for (const [key, threshold] of Object.entries(RANK_THRESHOLDS)) {
                 if (points >= threshold.min && points <= threshold.max) {
-                    currentRank = key;
+                    currentRankKey = key;
                     break;
                 }
             }
             
-            const rankData = RANK_THRESHOLDS[currentRank];
+            const rankData = RANK_THRESHOLDS[currentRankKey];
             document.getElementById('current-rank').textContent = rankData.name;
             
             // 次のランクまでの情報
             if (rankData.next) {
                 document.getElementById('next-rank-info').textContent = `次のランクまで: ${rankData.next - points}pt`;
                 const progress = ((points - rankData.min) / (rankData.next - rankData.min)) * 100;
-                document.getElementById('progress-fill').style.width = `${progress}%`;
+                document.getElementById('progress-fill').style.width = `${Math.max(0, Math.min(100, progress))}%`;
             } else {
                 document.getElementById('next-rank-info').textContent = '最高ランク達成！';
                 document.getElementById('progress-fill').style.width = '100%';
             }
             
             // ランク特典表示
-            const benefits = RANK_BENEFITS[currentRank];
+            const benefits = RANK_BENEFITS[currentRankKey] || RANK_BENEFITS['ビギナー'];
             document.getElementById('rank-benefits-list').innerHTML = benefits
                 .map(b => `<div class="benefit-item">✓ ${b}</div>`)
                 .join('');
             
             // 特典申請ボタン表示判定
-            console.log(`ポイント判定: ${points}pt >= 1000?`, points >= 1000);
-            if (points >= 1000) {
-                console.log('特典申請ボタンを表示');
+            if (points >= 1000 && !hasClaimedReward) {
                 const button = document.getElementById('claim-reward-btn');
                 if (button) {
                     button.style.display = 'block';
-                    console.log('ボタン表示設定完了');
-                } else {
-                    console.error('claim-reward-btnが見つかりません');
                 }
-            } else {
-                console.log(`ポイント不足のため非表示: ${points}pt < 1000pt`);
             }
         }
 
@@ -320,6 +323,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         }
 
+        // 成功メッセージ表示
+        function showSuccess(message) {
+            const successEl = document.getElementById('success-message');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+            setTimeout(() => {
+                successEl.style.display = 'none';
+            }, 10000);
+        }
+
         // エラー表示
         function showError(message) {
             const errorEl = document.getElementById('error-message');
@@ -332,9 +345,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         // 特典申請
         document.getElementById('claim-reward-btn')?.addEventListener('click', async () => {
-            const email = sessionStorage.getItem('customerEmail');
-            if (!email) {
-                showError('メールアドレスが取得できません');
+            const customer = sessionManager.getCustomer();
+            if (!customer || !customer.email) {
+                showError('ログイン情報が取得できません');
                 return;
             }
             
@@ -349,7 +362,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ email })
+                        body: JSON.stringify({ email: customer.email })
                     });
                     
                     const data = await response.json();
@@ -358,6 +371,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         button.textContent = '✅ 申請済み';
                         button.style.background = '#64748b';
                         alert('特典申請を受け付けました！\n3営業日以内にメールでご連絡いたします。');
+                        
+                        // セッション更新（申請済みフラグ）
+                        const updatedCustomer = { ...customer, hasClaimedReward: true };
+                        sessionManager.saveSession(updatedCustomer);
                     } else {
                         throw new Error(data.error || '申請に失敗しました');
                     }
@@ -373,17 +390,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         // ログアウト
         window.logout = function() {
-            sessionStorage.clear();
-            location.reload();
+            logoutFunction();
         }
 
-        // ページ読み込み時にセッションチェック
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedEmail = sessionStorage.getItem('customerEmail');
-            const savedData = sessionStorage.getItem('customerData');
+        // ページ読み込み時の初期化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // マジックリンク認証チェック
+            await handleTokenAuth();
             
-            if (savedEmail && savedData) {
-                showDashboard(JSON.parse(savedData));
+            // 既存セッションチェック
+            if (sessionManager.isAuthenticated()) {
+                const customer = sessionManager.getCustomer();
+                if (customer) {
+                    sessionManager.refreshSession(); // セッション延長
+                    showDashboard(customer);
+                }
             }
         });
     </script>
@@ -487,6 +508,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.3);
             color: #ef4444;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
             padding: 0.75rem;
             border-radius: 0.5rem;
             margin-top: 1rem;
