@@ -49,15 +49,18 @@ export async function sendEmail({ to, subject, html, replyTo, fromName = "NANKAN
     }
 }
 
-// お問い合わせメール送信
+// お問い合わせメール送信（Brevo API使用）
 export async function sendContactEmail({ name, email, subject, message }) {
     if (!validateEmail(email)) {
         return { success: false, error: '有効なメールアドレスを入力してください' };
     }
 
     try {
+        // Brevo APIでメール送信
+        const { sendTransactionalEmail } = await import('./brevo-utils.js');
+        
         // 管理者向けメール
-        const adminResult = await sendEmail({
+        const adminResult = await sendTransactionalEmail({
             to: 'nankan.analytics@gmail.com',
             subject: `【お問い合わせ】${subject}`,
             replyTo: email,

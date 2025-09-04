@@ -165,7 +165,7 @@ export async function sendHorseRacingNewsletter({
         htmlContent,
         sender: {
             name: 'NANKANアナリティクス',
-            email: process.env.FROM_EMAIL || 'info@nankan-analytics.keiba.link'
+            email: process.env.FROM_EMAIL || 'nankan-analytics@keiba.link'
         },
         recipients: {
             listIds
@@ -367,6 +367,25 @@ export const NANKAN_LISTS = {
     PREMIUM: 'Premium会員',
     ALL: '全会員'
 };
+
+/**
+ * トランザクションメール送信（単発メール用）
+ */
+export async function sendTransactionalEmail({ to, subject, html, replyTo, fromName = "NANKANアナリティクス" }) {
+    return await brevoRequest('/smtp/email', {
+        method: 'POST',
+        body: JSON.stringify({
+            sender: {
+                name: fromName,
+                email: process.env.FROM_EMAIL || 'nankan-analytics@keiba.link'
+            },
+            to: [{ email: to }],
+            subject,
+            htmlContent: html,
+            replyTo: replyTo ? { email: replyTo } : { email: 'nankan.analytics@gmail.com' }
+        })
+    });
+}
 
 /**
  * テスト関数 - Brevo接続確認
