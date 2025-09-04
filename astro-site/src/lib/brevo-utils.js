@@ -116,7 +116,7 @@ export async function createEmailCampaign(campaignData) {
         htmlContent,
         sender: {
             name: sender.name || 'NANKANアナリティクス',
-            email: sender.email || process.env.FROM_EMAIL || 'info@nankan-analytics.keiba.link'
+            email: sender.email || 'nankan.analytics@gmail.com'
         },
         recipients,
         type: 'classic'
@@ -165,7 +165,7 @@ export async function sendHorseRacingNewsletter({
         htmlContent,
         sender: {
             name: 'NANKANアナリティクス',
-            email: process.env.FROM_EMAIL || 'nankan-analytics@keiba.link'
+            email: 'nankan.analytics@gmail.com'
         },
         recipients: {
             listIds
@@ -377,7 +377,7 @@ export async function sendTransactionalEmail({ to, subject, html, replyTo, fromN
         body: JSON.stringify({
             sender: {
                 name: fromName,
-                email: process.env.FROM_EMAIL || 'nankan-analytics@keiba.link'
+                email: 'nankan.analytics@gmail.com'
             },
             to: [{ email: to }],
             subject,
