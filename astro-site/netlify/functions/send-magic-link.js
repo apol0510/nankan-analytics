@@ -3,7 +3,10 @@ import Airtable from 'airtable';
 import crypto from 'crypto';
 
 export const handler = async (event, context) => {
-  console.log('マジックリンク送信処理開始');
+  // すぐにログを出力
+  console.log('🚀 Function実行開始:', new Date().toISOString());
+  console.log('Method:', event.httpMethod);
+  console.log('Headers:', JSON.stringify(event.headers));
   
   // CORSヘッダー設定
   const headers = {
@@ -14,6 +17,7 @@ export const handler = async (event, context) => {
   
   // OPTIONSリクエスト（CORS preflight）
   if (event.httpMethod === 'OPTIONS') {
+    console.log('OPTIONS request received');
     return {
       statusCode: 200,
       headers,
@@ -23,6 +27,7 @@ export const handler = async (event, context) => {
   
   // POSTリクエストのみ許可
   if (event.httpMethod !== 'POST') {
+    console.log('Invalid method:', event.httpMethod);
     return {
       statusCode: 405,
       headers,
@@ -31,6 +36,7 @@ export const handler = async (event, context) => {
   }
   
   try {
+    console.log('POSTリクエスト処理開始');
     const { email } = JSON.parse(event.body || '{}');
     
     if (!email) {
@@ -65,12 +71,11 @@ export const handler = async (event, context) => {
     }).firstPage();
     
     if (records.length === 0) {
-      // 新規顧客の場合は Free プランで作成
+      // 新規顧客の場合は Free プランで作成（登録日は自動計算フィールドのため除外）
       const newRecord = await base('Customers').create({
         'Email': email,
         'プラン': 'Free',
-        'ポイント': 0,
-        '登録日': new Date().toISOString()
+        'ポイント': 0
       });
       console.log('新規顧客作成:', email);
     }
@@ -114,13 +119,18 @@ export const handler = async (event, context) => {
     };
     
   } catch (error) {
-    console.error('マジックリンク送信エラー:', error);
+    console.error('❌ エラー発生:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
         error: '一時的にアクセスできません',
-        details: error.message
+        details: error.message,
+        type: error.name
       })
     };
   }
