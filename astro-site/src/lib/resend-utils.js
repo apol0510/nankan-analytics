@@ -10,7 +10,7 @@ function validateEmail(email) {
 // 統一メール送信関数（Resend API）
 export async function sendEmail({ to, subject, html, replyTo, fromName = "NANKANアナリティクス" }) {
     const apiKey = process.env.RESEND_API_KEY || 're_3V2es1rn_9ghDCmQkPGfTQLdyt7vKcGDe';
-    const fromEmail = process.env.FROM_EMAIL || 'noreply@nankan-analytics.keiba.link';
+    const fromEmail = process.env.FROM_EMAIL || 'info@nankan-analytics.keiba.link';
     
     try {
         const response = await fetch('https://api.resend.com/emails', {
