@@ -5,14 +5,6 @@ import crypto from 'crypto';
 export const handler = async (event, context) => {
   console.log('マジックリンク送信処理開始');
   
-  // ローカル開発用の環境変数設定
-  if (!process.env.AIRTABLE_API_KEY) {
-    process.env.AIRTABLE_API_KEY = 'patI5iAJomkQlLBNa.0a9c0bb65db234825ecc453d210440068338de6e98594e3e357add37658f0028';
-    process.env.AIRTABLE_BASE_ID = 'apptmQUPAlgZMmBC9';
-    process.env.SITE_URL = 'http://localhost:4321';
-    console.log('ローカル開発用環境変数を設定しました');
-  }
-  
   // CORSヘッダー設定
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -123,7 +115,10 @@ export const handler = async (event, context) => {
 
 // マジックリンクメール送信
 async function sendMagicLinkEmail(email, magicLink) {
-  if (!process.env.RESEND_API_KEY) {
+  // Resend APIキー（環境変数またはハードコード）
+  const apiKey = process.env.RESEND_API_KEY || 're_3V2es1rn_9ghDCmQkPGfTQLdyt7vKcGDe';
+  
+  if (!apiKey) {
     console.log('RESEND_API_KEY未設定のため、メール送信をスキップ');
     console.log('マジックリンク:', magicLink); // デバッグ用
     return;
@@ -133,7 +128,7 @@ async function sendMagicLinkEmail(email, magicLink) {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

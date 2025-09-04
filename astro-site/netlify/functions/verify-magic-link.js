@@ -4,13 +4,6 @@ import Airtable from 'airtable';
 export const handler = async (event, context) => {
   console.log('マジックリンク検証処理開始');
   
-  // ローカル開発用の環境変数設定
-  if (!process.env.AIRTABLE_API_KEY) {
-    process.env.AIRTABLE_API_KEY = 'patI5iAJomkQlLBNa.0a9c0bb65db234825ecc453d210440068338de6e98594e3e357add37658f0028';
-    process.env.AIRTABLE_BASE_ID = 'apptmQUPAlgZMmBC9';
-    console.log('ローカル開発用環境変数を設定しました');
-  }
-  
   // CORSヘッダー設定
   const headers = {
     'Access-Control-Allow-Origin': '*',
