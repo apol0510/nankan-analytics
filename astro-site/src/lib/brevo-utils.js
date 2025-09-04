@@ -165,7 +165,7 @@ export async function sendHorseRacingNewsletter({
         htmlContent,
         sender: {
             name: 'NANKANアナリティクス',
-            email: process.env.FROM_EMAIL || 'nankan-analytics@keiba.link'
+            email: process.env.FROM_EMAIL || 'info@nankan-analytics.keiba.link'
         },
         recipients: {
             listIds
