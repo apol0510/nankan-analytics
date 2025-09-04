@@ -7,6 +7,7 @@ export const handler = async (event, context) => {
     AIRTABLE_API_KEY: process.env.AIRTABLE_API_KEY,
     AIRTABLE_BASE_ID: process.env.AIRTABLE_BASE_ID,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
     FROM_EMAIL: process.env.FROM_EMAIL,
     SITE_URL: process.env.SITE_URL
   };
