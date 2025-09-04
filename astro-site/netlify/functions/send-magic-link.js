@@ -118,6 +118,12 @@ async function sendMagicLinkEmail(email, magicLink) {
   // Resend APIキー（環境変数またはハードコード）
   const apiKey = process.env.RESEND_API_KEY || 're_3V2es1rn_9ghDCmQkPGfTQLdyt7vKcGDe';
   
+  console.log('📧 メール送信開始:', { 
+    to: email,
+    hasApiKey: !!apiKey,
+    apiKeyPreview: apiKey ? apiKey.substring(0, 10) + '...' : 'なし'
+  });
+  
   if (!apiKey) {
     console.log('RESEND_API_KEY未設定のため、メール送信をスキップ');
     console.log('マジックリンク:', magicLink); // デバッグ用
@@ -223,10 +229,19 @@ async function sendMagicLinkEmail(email, magicLink) {
     });
     
     if (!response.ok) {
-      throw new Error(`メール送信失敗: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ Resend APIエラー:', {
+        status: response.status,
+        error: errorText
+      });
+      throw new Error(`メール送信失敗: ${response.status} - ${errorText}`);
     }
     
-    console.log('✅ マジックリンクメール送信完了');
+    const result = await response.json();
+    console.log('✅ マジックリンクメール送信完了:', {
+      id: result.id,
+      to: email
+    });
     
   } catch (error) {
     console.error('メール送信エラー:', error);
