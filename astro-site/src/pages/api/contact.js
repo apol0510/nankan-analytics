@@ -58,7 +58,7 @@ export async function POST({ request }) {
             JSON.stringify({ 
                 ok: false, 
                 error: 'Internal Server Error',
-                details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                details: err.message
             }),
             { 
                 status: 500,

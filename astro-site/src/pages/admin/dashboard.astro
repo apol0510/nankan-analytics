@@ -155,8 +155,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             <span class="status-badge ok" id="db-status">接続OK</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Stripe</span>
-                            <span class="status-badge ok" id="stripe-status">正常</span>
+                            <span class="stat-label">Payment</span>
+                            <span class="status-badge ok" id="payment-status">Zapier連携</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">メール配信</span>
@@ -626,7 +626,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             document.getElementById('server-status').textContent = '正常';
             document.getElementById('db-status').textContent = 'Airtable接続';
             document.getElementById('db-status').className = 'status-badge ok';
-            document.getElementById('stripe-status').textContent = '正常';
+            document.getElementById('payment-status').textContent = 'Zapier連携';
             document.getElementById('email-status').textContent = 'Brevo正常';
         } catch (error) {
             console.error('System status error:', error);

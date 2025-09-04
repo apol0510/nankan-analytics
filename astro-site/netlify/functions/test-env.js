@@ -8,8 +8,7 @@ export const handler = async (event, context) => {
     AIRTABLE_BASE_ID: process.env.AIRTABLE_BASE_ID,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     FROM_EMAIL: process.env.FROM_EMAIL,
-    SITE_URL: process.env.SITE_URL,
-    NODE_ENV: process.env.NODE_ENV
+    SITE_URL: process.env.SITE_URL
   };
   
   // 環境変数の状態を確認
@@ -37,7 +36,6 @@ export const handler = async (event, context) => {
     },
     body: JSON.stringify({
       message: '環境変数チェック完了',
-      environment: process.env.NODE_ENV || 'unknown',
       envStatus: envStatus,
       timestamp: new Date().toISOString()
     })

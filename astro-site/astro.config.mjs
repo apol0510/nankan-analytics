@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import mdx from '@astrojs/mdx';
 import netlify from '@astrojs/netlify';
 
 // https://astro.build/config
@@ -13,7 +12,6 @@ export default defineConfig({
 
   // インテグレーション
   integrations: [
-    mdx(),
     sitemap()
   ],
   
@@ -22,22 +20,6 @@ export default defineConfig({
     assets: 'assets'
   },
 
-  // マークダウン設定
-  markdown: {
-    shikiConfig: {
-      theme: 'monokai',
-      wrap: true
-    },
-    remarkPlugins: [],
-    rehypePlugins: []
-  },
-
   // SEO設定
-  trailingSlash: 'ignore',
-  
-  // 日本語URL対応
-  i18n: {
-    defaultLocale: 'ja',
-    locales: ['ja']
-  }
+  trailingSlash: 'ignore'
 });
