@@ -382,7 +382,7 @@ export async function sendTransactionalEmail({ to, subject, html, replyTo, fromN
             to: [{ email: to }],
             subject,
             htmlContent: html,
-            replyTo: replyTo ? { email: replyTo } : { email: 'nankan.analytics@gmail.com' }
+            replyTo: { email: replyTo || 'nankan.analytics@gmail.com' }
         })
     });
 }
