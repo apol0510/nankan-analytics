@@ -9,8 +9,13 @@ function validateEmail(email) {
 
 // 統一メール送信関数（Resend API）
 export async function sendEmail({ to, subject, html, replyTo, fromName = "NANKANアナリティクス" }) {
-    const apiKey = process.env.RESEND_API_KEY || 're_3V2es1rn_9ghDCmQkPGfTQLdyt7vKcGDe';
+    const apiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.FROM_EMAIL || 'nankan-analytics@keiba.link';
+    
+    if (!apiKey) {
+        console.error('RESEND_API_KEY環境変数が設定されていません');
+        return { success: false, error: 'RESEND_API_KEY環境変数が設定されていません' };
+    }
     
     try {
         const response = await fetch('https://api.resend.com/emails', {
