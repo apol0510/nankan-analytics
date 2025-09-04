@@ -151,39 +151,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script>
-    // Supabase認証チェック
-    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
-    
-    const supabaseUrl = 'https://qysycsrhaatudnksbpqe.supabase.co';
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5c3ljc3JoYWF0dWRua3NicHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzM3MjcsImV4cCI6MjA3MTUwOTcyN30.UDWi7FYqpJNpMhvMMaZoGMXwuD1R2PNH4Tk6Xs1u1pU';
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-    async function checkAuth() {
-        const { data: { user }, error } = await supabase.auth.getUser();
-        
+    document.addEventListener('DOMContentLoaded', function() {
         const authLoading = document.getElementById('auth-loading');
         const accountContent = document.getElementById('account-content');
+        const userInfo = document.getElementById('user-info');
         
-        if (user) {
-            // ユーザー情報を表示
-            const userInfo = document.getElementById('user-info');
-            userInfo.innerHTML = `
-                <p><strong>メールアドレス:</strong> ${user.email}</p>
-                <p><strong>ユーザーID:</strong> ${user.id}</p>
-                <p><strong>登録日:</strong> ${new Date(user.created_at).toLocaleDateString('ja-JP')}</p>
-            `;
-            
-            authLoading.classList.add('hidden');
-            accountContent.classList.remove('hidden');
-        } else {
-            authLoading.innerHTML = `
-                <p style="color: #ef4444;">ログインが必要です</p>
-                <a href="/auth/login" style="margin-top: 20px; display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none;">
-                    ログインする
-                </a>
-            `;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', checkAuth);
+        // 新システムでは決済完了後にAirtableダッシュボードのURLが提供される
+        userInfo.innerHTML = `
+            <div class="info-section">
+                <h3>💼 会員ダッシュボード</h3>
+                <p>決済完了後に送信されたメールに記載されているダッシュボードURLからアクセスしてください。</p>
+                <div class="action-buttons">
+                    <a href="mailto:support@nankan-analytics.jp" class="btn-secondary">
+                        メールが見つからない場合はサポートへ
+                    </a>
+                </div>
+            </div>
+        `;
+        
+        authLoading.classList.add('hidden');
+        accountContent.classList.remove('hidden');
+    });
 </script>
