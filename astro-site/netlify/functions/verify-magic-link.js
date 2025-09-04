@@ -40,10 +40,29 @@ export const handler = async (event, context) => {
       };
     }
     
+    // 環境変数チェック
+    const airtableApiKey = process.env.AIRTABLE_API_KEY;
+    const airtableBaseId = process.env.AIRTABLE_BASE_ID;
+    
+    if (!airtableApiKey || !airtableBaseId) {
+      console.error('環境変数エラー:', {
+        hasApiKey: !!airtableApiKey,
+        hasBaseId: !!airtableBaseId
+      });
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: '環境変数が設定されていません',
+          details: 'Netlifyの環境変数設定を確認してください'
+        })
+      };
+    }
+    
     // Airtable接続
     const base = new Airtable({
-      apiKey: process.env.AIRTABLE_API_KEY
-    }).base(process.env.AIRTABLE_BASE_ID);
+      apiKey: airtableApiKey
+    }).base(airtableBaseId);
     
     // 顧客とトークン確認
     const records = await base('Customers').select({
