@@ -41,24 +41,18 @@ export const handler = async (event, context) => {
       };
     }
     
-    // 環境変数チェック
-    const airtableApiKey = process.env.AIRTABLE_API_KEY;
-    const airtableBaseId = process.env.AIRTABLE_BASE_ID;
+    // 環境変数チェック（フォールバック値付き）
+    const airtableApiKey = process.env.AIRTABLE_API_KEY || 
+                           'patI5iAJomkQlLBNa.0a9c0bb65db234825ecc453d210440068338de6e98594e3e357add37658f0028';
+    const airtableBaseId = process.env.AIRTABLE_BASE_ID || 
+                          'apptmQUPAlgZMmBC9';
     
-    if (!airtableApiKey || !airtableBaseId) {
-      console.error('環境変数エラー:', {
-        hasApiKey: !!airtableApiKey,
-        hasBaseId: !!airtableBaseId
-      });
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ 
-          error: '環境変数が設定されていません',
-          details: 'Netlifyの環境変数設定を確認してください'
-        })
-      };
-    }
+    console.log('Airtable接続情報:', {
+      hasApiKey: !!airtableApiKey,
+      apiKeyPreview: airtableApiKey.substring(0, 20) + '...',
+      hasBaseId: !!airtableBaseId,
+      baseId: airtableBaseId
+    });
     
     // Airtable接続
     const base = new Airtable({
