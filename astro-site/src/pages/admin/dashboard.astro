@@ -112,6 +112,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             <button class="action-btn" onclick="previewNewsletter()">
                                 👁️ プレビュー
                             </button>
+                            <button class="action-btn warning" onclick="manageBrevoLists()">
+                                📋 リスト管理
+                            </button>
                         </div>
                     </div>
                     
@@ -660,8 +663,150 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     window.loadUserData = loadUserStats;
     window.exportUsers = () => alert('ユーザーデータエクスポート機能は準備中です');
     window.viewRecentUsers = () => alert('最近の登録者表示機能は準備中です');
-    window.sendNewsletter = () => alert('メルマガ即時配信機能は準備中です');
-    window.previewNewsletter = () => alert('メルマガプレビュー機能は準備中です');
+    // Brevoメルマガ配信機能
+    window.sendNewsletter = async () => {
+        const target = document.getElementById('email-target').value;
+        const today = new Date().toISOString().split('T')[0];
+        
+        try {
+            // サンプル予想データ（実際にはJSONファイルから取得）
+            const samplePredictions = [
+                {
+                    raceNumber: '11',
+                    raceName: 'メインレース',
+                    predictions: [
+                        { horseName: 'NANKANサンプル1', confidence: 85 },
+                        { horseName: 'NANKANサンプル2', confidence: 72 },
+                        { horseName: 'NANKANサンプル3', confidence: 68 }
+                    ]
+                }
+            ];
+            
+            const planMapping = {
+                'all': ['ALL'],
+                'free': ['FREE'],
+                'standard': ['STANDARD'],
+                'premium': ['PREMIUM']
+            };
+            
+            const response = await fetch('/.netlify/functions/send-newsletter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    raceDate: today,
+                    predictions: samplePredictions,
+                    targetPlans: planMapping[target] || ['ALL'],
+                    testMode: false
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                alert(`✅ メルマガキャンペーン作成成功！\\nID: ${result.campaignId}\\n対象: ${target}`);
+                loadEmailLog();
+            } else {
+                alert(`❌ エラー: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('メルマガ送信エラー:', error);
+            alert(`❌ 送信失敗: ${error.message}`);
+        }
+    };
+    
+    window.previewNewsletter = async () => {
+        const target = document.getElementById('email-target').value;
+        const today = new Date().toISOString().split('T')[0];
+        
+        try {
+            const samplePredictions = [
+                {
+                    raceNumber: '11',
+                    raceName: 'メインレース',
+                    predictions: [
+                        { horseName: 'NANKANサンプル1', confidence: 85 },
+                        { horseName: 'NANKANサンプル2', confidence: 72 },
+                        { horseName: 'NANKANサンプル3', confidence: 68 }
+                    ]
+                }
+            ];
+            
+            const planMapping = {
+                'all': ['ALL'],
+                'free': ['FREE'],
+                'standard': ['STANDARD'],
+                'premium': ['PREMIUM']
+            };
+            
+            const response = await fetch('/.netlify/functions/send-newsletter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    raceDate: today,
+                    predictions: samplePredictions,
+                    targetPlans: planMapping[target] || ['ALL'],
+                    testMode: true // プレビューモード
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                alert(`👁️ プレビュー実行完了！\\n対象: ${target}\\n予想データ: ${result.predictionsCount}件`);
+            } else {
+                alert(`❌ エラー: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('プレビューエラー:', error);
+            alert(`❌ プレビュー失敗: ${error.message}`);
+        }
+    };
+    
+    // Brevo顧客リスト管理
+    window.manageBrevoLists = async () => {
+        try {
+            // リスト作成
+            const response = await fetch('/.netlify/functions/brevo-manage-lists?action=create', {
+                method: 'GET'
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                const summary = result.results.map(r => `${r.name}: ${r.status}`).join('\\n');
+                alert(`📋 NANKANリスト管理完了:\\n\\n${summary}`);
+            } else {
+                alert(`❌ エラー: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('リスト管理エラー:', error);
+            alert(`❌ リスト管理失敗: ${error.message}`);
+        }
+    };
+    
+    // メール配信履歴読み込み
+    async function loadEmailLog() {
+        const logDiv = document.getElementById('email-log');
+        logDiv.innerHTML = '<div class="loading-small">配信履歴を読み込み中...</div>';
+        
+        try {
+            const response = await fetch('/.netlify/functions/brevo-manage-lists?action=list');
+            const result = await response.json();
+            
+            if (response.ok) {
+                const listHtml = result.nankanLists.map(list => 
+                    `<div class="log-entry">📋 ${list.name}: ${list.totalSubscribers || 0}名</div>`
+                ).join('');
+                
+                logDiv.innerHTML = listHtml || '<div class="log-entry">リストがありません</div>';
+            } else {
+                logDiv.innerHTML = '<div class="log-entry error">履歴読み込み失敗</div>';
+            }
+        } catch (error) {
+            console.error('メール履歴読み込みエラー:', error);
+            logDiv.innerHTML = '<div class="log-entry error">読み込みエラー</div>';
+        }
+    }
     window.generatePredictionReport = () => alert('成績レポート生成機能は準備中です');
     window.clearCache = () => alert('キャッシュクリア機能は準備中です');
     window.runBackup = () => alert('バックアップ実行機能は準備中です');
