@@ -48,6 +48,7 @@ export const handler = async (event, context) => {
             body: JSON.stringify({
                 from: `NANKANアナリティクス <${fromEmail || 'nankan-analytics@keiba.link'}>`,
                 to: 'nankan.analytics@gmail.com',
+                reply_to: 'nankan.analytics@gmail.com',
                 subject: 'デバッグテスト - 返信機能確認',
                 html: `
                     <h1>🔧 デバッグテストメール</h1>
