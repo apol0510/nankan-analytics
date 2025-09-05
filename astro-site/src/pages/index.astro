@@ -1450,5 +1450,55 @@ const raceTitle = `${formattedDate} ${raceInfo?.track !== 'レース情報未検
             </div>
         </div>
     </footer>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+    function s(t,e,r,i,a=""){
+        if(!t||!t.getAttribute)return;
+        t.innerHTML="0"+a;
+        let l=null;
+        const u=g=>{
+            l||(l=g);
+            const d=Math.min((g-l)/i,1);
+            let c;
+            try{
+                r>=1e3?(c=Math.floor(d*(r-e)+e),t.innerHTML=c.toLocaleString()+a):(c=d*(r-e)+e,t.innerHTML=c.toFixed(1)+a),d<1&&window.requestAnimationFrame(u)
+            }catch(f){
+                console.error("カウントアップエラー:",f),t.innerHTML=r+a
+            }
+        };
+        window.requestAnimationFrame(u)
+    }
+
+    const o=new IntersectionObserver(t=>{
+        t.forEach(e=>{
+            if(e.isIntersecting&&!e.target.hasAttribute("data-animated")){
+                const r=e.target.getAttribute("data-target"),
+                      i=e.target.getAttribute("data-suffix")||"";
+                if(!r){
+                    console.warn("data-target属性が見つかりません:",e.target);
+                    return
+                }
+                const a=parseFloat(r);
+                if(isNaN(a)){
+                    console.warn("無効なdata-target値:",r);
+                    return
+                }
+                console.log("カウントアップ開始:",a,i),
+                s(e.target,0,a,2e3,i),
+                e.target.setAttribute("data-animated","true")
+            }
+        })
+    },{threshold:.3});
+
+    const n=document.querySelectorAll(".stats-number");
+    console.log("stats-number要素を発見:",n.length);
+    n.forEach(t=>{
+        const e=t.getAttribute("data-target");
+        console.log("要素:",t,"data-target:",e),
+        o.observe(t)
+    })
+});
+</script>
 </body>
 </html>
