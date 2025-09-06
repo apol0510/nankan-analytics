@@ -125,90 +125,80 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                 </div>
             ))}
 
-            {/* ◎印（単穴）- 中サイズで表示 */}
-            {allHorses && allHorses.filter(h => h.mark === '▲').map((horse, index) => (
-                <div class="horse-card horse-card-sub premium-masked">
-                    <div class="horse-header">
-                        <div>
-                            <span class="horse-mark-sub">▲</span>
-                            <span class="horse-number">{horse.number}</span>
-                            <span class="horse-name">{horse.name}</span>
-                            <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
-                        </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
-                    </div>
-                    <div class="ai-factors">
-                        {horse.factors.map(factor => (
-                            <div class="factor">
-                                <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+            {/* 穴馬エリア統合オーバーレイ */}
+            {allHorses && (allHorses.filter(h => h.mark === '▲' || h.mark === '△' || h.mark === '×').length > 0) && (
+                <div class="premium-horses-wrapper premium-masked">
+                    
+                    {/* ◎印（単穴）- 中サイズで表示 */}
+                    {allHorses && allHorses.filter(h => h.mark === '▲').map((horse, index) => (
+                        <div class="horse-card horse-card-sub">
+                            <div class="horse-header">
+                                <div>
+                                    <span class="horse-mark-sub">▲</span>
+                                    <span class="horse-number">{horse.number}</span>
+                                    <span class="horse-name">{horse.name}</span>
+                                    <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
+                                </div>
+                                <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                             </div>
-                        ))}
-                    </div>
+                            <div class="ai-factors">
+                                {horse.factors.map(factor => (
+                                    <div class="factor">
+                                        <span class="factor-icon">{factor.icon}</span>
+                                        <span>{factor.text}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* △印（連下）- まとめて表示 */}
+                    {allHorses && allHorses.filter(h => h.mark === '△').length > 0 && (
+                        <div class="horse-card horse-card-minor">
+                            <div class="horse-header">
+                                <div>
+                                    <span class="horse-mark-minor">△</span>
+                                    <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
+                                </div>
+                            </div>
+                            <div class="horse-grid">
+                                {allHorses.filter(h => h.mark === '△').map(horse => (
+                                    <div class="horse-grid-item">
+                                        <span class="horse-number-small">{horse.number}</span>
+                                        <span class="horse-name-small">{horse.name}</span>
+                                        <span class="confidence-small">({horse.confidence}%)</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ×印（押さえ）- まとめて表示 */}
+                    {allHorses && allHorses.filter(h => h.mark === '×').length > 0 && (
+                        <div class="horse-card horse-card-minor">
+                            <div class="horse-header">
+                                <div>
+                                    <span class="horse-mark-minor">×</span>
+                                    <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
+                                </div>
+                            </div>
+                            <div class="horse-grid">
+                                {allHorses.filter(h => h.mark === '×').map(horse => (
+                                    <div class="horse-grid-item">
+                                        <span class="horse-number-small">{horse.number}</span>
+                                        <span class="horse-name-small">{horse.name}</span>
+                                        <span class="confidence-small">({horse.confidence}%)</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     
                     <div class="premium-overlay">
                         <div class="premium-content">
                             <div class="premium-icon">🔒</div>
                             <div class="premium-text">有料会員限定</div>
-                            <div class="premium-subtitle">詳細分析データを表示</div>
-                            <button class="premium-button">今すぐ登録</button>
-                        </div>
-                    </div>
-                </div>
-            ))}
-
-            {/* △印（連下）- まとめて表示 */}
-            {allHorses && allHorses.filter(h => h.mark === '△').length > 0 && (
-                <div class="horse-card horse-card-minor premium-masked">
-                    <div class="horse-header">
-                        <div>
-                            <span class="horse-mark-minor">△</span>
-                            <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
-                        </div>
-                    </div>
-                    <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
-                            </div>
-                        ))}
-                    </div>
-                    <div class="premium-overlay">
-                        <div class="premium-content">
-                            <div class="premium-icon">🔒</div>
-                            <div class="premium-text">有料会員限定</div>
-                            <div class="premium-subtitle">詳細分析データを表示</div>
-                            <button class="premium-button">今すぐ登録</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* ×印（押さえ）- まとめて表示 */}
-            {allHorses && allHorses.filter(h => h.mark === '×').length > 0 && (
-                <div class="horse-card horse-card-minor premium-masked">
-                    <div class="horse-header">
-                        <div>
-                            <span class="horse-mark-minor">×</span>
-                            <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
-                        </div>
-                    </div>
-                    <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
-                            </div>
-                        ))}
-                    </div>
-                    <div class="premium-overlay">
-                        <div class="premium-content">
-                            <div class="premium-icon">🔒</div>
-                            <div class="premium-text">有料会員限定</div>
-                            <div class="premium-subtitle">詳細分析データを表示</div>
+                            <div class="premium-subtitle">穴馬分析データを表示</div>
                             <button class="premium-button">今すぐ登録</button>
                         </div>
                     </div>
