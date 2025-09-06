@@ -107,12 +107,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         </div>
                         
                         <div class="email-actions">
-                            <button class="action-btn primary" onclick="sendNewsletter()">
-                                📬 メルマガ即時配信
-                            </button>
-                            <button class="action-btn" onclick="previewNewsletter()">
-                                👁️ プレビュー
-                            </button>
                             <button class="action-btn warning" onclick="manageBrevoLists()">
                                 📋 リスト管理
                             </button>
@@ -618,7 +612,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     // メール統計読み込み（デモデータ）
     async function loadEmailStats() {
-        // 実際の実装では、newsletter_logsから取得
+        // 実際の実装では、email_logsから取得
         const emailsSent = Math.floor(Math.random() * 1000) + 500;
         document.getElementById('email-sent').textContent = emailsSent.toLocaleString();
     }
@@ -664,104 +658,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     window.loadUserData = loadUserStats;
     window.exportUsers = () => alert('ユーザーデータエクスポート機能は準備中です');
     window.viewRecentUsers = () => alert('最近の登録者表示機能は準備中です');
-    // Brevoメルマガ配信機能
-    window.sendNewsletter = async () => {
-        const target = document.getElementById('email-target').value;
-        const today = new Date().toISOString().split('T')[0];
-        
-        try {
-            // サンプル予想データ（実際にはJSONファイルから取得）
-            const samplePredictions = [
-                {
-                    raceNumber: '11',
-                    raceName: 'メインレース',
-                    predictions: [
-                        { horseName: 'NANKANサンプル1', confidence: 85 },
-                        { horseName: 'NANKANサンプル2', confidence: 72 },
-                        { horseName: 'NANKANサンプル3', confidence: 68 }
-                    ]
-                }
-            ];
-            
-            const planMapping = {
-                'all': ['ALL'],
-                'free': ['FREE'],
-                'standard': ['STANDARD'],
-                'premium': ['PREMIUM']
-            };
-            
-            const response = await fetch('/.netlify/functions/send-newsletter', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    raceDate: today,
-                    predictions: samplePredictions,
-                    targetPlans: planMapping[target] || ['ALL'],
-                    testMode: false
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert(`✅ メルマガキャンペーン作成成功！\\nID: ${result.campaignId}\\n対象: ${target}`);
-                loadEmailLog();
-            } else {
-                alert(`❌ エラー: ${result.error}`);
-            }
-        } catch (error) {
-            console.error('メルマガ送信エラー:', error);
-            alert(`❌ 送信失敗: ${error.message}`);
-        }
-    };
-    
-    window.previewNewsletter = async () => {
-        const target = document.getElementById('email-target').value;
-        const today = new Date().toISOString().split('T')[0];
-        
-        try {
-            const samplePredictions = [
-                {
-                    raceNumber: '11',
-                    raceName: 'メインレース',
-                    predictions: [
-                        { horseName: 'NANKANサンプル1', confidence: 85 },
-                        { horseName: 'NANKANサンプル2', confidence: 72 },
-                        { horseName: 'NANKANサンプル3', confidence: 68 }
-                    ]
-                }
-            ];
-            
-            const planMapping = {
-                'all': ['ALL'],
-                'free': ['FREE'],
-                'standard': ['STANDARD'],
-                'premium': ['PREMIUM']
-            };
-            
-            const response = await fetch('/.netlify/functions/send-newsletter', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    raceDate: today,
-                    predictions: samplePredictions,
-                    targetPlans: planMapping[target] || ['ALL'],
-                    testMode: true // プレビューモード
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert(`👁️ プレビュー実行完了！\\n対象: ${target}\\n予想データ: ${result.predictionsCount}件`);
-            } else {
-                alert(`❌ エラー: ${result.error}`);
-            }
-        } catch (error) {
-            console.error('プレビューエラー:', error);
-            alert(`❌ プレビュー失敗: ${error.message}`);
-        }
-    };
     
     // Brevo顧客リスト管理
     window.manageBrevoLists = async () => {
