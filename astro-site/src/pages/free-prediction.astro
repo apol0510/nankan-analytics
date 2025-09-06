@@ -291,6 +291,14 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                     <div class="return-value">推定配当 {strategies.safe.expectedPayout}</div>
                     <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.safe.payoutType}</div>
                 </div>
+                <div class="premium-overlay">
+                    <div class="premium-content">
+                        <div class="premium-icon">🔒</div>
+                        <div class="premium-text">有料会員限定</div>
+                        <div class="premium-subtitle">投資戦略を完全表示</div>
+                        <button class="premium-button">今すぐ登録</button>
+                    </div>
+                </div>
             </div>
 
             <!-- 戦略2: バランス型 -->
@@ -855,7 +863,17 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
         position: relative;
     }
     .premium-overlay {
-        display: none !important; /* 一時的に非表示 */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
     }
     .premium-content {
         text-align: center;
