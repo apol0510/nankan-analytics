@@ -199,7 +199,7 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                             <div class="free-member-icon">📧</div>
                             <div class="free-member-text">無料会員登録が必要</div>
                             <div class="free-member-subtitle">穴馬データを表示</div>
-                            <button class="free-member-button">無料登録する</button>
+                            <button class="free-member-button" onclick="window.location.href='/pricing/'">無料登録する</button>
                         </div>
                     </div>
                 </div>
@@ -882,6 +882,21 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
     }
     .premium-content, .free-member-content {
         text-align: center;
+    }
+    .free-member-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    .free-member-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 5px;
+    }
+    .free-member-subtitle {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-bottom: 15px;
     }
     .premium-icon {
         font-size: 2rem;
