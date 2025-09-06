@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
@@ -72,41 +72,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-    // URLパラメータからプラン情報を取得
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session_id');
-    
-    // プラン判定（URLから推測）
-    let plan = 'Standard';
-    if (window.location.href.includes('premium')) {
-        plan = 'Premium';
-    }
-    
-    // LocalStorageに保存（簡易的なセッション管理）
-    if (sessionId) {
-        const userData = {
-            plan: plan.toLowerCase(),
-            sessionId: sessionId,
-            registeredAt: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-        };
+    document.addEventListener('DOMContentLoaded', async function() {
+        // URLパラメータからプラン情報を取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const planType = urlParams.get('plan');  // 'standard' or 'premium'
+        const email = urlParams.get('email');
+        const sessionId = urlParams.get('session_id');
         
-        localStorage.setItem('userPlan', plan.toLowerCase());
-        localStorage.setItem('userData', JSON.stringify(userData));
+        const planNameEl = document.getElementById('plan-name');
         
-        console.log('ユーザーデータ保存:', userData);
-    }
-    
-    // プラン名を表示
-    const planNameEl = document.getElementById('plan-name');
-    if (planNameEl) {
-        planNameEl.textContent = `${plan}会員`;
-    }
-    
-    // 3秒後に自動的にホームへリダイレクト（オプション）
-    // setTimeout(() => {
-    //     window.location.href = '/';
-    // }, 10000);
+        console.log('URL Parameters:', { planType, email, sessionId });
+        
+        if (planType && email) {
+            // プラン情報をLocalStorageに保存
+            const userData = {
+                email: email,
+                plan: planType,
+                status: 'active',
+                sessionId: sessionId,
+                registeredAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            };
+            
+            // 新しい形式でLocalStorageに保存（plan-storage.js互換）
+            localStorage.setItem('user-plan', JSON.stringify(userData));
+            localStorage.setItem('userPlan', planType); // 互換性のため
+            localStorage.setItem('userData', JSON.stringify(userData)); // 互換性のため
+            
+            // プラン名を表示
+            const planNames = {
+                'standard': 'スタンダード',
+                'premium': 'プレミアム'
+            };
+            
+            planNameEl.textContent = `${planNames[planType] || planType}会員`;
+            
+            // ナビゲーション更新イベントを発火
+            window.dispatchEvent(new CustomEvent('planUpdated', {
+                detail: { plan: planType, email: email }
+            }));
+            
+            console.log('✅ プラン情報が正常に更新されました:', userData);
+            
+        } else {
+            // URLパラメータが不足している場合
+            console.warn('⚠️ プラン情報またはメールアドレスが不足しています');
+            planNameEl.textContent = '会員登録完了';
+        }
+    });
 </script>
 
 <style>

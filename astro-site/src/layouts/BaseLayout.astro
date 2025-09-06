@@ -1,4 +1,5 @@
 ---
+export const prerender = false; // 動的ナビゲーション用
 import UserStatus from '../components/UserStatus.astro';
 
 export interface Props {
@@ -213,6 +214,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
         .pricing-link::after {
             display: none;
+        }
+        
+        .logout-link {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #ef4444 !important;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        }
+        
+        .logout-link:hover {
+            background: rgba(239, 68, 68, 0.2) !important;
+            border-color: rgba(239, 68, 68, 0.5) !important;
         }
 
         /* Mobile Menu */
@@ -610,8 +622,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                         <li><a href="/technology/"><span class="nav-icon">🤖</span> <span class="nav-text">AI技術</span></a></li>
                         <li><a href="/blog/"><span class="nav-icon">📰</span> <span class="nav-text">ブログ</span></a></li>
                         <li><a href="/contact/"><span class="nav-icon">📧</span> <span class="nav-text">お問い合わせ</span></a></li>
-                        <li><a href="/pricing/" class="pricing-link"><span class="nav-icon">✨</span> <span class="nav-text">無料登録</span></a></li>
-                        <li><a href="/dashboard/" class="login-link"><span class="nav-icon">🔐</span> <span class="nav-text">ログイン</span></a></li>
+                        <li id="nav-signup" class="nav-auth-item"><a href="/pricing/" class="pricing-link"><span class="nav-icon">✨</span> <span class="nav-text">無料登録</span></a></li>
+                        <li id="nav-login" class="nav-auth-item"><a href="/dashboard/" class="login-link"><span class="nav-icon">🔐</span> <span class="nav-text">ログイン</span></a></li>
+                        <li id="nav-dashboard" class="nav-auth-item" style="display: none;"><a href="/dashboard/" class="dashboard-link"><span class="nav-icon">👤</span> <span class="nav-text">マイページ</span></a></li>
                     </ul>
                     
                     <UserStatus />
@@ -637,9 +650,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                     <li><a href="/technology/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">🤖</span> AI技術</a></li>
                     <li><a href="/blog/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">📰</span> ブログ</a></li>
                     <li><a href="/contact/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">📧</span> お問い合わせ</a></li>
-                    <li><a href="/pricing/" class="pricing-link" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">✨</span> 無料登録</a></li>
-                    <li class="mobile-nav-separator"></li>
-                    <li><a href="/dashboard/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">🔐</span> ログイン</a></li>
+                    <li id="mobile-nav-signup" class="nav-auth-item"><a href="/pricing/" class="pricing-link" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">✨</span> 無料登録</a></li>
+                    <li class="mobile-nav-separator nav-auth-item" id="mobile-nav-separator"></li>
+                    <li id="mobile-nav-login" class="nav-auth-item"><a href="/dashboard/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">🔐</span> ログイン</a></li>
+                    <li id="mobile-nav-dashboard" class="nav-auth-item" style="display: none;"><a href="/dashboard/" onclick="document.getElementById('mobile-nav-menu').classList.remove('active')"><span class="mobile-nav-icon">👤</span> マイページ</a></li>
                 </ul>
             </div>
         </nav>
@@ -742,7 +756,120 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         
         document.addEventListener('DOMContentLoaded', () => {
             // updateNavigation();
+            
+            // 統合認証システム：ナビゲーションの表示状態を更新
+            const updateAuthNavigation = () => {
+                // 新しい決済システム（user-plan）と古いシステム（isLoggedIn）の両方をチェック
+                const userPlanData = localStorage.getItem('user-plan');
+                const isLoggedInOld = localStorage.getItem('isLoggedIn') === 'true';
+                const userPlanOld = localStorage.getItem('userPlan');
+                
+                let isLoggedIn = false;
+                let planType = null;
+                
+                // 新しいシステム（決済後のuser-plan）をチェック
+                if (userPlanData) {
+                    try {
+                        const userData = JSON.parse(userPlanData);
+                        if (userData && (userData.plan === 'standard' || userData.plan === 'premium')) {
+                            isLoggedIn = true;
+                            planType = userData.plan;
+                        }
+                    } catch (e) {
+                        console.warn('user-plan解析エラー:', e);
+                    }
+                }
+                
+                // 古いシステム（マジックリンクログイン）をチェック
+                if (!isLoggedIn && (isLoggedInOld || userPlanOld)) {
+                    isLoggedIn = true;
+                    planType = userPlanOld || 'free';
+                }
+                
+                // ナビゲーション要素を取得
+                const navSignup = document.getElementById('nav-signup');
+                const navLogin = document.getElementById('nav-login');
+                const navDashboard = document.getElementById('nav-dashboard');
+                
+                const mobileNavSignup = document.getElementById('mobile-nav-signup');
+                const mobileNavLogin = document.getElementById('mobile-nav-login');
+                const mobileNavDashboard = document.getElementById('mobile-nav-dashboard');
+                const mobileNavSeparator = document.getElementById('mobile-nav-separator');
+                
+                // ログアウトボタンを追加
+                if (!document.getElementById('nav-logout') && isLoggedIn) {
+                    const navMenu = document.getElementById('nav-menu');
+                    if (navMenu) {
+                        const logoutLi = document.createElement('li');
+                        logoutLi.id = 'nav-logout';
+                        logoutLi.innerHTML = `<a href="#" onclick="logout(); return false;" class="logout-link"><span class="nav-icon">🚪</span> <span class="nav-text">ログアウト</span></a>`;
+                        navMenu.appendChild(logoutLi);
+                    }
+                }
+                
+                if (isLoggedIn) {
+                    // ログイン済み：マイページとログアウトを表示、ログイン/登録を非表示
+                    if (navSignup) navSignup.style.display = 'none';
+                    if (navLogin) navLogin.style.display = 'none';
+                    if (navDashboard) navDashboard.style.display = 'block';
+                    
+                    if (mobileNavSignup) mobileNavSignup.style.display = 'none';
+                    if (mobileNavLogin) mobileNavLogin.style.display = 'none';
+                    if (mobileNavDashboard) mobileNavDashboard.style.display = 'block';
+                    if (mobileNavSeparator) mobileNavSeparator.style.display = 'none';
+                    
+                    // マイページリンクにプラン情報を表示
+                    const dashboardLinks = document.querySelectorAll('.dashboard-link');
+                    dashboardLinks.forEach(link => {
+                        const planEmojis = { standard: '⚡', premium: '💎', free: '🎁' };
+                        const emoji = planEmojis[planType] || '👤';
+                        const textSpan = link.querySelector('.nav-text') || link.querySelector('span:last-child');
+                        if (textSpan) textSpan.textContent = `マイページ ${emoji}`;
+                    });
+                } else {
+                    // 未ログイン：ログイン/登録を表示、マイページとログアウトを非表示
+                    if (navSignup) navSignup.style.display = 'block';
+                    if (navLogin) navLogin.style.display = 'block';
+                    if (navDashboard) navDashboard.style.display = 'none';
+                    
+                    if (mobileNavSignup) mobileNavSignup.style.display = 'block';
+                    if (mobileNavLogin) mobileNavLogin.style.display = 'block';
+                    if (mobileNavDashboard) mobileNavDashboard.style.display = 'none';
+                    if (mobileNavSeparator) mobileNavSeparator.style.display = 'block';
+                    
+                    // ログアウトボタンを削除
+                    const logoutBtn = document.getElementById('nav-logout');
+                    if (logoutBtn) logoutBtn.remove();
+                }
+            };
+            
+            updateAuthNavigation();
+            
+            // LocalStorageの変更を監視（他のタブでの変更も含む）
+            window.addEventListener('storage', updateAuthNavigation);
+            
+            // カスタムイベントも監視（同一タブでの変更）
+            window.addEventListener('planUpdated', updateAuthNavigation);
+            window.addEventListener('userLoggedOut', updateAuthNavigation);
         });
+        
+        // グローバルログアウト関数
+        window.logout = function() {
+            // 全てのログイン情報をクリア
+            localStorage.removeItem('user-plan');
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userPlan');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('userEmail');
+            
+            // ナビゲーション更新イベントを発火
+            window.dispatchEvent(new CustomEvent('userLoggedOut'));
+            
+            // ホームページにリダイレクト
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 500);
+        };
         
         // スムーススクロール
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

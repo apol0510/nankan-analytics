@@ -1,17 +1,18 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-// import netlify from '@astrojs/netlify';
+import netlify from '@astrojs/netlify';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://nankan-analytics.keiba.link',
   base: '/',
-  output: 'static',
+  output: 'server', // サーバーモードに変更（Functions使用可能）
 
   // インテグレーション
   integrations: [
-    sitemap()
+    sitemap(),
+    netlify() // Netlifyアダプター有効化
   ],
   
   // ビルド設定
