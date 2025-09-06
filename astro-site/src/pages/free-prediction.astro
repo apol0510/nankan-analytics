@@ -127,7 +127,7 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
 
             {/* 穴馬エリア統合オーバーレイ */}
             {allHorses && (allHorses.filter(h => h.mark === '▲' || h.mark === '△' || h.mark === '×').length > 0) && (
-                <div class="premium-horses-wrapper premium-masked">
+                <div class="premium-horses-wrapper free-member-masked">
                     
                     {/* ◎印（単穴）- 中サイズで表示 */}
                     {allHorses && allHorses.filter(h => h.mark === '▲').map((horse, index) => (
@@ -194,12 +194,12 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                         </div>
                     )}
                     
-                    <div class="premium-overlay">
-                        <div class="premium-content">
-                            <div class="premium-icon">🔒</div>
-                            <div class="premium-text">有料会員限定</div>
-                            <div class="premium-subtitle">穴馬分析データを表示</div>
-                            <button class="premium-button">今すぐ登録</button>
+                    <div class="free-member-overlay">
+                        <div class="free-member-content">
+                            <div class="free-member-icon">📧</div>
+                            <div class="free-member-text">無料会員登録が必要</div>
+                            <div class="free-member-subtitle">穴馬データを表示</div>
+                            <button class="free-member-button">無料登録する</button>
                         </div>
                     </div>
                 </div>
@@ -843,6 +843,9 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
     .premium-masked {
         position: relative;
     }
+    .free-member-masked {
+        position: relative;
+    }
     .premium-overlay {
         position: absolute;
         top: 0;
@@ -860,7 +863,24 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
         border-radius: 10px;
         backdrop-filter: blur(4px);
     }
-    .premium-content {
+    .free-member-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, 
+            rgba(15, 23, 42, 0.3) 0%,
+            rgba(15, 23, 42, 0.6) 20%,
+            rgba(15, 23, 42, 0.85) 60%,
+            rgba(15, 23, 42, 0.95) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        backdrop-filter: blur(3px);
+    }
+    .premium-content, .free-member-content {
         text-align: center;
     }
     .premium-icon {
@@ -889,6 +909,19 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
         transition: transform 0.2s;
     }
     .premium-button:hover {
+        transform: scale(1.05);
+    }
+    .free-member-button {
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .free-member-button:hover {
         transform: scale(1.05);
     }
 
