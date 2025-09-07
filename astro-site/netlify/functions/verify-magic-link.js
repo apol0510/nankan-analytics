@@ -84,21 +84,49 @@ export const handler = async (event, context) => {
     //   };
     // }
     
-    // 顧客データ取得
+    // 顧客データ取得（更新後のポイントを使用）
     const customerData = {
       email: customer.get('Email'),
       name: customer.get('氏名') || 'お客様',
       plan: customer.get('プラン') || 'Free',
-      points: customer.get('ポイント') || 0,
+      points: newPoints,
       registrationDate: customer.get('登録日'),
-      rank: calculateRank(customer.get('ポイント') || 0),
-      hasClaimedReward: customer.get('特典申請済み') || false
+      rank: calculateRank(newPoints),
+      hasClaimedReward: customer.get('特典申請済み') || false,
+      pointsAdded: pointsAdded,
+      pointsAddedAmount: pointsAdded ? pointsToAdd : 0
     };
     
-    // トークンクリア（使用済みにする）
+    // ログインポイント付与処理
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD形式
+    const lastLogin = customer.get('最終ログイン日');
+    const currentPoints = customer.get('ポイント') || 0;
+    const userPlan = (customer.get('プラン') || 'free').toLowerCase();
+    
+    // プラン別デイリーポイント
+    const dailyPointsMap = {
+      'free': 1,
+      'standard': 10,
+      'premium': 50
+    };
+    const pointsToAdd = dailyPointsMap[userPlan] || 1;
+    
+    // 今日初めてのログインかチェック
+    let newPoints = currentPoints;
+    let pointsAdded = false;
+    
+    if (!lastLogin || lastLogin !== today) {
+      // ポイント付与
+      newPoints = currentPoints + pointsToAdd;
+      pointsAdded = true;
+      console.log(`📊 デイリーポイント付与: ${email} (${userPlan}) +${pointsToAdd}pt → 合計${newPoints}pt`);
+    }
+    
+    // Airtable更新（トークンクリア + ポイント更新 + 最終ログイン日）
     await base('Customers').update(customer.id, {
-      '認証トークン': null
-      // TODO: '最終ログイン': new Date().toISOString() フィールド追加後に有効化
+      '認証トークン': null,
+      'ポイント': newPoints,
+      '最終ログイン日': today
     });
     
     console.log(`✅ ログイン成功: ${email}`);

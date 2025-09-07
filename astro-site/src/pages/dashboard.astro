@@ -267,6 +267,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     document.getElementById('email-input').value = '';
                     
                     // ダッシュボード表示
+                    // ポイント獲得通知表示
+                    if (data.customer.pointsAdded) {
+                        showPointsNotification(data.customer.pointsAddedAmount);
+                    }
+                    
                     setTimeout(() => {
                         showDashboard(data.customer);
                         // ナビゲーション更新のためイベント発火
@@ -358,6 +363,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             document.getElementById('membership-details').innerHTML = detailsHtml;
         }
 
+        // ポイント獲得通知表示
+        function showPointsNotification(points) {
+            const notification = document.createElement('div');
+            notification.className = 'points-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    🎆 デイリーポイント獲得！
+                    <span class="points-added">+${points}pt</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // アニメーション後に削除
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
         // ポイント表示更新
         function updatePointsDisplay(points, hasClaimedReward = false) {
             document.getElementById('current-points').textContent = points;
@@ -979,6 +1003,57 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
 
         /* レスポンシブ */
+        /* ポイント獲得通知 */
+        .points-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .points-added {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .points-notification.fade-out {
+            animation: slideOut 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
         @media (max-width: 768px) {
             .dashboard-container {
                 padding: 1rem;
