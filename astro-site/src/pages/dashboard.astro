@@ -76,6 +76,82 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
             </div>
 
+            <!-- ポイント交換メニュー -->
+            <div class="exchange-section">
+                <div class="exchange-card">
+                    <div class="exchange-header">
+                        <h2>🎁 ポイント交換</h2>
+                        <p class="exchange-subtitle">ポイントを特典と交換できます</p>
+                    </div>
+                    
+                    <div class="exchange-grid">
+                        <!-- 100pt特典 -->
+                        <div class="exchange-option">
+                            <div class="exchange-cost">100pt</div>
+                            <div class="exchange-reward">Standard会員
+1日パス</div>
+                            <button class="exchange-btn" onclick="requestExchange(100, 'Standard会員1日パス')">
+                                交換申請
+                            </button>
+                        </div>
+                        
+                        <!-- 300pt特典 -->
+                        <div class="exchange-option">
+                            <div class="exchange-cost">300pt</div>
+                            <div class="exchange-reward">特別攻略
+レポート</div>
+                            <button class="exchange-btn" onclick="requestExchange(300, '特別攻略レポート配信')">
+                                交換申請
+                            </button>
+                        </div>
+                        
+                        <!-- 500pt特典 -->
+                        <div class="exchange-option">
+                            <div class="exchange-cost">500pt</div>
+                            <div class="exchange-reward">Premium会員
+1日パス</div>
+                            <button class="exchange-btn" onclick="requestExchange(500, 'Premium会員1日パス')">
+                                交換申請
+                            </button>
+                        </div>
+                        
+                        <!-- 1000pt特典 -->
+                        <div class="exchange-option">
+                            <div class="exchange-cost">1000pt</div>
+                            <div class="exchange-reward">個別相談
+30分</div>
+                            <button class="exchange-btn" onclick="requestExchange(1000, '個別相談30分')">
+                                交換申請
+                            </button>
+                        </div>
+                        
+                        <!-- 2000pt特典 -->
+                        <div class="exchange-option premium-option">
+                            <div class="exchange-cost">2000pt</div>
+                            <div class="exchange-reward">月額料金
+500円割引</div>
+                            <button class="exchange-btn" onclick="requestExchange(2000, '月額料金500円割引')">
+                                交換申請
+                            </button>
+                        </div>
+                        
+                        <!-- 3000pt特典 -->
+                        <div class="exchange-option premium-option">
+                            <div class="exchange-cost">3000pt</div>
+                            <div class="exchange-reward">Premium会員
+1ヶ月無料</div>
+                            <button class="exchange-btn" onclick="requestExchange(3000, 'Premium会員1ヶ月無料')">
+                                交換申請
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="exchange-note">
+                        <small>※ 交換申請後、管理者が確認後に特典を提供いたします。</small>
+                    </div>
+                </div>
+            </div>
+
             <!-- 今日の予想 -->
             <div class="predictions-section">
                 <h2>🏇 今日の予想</h2>
@@ -1002,6 +1078,101 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
         }
 
+        /* ポイント交換メニュー */
+        .exchange-section {
+            margin-top: 30px;
+        }
+        
+        .exchange-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .exchange-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .exchange-header h2 {
+            color: #2d3748;
+            margin: 0 0 8px 0;
+            font-size: 1.5rem;
+        }
+        
+        .exchange-subtitle {
+            color: #718096;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        
+        .exchange-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .exchange-option {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .exchange-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .premium-option {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .premium-option:hover {
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
+        }
+        
+        .exchange-cost {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .exchange-reward {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .exchange-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .exchange-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .exchange-note {
+            text-align: center;
+            color: #718096;
+            margin-top: 15px;
+        }
+        
         /* レスポンシブ */
         /* ポイント獲得通知 */
         .points-notification {
@@ -1073,6 +1244,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 flex-direction: column;
                 text-align: center;
                 gap: 1rem;
+            }
+            
+            .exchange-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .exchange-option {
+                padding: 15px;
             }
 
             .predictions-grid {
