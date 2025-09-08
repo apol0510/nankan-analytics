@@ -145,6 +145,8 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
 
     // 簡易認証状態チェック（認証モジュール使用まで）
     function getCurrentUserPlan() {
+        console.log('🔍 認証状態チェック開始');
+        
         // 0. デモモードのサブスクリプション情報をチェック（優先）
         const demoKeys = Object.keys(localStorage).filter(key => key.startsWith('demo_subscription_'));
         if (demoKeys.length > 0) {
@@ -160,7 +162,22 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 1. 新形式のuser-planチェック（最優先）
+        // 1. 旧形式のtest_subscription_データをチェック（最優先 - 本番で実際に使用中）
+        const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
+        if (testSubscriptionKeys.length > 0) {
+            try {
+                const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
+                console.log('📦 旧形式認証データ発見:', testData);
+                return { 
+                    user: { id: testData.userId, legacy: true }, 
+                    plan: testData.planType.toLowerCase() 
+                };
+            } catch (error) {
+                console.error('Test subscription data parsing error:', error);
+            }
+        }
+
+        // 2. 新形式のuser-planチェック
         const userPlanData = localStorage.getItem('user-plan');
         if (userPlanData) {
             try {
@@ -175,7 +192,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 2. 旧形式のisLoggedInチェック（互換性）
+        // 3. 旧形式のisLoggedInチェック（互換性）
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         const userPlan = localStorage.getItem('userPlan');
         if (isLoggedIn === 'true') {
@@ -186,7 +203,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             };
         }
 
-        // 3. ローカルストレージから認証情報を取得
+        // 4. ローカルストレージから認証情報を取得
         const authData = localStorage.getItem('auth_data');
         if (authData) {
             try {
@@ -205,7 +222,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 4. セッションストレージチェック
+        // 5. セッションストレージチェック
         const sessionAuth = sessionStorage.getItem('temp_auth');
         if (sessionAuth) {
             try {
@@ -216,23 +233,9 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 5. 旧形式のtest_subscription_データをチェック（互換性のため）
-        const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
-        if (testSubscriptionKeys.length > 0) {
-            try {
-                const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
-                console.log('📦 旧形式認証データ発見:', testData);
-                return { 
-                    user: { id: testData.userId, legacy: true }, 
-                    plan: testData.planType.toLowerCase() 
-                };
-            } catch (error) {
-                console.error('Test subscription data parsing error:', error);
-            }
-        }
-
-        // 6. デフォルトは無料プラン
-        return { user: null, plan: 'free' };
+        // 6. デフォルトは未登録
+        console.log('❌ 認証データなし - 未登録状態');
+        return { user: null, plan: null };
     }
 
     // プラン階層チェック
