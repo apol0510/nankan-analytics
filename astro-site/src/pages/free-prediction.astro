@@ -1,7 +1,6 @@
 ---
 export const prerender = true; // 静的サイト生成用に戻す
 import BaseLayout from '../layouts/BaseLayout.astro';
-import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 
 // メインレース（11R）を取得
@@ -15,8 +14,7 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
 ---
 
 <BaseLayout title={`AI予想分析 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想を無料で提供中。`}>
-    <AccessControl requiredPlan="free">
-        <div class="container">
+    <div class="container">
         <!-- ヘッダーセクション -->
         <div class="header-section">
             <div class="ai-badge">
@@ -448,7 +446,6 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
             <p style="color:#e2e8f0;line-height:1.6">競馬予想は投資の一種です。必ず余裕資金の範囲内で楽しみ、自己責任でご利用ください。当予想による損失については一切の責任を負いません。</p>
         </div>
         </div>
-    </AccessControl>
 </BaseLayout>
 
 <style>
@@ -1204,4 +1201,75 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
             icon.textContent = '▼';
         }
     }
+
+    // 無料会員アクセス制御
+    function checkFreeMemberAccess() {
+        // 認証状態の確認
+        function getCurrentUserPlan() {
+            // 1. 新形式のuser-planチェック（最優先）
+            const userPlanData = localStorage.getItem('user-plan');
+            if (userPlanData) {
+                try {
+                    const userData = JSON.parse(userPlanData);
+                    return { 
+                        user: { email: userData.email }, 
+                        plan: userData.plan || 'free' 
+                    };
+                } catch (error) {
+                    console.error('User plan parsing error:', error);
+                }
+            }
+
+            // 2. 旧形式のisLoggedInチェック（互換性）
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userPlan = localStorage.getItem('userPlan');
+            if (isLoggedIn === 'true') {
+                return { 
+                    user: { legacy: true }, 
+                    plan: userPlan || 'free' 
+                };
+            }
+
+            // 3. 旧形式のtest_subscription_データをチェック
+            const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
+            if (testSubscriptionKeys.length > 0) {
+                try {
+                    const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
+                    return { 
+                        user: { id: testData.userId, legacy: true }, 
+                        plan: testData.planType.toLowerCase() 
+                    };
+                } catch (error) {
+                    console.error('Test subscription data parsing error:', error);
+                }
+            }
+
+            // 4. デフォルトは未登録
+            return { user: null, plan: null };
+        }
+
+        const { user, plan } = getCurrentUserPlan();
+        const isRegistered = user !== null;
+        
+        console.log('🔍 無料会員アクセスチェック:', { user, plan, isRegistered });
+
+        // 穴馬データのオーバーレイ制御
+        const freeMemberOverlay = document.querySelector('.free-member-overlay');
+        if (freeMemberOverlay) {
+            if (isRegistered) {
+                // 登録済み: オーバーレイを非表示
+                freeMemberOverlay.style.display = 'none';
+                console.log('✅ 穴馬データアクセス許可（登録済みユーザー）');
+            } else {
+                // 未登録: オーバーレイを表示
+                freeMemberOverlay.style.display = 'flex';
+                console.log('🔒 穴馬データアクセス拒否（未登録ユーザー）');
+            }
+        }
+    }
+
+    // ページ読み込み後に実行
+    document.addEventListener('DOMContentLoaded', function() {
+        checkFreeMemberAccess();
+    });
 </script>
