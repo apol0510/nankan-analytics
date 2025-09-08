@@ -1,0 +1,348 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="無料会員登録 - NANKANアナリティクス">
+    <div class="signup-container">
+        <!-- ヘッダー -->
+        <div class="signup-header">
+            <h1>🎉 無料会員登録</h1>
+            <p class="subtitle">メインレース（11R）の予想を無料でご利用いただけます</p>
+        </div>
+
+        <!-- 登録フォーム -->
+        <div id="signup-section" class="signup-section">
+            <div class="signup-card">
+                <h2>📧 メールアドレス登録</h2>
+                <p>以下のメールアドレスで無料会員登録を行います</p>
+                
+                <div class="email-input-section">
+                    <input 
+                        type="email" 
+                        id="email-input" 
+                        placeholder="example@email.com"
+                        required
+                        class="email-input"
+                    />
+                    <button id="signup-btn" class="signup-btn">
+                        無料会員登録する
+                    </button>
+                </div>
+
+                <div id="success-message" class="success-message" style="display: none;"></div>
+                <div id="error-message" class="error-message" style="display: none;"></div>
+
+                <!-- 特典説明 -->
+                <div class="benefits-section">
+                    <h3>✨ 無料会員特典</h3>
+                    <ul class="benefits-list">
+                        <li>📊 メインレース（11R）の詳細予想</li>
+                        <li>🤖 AI分析による予想データ</li>
+                        <li>🎯 基本的な競馬情報</li>
+                        <li>🎁 毎日ログインでポイント獲得</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 登録完了後のメッセージ -->
+        <div id="completed-section" style="display: none;" class="completed-section">
+            <div class="completed-card">
+                <div class="success-icon">🎊</div>
+                <h2>登録完了！</h2>
+                <p>無料会員登録が完了しました。今すぐメインレースの予想をご確認ください。</p>
+                <div class="action-buttons">
+                    <a href="/free-prediction/" class="primary-btn">メインレース予想を見る</a>
+                    <a href="/dashboard/" class="secondary-btn">マイページへ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .signup-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #e2e8f0;
+        padding: 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .signup-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        max-width: 600px;
+    }
+
+    .signup-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #3b82f6, #10b981);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+        font-size: 1.25rem;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    .signup-section, .completed-section {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .signup-card, .completed-card {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        backdrop-filter: blur(10px);
+        text-align: center;
+    }
+
+    .signup-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #f1f5f9;
+    }
+
+    .signup-card p {
+        color: #94a3b8;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .email-input-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .email-input {
+        padding: 0.875rem 1rem;
+        border-radius: 0.5rem;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        background: rgba(15, 23, 42, 0.8);
+        color: #e2e8f0;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .email-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .signup-btn {
+        padding: 0.875rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .signup-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .benefits-section {
+        text-align: left;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .benefits-section h3 {
+        color: #10b981;
+        margin-bottom: 1rem;
+        font-size: 1.125rem;
+    }
+
+    .benefits-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .benefits-list li {
+        padding: 0.5rem 0;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+    }
+
+    .success-message {
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.5);
+        color: #10b981;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .error-message {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.5);
+        color: #ef4444;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .completed-card h2 {
+        color: #10b981;
+        margin-bottom: 1rem;
+    }
+
+    .completed-card p {
+        margin-bottom: 2rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .primary-btn, .secondary-btn {
+        flex: 1;
+        padding: 0.875rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        text-align: center;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .primary-btn {
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        color: white;
+    }
+
+    .primary-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .secondary-btn {
+        background: transparent;
+        color: #3b82f6;
+        border: 2px solid rgba(59, 130, 246, 0.5);
+    }
+
+    .secondary-btn:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: #3b82f6;
+    }
+
+    @media (max-width: 640px) {
+        .signup-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+        }
+
+        .signup-card, .completed-card {
+            padding: 1.5rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    // 無料会員登録処理
+    document.getElementById('signup-btn').addEventListener('click', function() {
+        const emailInput = document.getElementById('email-input');
+        const email = emailInput.value.trim();
+        
+        if (!email) {
+            showError('メールアドレスを入力してください');
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            showError('有効なメールアドレスを入力してください');
+            return;
+        }
+
+        // 無料会員として登録
+        registerFreeUser(email);
+    });
+
+    function registerFreeUser(email) {
+        try {
+            // Free会員としてLocalStorageに保存
+            const userData = {
+                email: email,
+                plan: 'free',
+                registeredAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('user-plan', JSON.stringify(userData));
+            
+            // 旧形式との互換性
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userPlan', 'free');
+            
+            showSuccess('無料会員登録が完了しました！');
+            
+            // 2秒後に完了画面を表示
+            setTimeout(() => {
+                document.getElementById('signup-section').style.display = 'none';
+                document.getElementById('completed-section').style.display = 'block';
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            showError('登録に失敗しました。再度お試しください。');
+        }
+    }
+
+    function showSuccess(message) {
+        const successDiv = document.getElementById('success-message');
+        const errorDiv = document.getElementById('error-message');
+        
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('error-message');
+        const successDiv = document.getElementById('success-message');
+        
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        successDiv.style.display = 'none';
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+</script>

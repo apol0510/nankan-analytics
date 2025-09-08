@@ -1,6 +1,7 @@
 ---
 export const prerender = true; // 静的サイト生成用に戻す
 import BaseLayout from '../layouts/BaseLayout.astro';
+import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 
 // メインレース（11R）を取得
@@ -14,7 +15,8 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
 ---
 
 <BaseLayout title={`AI予想分析 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想を無料で提供中。`}>
-    <div class="container">
+    <AccessControl requiredPlan="free">
+        <div class="container">
         <!-- ヘッダーセクション -->
         <div class="header-section">
             <div class="ai-badge">
@@ -445,7 +447,8 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
             <h3 style="color:#f59e0b;margin-bottom:15px">⚠️ 免責事項</h3>
             <p style="color:#e2e8f0;line-height:1.6">競馬予想は投資の一種です。必ず余裕資金の範囲内で楽しみ、自己責任でご利用ください。当予想による損失については一切の責任を負いません。</p>
         </div>
-    </div>
+        </div>
+    </AccessControl>
 </BaseLayout>
 
 <style>

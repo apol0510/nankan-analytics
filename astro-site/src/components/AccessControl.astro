@@ -134,14 +134,13 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
 </style>
 
 <script>
-    // 環境判定の厳密化
+    // 環境判定
     function isDevelopmentMode() {
-        // 開発環境の条件を厳しく設定
-        const isLocalhost = window.location.hostname === 'localhost';
-        const hasDevParam = new URLSearchParams(window.location.search).get('dev') === 'true';
-        const hasAdminParam = new URLSearchParams(window.location.search).get('admin') === 'true';
+        // 開発環境判定：localhostまたはポート番号がある場合
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const hasDevPort = window.location.port === '4321' || window.location.port === '3000';
         
-        return isLocalhost && (hasDevParam || hasAdminParam);
+        return isLocalhost || hasDevPort;
     }
 
     // 簡易認証状態チェック（認証モジュール使用まで）
@@ -161,7 +160,33 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 1. ローカルストレージから認証情報を取得
+        // 1. 新形式のuser-planチェック（最優先）
+        const userPlanData = localStorage.getItem('user-plan');
+        if (userPlanData) {
+            try {
+                const userData = JSON.parse(userPlanData);
+                console.log('✅ user-plan認証:', userData);
+                return { 
+                    user: { email: userData.email }, 
+                    plan: userData.plan || 'free' 
+                };
+            } catch (error) {
+                console.error('User plan parsing error:', error);
+            }
+        }
+
+        // 2. 旧形式のisLoggedInチェック（互換性）
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const userPlan = localStorage.getItem('userPlan');
+        if (isLoggedIn === 'true') {
+            console.log('✅ 旧形式認証（isLoggedIn）:', userPlan);
+            return { 
+                user: { legacy: true }, 
+                plan: userPlan || 'free' 
+            };
+        }
+
+        // 3. ローカルストレージから認証情報を取得
         const authData = localStorage.getItem('auth_data');
         if (authData) {
             try {
@@ -180,7 +205,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 2. セッションストレージチェック
+        // 4. セッションストレージチェック
         const sessionAuth = sessionStorage.getItem('temp_auth');
         if (sessionAuth) {
             try {
@@ -191,7 +216,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 3. 旧形式のtest_subscription_データをチェック（互換性のため）
+        // 5. 旧形式のtest_subscription_データをチェック（互換性のため）
         const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
         if (testSubscriptionKeys.length > 0) {
             try {
@@ -206,7 +231,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 4. デフォルトは無料プラン
+        // 6. デフォルトは無料プラン
         return { user: null, plan: 'free' };
     }
 
@@ -243,18 +268,14 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         const requiredPlan = accessControl.dataset.requiredPlan;
         
         try {
-            // 開発モードチェック（厳密化）
-            if (isDevelopmentMode()) {
-                console.log('🔧 開発モード: 認証チェックをスキップ（?dev=true または ?admin=true必須）');
-                loadingState.classList.add('hidden');
-                contentArea.classList.remove('hidden');
-                return;
-            }
-
-            // 本番環境での認証チェック
-            console.log('🔒 本番モード: 認証システム有効化');
-            
+            // 認証状態の取得
             const { user, plan } = getCurrentUserPlan();
+            console.log(`🔒 認証チェック - ユーザー:`, user, `プラン:`, plan, `必要プラン:`, requiredPlan);
+
+            // 開発モードでの優先表示（デバッグ用）
+            if (isDevelopmentMode()) {
+                console.log('🔧 開発モード: 認証情報を優先表示');
+            }
             
             // アクセス権限チェック
             if (canAccessContent(plan, requiredPlan)) {
