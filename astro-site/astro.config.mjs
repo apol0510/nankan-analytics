@@ -7,12 +7,12 @@ import netlify from '@astrojs/netlify';
 export default defineConfig({
   site: 'https://nankan-analytics.keiba.link',
   base: '/',
-  output: 'static', // 静的サイト生成に戻す（Netlify Functionsエラー回避）
+  output: 'static', // 静的サイトモードでFunctionsを独立実行
 
   // インテグレーション
   integrations: [
     sitemap()
-    // netlify() // 一時的に無効化（ESModuleエラー回避）
+    // netlify() // 静的モードでは不要
   ],
   
   // ビルド設定

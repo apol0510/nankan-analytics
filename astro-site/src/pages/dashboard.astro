@@ -230,17 +230,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             return !!(userPlanData || isLoggedIn || userPlan);
         }
         
-        function getCustomerData() {
+        async function getCustomerData() {
             // 新しい決済システムのデータを最優先
             const userPlanData = localStorage.getItem('user-plan');
             if (userPlanData) {
                 try {
                     const userData = JSON.parse(userPlanData);
+                    // 実際のポイントをFunctionsから取得
+                    const realPoints = await fetchUserPoints(userData.email);
                     return {
                         email: userData.email,
                         plan: userData.plan || 'free',
-                        points: 150, // デフォルト値
-                        hasClaimedReward: false,
+                        points: realPoints,
+                        hasClaimedReward: localStorage.getItem('hasClaimedReward') === 'true',
                         registrationDate: userData.registeredAt,
                         name: 'お客様'
                     };
@@ -254,16 +256,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const plan = localStorage.getItem('userPlan') || 'free';
             
             if (email || plan !== 'free') {
+                // 実際のポイントをFunctionsから取得
+                const realPoints = await fetchUserPoints(email);
                 return {
                     email: email || 'member@example.com',
                     plan: plan,
-                    points: 150,
-                    hasClaimedReward: false,
+                    points: realPoints,
+                    hasClaimedReward: localStorage.getItem('hasClaimedReward') === 'true',
                     name: 'お客様'
                 };
             }
             
             return null;
+        }
+
+        // Functionsからユーザーポイントを取得
+        async function fetchUserPoints(email) {
+            if (!email) return 0;
+            
+            try {
+                const functionsUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:9999/.netlify/functions/get-user-points'
+                    : '/.netlify/functions/get-user-points';
+                
+                const response = await fetch(`${functionsUrl}?email=${encodeURIComponent(email)}`);
+                
+                if (!response.ok) {
+                    console.error('ポイント取得エラー:', response.status);
+                    return 0;
+                }
+                
+                const data = await response.json();
+                return data.points || 0;
+                
+            } catch (error) {
+                console.error('ポイント取得失敗:', error);
+                return 0; // エラー時はデフォルト値を返す
+            }
         }
 
         // ランク定義
@@ -301,7 +330,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 let data;
                 
                 try {
-                    response = await fetch('/.netlify/functions/get-plan', {
+                    // 開発環境では直接Functions サーバーを呼び出す
+                    const functionsUrl = window.location.hostname === 'localhost' 
+                        ? 'http://localhost:9999/.netlify/functions/auth-user'
+                        : '/.netlify/functions/auth-user';
+                    
+                    response = await fetch(functionsUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -315,23 +349,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     
                     data = await response.json();
                 } catch (fetchError) {
-                    console.warn('Functions呼び出しエラー、ローカル認証を使用:', fetchError);
+                    console.error('Functions呼び出しエラー:', fetchError);
                     
-                    // Functions失敗時のフォールバック：ローカル認証
-                    const mockCustomer = {
-                        email: email,
-                        plan: email.includes('premium') ? 'premium' : (email.includes('standard') ? 'standard' : 'free'),
-                        registrationDate: new Date().toISOString()
-                    };
-                    
-                    data = { success: true, customer: mockCustomer };
+                    // エラー表示して処理を停止
+                    throw new Error('認証システムエラー。再度お試しください。');
                 }
                 
-                if (data.success && data.customer) {
+                if (data.success && data.user) {
                     // セッション情報保存
                     localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userEmail', data.customer.email);
-                    localStorage.setItem('userPlan', data.customer.plan);
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('userPlan', data.user.plan);
                     
                     const planNames = {
                         'free': '無料会員',
@@ -339,17 +367,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         'premium': 'Premium会員'
                     };
                     
-                    showSuccess(`✅ ${planNames[data.customer.plan] || data.customer.plan}でログインしました`);
-                    document.getElementById('email-input').value = '';
-                    
-                    // ダッシュボード表示
-                    // ポイント獲得通知表示
-                    if (data.customer.pointsAdded) {
-                        showPointsNotification(data.customer.pointsAddedAmount);
+                    // ログインポイント付与通知
+                    if (data.user.pointsAdded > 0) {
+                        showSuccess(`✅ ${planNames[data.user.plan] || data.user.plan}でログイン！デイリーポイント${data.user.pointsAdded}pt獲得`);
+                        showPointsNotification(data.user.pointsAdded);
+                    } else {
+                        showSuccess(`✅ ${planNames[data.user.plan] || data.user.plan}でログインしました`);
                     }
                     
+                    document.getElementById('email-input').value = '';
+                    
+                    // ダッシュボード表示用データ準備（Functionsから取得した実データを使用）
+                    const dashboardData = {
+                        email: data.user.email,
+                        plan: data.user.plan,
+                        points: data.user.points,  // Functions から取得した実際のポイント
+                        hasClaimedReward: localStorage.getItem('hasClaimedReward') === 'true',
+                        registrationDate: data.user.registeredAt || data.user.lastLogin,
+                        name: 'お客様'
+                    };
+                    
                     setTimeout(() => {
-                        showDashboard(data.customer);
+                        showDashboard(dashboardData);
                         // ナビゲーション更新のためイベント発火
                         window.dispatchEvent(new Event('storage'));
                     }, 1000);
@@ -565,6 +604,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         });
 
+        // ポイント交換申請関数
+        window.requestExchange = async function(requiredPoints, rewardName) {
+            const customer = await getCustomerData();
+            
+            if (!customer || !customer.email) {
+                alert('ログインが必要です');
+                return;
+            }
+            
+            if (customer.points < requiredPoints) {
+                alert(`ポイントが不足しています。\n必要: ${requiredPoints}pt\n現在: ${customer.points}pt`);
+                return;
+            }
+            
+            const subject = `ポイント交換申請: ${rewardName}`;
+            const body = `
+ユーザー: ${customer.email}
+プラン: ${customer.plan}
+申請: ${requiredPoints}pt → ${rewardName}
+現在のポイント: ${customer.points}pt
+申請日時: ${new Date().toLocaleString()}
+
+※この申請は自動送信されました。管理者が確認後にご連絡いたします。
+            `.trim();
+            
+            // メール申請を開く
+            window.location.href = `mailto:support@keiba.link?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        };
+
         // ログアウト（簡略化）
         window.logout = function() {
             // 全てのログイン情報をクリア
@@ -599,7 +667,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             
             // 既存セッションチェック
             if (isAuthenticated()) {
-                const customer = getCustomerData();
+                const customer = await getCustomerData();
                 if (customer) {
                     showDashboard(customer);
                 }
