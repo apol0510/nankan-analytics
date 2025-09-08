@@ -242,8 +242,11 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
     function canAccessContent(userPlan, requiredPlan, user) {
         const planHierarchy = {
             'free': 0,
+            'Free': 0,
             'standard': 1,
-            'premium': 2
+            'Standard': 1,
+            'premium': 2,
+            'Premium': 2
         };
         
         const userLevel = planHierarchy[userPlan] || 0;
@@ -273,8 +276,11 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
     function getPlanDisplayName(plan) {
         const displayNames = {
             'free': '無料プラン',
+            'Free': '無料プラン',
             'standard': 'スタンダードプラン',
-            'premium': 'プレミアムプラン'
+            'Standard': 'スタンダードプラン',
+            'premium': 'プレミアムプラン',
+            'Premium': 'プレミアムプラン'
         };
         return displayNames[plan] || '不明なプラン';
     }
