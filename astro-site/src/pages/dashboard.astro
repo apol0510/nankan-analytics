@@ -426,10 +426,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             
             try {
                 const functionsUrl = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:9999/.netlify/functions/get-user-points'
-                    : '/.netlify/functions/get-user-points';
+                    ? 'http://localhost:9999/.netlify/functions/auth-user'
+                    : '/.netlify/functions/auth-user';
                 
-                const response = await fetch(`${functionsUrl}?email=${encodeURIComponent(email)}`);
+                // auth-user Functionを使用（get-user-pointsは削除済み）
+                const response = await fetch(functionsUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email })
+                });
                 
                 if (!response.ok) {
                     console.error('ポイント取得エラー:', response.status);
@@ -437,7 +444,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }
                 
                 const data = await response.json();
-                const points = data.points || 0;
+                const points = data.user?.points || 0;
                 console.log(`📊 Airtableから取得: ${points}pt (email: ${email})`);
                 return points;
                 
