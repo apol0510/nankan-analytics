@@ -330,7 +330,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // 本番環境：Netlify Functions経由でZapier連携（CORS回避）
             console.log('🚀 本番モード: Functions経由Zapier連携');
             
-            const response = await fetch('/.netlify/functions/register-free-user', {
+            const response = await fetch('/.netlify/functions/auth-user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
