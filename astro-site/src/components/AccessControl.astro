@@ -299,12 +299,22 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             if (canAccessContent(plan, requiredPlan, user)) {
                 // アクセス許可
                 console.log(`✅ アクセス許可: ${getPlanDisplayName(plan)} → ${requiredPlan}コンテンツ`);
+                console.log('📋 DOM要素状態 - loading:', loadingState, 'content:', contentArea, 'denied:', accessDenied);
+                
                 loadingState.classList.add('hidden');
                 contentArea.classList.remove('hidden');
+                accessDenied.classList.add('hidden'); // 念のため拒否メッセージを明示的に非表示
+                
+                console.log('🔓 コンテンツ表示完了:', {
+                    loading: loadingState.classList.contains('hidden'),
+                    content: !contentArea.classList.contains('hidden'),
+                    denied: accessDenied.classList.contains('hidden')
+                });
             } else {
                 // アクセス拒否
                 console.log(`❌ アクセス拒否: ${getPlanDisplayName(plan)} → ${requiredPlan}コンテンツ`);
                 loadingState.classList.add('hidden');
+                contentArea.classList.add('hidden'); // コンテンツを明示的に非表示
                 accessDenied.classList.remove('hidden');
                 
                 // メッセージをカスタマイズ
@@ -363,6 +373,10 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        checkAccess();
+        console.log('📋 DOMContentLoaded - AccessControl初期化開始');
+        // DOM要素の完全な準備を待つため少し遅延
+        setTimeout(() => {
+            checkAccess();
+        }, 100);
     });
 </script>
