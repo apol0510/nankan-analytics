@@ -745,26 +745,57 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
         
         // モック統計データ更新
-        function updateMockStats(plan, points) {
+        async function updateMockStats(plan, points) {
             console.log('📊 updateMockStats 呼び出し:', { plan, points });
             
-            // プランに応じたモックデータ
-            const mockData = {
-                free: { logins: 5, streak: 2, earned: '15pt' },
-                Free: { logins: 5, streak: 2, earned: '15pt' },
-                standard: { logins: 25, streak: 7, earned: '890pt' },
-                Standard: { logins: 25, streak: 7, earned: '890pt' },
-                premium: { logins: 45, streak: 12, earned: '2.1k pt' },
-                Premium: { logins: 45, streak: 12, earned: '2.1k pt' }
-            };
-            
-            const stats = mockData[plan] || mockData.free;
-            
-            // 要素の存在チェック付きで更新
+            // 要素の存在チェック
             const totalLoginsEl = document.getElementById('total-logins');
             const streakDaysEl = document.getElementById('streak-days');
             const totalEarnedEl = document.getElementById('total-earned');
             
+            // デフォルトはプランに応じたモックデータ
+            const mockData = {
+                free: { logins: 1, streak: 1, earned: `${points}pt` },
+                Free: { logins: 1, streak: 1, earned: `${points}pt` },
+                standard: { logins: 25, streak: 7, earned: `${points}pt` },
+                Standard: { logins: 25, streak: 7, earned: `${points}pt` },
+                premium: { logins: 45, streak: 12, earned: `${points}pt` },
+                Premium: { logins: 45, streak: 12, earned: `${points}pt` }
+            };
+            
+            let stats = mockData[plan] || mockData.free;
+            
+            // Airtableから実際のユーザーデータを取得試行
+            try {
+                const userPlanData = localStorage.getItem('user-plan');
+                if (userPlanData) {
+                    const userData = JSON.parse(userPlanData);
+                    const email = userData.email;
+                    
+                    if (email) {
+                        // get-user-points Functionでユーザーの詳細情報取得
+                        const response = await fetch(`/.netlify/functions/get-user-points?email=${encodeURIComponent(email)}`);
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            console.log('📊 Airtable実データ取得成功:', data);
+                            
+                            // 実際のデータで更新（TODO: より詳細な統計情報が必要な場合は拡張）
+                            stats = {
+                                logins: 1, // 今のところAirtableにログイン回数履歴なし
+                                streak: 1,  // 連続日数もまだ未実装
+                                earned: `${data.points || points}pt`
+                            };
+                        } else {
+                            console.warn('⚠️ Airtableデータ取得失敗、モックデータ使用');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Airtableデータ取得エラー、モックデータ使用:', error);
+            }
+            
+            // UI更新
             if (totalLoginsEl) {
                 totalLoginsEl.textContent = `${stats.logins}回`;
             } else {
@@ -783,7 +814,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 console.warn('⚠️ total-earned 要素が見つかりません');
             }
             
-            console.log('✅ updateMockStats 完了');
+            console.log('✅ updateMockStats 完了:', stats);
         }
         
         // VIP特典更新
