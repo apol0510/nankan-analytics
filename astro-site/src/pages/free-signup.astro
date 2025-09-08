@@ -294,32 +294,81 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         registerFreeUser(email);
     });
 
-    function registerFreeUser(email) {
+    async function registerFreeUser(email) {
         try {
-            // Free会員としてLocalStorageに保存
-            const userData = {
-                email: email,
-                plan: 'free',
-                registeredAt: new Date().toISOString()
-            };
+            showSuccess('無料会員登録を処理中...');
             
-            localStorage.setItem('user-plan', JSON.stringify(userData));
+            // 開発環境判定
+            const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             
-            // 旧形式との互換性
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userPlan', 'free');
+            if (isLocalDev) {
+                // ローカル開発環境：Functions使用せずLocalStorageのみ
+                console.log('🔧 開発モード: LocalStorage登録のみ');
+                
+                const userData = {
+                    email: email,
+                    plan: 'free',
+                    points: 1,
+                    registeredAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString().split('T')[0]
+                };
+                
+                localStorage.setItem('user-plan', JSON.stringify(userData));
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userPlan', 'free');
+                
+                showSuccess('無料会員登録が完了しました！（開発モード）');
+                
+                setTimeout(() => {
+                    document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('completed-section').style.display = 'block';
+                }, 2000);
+                
+                return;
+            }
             
-            showSuccess('無料会員登録が完了しました！');
+            // 本番環境：auth-user Function呼び出し
+            const response = await fetch('/.netlify/functions/auth-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await response.json();
             
-            // 2秒後に完了画面を表示
-            setTimeout(() => {
-                document.getElementById('signup-section').style.display = 'none';
-                document.getElementById('completed-section').style.display = 'block';
-            }, 2000);
+            if (data.success) {
+                // LocalStorage更新（Airtableデータと同期）
+                const userData = {
+                    email: email,
+                    plan: data.user.plan || 'free',
+                    points: data.user.points || 1,
+                    registeredAt: new Date().toISOString(),
+                    lastLogin: data.user.lastLogin
+                };
+                
+                localStorage.setItem('user-plan', JSON.stringify(userData));
+                
+                // 旧形式との互換性
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userPlan', userData.plan);
+                
+                showSuccess(`無料会員登録が完了しました！${data.user.pointsAdded > 0 ? ' ログインポイント' + data.user.pointsAdded + 'pt獲得！' : ''}`);
+                
+                // 2秒後に完了画面を表示
+                setTimeout(() => {
+                    document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('completed-section').style.display = 'block';
+                }, 2000);
+                
+            } else {
+                throw new Error(data.message || 'サーバーエラー');
+            }
             
         } catch (error) {
             console.error('Registration error:', error);
-            showError('登録に失敗しました。再度お試しください。');
+            showError('登録に失敗しました。再度お試しください。' + (error.message ? ' (' + error.message + ')' : ''));
         }
     }
 

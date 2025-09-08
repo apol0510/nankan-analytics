@@ -236,7 +236,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
     }
 
     // プラン階層チェック
-    function canAccessContent(userPlan, requiredPlan) {
+    function canAccessContent(userPlan, requiredPlan, user) {
         const planHierarchy = {
             'free': 0,
             'standard': 1,
@@ -246,7 +246,13 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         const userLevel = planHierarchy[userPlan] || 0;
         const requiredLevel = planHierarchy[requiredPlan] || 0;
         
-        return userLevel >= requiredLevel;
+        // 無料プランが必要な場合は、実際に会員登録されているかチェック
+        if (requiredPlan === 'free') {
+            return user !== null; // 会員登録されている場合のみアクセス許可
+        }
+        
+        // 有料プランの場合は従来通りの階層チェック
+        return userLevel >= requiredLevel && user !== null;
     }
 
     // プラン表示名取得
@@ -278,7 +284,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
             
             // アクセス権限チェック
-            if (canAccessContent(plan, requiredPlan)) {
+            if (canAccessContent(plan, requiredPlan, user)) {
                 // アクセス許可
                 console.log(`✅ アクセス許可: ${getPlanDisplayName(plan)} → ${requiredPlan}コンテンツ`);
                 loadingState.classList.add('hidden');
