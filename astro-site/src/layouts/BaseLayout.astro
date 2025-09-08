@@ -220,11 +220,29 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             background: rgba(239, 68, 68, 0.1) !important;
             color: #ef4444 !important;
             border: 1px solid rgba(239, 68, 68, 0.3) !important;
+            padding: 8px 10px !important;
+            border-radius: 6px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            white-space: nowrap !important;
+            font-weight: 500 !important;
+            font-size: 0.9rem !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
         }
         
         .logout-link:hover {
             background: rgba(239, 68, 68, 0.2) !important;
             border-color: rgba(239, 68, 68, 0.5) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2) !important;
+        }
+        
+        .logout-link .nav-icon {
+            font-size: 1rem !important;
+            filter: drop-shadow(0 1px 2px rgba(239, 68, 68, 0.2)) !important;
+            flex-shrink: 0 !important;
         }
 
         /* Mobile Menu */
@@ -378,6 +396,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
         .mobile-nav-menu .pricing-link:hover {
             background: linear-gradient(135deg, #4f94ff 0%, #9d6cff 100%);
+        }
+        
+        /* モバイルログアウトボタンのスタイル */
+        .mobile-nav-menu #mobile-nav-logout a {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #ef4444 !important;
+        }
+        
+        .mobile-nav-menu #mobile-nav-logout a:hover {
+            background: rgba(239, 68, 68, 0.2) !important;
+            color: #ef4444 !important;
         }
 
         .mobile-nav-separator {
@@ -802,8 +831,98 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                     if (navMenu) {
                         const logoutLi = document.createElement('li');
                         logoutLi.id = 'nav-logout';
-                        logoutLi.innerHTML = `<a href="#" onclick="logout(); return false;" class="logout-link"><span class="nav-icon">🚪</span> <span class="nav-text">ログアウト</span></a>`;
+                        logoutLi.className = 'nav-auth-item';
+                        
+                        const logoutLink = document.createElement('a');
+                        logoutLink.href = '#';
+                        logoutLink.onclick = (e) => { e.preventDefault(); logout(); return false; };
+                        logoutLink.className = 'logout-link';
+                        
+                        // スタイルを直接適用（確実に表示されるように）
+                        logoutLink.style.cssText = `
+                            background: rgba(239, 68, 68, 0.1) !important;
+                            color: #ef4444 !important;
+                            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+                            padding: 8px 10px !important;
+                            border-radius: 6px !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            gap: 5px !important;
+                            white-space: nowrap !important;
+                            font-weight: 500 !important;
+                            font-size: 0.9rem !important;
+                            text-decoration: none !important;
+                            transition: all 0.3s ease !important;
+                            position: relative !important;
+                        `;
+                        
+                        // ホバーイベントを追加
+                        logoutLink.addEventListener('mouseenter', function() {
+                            this.style.background = 'rgba(239, 68, 68, 0.2)';
+                            this.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+                            this.style.transform = 'translateY(-2px)';
+                            this.style.boxShadow = '0 4px 8px rgba(239, 68, 68, 0.2)';
+                        });
+                        
+                        logoutLink.addEventListener('mouseleave', function() {
+                            this.style.background = 'rgba(239, 68, 68, 0.1)';
+                            this.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                            this.style.transform = 'translateY(0)';
+                            this.style.boxShadow = 'none';
+                        });
+                        
+                        logoutLink.innerHTML = `<span class="nav-icon">🚪</span> <span class="nav-text">ログアウト</span>`;
+                        
+                        logoutLi.appendChild(logoutLink);
                         navMenu.appendChild(logoutLi);
+                    }
+                    
+                    // モバイルメニューにもログアウトボタンを追加
+                    const mobileNavMenu = document.querySelector('#mobile-nav-menu ul');
+                    if (mobileNavMenu && !document.getElementById('mobile-nav-logout')) {
+                        const mobileLogoutLi = document.createElement('li');
+                        mobileLogoutLi.id = 'mobile-nav-logout';
+                        mobileLogoutLi.className = 'nav-auth-item';
+                        
+                        const mobileLogoutLink = document.createElement('a');
+                        mobileLogoutLink.href = '#';
+                        mobileLogoutLink.onclick = (e) => {
+                            e.preventDefault();
+                            document.getElementById('mobile-nav-menu').classList.remove('active');
+                            logout();
+                            return false;
+                        };
+                        
+                        // モバイルログアウトボタンのスタイルを直接適用
+                        mobileLogoutLink.style.cssText = `
+                            display: flex !important;
+                            align-items: center !important;
+                            gap: 12px !important;
+                            padding: 15px 20px !important;
+                            color: #ef4444 !important;
+                            text-decoration: none !important;
+                            font-weight: 500 !important;
+                            transition: all 0.3s ease !important;
+                            position: relative !important;
+                            overflow: hidden !important;
+                            background: rgba(239, 68, 68, 0.1) !important;
+                        `;
+                        
+                        // モバイルホバーイベント
+                        mobileLogoutLink.addEventListener('mouseenter', function() {
+                            this.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                            this.style.paddingLeft = '30px';
+                        });
+                        
+                        mobileLogoutLink.addEventListener('mouseleave', function() {
+                            this.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                            this.style.paddingLeft = '20px';
+                        });
+                        
+                        mobileLogoutLink.innerHTML = `<span class="mobile-nav-icon" style="font-size: 1.2rem; filter: drop-shadow(0 2px 4px rgba(239, 68, 68, 0.2)); transition: transform 0.3s ease;">🚪</span> ログアウト`;
+                        
+                        mobileLogoutLi.appendChild(mobileLogoutLink);
+                        mobileNavMenu.appendChild(mobileLogoutLi);
                     }
                 }
                 
@@ -840,6 +959,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                     // ログアウトボタンを削除
                     const logoutBtn = document.getElementById('nav-logout');
                     if (logoutBtn) logoutBtn.remove();
+                    
+                    const mobileLogoutBtn = document.getElementById('mobile-nav-logout');
+                    if (mobileLogoutBtn) mobileLogoutBtn.remove();
                 }
             };
             
