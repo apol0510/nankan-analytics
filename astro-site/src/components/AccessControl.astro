@@ -254,14 +254,15 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         
         // 無料プランが必要な場合 - 登録ユーザーのみアクセス可能
         if (requiredPlan === 'free') {
-            const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
-            console.log(`🆓 無料会員限定コンテンツ - 登録チェック:`, hasValidUser, { user, plan });
-            return hasValidUser; // 登録済みユーザーのみアクセス許可
+            const hasValidFreeUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
+            console.log(`🆓 無料会員限定コンテンツ - 登録チェック:`, hasValidFreeUser, { user, plan });
+            return hasValidFreeUser; // 登録済みユーザーのみアクセス許可
         }
         
         // 有料プランの場合は従来通りの階層チェック + 登録チェック
-        const hasAccess = userLevel >= requiredLevel && user !== null;
-        console.log(`💎 有料アクセスチェック:`, hasAccess);
+        const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
+        const hasAccess = userLevel >= requiredLevel && hasValidUser;
+        console.log(`💎 有料アクセスチェック:`, hasAccess, { userLevel, requiredLevel, hasValidUser });
         return hasAccess;
     }
 
