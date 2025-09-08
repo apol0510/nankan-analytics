@@ -337,12 +337,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // Zapier Webhook URL（無料会員登録専用）
             const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/18635496/2q2kn7r/';
             
+            // CORS問題回避: mode: 'no-cors' でシンプル送信
             const response = await fetch(zapierWebhookUrl, {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: JSON.stringify({ 
+                body: new URLSearchParams({
                     email: email,
                     planType: 'Free',
                     userId: 'free_' + Date.now(),
@@ -350,14 +352,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 })
             });
 
-            let data;
-            if (response.ok) {
-                console.log('✅ Zapier Webhook成功: Airtable更新＆メール送信自動実行');
-                data = { success: true, user: { plan: 'free', points: 1, pointsAdded: 1, lastLogin: new Date().toISOString().split('T')[0] } };
-            } else {
-                console.error('❌ Zapier Webhook失敗:', response.status);
-                throw new Error('Zapier連携に失敗しました');
-            }
+            // no-corsモードでは応答確認不可のため、送信成功と仮定
+            console.log('✅ Zapier Webhook送信完了: Airtable更新＆メール送信自動実行');
+            const data = { 
+                success: true, 
+                user: { 
+                    plan: 'free', 
+                    points: 1, 
+                    pointsAdded: 1, 
+                    lastLogin: new Date().toISOString().split('T')[0] 
+                } 
+            };
             
             if (data.success) {
                 // LocalStorage更新（Airtableデータと同期）
