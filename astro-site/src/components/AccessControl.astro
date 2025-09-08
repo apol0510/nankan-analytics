@@ -252,20 +252,10 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             hasUser: user !== null
         });
         
-        // 無料プランが必要な場合
+        // 無料プランが必要な場合 - 誰でもアクセス可能
         if (requiredPlan === 'free') {
-            // ユーザー情報がある場合（登録済み）はアクセス許可
-            // ユーザー情報がない場合（未登録）は拒否
-            const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
-            console.log(`👤 無料アクセスチェック:`, hasValidUser, '詳細:', { user, plan });
-            
-            // 緊急修正: Standard以上のプランは無料コンテンツに無条件アクセス許可
-            if (userLevel >= 1) { // standard以上
-                console.log(`🎯 有料プランのため無料コンテンツを無条件許可: ${userPlan}`);
-                return true;
-            }
-            
-            return hasValidUser;
+            console.log(`🆓 無料コンテンツ - 誰でもアクセス可能`);
+            return true; // 無料コンテンツは常にアクセス許可
         }
         
         // 有料プランの場合は従来通りの階層チェック + 登録チェック
