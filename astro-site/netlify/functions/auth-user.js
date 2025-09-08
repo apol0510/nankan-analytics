@@ -181,9 +181,23 @@ async function sendWelcomeEmail(email) {
         
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://nankan-analytics.keiba.link/free-prediction/" 
-             style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+             style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; margin-right: 10px;">
             今すぐ予想を見る 🏇
           </a>
+          <a href="https://nankan-analytics.keiba.link/dashboard/" 
+             style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+            マイページにログイン 📊
+          </a>
+        </div>
+        
+        <div style="background: #e0f2fe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+          <h3 style="color: #1565c0; margin-bottom: 10px;">🔑 ログインについて</h3>
+          <p style="color: #0277bd; margin-bottom: 10px; font-size: 14px;">
+            メールアドレス「<strong>${email}</strong>」でログインできます。
+          </p>
+          <p style="color: #0277bd; font-size: 14px; margin: 0;">
+            マイページでポイント確認・交換申請が可能です！
+          </p>
         </div>
         
         <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-top: 20px;">
