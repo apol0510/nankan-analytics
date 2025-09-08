@@ -246,13 +246,25 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         const userLevel = planHierarchy[userPlan] || 0;
         const requiredLevel = planHierarchy[requiredPlan] || 0;
         
-        // 無料プランが必要な場合は、実際に会員登録されているかチェック
+        console.log(`🔍 アクセスチェック詳細:`, {
+            userPlan, requiredPlan, user, 
+            userLevel, requiredLevel,
+            hasUser: user !== null
+        });
+        
+        // 無料プランが必要な場合
         if (requiredPlan === 'free') {
-            return user !== null; // 会員登録されている場合のみアクセス許可
+            // ユーザー情報がある場合（登録済み）はアクセス許可
+            // ユーザー情報がない場合（未登録）は拒否
+            const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
+            console.log(`👤 無料アクセスチェック:`, hasValidUser);
+            return hasValidUser;
         }
         
-        // 有料プランの場合は従来通りの階層チェック
-        return userLevel >= requiredLevel && user !== null;
+        // 有料プランの場合は従来通りの階層チェック + 登録チェック
+        const hasAccess = userLevel >= requiredLevel && user !== null;
+        console.log(`💎 有料アクセスチェック:`, hasAccess);
+        return hasAccess;
     }
 
     // プラン表示名取得
