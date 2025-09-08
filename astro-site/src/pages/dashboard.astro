@@ -54,12 +54,130 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             <!-- 会員ステータス -->
             <div class="status-section">
-                <div class="status-card">
-                    <div class="status-icon">👤</div>
-                    <div class="status-info">
-                        <h3>会員ステータス</h3>
-                        <div id="membership-status" class="status-value">読み込み中...</div>
-                        <div id="membership-details" class="status-details"></div>
+                <div class="status-grid">
+                    <!-- メインステータスカード -->
+                    <div class="status-card main-status">
+                        <div class="status-header">
+                            <div class="status-icon" id="main-status-icon">👤</div>
+                            <div class="status-badge" id="status-badge">読み込み中</div>
+                        </div>
+                        <div class="status-info">
+                            <h3>会員ステータス</h3>
+                            <div id="membership-status" class="status-value">読み込み中...</div>
+                            <div id="membership-details" class="status-details"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 統計情報グリッド -->
+                    <div class="stats-mini-grid">
+                        <div class="mini-stat-card">
+                            <div class="mini-stat-icon">🔥</div>
+                            <div class="mini-stat-info">
+                                <div class="mini-stat-value" id="total-logins">-</div>
+                                <div class="mini-stat-label">ログイン日数</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mini-stat-card">
+                            <div class="mini-stat-icon">📅</div>
+                            <div class="mini-stat-info">
+                                <div class="mini-stat-value" id="member-days">-</div>
+                                <div class="mini-stat-label">会員歴</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mini-stat-card">
+                            <div class="mini-stat-icon">🎯</div>
+                            <div class="mini-stat-info">
+                                <div class="mini-stat-value" id="streak-days">-</div>
+                                <div class="mini-stat-label">連続日数</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mini-stat-card rank-card">
+                            <div class="mini-stat-icon" id="current-rank-icon">🌱</div>
+                            <div class="mini-stat-info">
+                                <div class="mini-stat-value" id="current-rank-name">ビギナー</div>
+                                <div class="mini-stat-label">現在ランク</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- VIP情報カード（Premiumのみ） -->
+                    <div class="vip-status-card" id="vip-status-card" style="display: none;">
+                        <div class="vip-header">
+                            <div class="vip-icon">👑</div>
+                            <div class="vip-title">VIP会員特典</div>
+                        </div>
+                        <div class="vip-benefits" id="vip-benefits">
+                            <div class="vip-benefit">✨ 優先サポート</div>
+                            <div class="vip-benefit">🏆 限定コンテンツ</div>
+                            <div class="vip-benefit">💰 ボーナスポイント</div>
+                        </div>
+                    </div>
+                    
+                    <!-- プラン特典カード（Standard/Free用） -->
+                    <div class="plan-benefits-card" id="plan-benefits-card" style="display: none;">
+                        <div class="plan-header">
+                            <div class="plan-icon" id="plan-icon">🎁</div>
+                            <div class="plan-title" id="plan-title">プラン特典</div>
+                        </div>
+                        <div class="plan-benefits" id="plan-benefits">
+                            <div class="plan-benefit">🏇 後半3レース予想</div>
+                            <div class="plan-benefit">💰 デイリー10pt</div>
+                        </div>
+                    </div>
+                    
+                    <!-- ランク目安カード -->
+                    <div class="rank-guide-card" id="rank-guide-card">
+                        <div class="rank-guide-header">
+                            <div class="rank-guide-icon">🏆</div>
+                            <div class="rank-guide-title">ランク目安</div>
+                        </div>
+                        <div class="rank-list" id="rank-list">
+                            <div class="rank-item">
+                                <div class="rank-badge beginner">🌱</div>
+                                <div class="rank-info">
+                                    <div class="rank-name">ビギナー</div>
+                                    <div class="rank-requirement">0-199pt</div>
+                                </div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-badge bronze">🥉</div>
+                                <div class="rank-info">
+                                    <div class="rank-name">ブロンズ</div>
+                                    <div class="rank-requirement">200-599pt</div>
+                                </div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-badge silver">🥈</div>
+                                <div class="rank-info">
+                                    <div class="rank-name">シルバー</div>
+                                    <div class="rank-requirement">600-1199pt</div>
+                                </div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-badge gold">🥇</div>
+                                <div class="rank-info">
+                                    <div class="rank-name">ゴールド</div>
+                                    <div class="rank-requirement">1200-2999pt</div>
+                                </div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-badge platinum">🏆</div>
+                                <div class="rank-info">
+                                    <div class="rank-name">プラチナ</div>
+                                    <div class="rank-requirement">3000-7999pt</div>
+                                </div>
+                            </div>
+                            <div class="rank-item">
+                                <div class="rank-badge diamond">💎</div>
+                                <div class="rank-info">
+                                    <div class="rank-name">ダイヤモンド</div>
+                                    <div class="rank-requirement">8000pt+</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -248,14 +366,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
         
         async function getCustomerData() {
+            console.log('🔍 getCustomerData 開始');
+            
             // 新しい決済システムのデータを最優先
             const userPlanData = localStorage.getItem('user-plan');
+            console.log('📦 user-plan データ:', userPlanData);
+            
             if (userPlanData) {
                 try {
                     const userData = JSON.parse(userPlanData);
+                    console.log('📋 解析したuserData:', userData);
+                    
                     // 実際のポイントをFunctionsから取得
+                    console.log('🚀 fetchUserPoints 呼び出し開始:', userData.email);
                     const realPoints = await fetchUserPoints(userData.email);
-                    return {
+                    console.log('🎯 取得したrealPoints:', realPoints);
+                    
+                    const result = {
                         email: userData.email,
                         plan: userData.plan || 'free',
                         points: realPoints,
@@ -263,6 +390,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         registrationDate: userData.registeredAt,
                         name: 'お客様'
                     };
+                    console.log('✅ getCustomerData 返却値:', result);
+                    return result;
                 } catch (e) {
                     console.warn('user-plan解析エラー:', e);
                 }
@@ -287,22 +416,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             return null;
         }
 
-        // Functionsからユーザーポイントを取得（テスト用モック機能付き）
+        // Functionsからユーザーポイントを取得（実際のAirtableデータ優先）
         async function fetchUserPoints(email) {
-            if (!email) return 0;
-            
-            // テスト用モックポイント（開発環境での表示確認用）
-            if (window.location.hostname === 'localhost' && email.includes('test.com')) {
-                if (email.includes('1000')) return 1000;
-                if (email.includes('1500')) return 1500;
-                if (email.includes('2000')) return 2000;
-                if (email.includes('3500')) return 3500;
-                if (email.includes('5000')) return 5000;
-                if (email.includes('8500')) return 8500;
-                if (email.includes('premium')) return 2500;
-                if (email.includes('standard')) return 800;
-                // デフォルトテストポイント
-                return 1200;
+            console.log('📝 fetchUserPoints 呼び出し:', email);
+            if (!email) {
+                console.log('⚠️ メールアドレスが空です');
+                return 0;
             }
             
             try {
@@ -314,15 +433,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 
                 if (!response.ok) {
                     console.error('ポイント取得エラー:', response.status);
-                    return 1200; // エラー時はテスト用ポイントを返す
+                    return 0;
                 }
                 
                 const data = await response.json();
-                return data.points || 1200; // デフォルトでテスト用ポイント
+                const points = data.points || 0;
+                console.log(`📊 Airtableから取得: ${points}pt (email: ${email})`);
+                return points;
                 
             } catch (error) {
-                console.error('ポイント取得失敗:', error);
-                return 1200; // エラー時はテスト用ポイントを返す
+                console.error('⚠️ ポイント取得エラー:', error);
+                console.log('🔄 エラーのため0ptを返します');
+                return 0;
             }
         }
 
@@ -494,6 +616,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         // ダッシュボード表示
         function showDashboard(customerData) {
+            console.log('🎨 showDashboard 開始, customerData:', customerData);
+            
             // セクション切り替え
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('dashboard-section').style.display = 'block';
@@ -505,6 +629,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             updateMembershipInfo(customerData);
             
             // ポイント表示
+            console.log('🎯 updatePointsDisplay 呼び出し, points:', customerData.points);
             updatePointsDisplay(customerData.points, customerData.hasClaimedReward);
             
             // プラン別コンテンツ表示
@@ -544,7 +669,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         }
 
-        // 会員情報更新
+        // 会員情報更新（統計情報付き）
         function updateMembershipInfo(data) {
             const planNames = {
                 'free': '🎁 無料会員',
@@ -555,7 +680,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 'Premium': '💎 Premium会員'
             };
             
+            const planIcons = {
+                'free': '🎁',
+                'Free': '🎁',
+                'standard': '⚡',
+                'Standard': '⚡',
+                'premium': '💎',
+                'Premium': '💎'
+            };
+            
+            const planBadgeTexts = {
+                'free': 'FREE',
+                'Free': 'FREE',
+                'standard': 'STANDARD',
+                'Standard': 'STANDARD',
+                'premium': 'PREMIUM',
+                'Premium': 'PREMIUM'
+            };
+            
+            // メインステータス更新
             document.getElementById('membership-status').textContent = planNames[data.plan] || '🎁 無料会員';
+            document.getElementById('main-status-icon').textContent = planIcons[data.plan] || '🎁';
+            document.getElementById('status-badge').textContent = planBadgeTexts[data.plan] || 'FREE';
             
             let detailsHtml = `<div class="email">${data.email}</div>`;
             if (data.name && data.name !== 'お客様') {
@@ -563,10 +709,180 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
             if (data.registrationDate) {
                 const regDate = new Date(data.registrationDate);
+                const daysSinceRegistration = Math.floor((new Date() - regDate) / (1000 * 60 * 60 * 24));
                 detailsHtml += `<div class="registered">登録日: ${regDate.toLocaleDateString('ja-JP')}</div>`;
+                
+                // 会員歴を表示
+                document.getElementById('member-days').textContent = `${daysSinceRegistration}日`;
             }
             
             document.getElementById('membership-details').innerHTML = detailsHtml;
+            
+            // モック統計データとランク表示（開発環境用）
+            updateMockStats(data.plan, data.points || 0);
+            updateCurrentRankDisplay(data.points || 0);
+            updateRankGuide(data.points || 0);
+            
+            // プラン別特典カード表示
+            const vipCard = document.getElementById('vip-status-card');
+            const planCard = document.getElementById('plan-benefits-card');
+            
+            if (data.plan === 'premium' || data.plan === 'Premium') {
+                // Premium会員はVIPカードを表示
+                vipCard.style.display = 'block';
+                planCard.style.display = 'none';
+                updateVipBenefits(data.plan);
+            } else if (data.plan === 'standard' || data.plan === 'Standard') {
+                // Standard会員はプラン特典カードを表示
+                vipCard.style.display = 'none';
+                planCard.style.display = 'block';
+                updatePlanBenefits('standard');
+            } else {
+                // Free会員は両方非表示
+                vipCard.style.display = 'none';
+                planCard.style.display = 'none';
+            }
+        }
+        
+        // モック統計データ更新
+        function updateMockStats(plan, points) {
+            console.log('📊 updateMockStats 呼び出し:', { plan, points });
+            
+            // プランに応じたモックデータ
+            const mockData = {
+                free: { logins: 5, streak: 2, earned: '15pt' },
+                Free: { logins: 5, streak: 2, earned: '15pt' },
+                standard: { logins: 25, streak: 7, earned: '890pt' },
+                Standard: { logins: 25, streak: 7, earned: '890pt' },
+                premium: { logins: 45, streak: 12, earned: '2.1k pt' },
+                Premium: { logins: 45, streak: 12, earned: '2.1k pt' }
+            };
+            
+            const stats = mockData[plan] || mockData.free;
+            
+            // 要素の存在チェック付きで更新
+            const totalLoginsEl = document.getElementById('total-logins');
+            const streakDaysEl = document.getElementById('streak-days');
+            const totalEarnedEl = document.getElementById('total-earned');
+            
+            if (totalLoginsEl) {
+                totalLoginsEl.textContent = `${stats.logins}回`;
+            } else {
+                console.warn('⚠️ total-logins 要素が見つかりません');
+            }
+            
+            if (streakDaysEl) {
+                streakDaysEl.textContent = `${stats.streak}日`;
+            } else {
+                console.warn('⚠️ streak-days 要素が見つかりません');
+            }
+            
+            if (totalEarnedEl) {
+                totalEarnedEl.textContent = stats.earned;
+            } else {
+                console.warn('⚠️ total-earned 要素が見つかりません');
+            }
+            
+            console.log('✅ updateMockStats 完了');
+        }
+        
+        // VIP特典更新
+        function updateVipBenefits(plan) {
+            const benefits = {
+                standard: [
+                    '⚡ 後半3レース予想',
+                    '📊 統計データ閲覧',
+                    '💰 デイリー10pt'
+                ],
+                Standard: [
+                    '⚡ 後半3レース予想',
+                    '📊 統計データ閲覧',
+                    '💰 デイリー10pt'
+                ],
+                premium: [
+                    '💎 全レース予想',
+                    '🏆 優先サポート',
+                    '💰 デイリー50pt'
+                ],
+                Premium: [
+                    '💎 全レース予想',
+                    '🏆 優先サポート',
+                    '💰 デイリー50pt'
+                ]
+            };
+            
+            const planBenefits = benefits[plan] || benefits.standard;
+            document.getElementById('vip-benefits').innerHTML = planBenefits
+                .map(benefit => `<div class="vip-benefit">${benefit}</div>`)
+                .join('');
+        }
+        
+        // プラン特典更新（Standard用）
+        function updatePlanBenefits(plan) {
+            const benefits = {
+                standard: [
+                    '🏇 後半3レース予想',
+                    '📊 統計データ閲覧',
+                    '💰 デイリー10pt'
+                ]
+            };
+            
+            const planBenefits = benefits[plan] || benefits.standard;
+            document.getElementById('plan-benefits').innerHTML = planBenefits
+                .map(benefit => `<div class="plan-benefit">${benefit}</div>`)
+                .join('');
+        }
+        
+        // 現在ランク表示更新
+        function updateCurrentRankDisplay(points) {
+            const RANK_INFO = {
+                'ビギナー': { icon: '🌱', emoji: '🌱', name: 'ビギナー' },
+                'ブロンズ': { icon: '🥉', emoji: '🥉', name: 'ブロンズ' },
+                'シルバー': { icon: '🥈', emoji: '🥈', name: 'シルバー' },
+                'ゴールド': { icon: '🥇', emoji: '🥇', name: 'ゴールド' },
+                'プラチナ': { icon: '🏆', emoji: '🏆', name: 'プラチナ' },
+                'ダイヤモンド': { icon: '💎', emoji: '💎', name: 'ダイヤモンド' }
+            };
+            
+            // ランク判定ロジックと同じものを使用
+            let currentRankKey = 'ビギナー';
+            for (const [key, threshold] of Object.entries(RANK_THRESHOLDS)) {
+                if (points >= threshold.min && points <= threshold.max) {
+                    currentRankKey = key;
+                    break;
+                }
+            }
+            
+            const rankInfo = RANK_INFO[currentRankKey];
+            if (rankInfo) {
+                document.getElementById('current-rank-icon').textContent = rankInfo.icon;
+                document.getElementById('current-rank-name').textContent = rankInfo.name;
+            }
+        }
+        
+        // ランク目安ガイド更新
+        function updateRankGuide(currentPoints) {
+            const rankItems = document.querySelectorAll('.rank-item');
+            
+            // 現在ランクをハイライト
+            let currentRankKey = 'ビギナー';
+            for (const [key, threshold] of Object.entries(RANK_THRESHOLDS)) {
+                if (currentPoints >= threshold.min && currentPoints <= threshold.max) {
+                    currentRankKey = key;
+                    break;
+                }
+            }
+            
+            // ランクアイテムにハイライトを設定
+            rankItems.forEach((item, index) => {
+                const rankNames = ['ビギナー', 'ブロンズ', 'シルバー', 'ゴールド', 'プラチナ', 'ダイヤモンド'];
+                
+                if (rankNames[index] === currentRankKey) {
+                    item.classList.add('current');
+                } else {
+                    item.classList.remove('current');
+                }
+            });
         }
 
         // ポイント獲得通知表示
@@ -926,11 +1242,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             await handleTokenAuth();
             
             // 既存セッションチェック
+            console.log('🔐 認証チェック開始');
             if (isAuthenticated()) {
+                console.log('✅ 認証済み、顧客データ取得開始');
                 const customer = await getCustomerData();
+                console.log('👤 取得した顧客データ:', customer);
                 if (customer) {
+                    console.log('🎨 showDashboard 実行');
                     showDashboard(customer);
+                } else {
+                    console.log('⚠️ 顧客データがnull');
                 }
+            } else {
+                console.log('❌ 未認証');
             }
         });
     </script>
@@ -1180,6 +1504,390 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             margin-bottom: 0.25rem;
         }
 
+        .expires {
+            font-size: 0.85rem;
+            color: #10b981;
+        }
+
+        /* 会員ステータスグリッド */
+        .status-section {
+            margin-bottom: 2rem;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 1.5rem;
+        }
+        
+        /* メインステータスカード */
+        .main-status {
+            grid-column: 1;
+            grid-row: 1 / 3;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .main-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+            animation: status-shine 4s infinite;
+        }
+        
+        @keyframes status-shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .status-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
+        }
+        
+        .status-badge {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #3b82f6;
+        }
+        
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-details {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+        
+        /* ミニ統計グリッド */
+        .stats-mini-grid {
+            grid-column: 2;
+            grid-row: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .mini-stat-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .mini-stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .mini-stat-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 1px 3px rgba(59, 130, 246, 0.2));
+        }
+        
+        .mini-stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 0.2rem;
+        }
+        
+        .mini-stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            line-height: 1;
+        }
+        
+        /* VIPステータスカード */
+        .vip-status-card {
+            grid-column: 2;
+            grid-row: 2;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vip-status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.1) 50%, transparent 100%);
+            animation: vip-shine 3s infinite;
+        }
+        
+        @keyframes vip-shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .vip-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .vip-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.3));
+        }
+        
+        .vip-title {
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .vip-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .vip-benefit {
+            font-size: 0.85rem;
+            color: #fbbf24;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid #fbbf24;
+        }
+        
+        /* プラン特典カード（Standard/Free用） */
+        .plan-benefits-card {
+            grid-column: 2;
+            grid-row: 2;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-benefits-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.1) 50%, transparent 100%);
+            animation: plan-shine 3s infinite;
+        }
+        
+        @keyframes plan-shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .plan-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .plan-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3));
+        }
+        
+        .plan-title {
+            color: #10b981;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .plan-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .plan-benefit {
+            font-size: 0.85rem;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid #10b981;
+        }
+        
+        /* ランクカード特別スタイル */
+        .rank-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+        
+        .rank-card:hover {
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        
+        /* ランク目安カード */
+        .rank-guide-card {
+            grid-column: 1 / 3;
+            grid-row: 3;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .rank-guide-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.1) 50%, transparent 100%);
+            animation: rank-shine 4s infinite;
+        }
+        
+        @keyframes rank-shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .rank-guide-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .rank-guide-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.3));
+        }
+        
+        .rank-guide-title {
+            color: #6366f1;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .rank-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        
+        @media (max-width: 480px) {
+            .rank-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .rank-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .rank-item.current {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            border: 2px solid #6366f1;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+        
+        .rank-badge {
+            font-size: 1.2rem;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .rank-badge.beginner { background: rgba(34, 197, 94, 0.2); }
+        .rank-badge.bronze { background: rgba(205, 127, 50, 0.2); }
+        .rank-badge.silver { background: rgba(192, 192, 192, 0.2); }
+        .rank-badge.gold { background: rgba(255, 215, 0, 0.2); }
+        .rank-badge.platinum { background: rgba(229, 228, 226, 0.2); }
+        .rank-badge.diamond { background: rgba(0, 191, 255, 0.2); }
+        
+        .rank-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+        
+        .rank-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        
+        .rank-requirement {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        
+        .email {
+            margin-bottom: 0.25rem;
+        }
+        
         .expires {
             font-size: 0.85rem;
             color: #10b981;
@@ -1930,6 +2638,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             .plan-actions {
                 flex-direction: column;
+            }
+
+            /* 会員ステータスグリッドのモバイル対応 */
+            .status-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto auto;
+                gap: 1rem;
+            }
+            
+            .main-status {
+                grid-column: 1;
+                grid-row: 1;
+            }
+            
+            .stats-mini-grid {
+                grid-column: 1;
+                grid-row: 2;
+            }
+            
+            .vip-status-card {
+                grid-column: 1;
+                grid-row: 3;
+            }
+            
+            .plan-benefits-card {
+                grid-column: 1;
+                grid-row: 3;
+            }
+            
+            .rank-guide-card {
+                grid-column: 1;
+                grid-row: 4;
+            }
+            
+            .rank-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
             }
 
             /* モバイルでの射幸心演出調整 */
