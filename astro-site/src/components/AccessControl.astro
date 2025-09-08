@@ -257,7 +257,14 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             // ユーザー情報がある場合（登録済み）はアクセス許可
             // ユーザー情報がない場合（未登録）は拒否
             const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
-            console.log(`👤 無料アクセスチェック:`, hasValidUser);
+            console.log(`👤 無料アクセスチェック:`, hasValidUser, '詳細:', { user, plan });
+            
+            // 緊急修正: Standard以上のプランは無料コンテンツに無条件アクセス許可
+            if (userLevel >= 1) { // standard以上
+                console.log(`🎯 有料プランのため無料コンテンツを無条件許可: ${userPlan}`);
+                return true;
+            }
+            
             return hasValidUser;
         }
         
@@ -301,14 +308,24 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
                 console.log(`✅ アクセス許可: ${getPlanDisplayName(plan)} → ${requiredPlan}コンテンツ`);
                 console.log('📋 DOM要素状態 - loading:', loadingState, 'content:', contentArea, 'denied:', accessDenied);
                 
-                loadingState.classList.add('hidden');
-                contentArea.classList.remove('hidden');
-                accessDenied.classList.add('hidden'); // 念のため拒否メッセージを明示的に非表示
+                // 強制的にDOM操作を実行
+                if (loadingState) {
+                    loadingState.style.display = 'none';
+                    loadingState.classList.add('hidden');
+                }
+                if (contentArea) {
+                    contentArea.style.display = 'block';
+                    contentArea.classList.remove('hidden');
+                }
+                if (accessDenied) {
+                    accessDenied.style.display = 'none';
+                    accessDenied.classList.add('hidden');
+                }
                 
                 console.log('🔓 コンテンツ表示完了:', {
-                    loading: loadingState.classList.contains('hidden'),
-                    content: !contentArea.classList.contains('hidden'),
-                    denied: accessDenied.classList.contains('hidden')
+                    loading: loadingState ? loadingState.style.display : 'なし',
+                    content: contentArea ? contentArea.style.display : 'なし',
+                    denied: accessDenied ? accessDenied.style.display : 'なし'
                 });
             } else {
                 // アクセス拒否
