@@ -1,7 +1,7 @@
 // Brevoメルマガ配信Function
 // 南関競馬の予想結果や攻略情報を配信
 
-export default async function handler(event, context) {
+export default async function handler(request, context) {
   // CORS対応ヘッダー
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -11,7 +11,7 @@ export default async function handler(event, context) {
   };
 
   // OPTIONSリクエスト対応
-  if (event.httpMethod === 'OPTIONS') {
+  if (request.method === 'OPTIONS') {
     return new Response('', { 
       status: 200, 
       headers 
@@ -19,9 +19,9 @@ export default async function handler(event, context) {
   }
 
   // POSTメソッドのみ受付
-  if (event.httpMethod !== 'POST') {
+  if (request.method !== 'POST') {
     return new Response(
-      JSON.stringify({ error: 'Method not allowed' }), 
+      JSON.stringify({ error: `Method ${request.method} not allowed` }), 
       {
         status: 405,
         headers
@@ -30,7 +30,10 @@ export default async function handler(event, context) {
   }
 
   try {
-    const { subject, htmlContent, scheduledAt, targetPlan = 'all' } = JSON.parse(event.body);
+    const requestBody = await request.text();
+    console.log('Received request body:', requestBody);
+    
+    const { subject, htmlContent, scheduledAt, targetPlan = 'all' } = JSON.parse(requestBody);
 
     // 必須パラメータチェック
     if (!subject || !htmlContent) {
