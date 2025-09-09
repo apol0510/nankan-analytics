@@ -5,6 +5,350 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="メルマガ配信管理 - NANKANアナリティクス">
+    <style>
+        /* モダンな管理画面デザイン */
+        .newsletter-admin {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .admin-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .admin-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 1024px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .card h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2::before {
+            content: '🎨';
+            font-size: 1.2em;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .template-sections {
+            margin: 25px 0;
+        }
+        
+        .template-section {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .template-section h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .preview-area {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px dashed #cbd5e0;
+            min-height: 400px;
+        }
+        
+        .preview-frame {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .history-area {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-sent {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-scheduled {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+        
+        .current-time {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        /* モダンなキャンペーンデザイン */
+        .campaign-preview {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .campaign-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+        }
+        
+        .campaign-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .price-showcase {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .old-price {
+            font-size: 1.5rem;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .new-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .discount-badge {
+            background: #10b981;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* プレビュー機能の改善 */
+        .preview-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preview-help {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #1565c0;
+        }
+        
+        .preview-help h4 {
+            margin: 0 0 10px 0;
+            color: #0d47a1;
+        }
+        
+        .preview-placeholder {
+            text-align: center;
+            color: #718096;
+            padding: 60px 20px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 15px;
+            background: #f7fafc;
+        }
+        
+        .preview-placeholder::before {
+            content: '🔍';
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 15px;
+        }
+    </style>
+    
     <div class="newsletter-admin">
         <div class="admin-header">
             <h1>📧 メルマガ配信管理</h1>
@@ -141,8 +485,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- プレビューエリア -->
             <div class="card">
                 <h2>メールプレビュー</h2>
-                <div id="previewArea" class="preview-container">
-                    <p class="preview-placeholder">配信内容をプレビューするには「プレビュー」ボタンをクリックしてください</p>
+                
+                <div class="preview-help">
+                    <h4>💬 プレビュー機能の使い方</h4>
+                    <p><strong>プレビュー更新</strong>: 入力内容を元にメールの見た目を確認できます</p>
+                    <p>テンプレートタイプや入力内容を変更した場合は、再度「プレビュー更新」をクリックしてください。</p>
+                </div>
+                
+                <div class="preview-controls">
+                    <button type="button" id="generatePreviewBtn2" class="btn btn-info">🔄 プレビュー更新</button>
+                    <button type="button" id="clearPreviewBtn2" class="btn btn-secondary">🎴 クリア</button>
+                </div>
+                
+                <div id="previewArea" class="preview-area">
+                    <div class="preview-placeholder">
+                        メールのプレビューを表示します<br>
+                        <small>上の「プレビュー更新」ボタンをクリック</small>
+                    </div>
+                    <iframe id="previewFrame" class="preview-frame" style="display: none;"></iframe>
                 </div>
             </div>
 
@@ -486,8 +846,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     // 履歴更新ボタン
     document.getElementById('refreshHistoryBtn')?.addEventListener('click', loadHistory);
     
-    // プレビューボタン
+    // プレビューボタン (メイン)
     document.getElementById('generatePreviewBtn')?.addEventListener('click', generatePreview);
+    
+    // プレビューボタン (サブ)
+    document.getElementById('generatePreviewBtn2')?.addEventListener('click', generatePreview);
+    
+    // クリアボタン (サブ)
+    document.getElementById('clearPreviewBtn2')?.addEventListener('click', clearPreview);
 
     // 現在時刻を更新する関数
     function updateCurrentTime() {
@@ -758,29 +1124,59 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             customCtaUrl = ''
         } = templateData;
 
-        // テーマ別のスタイル
-        let themeStyles = '';
-        let headerClass = 'header';
+        // モダンテーマ別スタイル
+        const modernThemes = {
+            gold: {
+                gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%)',
+                cardBg: 'linear-gradient(135deg, #fefbf3 0%, #fef3c7 100%)',
+                textColor: '#92400e',
+                accentColor: '#f59e0b'
+            },
+            red: {
+                gradient: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #e17055 100%)',
+                cardBg: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+                textColor: '#991b1b',
+                accentColor: '#dc2626'
+            },
+            blue: {
+                gradient: 'linear-gradient(135deg, #4299e1 0%, #3182ce 50%, #2b6cb0 100%)',
+                cardBg: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                textColor: '#1e40af',
+                accentColor: '#3b82f6'
+            }
+        };
         
-        if (customTheme === 'gold') {
-            themeStyles = `
-                .header { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-                .prediction-card, .result-card, .campaign-card { border-left-color: #f59e0b; background: #fefbf3; }
-                .cta-button { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-            `;
-        } else if (customTheme === 'red') {
-            themeStyles = `
-                .header { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-                .prediction-card, .result-card, .campaign-card { border-left-color: #ef4444; background: #fef2f2; }
-                .cta-button { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-            `;
-        } else if (customTheme === 'blue') {
-            themeStyles = `
-                .header { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-                .prediction-card, .result-card, .campaign-card { border-left-color: #3b82f6; background: #eff6ff; }
-                .cta-button { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-            `;
-        }
+        const currentTheme = modernThemes[customTheme] || modernThemes.blue;
+        
+        let themeStyles = `
+            .header { background: ${currentTheme.gradient}; }
+            .prediction-card, .result-card, .campaign-card { 
+                border-left-color: ${currentTheme.accentColor}; 
+                background: ${currentTheme.cardBg};
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                border-radius: 15px;
+            }
+            .cta-button { 
+                background: ${currentTheme.gradient};
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                border-radius: 12px;
+                transition: all 0.3s ease;
+            }
+            .cta-button:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            }
+            .modern-campaign-hero {
+                background: ${currentTheme.gradient};
+                position: relative;
+                overflow: hidden;
+            }
+            .campaign-highlight {
+                background: ${currentTheme.cardBg};
+                border: 2px solid ${currentTheme.accentColor};
+                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            }
+        `;
 
         // カスタムヘッドライン
         const customHeadlineHTML = customHeadline ? `
@@ -893,17 +1289,58 @@ ${mainContent}
             ` : ''}
             
             ${templateType === 'campaign' && campaignTitle ? `
-            <div class="campaign-highlight">
-                <h3 style="color: #92400e; margin-top: 0;">🎪 ${campaignTitle}</h3>
-                <p style="color: #78350f; line-height: 1.6;">${campaignDetails}</p>
+            <div class="modern-campaign-hero" style="
+                background: ${currentTheme.gradient};
+                color: white;
+                padding: 40px;
+                border-radius: 20px;
+                margin: 30px 0;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                text-align: center;
+            ">
+                <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; animation: float 3s ease-in-out infinite;"></div>
+                <div style="position: absolute; bottom: -30px; left: -30px; width: 80px; height: 80px; background: rgba(255,255,255,0.08); border-radius: 50%; animation: float 4s ease-in-out infinite reverse;"></div>
+                
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 4px 8px rgba(0,0,0,0.3); animation: pulse 2s infinite;">
+                    🎆 ${campaignTitle} 🎆
+                </h2>
+                
+                <p style="font-size: 1.3rem; margin-bottom: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                    ✨ ${campaignDetails || '期間限定の特別オファーをお見逃しなく！'} ✨
+                </p>
+                
                 ${originalPrice && campaignPrice ? `
-                <div class="price-comparison">
-                    <span class="original-price">${originalPrice}</span>
-                    <span style="color: #dc2626;">→</span>
-                    <span class="campaign-price">${campaignPrice}</span>
+                <div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; margin: 20px 0; backdrop-filter: blur(10px);">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                        <span style="font-size: 1.8rem; text-decoration: line-through; opacity: 0.7;">${originalPrice}</span>
+                        <span style="font-size: 1.2rem; font-weight: bold;">→</span>
+                        <span style="font-size: 2.8rem; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${campaignPrice}</span>
+                    </div>
                 </div>
                 ` : ''}
-                ${campaignDeadline ? `<div class="deadline">期限: ${campaignDeadline}</div>` : ''}
+                
+                ${campaignDeadline ? `
+                <div style="background: rgba(220, 38, 38, 0.9); color: white; padding: 15px 30px; border-radius: 25px; font-weight: bold; margin-top: 20px; animation: urgency 2s infinite;">
+                    🚨 期限: ${campaignDeadline} 🚨
+                </div>
+                ` : ''}
+                
+                <style>
+                    @keyframes float {
+                        0%, 100% { transform: translateY(0px) rotate(0deg); }
+                        50% { transform: translateY(-10px) rotate(5deg); }
+                    }
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.02); }
+                    }
+                    @keyframes urgency {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.05); }
+                    }
+                </style>
             </div>
             ` : ''}
             
