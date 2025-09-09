@@ -464,8 +464,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
 
                 <div class="form-group">
+                    <label for="layoutOrder">📋 レイアウト順序</label>
+                    <select id="layoutOrder">
+                        <option value="content-first">本文 → 予想情報</option>
+                        <option value="prediction-first">予想情報 → 本文</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="mainContent">本文</label>
-                    <textarea id="mainContent" rows="10" placeholder="メールの本文を入力してください"></textarea>
+                    <textarea id="mainContent" rows="8" placeholder="メールの本文を入力してください"></textarea>
                 </div>
 
                 <!-- 予想セクション（予想配信タイプの場合） -->
@@ -478,6 +486,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         </div>
                     </div>
                     <button type="button" id="addPrediction" class="btn-secondary">+ 予想を追加</button>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label for="predictionNote">📝 予想補足・追記</label>
+                        <textarea id="predictionNote" rows="3" placeholder="予想の補足情報、注意点、戦略説明など（オプション）"></textarea>
+                    </div>
                 </div>
 
                 <!-- 結果報告セクション（結果報告タイプの場合） -->
@@ -539,6 +552,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <label style="color: #374151; font-weight: 600;">追加CTA</label>
                         <input type="text" placeholder="追加ボタンテキスト" id="customCtaText" />
                         <input type="url" placeholder="追加ボタンURL" id="customCtaUrl" />
+                    </div>
+                </div>
+
+                <!-- CTAボタン設定 -->
+                <div class="form-group" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <h3 style="color: #4b5563; font-weight: 600; font-size: 1.1rem; margin-bottom: 15px;">🎯 CTAボタン設定</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="showCtaButton" checked style="width: 18px; height: 18px;">
+                            <span>CTAボタンを表示する</span>
+                        </label>
+                    </div>
+                    
+                    <div id="ctaButtonSettings">
+                        <div style="display: grid; gap: 12px;">
+                            <input type="text" id="customCtaText" placeholder="ボタンテキスト（例: 🏇 有料プランで全レース予想を見る）" />
+                            <input type="url" id="customCtaUrl" placeholder="リンク先URL" value="https://nankan-analytics.keiba.link/pricing/" />
+                        </div>
                     </div>
                 </div>
 
@@ -646,6 +678,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const templateType = document.getElementById('templateType');
     templateType?.addEventListener('change', updateTemplateSection);
 
+    // CTAボタン表示/非表示制御
+    function updateCtaButtonSettings() {
+        const showCtaButton = document.getElementById('showCtaButton');
+        const ctaButtonSettings = document.getElementById('ctaButtonSettings');
+        
+        if (showCtaButton && ctaButtonSettings) {
+            ctaButtonSettings.style.display = showCtaButton.checked ? 'block' : 'none';
+        }
+    }
+
+    // CTAボタンチェックボックス変更時の処理
+    document.getElementById('showCtaButton')?.addEventListener('change', updateCtaButtonSettings);
+
     // 予想追加ボタン
     document.getElementById('addPrediction')?.addEventListener('click', () => {
         const container = document.getElementById('predictionsContainer');
@@ -710,13 +755,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             // テンプレートタイプ別データ収集
             let templateData = {
-                subject: subject,
+                title: subject,
+                mainContent: mainContent,
                 templateType: templateType,
-                theme: document.getElementById('customTheme')?.value || 'blue'
+                theme: document.getElementById('customTheme')?.value || 'blue',
+                layoutOrder: document.getElementById('layoutOrder')?.value || 'content-first',
+                predictionNote: document.getElementById('predictionNote')?.value || '',
+                showCtaButton: document.getElementById('showCtaButton')?.checked || false,
+                customCtaText: document.getElementById('customCtaText')?.value || '',
+                customCtaUrl: document.getElementById('customCtaUrl')?.value || 'https://nankan-analytics.keiba.link/pricing/'
             };
 
             if (templateType === 'prediction') {
-                templateData.predictions = collectPredictionData();
+                // 予想データ収集
+                const predictionInputs = document.querySelectorAll('.prediction-input');
+                templateData.predictions = Array.from(predictionInputs).map(input => {
+                    const raceName = input.querySelector('.race-name')?.value || '';
+                    const horses = (input.querySelector('.race-horses')?.value || '')
+                        .split('\n')
+                        .filter(h => h.trim())
+                        .map(h => h.trim());
+                    return { raceName, horses };
+                }).filter(p => p.raceName && p.horses.length > 0);
             } else if (templateType === 'result') {
                 templateData.results = collectResultData();
             } else if (templateType === 'campaign') {
@@ -935,6 +995,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         updateCurrentTime();
         // 初期状態でテンプレートセクションの表示を設定
         updateTemplateSection();
+        // CTAボタン設定の初期状態を設定
+        updateCtaButtonSettings();
         
         // プレビューボタンが見つからない場合の代替処理
         const previewBtn = document.getElementById('generatePreviewBtn');
@@ -1068,12 +1130,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }).filter(p => p.raceName && p.horses.length > 0);
         }
 
-        // HTMLテンプレート生成
-        const htmlContent = generateNewsletterHTML({
+        // テンプレートデータ準備
+        let templateData = {
             title: subject,
             mainContent: mainContent,
+            templateType: templateType,
+            layoutOrder: document.getElementById('layoutOrder')?.value || 'content-first',
+            predictionNote: document.getElementById('predictionNote')?.value || '',
+            showCtaButton: document.getElementById('showCtaButton')?.checked || false,
+            customCtaText: document.getElementById('customCtaText')?.value || '',
+            customCtaUrl: document.getElementById('customCtaUrl')?.value || 'https://nankan-analytics.keiba.link/pricing/',
             predictions: predictions
-        });
+        };
+
+        // HTMLテンプレート生成
+        const htmlContent = generateAdvancedNewsletterHTML(templateData);
 
         try {
             console.log('配信リクエスト送信中...', {
@@ -1175,7 +1246,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             customHeadline = '',
             customAccent = '',
             customCtaText = '',
-            customCtaUrl = ''
+            customCtaUrl = '',
+            layoutOrder = 'content-first',
+            predictionNote = '',
+            showCtaButton = true
         } = templateData;
 
         // モダンテーマ別スタイル
@@ -1546,13 +1620,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="content">
             ${customHeadlineHTML}
             
-            <div class="main-content">
-${mainContent}
-            </div>
-            
-            ${customAccentHTML}
-            
-            ${templateType === 'prediction' && predictions.length > 0 ? `
+            ${layoutOrder === 'prediction-first' && templateType === 'prediction' && predictions.length > 0 ? `
             <h3 class="section-title">🎯 本日の注目予想</h3>
             ${predictions.map(p => `
             <div class="prediction-card">
@@ -1562,6 +1630,36 @@ ${mainContent}
                 </div>
             </div>
             `).join('')}
+            ${predictionNote ? `
+            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+                <h4 style="color: #92400e; font-size: 16px; font-weight: 700; margin: 0 0 10px 0;">📝 補足・戦略メモ</h4>
+                <div style="color: #78350f; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${predictionNote}</div>
+            </div>
+            ` : ''}
+            ` : ''}
+            
+            <div class="main-content">
+${mainContent}
+            </div>
+            
+            ${customAccentHTML}
+            
+            ${layoutOrder === 'content-first' && templateType === 'prediction' && predictions.length > 0 ? `
+            <h3 class="section-title">🎯 本日の注目予想</h3>
+            ${predictions.map(p => `
+            <div class="prediction-card">
+                <div class="race-title">🏁 ${p.raceName}</div>
+                <div class="horses">
+                    ${p.horses.map(h => `<div class="horse-item">📍 ${h}</div>`).join('')}
+                </div>
+            </div>
+            `).join('')}
+            ${predictionNote ? `
+            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+                <h4 style="color: #92400e; font-size: 16px; font-weight: 700; margin: 0 0 10px 0;">📝 補足・戦略メモ</h4>
+                <div style="color: #78350f; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${predictionNote}</div>
+            </div>
+            ` : ''}
             ` : ''}
             
             ${templateType === 'result' && results.length > 0 ? `
@@ -1651,12 +1749,11 @@ ${mainContent}
             </div>
             ` : ''}
             
+            ${showCtaButton ? `
             <div style="text-align: center;">
-                <a href="${ctaUrl}" class="cta-button">${ctaText}</a>
-                ${customCtaText && customCtaUrl ? `
-                <br><a href="${customCtaUrl}" class="cta-button" style="margin-top: 10px;">${customCtaText}</a>
-                ` : ''}
+                <a href="${customCtaUrl || ctaUrl}" class="cta-button">${customCtaText || ctaText}</a>
             </div>
+            ` : ''}
         </div>
         
         <div class="footer">
