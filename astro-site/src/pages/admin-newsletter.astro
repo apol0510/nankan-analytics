@@ -49,7 +49,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
                 <!-- 予想セクション（予想配信タイプの場合） -->
                 <div id="predictionSection">
-                    <h3>予想情報</h3>
+                    <h3>🎯 予想情報</h3>
                     <div id="predictionsContainer">
                         <div class="prediction-input">
                             <input type="text" placeholder="レース名（例: 第11R メインレース）" class="race-name" />
@@ -57,6 +57,68 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         </div>
                     </div>
                     <button type="button" id="addPrediction" class="btn-secondary">+ 予想を追加</button>
+                </div>
+
+                <!-- 結果報告セクション（結果報告タイプの場合） -->
+                <div id="resultSection" style="display: none;">
+                    <h3>📊 昨日の結果</h3>
+                    <div id="resultsContainer">
+                        <div class="result-input">
+                            <input type="text" placeholder="レース名（例: 第11R メインレース）" class="result-race-name" />
+                            <div class="result-details">
+                                <input type="text" placeholder="1着馬" class="result-winner" />
+                                <input type="text" placeholder="配当（例: ¥1,200）" class="result-payout" />
+                                <select class="result-status">
+                                    <option value="hit">🎯 的中！</option>
+                                    <option value="miss">❌ 不的中</option>
+                                    <option value="near">📈 惜しい！</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="addResult" class="btn-secondary">+ 結果を追加</button>
+                    <div class="total-stats">
+                        <input type="text" placeholder="今月の的中率（例: 78%）" id="monthlyHitRate" />
+                        <input type="text" placeholder="今月の収支（例: +¥45,600）" id="monthlyProfit" />
+                    </div>
+                </div>
+
+                <!-- キャンペーンセクション（キャンペーンタイプの場合） -->
+                <div id="campaignSection" style="display: none;">
+                    <h3>🎪 キャンペーン情報</h3>
+                    <div class="campaign-inputs">
+                        <input type="text" placeholder="キャンペーン名（例: 限定50名！特別予想プラン）" id="campaignTitle" />
+                        <textarea placeholder="キャンペーン詳細・特典内容" rows="3" id="campaignDetails"></textarea>
+                        <input type="text" placeholder="通常価格（例: ¥9,980）" id="originalPrice" />
+                        <input type="text" placeholder="特別価格（例: ¥4,980）" id="campaignPrice" />
+                        <input type="text" placeholder="期限（例: 12月31日まで）" id="campaignDeadline" />
+                        <input type="text" placeholder="CTAボタンテキスト（例: 今すぐ申し込む）" id="ctaText" />
+                        <input type="url" placeholder="CTAボタンリンク先URL" id="ctaUrl" />
+                    </div>
+                </div>
+
+                <!-- カスタムセクション（カスタムタイプの場合） -->
+                <div id="customSection" style="display: none;">
+                    <h3>🎨 カスタムレイアウト</h3>
+                    <div class="custom-inputs">
+                        <label>背景色テーマ</label>
+                        <select id="customTheme">
+                            <option value="default">デフォルト</option>
+                            <option value="gold">🏆 ゴールド（勝利感）</option>
+                            <option value="red">🔥 レッド（緊急感）</option>
+                            <option value="blue">💎 ブルー（信頼感）</option>
+                        </select>
+                        
+                        <label>特別見出し</label>
+                        <input type="text" placeholder="特別見出し（例: 🚨 緊急速報！）" id="customHeadline" />
+                        
+                        <label>アクセント情報</label>
+                        <textarea placeholder="強調したい情報・数字・実績" rows="2" id="customAccent"></textarea>
+                        
+                        <label>追加CTA</label>
+                        <input type="text" placeholder="追加ボタンテキスト" id="customCtaText" />
+                        <input type="url" placeholder="追加ボタンURL" id="customCtaUrl" />
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -100,24 +162,52 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
     // テンプレートタイプの表示制御関数
-    function updatePredictionSection() {
+    function updateTemplateSection() {
         const templateType = document.getElementById('templateType');
         const predictionSection = document.getElementById('predictionSection');
+        const resultSection = document.getElementById('resultSection');
+        const campaignSection = document.getElementById('campaignSection');
+        const customSection = document.getElementById('customSection');
         
-        if (templateType && predictionSection) {
-            if (templateType.value === 'prediction') {
-                predictionSection.style.display = 'block';
-                console.log('予想セクションを表示');
-            } else {
-                predictionSection.style.display = 'none';
-                console.log('予想セクションを非表示');
+        // 全セクションを非表示
+        [predictionSection, resultSection, campaignSection, customSection].forEach(section => {
+            if (section) section.style.display = 'none';
+        });
+        
+        // 選択されたタイプに応じて表示
+        if (templateType) {
+            switch (templateType.value) {
+                case 'prediction':
+                    if (predictionSection) {
+                        predictionSection.style.display = 'block';
+                        console.log('🎯 予想セクションを表示');
+                    }
+                    break;
+                case 'result':
+                    if (resultSection) {
+                        resultSection.style.display = 'block';
+                        console.log('📊 結果報告セクションを表示');
+                    }
+                    break;
+                case 'campaign':
+                    if (campaignSection) {
+                        campaignSection.style.display = 'block';
+                        console.log('🎪 キャンペーンセクションを表示');
+                    }
+                    break;
+                case 'custom':
+                    if (customSection) {
+                        customSection.style.display = 'block';
+                        console.log('🎨 カスタムセクションを表示');
+                    }
+                    break;
             }
         }
     }
 
     // テンプレートタイプ変更時の処理
     const templateType = document.getElementById('templateType');
-    templateType?.addEventListener('change', updatePredictionSection);
+    templateType?.addEventListener('change', updateTemplateSection);
 
     // 予想追加ボタン
     document.getElementById('addPrediction')?.addEventListener('click', () => {
@@ -134,6 +224,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // 削除ボタンの処理
         newPrediction.querySelector('.remove-prediction')?.addEventListener('click', () => {
             newPrediction.remove();
+        });
+    });
+
+    // 結果追加ボタン
+    document.getElementById('addResult')?.addEventListener('click', () => {
+        const container = document.getElementById('resultsContainer');
+        const newResult = document.createElement('div');
+        newResult.className = 'result-input';
+        newResult.innerHTML = `
+            <input type="text" placeholder="レース名" class="result-race-name" />
+            <div class="result-details">
+                <input type="text" placeholder="1着馬" class="result-winner" />
+                <input type="text" placeholder="配当（例: ¥1,200）" class="result-payout" />
+                <select class="result-status">
+                    <option value="hit">🎯 的中！</option>
+                    <option value="miss">❌ 不的中</option>
+                    <option value="near">📈 惜しい！</option>
+                </select>
+                <button type="button" class="remove-result">削除</button>
+            </div>
+        `;
+        container.appendChild(newResult);
+        
+        // 削除ボタンの処理
+        newResult.querySelector('.remove-result')?.addEventListener('click', () => {
+            newResult.remove();
         });
     });
 
@@ -284,8 +400,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     document.addEventListener('DOMContentLoaded', () => {
         loadHistory();
         updateCurrentTime();
-        // 初期状態で予想セクションの表示を設定
-        updatePredictionSection();
+        // 初期状態でテンプレートセクションの表示を設定
+        updateTemplateSection();
         console.log('ページ初期化完了');
     });
 
@@ -433,9 +549,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 // プレビューもクリア
                 clearPreview();
                 
-                // テンプレートタイプをリセット後、予想セクションを更新
+                // テンプレートタイプをリセット後、テンプレートセクションを更新
                 setTimeout(() => {
-                    updatePredictionSection();
+                    updateTemplateSection();
                 }, 100);
                 
                 // 履歴を更新
@@ -793,9 +909,12 @@ ${mainContent}
         color: #ef4444;
     }
 
-    /* 予想セクションの初期表示制御 */
-    #predictionSection {
-        display: block; /* デフォルトで表示（予想配信が初期選択のため） */
+    /* 各テンプレートセクションの共通スタイル */
+    #predictionSection,
+    #resultSection,
+    #campaignSection,
+    #customSection {
+        display: block; /* JavaScriptで制御 */
         margin-top: 1.5rem;
         padding: 1.5rem;
         background: rgba(15, 23, 42, 0.3);
@@ -803,10 +922,93 @@ ${mainContent}
         border: 1px solid rgba(51, 65, 85, 0.3);
     }
 
-    #predictionSection h3 {
+    #predictionSection h3,
+    #resultSection h3,
+    #campaignSection h3,
+    #customSection h3 {
         margin-top: 0;
         color: #f1f5f9;
         margin-bottom: 1rem;
+    }
+
+    /* 結果報告セクション */
+    .result-input {
+        background: rgba(30, 41, 59, 0.8);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .result-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .total-stats {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 0.5rem;
+        border-left: 4px solid #3b82f6;
+    }
+
+    /* キャンペーンセクション */
+    .campaign-inputs {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .campaign-inputs input,
+    .campaign-inputs textarea {
+        padding: 0.75rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 0.5rem;
+        color: #e2e8f0;
+    }
+
+    /* カスタムセクション */
+    .custom-inputs {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .custom-inputs label {
+        color: #cbd5e1;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+
+    .custom-inputs input,
+    .custom-inputs textarea,
+    .custom-inputs select {
+        padding: 0.75rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 0.5rem;
+        color: #e2e8f0;
+    }
+
+    .remove-result {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .remove-result:hover {
+        background: #dc2626;
     }
 
     /* レスポンシブ対応 */
