@@ -49,8 +49,11 @@ export default async function handler(request, context) {
 
     const emailHistory = await emailHistoryResponse.json();
 
-    // スケジュール配信一覧取得
+    // スケジュール配信一覧取得（複数のエンドポイントを試す）
     let scheduledEmails = [];
+    let scheduledCampaigns = [];
+    
+    // 1. トランザクションメールのqueued状態を確認
     try {
       const scheduledResponse = await fetch(
         'https://api.brevo.com/v3/smtp/emails?status=queued',
@@ -63,11 +66,57 @@ export default async function handler(request, context) {
         }
       );
       const scheduledData = await scheduledResponse.json();
+      console.log('Queued emails response:', scheduledData);
       if (scheduledData && scheduledData.transactionalEmails) {
         scheduledEmails = scheduledData.transactionalEmails;
       }
     } catch (scheduledError) {
       console.log('スケジュール配信取得エラー:', scheduledError);
+    }
+    
+    // 2. キャンペーンAPIもチェック（スケジュール配信はこちらの可能性）
+    try {
+      const campaignsResponse = await fetch(
+        'https://api.brevo.com/v3/emailCampaigns?status=scheduled&limit=50',
+        {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'api-key': BREVO_API_KEY
+          }
+        }
+      );
+      const campaignsData = await campaignsResponse.json();
+      console.log('Scheduled campaigns response:', campaignsData);
+      if (campaignsData && campaignsData.campaigns) {
+        scheduledCampaigns = campaignsData.campaigns;
+      }
+    } catch (campaignError) {
+      console.log('キャンペーン取得エラー:', campaignError);
+    }
+    
+    // 3. 最近のトランザクションメールで未送信のものも確認
+    let pendingEmails = [];
+    try {
+      const pendingResponse = await fetch(
+        'https://api.brevo.com/v3/smtp/emails?limit=100',
+        {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'api-key': BREVO_API_KEY
+          }
+        }
+      );
+      const pendingData = await pendingResponse.json();
+      if (pendingData && pendingData.transactionalEmails) {
+        // scheduledAtが設定されているものを探す
+        pendingEmails = pendingData.transactionalEmails.filter(email => 
+          email.scheduledAt && new Date(email.scheduledAt) > new Date()
+        );
+      }
+    } catch (pendingError) {
+      console.log('Pending emails取得エラー:', pendingError);
     }
 
     // アカウント情報取得
@@ -99,6 +148,19 @@ export default async function handler(request, context) {
       console.log('統計情報取得エラー:', statsError);
     }
 
+    // すべての予約配信を結合
+    const allScheduled = [
+      ...scheduledEmails,
+      ...scheduledCampaigns.map(c => ({
+        subject: c.name,
+        scheduledAt: c.scheduledAt,
+        to: c.statistics ? [{ email: `${c.statistics.globalStats?.uniqueClicks || 0}件` }] : [],
+        status: 'campaign-scheduled',
+        id: c.id
+      })),
+      ...pendingEmails
+    ];
+    
     // レスポンス構築
     const response = {
       success: true,
@@ -112,12 +174,20 @@ export default async function handler(request, context) {
           plan: accountInfo.plan
         },
         recentEmails: emailHistory.transactionalEmails || [],
-        scheduledEmails: scheduledEmails,
+        scheduledEmails: allScheduled,
+        scheduledCampaigns: scheduledCampaigns,
+        pendingEmails: pendingEmails,
         stats: stats,
         summary: {
           totalSent24h: emailHistory.count || 0,
-          pendingScheduled: scheduledEmails.length,
+          pendingScheduled: allScheduled.length,
           accountStatus: accountInfo.email ? 'active' : 'unknown'
+        },
+        debug: {
+          queuedEmailsCount: scheduledEmails.length,
+          scheduledCampaignsCount: scheduledCampaigns.length,
+          pendingEmailsCount: pendingEmails.length,
+          message: 'Brevo SMTPでは予約配信がトランザクションメールとして記録されない可能性があります'
         }
       }
     };

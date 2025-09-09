@@ -3626,7 +3626,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     // 実際の配信状況表示
     function displayRealDeliveryStatus(data) {
         const historyArea = document.getElementById('newHistoryArea');
-        const { account, recentEmails, scheduledEmails, summary, stats } = data;
+        const { account, recentEmails, scheduledEmails, summary, stats, debug } = data;
 
         let html = `
             <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
@@ -3736,6 +3736,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             `;
         }
 
+        // デバッグ情報の表示
+        if (debug) {
+            html += `
+                <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                    <h4 style="margin: 0 0 10px 0; color: #d97706;">🔍 デバッグ情報</h4>
+                    <div style="font-size: 0.9rem; color: #92400e;">
+                        <div>Queued Emails: ${debug.queuedEmailsCount}件</div>
+                        <div>Scheduled Campaigns: ${debug.scheduledCampaignsCount}件</div>
+                        <div>Pending Emails: ${debug.pendingEmailsCount}件</div>
+                        <div style="margin-top: 10px; padding: 10px; background: rgba(245, 158, 11, 0.1); border-radius: 4px;">
+                            ⚠️ ${debug.message}
+                        </div>
+                        <div style="margin-top: 10px; font-weight: 600;">
+                            💡 重要: Brevo SMTPの予約配信は、実際に配信時刻になるまでAPIで確認できない仕様の可能性があります
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         html += `</div>`;
 
         historyArea.innerHTML = html;
@@ -3744,7 +3764,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         console.log('実際の配信状況:', {
             totalSent: summary.totalSent24h,
             scheduled: summary.pendingScheduled,
-            accountStatus: summary.accountStatus
+            accountStatus: summary.accountStatus,
+            debug: debug
         });
     }
 
