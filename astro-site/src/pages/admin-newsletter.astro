@@ -618,10 +618,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- 配信履歴 -->
             <div class="card">
                 <h2 style="color: #374151; font-weight: 600;">📋 配信履歴・予約状況</h2>
-                <button id="refreshHistoryBtn" class="btn btn-secondary" style="margin-bottom: 20px;">履歴を更新</button>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button id="refreshHistoryBtn" class="btn btn-secondary">🔄 履歴を更新</button>
+                    <button id="clearHistoryBtn" class="btn btn-danger">🗑️ 履歴をクリア</button>
+                </div>
                 <div id="newHistoryArea" style="background: #f9fafb; border-radius: 10px; padding: 20px; border: 2px solid #d1d5db;">
-                    <div class="simple-loading" style="text-align: center; color: #6b7280; font-weight: 500; font-size: 1rem; padding: 20px;">
-                        📄 読み込み中...
+                    <div class="new-no-history">
+                        📄 履歴を読み込み中...
                     </div>
                 </div>
             </div>
@@ -901,50 +904,67 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             return;
         }
         
-        // シンプルなサンプルデータ
-        const sampleHistory = [
-            {
-                subject: '9月2日 大井競馬予想',
-                status: '配信済み',
-                targetPlan: 'free',
-                recipientCount: 3,
-                date: '2025/09/09 12:52'
-            },
-            {
-                subject: '週末特別キャンペーンのお知らせ',
-                status: '配信済み',
-                targetPlan: 'all',
-                recipientCount: 15,
-                date: '2025/09/08 18:00'
-            }
-        ];
-        
-        if (sampleHistory.length > 0) {
-            let historyHTML = '';
-            sampleHistory.forEach(item => {
-                historyHTML += `
-                    <div class="new-history-item">
-                        <div class="new-history-title">
-                            ${item.subject}
-                            <span class="new-status-sent">${item.status} ✅</span>
+        try {
+            // LocalStorageから履歴を読み込み
+            const existingHistory = localStorage.getItem('newsletter-history');
+            const history = existingHistory ? JSON.parse(existingHistory) : [];
+            
+            console.log('LocalStorageから読み込んだ履歴:', history.length + '件');
+            
+            if (history.length > 0) {
+                let historyHTML = '';
+                // 最新10件のみ表示
+                history.slice(0, 10).forEach(item => {
+                    // 日付フォーマット
+                    const date = item.scheduledAt ? 
+                        new Date(item.scheduledAt).toLocaleString('ja-JP') : 
+                        new Date(item.createdAt).toLocaleString('ja-JP');
+                    
+                    // ステータス表示
+                    const statusText = item.status === 'scheduled' ? '予約済み' : '配信済み';
+                    const statusIcon = item.status === 'scheduled' ? '📅' : '✅';
+                    
+                    // プラン表示を日本語化
+                    const planText = {
+                        'all': '全会員',
+                        'free': '無料会員',
+                        'paid': '有料会員',
+                        'standard': 'Standard会員',
+                        'premium': 'Premium会員'
+                    }[item.targetPlan] || item.targetPlan;
+                    
+                    historyHTML += `
+                        <div class="new-history-item">
+                            <div class="new-history-title">
+                                ${item.subject}
+                                <span class="new-status-sent">${statusText} ${statusIcon}</span>
+                            </div>
+                            <div class="new-history-info">
+                                対象: ${planText} | 配信数: ${item.recipientCount || 0}件 | 配信日時: ${date}
+                            </div>
                         </div>
-                        <div class="new-history-info">
-                            対象: ${item.targetPlan} | 配信数: ${item.recipientCount}件 | 配信日時: ${item.date}
-                        </div>
+                    `;
+                });
+                newHistoryArea.innerHTML = historyHTML;
+            } else {
+                newHistoryArea.innerHTML = `
+                    <div class="new-no-history">
+                        📄 まだ配信履歴がありません<br>
+                        <small>メルマガを配信するとここに表示されます</small>
                     </div>
                 `;
-            });
-            newHistoryArea.innerHTML = historyHTML;
-        } else {
+            }
+            
+            console.log('✅ 履歴読み込み完了');
+        } catch (error) {
+            console.error('履歴読み込みエラー:', error);
             newHistoryArea.innerHTML = `
                 <div class="new-no-history">
-                    📄 まだ配信履歴がありません<br>
-                    <small>メルマガを配信するとここに表示されます</small>
+                    ⚠️ 履歴の読み込みに失敗しました<br>
+                    <small>${error.message}</small>
                 </div>
             `;
         }
-        
-        console.log('✅ 新しい履歴読み込み完了');
     }
 
     // 履歴を保存する関数
@@ -972,6 +992,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     // 履歴更新ボタン
     document.getElementById('refreshHistoryBtn')?.addEventListener('click', loadHistory);
+    
+    // 履歴クリアボタン
+    document.getElementById('clearHistoryBtn')?.addEventListener('click', () => {
+        if (confirm('配信履歴をすべて削除してもよろしいですか？\nこの操作は元に戻せません。')) {
+            try {
+                localStorage.removeItem('newsletter-history');
+                console.log('✅ 履歴をクリアしました');
+                loadHistory(); // 履歴表示を更新
+                alert('履歴をクリアしました');
+            } catch (error) {
+                console.error('履歴クリアエラー:', error);
+                alert('履歴のクリアに失敗しました: ' + error.message);
+            }
+        }
+    });
 
     // 現在時刻を更新する関数
     function updateCurrentTime() {
