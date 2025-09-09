@@ -189,10 +189,25 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
         }
       };
 
-      // スケジュール配信の場合
-      if (scheduledAt) {
-        emailData.scheduledAt = scheduledAt;
+      // スケジュール配信の場合（有効な日付のみ）
+      if (scheduledAt && scheduledAt !== 'null' && scheduledAt.trim() !== '') {
+        // RFC3339形式に変換（YYYY-MM-DDTHH:mm:ssZ）
+        const scheduledDate = new Date(scheduledAt);
+        if (!isNaN(scheduledDate.getTime())) {
+          emailData.scheduledAt = scheduledDate.toISOString();
+          console.log('スケジュール配信設定:', emailData.scheduledAt);
+        } else {
+          console.log('無効な日付のためスケジュール配信をスキップ:', scheduledAt);
+        }
       }
+
+      console.log('Brevo APIリクエストデータ:', {
+        senderEmail: emailData.sender.email,
+        recipientCount: emailData.to.length,
+        hasSubject: !!emailData.subject,
+        hasHtmlContent: !!emailData.htmlContent,
+        hasScheduledAt: !!emailData.scheduledAt
+      });
 
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
