@@ -166,21 +166,16 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
   
   try {
-    // 配信リストを作成（Brevoの仕様に合わせて最大1000件ずつ）
-    const batches = [];
-    for (let i = 0; i < recipients.length; i += 1000) {
-      batches.push(recipients.slice(i, i + 1000));
-    }
-
     const results = [];
     
-    for (const batch of batches) {
+    // 各受信者に個別送信（プライバシー保護のため）
+    for (const recipient of recipients) {
       const emailData = {
         sender: {
           name: "NANKANアナリティクス",
           email: "info@keiba.link"
         },
-        to: batch.map(r => ({ email: r.email })),
+        to: [{ email: recipient.email }], // 1人ずつ送信
         subject: subject,
         htmlContent: htmlContent,
         headers: {
@@ -203,7 +198,7 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
 
       console.log('Brevo APIリクエストデータ:', {
         senderEmail: emailData.sender.email,
-        recipientCount: emailData.to.length,
+        recipientEmail: emailData.to[0].email, // 個別送信なので1件のみ
         hasSubject: !!emailData.subject,
         hasHtmlContent: !!emailData.htmlContent,
         hasScheduledAt: !!emailData.scheduledAt
@@ -226,9 +221,17 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
       }
 
       const result = await response.json();
-      results.push(result);
+      results.push({
+        email: recipient.email,
+        messageId: result.messageId || 'sent',
+        status: 'success'
+      });
+
+      // API制限を避けるため少し待機（100ms）
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
+    console.log(`全${recipients.length}件の個別送信完了`);
     return results;
 
   } catch (error) {
