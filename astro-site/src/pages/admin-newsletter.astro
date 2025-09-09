@@ -491,6 +491,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <label for="predictionNote">📝 予想補足・追記</label>
                         <textarea id="predictionNote" rows="3" placeholder="予想の補足情報、注意点、戦略説明など（オプション）"></textarea>
                     </div>
+                    
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label for="additionalSection">📄 追加セクション</label>
+                        <textarea id="additionalSection" rows="4" placeholder="予想情報の後に表示する追加コンテンツ（オプション）&#13;&#10;例：重要なお知らせ、キャンペーン情報、注意事項など"></textarea>
+                    </div>
                 </div>
 
                 <!-- 結果報告セクション（結果報告タイプの場合） -->
@@ -761,6 +766,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 theme: document.getElementById('customTheme')?.value || 'blue',
                 layoutOrder: document.getElementById('layoutOrder')?.value || 'content-first',
                 predictionNote: document.getElementById('predictionNote')?.value || '',
+                additionalSection: document.getElementById('additionalSection')?.value || '',
                 showCtaButton: document.getElementById('showCtaButton')?.checked || false,
                 customCtaText: document.getElementById('customCtaText')?.value || '',
                 customCtaUrl: document.getElementById('customCtaUrl')?.value || 'https://nankan-analytics.keiba.link/pricing/'
@@ -1137,6 +1143,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             templateType: templateType,
             layoutOrder: document.getElementById('layoutOrder')?.value || 'content-first',
             predictionNote: document.getElementById('predictionNote')?.value || '',
+            additionalSection: document.getElementById('additionalSection')?.value || '',
             showCtaButton: document.getElementById('showCtaButton')?.checked || false,
             customCtaText: document.getElementById('customCtaText')?.value || '',
             customCtaUrl: document.getElementById('customCtaUrl')?.value || 'https://nankan-analytics.keiba.link/pricing/',
@@ -1205,6 +1212,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('targetPlan').value = 'all';
                 document.getElementById('templateType').value = 'prediction';
                 document.getElementById('scheduledAt').value = '';
+                document.getElementById('predictionNote').value = '';
+                document.getElementById('additionalSection').value = '';
+                document.getElementById('customCtaText').value = '';
+                document.getElementById('showCtaButton').checked = true;
                 // プレビューもクリア
                 clearPreview();
                 
@@ -1249,6 +1260,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             customCtaUrl = '',
             layoutOrder = 'content-first',
             predictionNote = '',
+            additionalSection = '',
             showCtaButton = true
         } = templateData;
 
@@ -1586,6 +1598,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             color: #374151;
             margin-bottom: 40px;
             font-weight: 400;
+            text-align: center;
         }
         
         /* フッターのモダン化 */
@@ -1626,7 +1639,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="prediction-card">
                 <div class="race-title">🏁 ${p.raceName}</div>
                 <div class="horses">
-                    ${p.horses.map(h => `<div class="horse-item">📍 ${h}</div>`).join('')}
+                    ${p.horses.map(h => `<div class="horse-item">${h}</div>`).join('')}
                 </div>
             </div>
             `).join('')}
@@ -1650,7 +1663,7 @@ ${mainContent}
             <div class="prediction-card">
                 <div class="race-title">🏁 ${p.raceName}</div>
                 <div class="horses">
-                    ${p.horses.map(h => `<div class="horse-item">📍 ${h}</div>`).join('')}
+                    ${p.horses.map(h => `<div class="horse-item">${h}</div>`).join('')}
                 </div>
             </div>
             `).join('')}
@@ -1658,6 +1671,13 @@ ${mainContent}
             <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin: 25px 0; border-left: 4px solid #f59e0b;">
                 <h4 style="color: #92400e; font-size: 16px; font-weight: 700; margin: 0 0 10px 0;">📝 補足・戦略メモ</h4>
                 <div style="color: #78350f; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${predictionNote}</div>
+            </div>
+            ` : ''}
+            
+            ${additionalSection ? `
+            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 25px; margin: 30px 0; border-left: 4px solid #0284c7;">
+                <h4 style="color: #0c4a6e; font-size: 18px; font-weight: 700; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">📄 追加情報</h4>
+                <div style="color: #164e63; font-size: 16px; line-height: 1.7; white-space: pre-wrap;">${additionalSection}</div>
             </div>
             ` : ''}
             ` : ''}
