@@ -205,37 +205,182 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .history-area {
             max-height: 500px;
             overflow-y: auto;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
         }
         
         .history-item {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
         }
         
         .history-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(8px) translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-left-color: #4c51bf;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .history-subject {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin: 0;
+            line-height: 1.4;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .history-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 1rem;
+            color: #1a202c;
+            margin-top: 15px;
+        }
+        
+        .history-details > span {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #2d3748;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+            min-height: 20px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .history-details > span:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .history-plan {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+            color: #064e3b !important;
+            border-color: #10b981 !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+        }
+        
+        .history-count {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%) !important;
+            color: #3730a3 !important;
+            border-color: #6366f1 !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+        }
+        
+        .history-date {
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%) !important;
+            color: #9a3412 !important;
+            border-color: #ea580c !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
         }
         
         .status-badge {
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+        
+        .status-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
         }
         
         .status-sent {
-            background: #c6f6d5;
-            color: #22543d;
+            background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+            color: #14532d;
+            border-color: #16a34a;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
         
         .status-scheduled {
-            background: #bee3f8;
-            color: #2a4365;
+            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+            color: #1e40af;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .status-unknown {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: #1f2937;
+            border-color: #6b7280;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
+        }
+        
+        .no-history {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            border: 2px dashed #d1d5db;
+        }
+        
+        .error {
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #fca5a5;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .history-details {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .history-details > span {
+                font-size: 1rem;
+                padding: 10px 16px;
+                text-align: center;
+            }
+            
+            .history-item {
+                padding: 20px;
+            }
+            
+            .history-subject {
+                font-size: 1.1rem;
+            }
+            
+            .status-badge {
+                font-size: 0.95rem;
+                padding: 10px 20px;
+                justify-content: center;
+            }
         }
         
         .current-time {
@@ -812,11 +957,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </div>
                 `;
             } else {
-                historyArea.innerHTML = '<p class="no-history">配信履歴がありません</p>';
+                historyArea.innerHTML = `
+                    <div class="no-history">
+                        📄 まだ配信履歴がありません<br>
+                        <small>メルマガジンを配信するとここに表示されます</small>
+                    </div>
+                `;
             }
         } catch (error) {
             console.error('履歴読み込みエラー:', error);
-            historyArea.innerHTML = '<p class="error">履歴の読み込みに失敗しました</p>';
+            historyArea.innerHTML = `
+                <div class="error">
+                    ⚠️ 履歴の読み込みに失敗しました<br>
+                    <small>ページをリロードして再度お試しください</small>
+                </div>
+            `;
         }
     }
 
