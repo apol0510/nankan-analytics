@@ -618,13 +618,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- 配信履歴 -->
             <div class="card">
                 <h2 style="color: #374151; font-weight: 600;">📋 配信履歴・予約状況</h2>
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                     <button id="refreshHistoryBtn" class="btn btn-secondary">🔄 履歴を更新</button>
                     <button id="clearHistoryBtn" class="btn btn-danger">🗑️ 履歴をクリア</button>
+                    <button id="showFailedEmailsBtn" class="btn btn-info">⚠️ 失敗メール確認</button>
+                    <button id="showReportBtn" class="btn btn-success">📊 配信レポート</button>
                 </div>
                 <div id="newHistoryArea" style="background: #f9fafb; border-radius: 10px; padding: 20px; border: 2px solid #d1d5db;">
                     <div class="new-no-history">
                         📄 履歴を読み込み中...
+                    </div>
+                </div>
+                
+                <!-- 失敗メール再送セクション -->
+                <div id="failedEmailsSection" style="display: none; margin-top: 25px; background: #fef2f2; border-radius: 10px; padding: 20px; border: 2px solid #fecaca;">
+                    <h3 style="color: #991b1b; margin-top: 0;">⚠️ 送信失敗メール一覧</h3>
+                    <div id="failedEmailsList"></div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button id="retryFailedBtn" class="btn btn-primary">🔄 失敗分を再送信</button>
+                        <button id="clearFailedBtn" class="btn btn-secondary">🗑️ 失敗リストをクリア</button>
+                        <button id="hideFailedBtn" class="btn btn-secondary">❌ 閉じる</button>
+                    </div>
+                </div>
+                
+                <!-- 配信レポートセクション -->
+                <div id="reportSection" style="display: none; margin-top: 25px; background: #f0f9ff; border-radius: 10px; padding: 20px; border: 2px solid #0ea5e9;">
+                    <h3 style="color: #0c4a6e; margin-top: 0;">📊 配信レポート</h3>
+                    <div id="reportContent"></div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button id="refreshReportBtn" class="btn btn-primary">🔄 レポート更新</button>
+                        <button id="hideReportBtn" class="btn btn-secondary">❌ 閉じる</button>
                     </div>
                 </div>
             </div>
@@ -1007,6 +1030,375 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         }
     });
+    
+    // 失敗メール確認ボタン
+    document.getElementById('showFailedEmailsBtn')?.addEventListener('click', () => {
+        loadFailedEmails();
+        document.getElementById('failedEmailsSection').style.display = 'block';
+    });
+    
+    // 失敗メールセクションを閉じる
+    document.getElementById('hideFailedBtn')?.addEventListener('click', () => {
+        document.getElementById('failedEmailsSection').style.display = 'none';
+    });
+    
+    // 失敗メール再送信
+    document.getElementById('retryFailedBtn')?.addEventListener('click', async () => {
+        const failedEmails = getFailedEmails();
+        if (failedEmails.length === 0) {
+            alert('再送信するメールがありません');
+            return;
+        }
+        
+        if (!confirm(`${failedEmails.length}件のメールを再送信しますか？`)) {
+            return;
+        }
+        
+        try {
+            // 最後に送信した設定を再利用
+            const lastHistory = JSON.parse(localStorage.getItem('newsletter-history') || '[]')[0];
+            if (!lastHistory) {
+                alert('再送信する設定が見つかりません');
+                return;
+            }
+            
+            const retryResult = await retryFailedEmails(failedEmails, lastHistory);
+            alert(`再送信完了：成功 ${retryResult.success}件、失敗 ${retryResult.failed}件`);
+            
+            // 成功したメールを失敗リストから削除
+            if (retryResult.success > 0) {
+                clearSuccessfulRetries(retryResult.successfulEmails);
+                loadFailedEmails(); // 失敗リストを更新
+            }
+            
+        } catch (error) {
+            console.error('再送信エラー:', error);
+            alert('再送信中にエラーが発生しました: ' + error.message);
+        }
+    });
+    
+    // 失敗リストクリア
+    document.getElementById('clearFailedBtn')?.addEventListener('click', () => {
+        if (confirm('失敗メールリストをすべてクリアしますか？')) {
+            clearAllFailedEmails();
+            loadFailedEmails();
+            alert('失敗メールリストをクリアしました');
+        }
+    });
+
+    // 失敗メール読み込み関数
+    function loadFailedEmails() {
+        const failedEmails = getFailedEmails();
+        const failedEmailsList = document.getElementById('failedEmailsList');
+        
+        if (failedEmails.length === 0) {
+            failedEmailsList.innerHTML = '<p style="color: #059669; font-weight: 600;">✅ 送信失敗メールはありません</p>';
+            return;
+        }
+        
+        let html = `<p style="color: #991b1b; font-weight: 600;">📧 失敗件数: ${failedEmails.length}件</p>`;
+        html += '<div style="max-height: 200px; overflow-y: auto; border: 1px solid #f87171; border-radius: 6px; background: white; padding: 15px;">';
+        
+        failedEmails.forEach((item, index) => {
+            html += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #fee2e2;">
+                    <div>
+                        <strong>${item.email}</strong><br>
+                        <small>プラン: ${item.plan || 'Unknown'} | エラー: ${item.error || 'Unknown error'}</small>
+                    </div>
+                    <button onclick="removeFailedEmail(${index})" class="btn" style="background: #ef4444; color: white; padding: 4px 8px; font-size: 12px;">削除</button>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        failedEmailsList.innerHTML = html;
+    }
+
+    // 失敗メール取得
+    function getFailedEmails() {
+        const keys = Object.keys(localStorage).filter(key => key.startsWith('newsletter-failed-'));
+        let allFailed = [];
+        
+        keys.forEach(key => {
+            try {
+                const failedData = JSON.parse(localStorage.getItem(key));
+                if (Array.isArray(failedData)) {
+                    allFailed = allFailed.concat(failedData.map(item => ({...item, key})));
+                }
+            } catch (error) {
+                console.error('Failed email data parse error:', error);
+            }
+        });
+        
+        return allFailed;
+    }
+
+    // 失敗メール再送信処理
+    async function retryFailedEmails(failedEmails, lastHistory) {
+        const retryData = {
+            subject: '[再送信] ' + lastHistory.subject,
+            htmlContent: lastHistory.htmlContent || generateBasicRetryHTML(lastHistory.subject),
+            targetPlan: 'retry',
+            scheduledAt: null,
+            retryEmails: failedEmails.map(item => ({email: item.email, plan: item.plan}))
+        };
+        
+        const response = await fetch('/.netlify/functions/send-newsletter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(retryData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`再送信失敗: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        return {
+            success: result.recipientCount || 0,
+            failed: failedEmails.length - (result.recipientCount || 0),
+            successfulEmails: failedEmails.slice(0, result.recipientCount || 0)
+        };
+    }
+
+    // 個別失敗メール削除
+    function removeFailedEmail(index) {
+        const failedEmails = getFailedEmails();
+        if (index < 0 || index >= failedEmails.length) return;
+        
+        const itemToRemove = failedEmails[index];
+        const key = itemToRemove.key;
+        
+        try {
+            const currentData = JSON.parse(localStorage.getItem(key) || '[]');
+            const updatedData = currentData.filter(item => item.email !== itemToRemove.email);
+            
+            if (updatedData.length === 0) {
+                localStorage.removeItem(key);
+            } else {
+                localStorage.setItem(key, JSON.stringify(updatedData));
+            }
+            
+            loadFailedEmails(); // リストを更新
+        } catch (error) {
+            console.error('Failed email removal error:', error);
+        }
+    }
+
+    // 成功した再送信メールを失敗リストから削除
+    function clearSuccessfulRetries(successfulEmails) {
+        successfulEmails.forEach(email => {
+            const allFailed = getFailedEmails();
+            allFailed.forEach(item => {
+                if (item.email === email.email) {
+                    removeFailedEmailByKey(item.key, email.email);
+                }
+            });
+        });
+    }
+
+    // すべての失敗メールをクリア
+    function clearAllFailedEmails() {
+        const keys = Object.keys(localStorage).filter(key => key.startsWith('newsletter-failed-'));
+        keys.forEach(key => localStorage.removeItem(key));
+    }
+
+    // 失敗メールをキー指定で削除
+    function removeFailedEmailByKey(key, email) {
+        try {
+            const currentData = JSON.parse(localStorage.getItem(key) || '[]');
+            const updatedData = currentData.filter(item => item.email !== email);
+            
+            if (updatedData.length === 0) {
+                localStorage.removeItem(key);
+            } else {
+                localStorage.setItem(key, JSON.stringify(updatedData));
+            }
+        } catch (error) {
+            console.error('Failed email key removal error:', error);
+        }
+    }
+
+    // 基本的な再送信用HTML生成
+    function generateBasicRetryHTML(subject) {
+        return `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h1 style="color: #1e293b;">🏇 NANKANアナリティクス</h1>
+                <p>このメールは配信エラーのため再送信されました。</p>
+                <h2>${subject}</h2>
+                <p>詳細な内容については、公式サイトをご確認ください。</p>
+                <a href="https://nankan-analytics.keiba.link/" style="background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">公式サイト</a>
+            </div>
+        `;
+    }
+
+    // 配信レポート関連
+    document.getElementById('showReportBtn')?.addEventListener('click', () => {
+        loadDeliveryReport();
+        document.getElementById('reportSection').style.display = 'block';
+    });
+    
+    document.getElementById('hideReportBtn')?.addEventListener('click', () => {
+        document.getElementById('reportSection').style.display = 'none';
+    });
+    
+    document.getElementById('refreshReportBtn')?.addEventListener('click', () => {
+        loadDeliveryReport();
+    });
+
+    // 配信レポート読み込み関数
+    function loadDeliveryReport() {
+        const reportContent = document.getElementById('reportContent');
+        reportContent.innerHTML = '<p>📊 レポートを読み込み中...</p>';
+        
+        try {
+            const history = JSON.parse(localStorage.getItem('newsletter-history') || '[]');
+            
+            if (history.length === 0) {
+                reportContent.innerHTML = '<p style="color: #6b7280;">配信履歴がありません</p>';
+                return;
+            }
+            
+            // 最新10件の配信について統計を計算
+            const recentHistory = history.slice(0, 10);
+            const totalSent = recentHistory.reduce((sum, item) => sum + (item.recipientCount || 0), 0);
+            const totalFailed = recentHistory.reduce((sum, item) => sum + (item.failedCount || 0), 0);
+            const successRate = totalSent + totalFailed > 0 ? ((totalSent / (totalSent + totalFailed)) * 100).toFixed(1) : '0';
+            
+            // プラン別統計
+            const planStats = {};
+            recentHistory.forEach(item => {
+                const plan = item.targetPlan || 'unknown';
+                if (!planStats[plan]) {
+                    planStats[plan] = { sent: 0, failed: 0 };
+                }
+                planStats[plan].sent += item.recipientCount || 0;
+                planStats[plan].failed += item.failedCount || 0;
+            });
+            
+            let html = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 10px 0; color: #059669;">📤 総配信数</h4>
+                        <div style="font-size: 2em; font-weight: bold; color: #059669;">${totalSent}</div>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 10px 0; color: #dc2626;">❌ 配信失敗</h4>
+                        <div style="font-size: 2em; font-weight: bold; color: ${totalFailed > 0 ? '#dc2626' : '#6b7280'};">${totalFailed}</div>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 10px 0; color: #0ea5e9;">📈 成功率</h4>
+                        <div style="font-size: 2em; font-weight: bold; color: ${parseFloat(successRate) > 90 ? '#059669' : parseFloat(successRate) > 70 ? '#f59e0b' : '#dc2626'};">${successRate}%</div>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 10px 0; color: #7c3aed;">📧 配信回数</h4>
+                        <div style="font-size: 2em; font-weight: bold; color: #7c3aed;">${recentHistory.length}</div>
+                    </div>
+                </div>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h4 style="margin-top: 0; color: #374151;">📊 プラン別配信統計</h4>
+                    <div style="display: grid; gap: 10px;">
+            `;
+            
+            Object.entries(planStats).forEach(([plan, stats]) => {
+                const planName = {
+                    'all': '全会員',
+                    'free': '無料会員',
+                    'paid': '有料会員',
+                    'standard': 'Standard会員',
+                    'premium': 'Premium会員',
+                    'retry': '再送信'
+                }[plan] || plan;
+                
+                const planSuccessRate = stats.sent + stats.failed > 0 ? ((stats.sent / (stats.sent + stats.failed)) * 100).toFixed(1) : '0';
+                
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 6px;">
+                        <span style="font-weight: 600; color: #374151;">${planName}</span>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <span style="color: #059669;">成功: ${stats.sent}</span>
+                            <span style="color: #dc2626;">失敗: ${stats.failed}</span>
+                            <span style="color: #0ea5e9; font-weight: 600;">${planSuccessRate}%</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 20px;">
+                    <h4 style="margin-top: 0; color: #374151;">📅 最近の配信履歴 (詳細)</h4>
+                    <div style="max-height: 300px; overflow-y: auto;">
+            `;
+            
+            recentHistory.forEach((item, index) => {
+                const date = new Date(item.scheduledAt || item.createdAt).toLocaleString('ja-JP');
+                const statusColor = item.failedCount > 0 ? '#f59e0b' : '#059669';
+                const statusText = item.failedCount > 0 ? `成功${item.recipientCount}件 / 失敗${item.failedCount}件` : `成功${item.recipientCount}件`;
+                
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #e5e7eb;">
+                        <div>
+                            <div style="font-weight: 600; color: #374151;">${item.subject}</div>
+                            <div style="font-size: 0.9em; color: #6b7280;">${date}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: ${statusColor}; font-weight: 600;">${statusText}</div>
+                            <div style="font-size: 0.9em; color: #6b7280;">${item.status === 'scheduled' ? '予約済み' : '配信済み'}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+                
+                <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                    <h4 style="margin: 0 0 10px 0; color: #92400e;">💡 改善提案</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #78350f;">
+            `;
+            
+            if (parseFloat(successRate) < 95) {
+                html += '<li>配信成功率が95%を下回っています。メールアドレスの品質確認をお勧めします。</li>';
+            }
+            if (totalFailed > 0) {
+                html += '<li>配信失敗メールがあります。「失敗メール確認」から再送信を検討してください。</li>';
+            }
+            if (recentHistory.length < 5) {
+                html += '<li>定期的な配信でユーザーエンゲージメントを向上させることをお勧めします。</li>';
+            }
+            if (planStats['free'] && planStats['paid']) {
+                const freeRate = planStats['free'].sent / (planStats['free'].sent + planStats['free'].failed || 1);
+                const paidRate = (planStats['standard']?.sent || 0) + (planStats['premium']?.sent || 0);
+                if (freeRate > paidRate) {
+                    html += '<li>無料会員への配信が多めです。有料会員向けの特別コンテンツ配信も検討してください。</li>';
+                }
+            }
+            
+            if (parseFloat(successRate) >= 95 && totalFailed === 0 && recentHistory.length >= 5) {
+                html += '<li style="color: #059669;">✨ 配信パフォーマンスは良好です！この調子で継続してください。</li>';
+            }
+            
+            html += `
+                    </ul>
+                </div>
+            `;
+            
+            reportContent.innerHTML = html;
+            
+        } catch (error) {
+            console.error('レポート生成エラー:', error);
+            reportContent.innerHTML = '<p style="color: #dc2626;">レポートの生成に失敗しました</p>';
+        }
+    }
+
+    // グローバル関数として定義（HTMLからアクセス可能にするため）
+    window.removeFailedEmail = removeFailedEmail;
 
     // 現在時刻を更新する関数
     function updateCurrentTime() {
@@ -1230,17 +1622,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
             
             if (response.ok) {
-                const successMessage = result.isScheduled 
-                    ? `✅ 配信予約完了！${result.recipientCount}件の配信を予約しました`
-                    : `✅ 配信成功！${result.recipientCount}件に配信しました`;
-                    
+                let successMessage;
+                if (result.isScheduled) {
+                    successMessage = `✅ 配信予約完了！${result.recipientCount}件の配信を予約しました`;
+                } else if (result.failedCount > 0) {
+                    successMessage = `⚠️ 配信完了！成功: ${result.recipientCount}件、失敗: ${result.failedCount}件`;
+                } else {
+                    successMessage = `✅ 配信成功！${result.recipientCount}件に配信しました`;
+                }
+                
                 alert(successMessage);
+                
+                // 失敗メールがある場合はLocalStorageに保存
+                if (result.failedEmails && result.failedEmails.length > 0) {
+                    const failedKey = `newsletter-failed-${Date.now()}`;
+                    localStorage.setItem(failedKey, JSON.stringify(result.failedEmails));
+                    console.warn('送信失敗メールを保存:', result.failedEmails.length + '件');
+                }
                 
                 // 履歴に保存
                 saveHistoryToLocal({
                     subject: subject,
                     targetPlan: targetPlan,
                     recipientCount: result.recipientCount,
+                    failedCount: result.failedCount || 0,
                     scheduledAt: scheduledAt || new Date().toISOString(),
                     status: result.isScheduled ? 'scheduled' : 'sent'
                 });

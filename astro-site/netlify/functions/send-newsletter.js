@@ -33,7 +33,7 @@ export default async function handler(request, context) {
     const requestBody = await request.text();
     console.log('Received request body:', requestBody);
     
-    const { subject, htmlContent, scheduledAt, targetPlan = 'all' } = JSON.parse(requestBody);
+    const { subject, htmlContent, scheduledAt, targetPlan = 'all', retryEmails } = JSON.parse(requestBody);
 
     // 必須パラメータチェック
     if (!subject || !htmlContent) {
@@ -46,8 +46,14 @@ export default async function handler(request, context) {
       );
     }
 
-    // Airtableから配信リスト取得
-    const recipients = await getRecipientsList(targetPlan);
+    // 配信リスト取得（再送信の場合は再送信リストを使用）
+    let recipients;
+    if (retryEmails && Array.isArray(retryEmails)) {
+      console.log('再送信モード:', retryEmails.length + '件');
+      recipients = retryEmails;
+    } else {
+      recipients = await getRecipientsList(targetPlan);
+    }
     
     if (recipients.length === 0) {
       return new Response(
@@ -72,9 +78,11 @@ export default async function handler(request, context) {
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Newsletter sent to ${recipients.length} recipients`,
+        message: `Newsletter sent to ${result.totalSent} recipients`,
         details: result,
-        recipientCount: recipients.length,
+        recipientCount: result.totalSent,
+        failedCount: result.totalFailed,
+        failedEmails: result.failedEmails,
         isScheduled: !!scheduledAt
       }),
       {
@@ -165,21 +173,55 @@ async function getRecipientsList(targetPlan) {
   }
 }
 
-// Brevo経由でメール送信
+// Brevo経由でメール送信（バッチ送信対応）
 async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, scheduledAt }) {
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
   
   try {
     const results = [];
+    const failedEmails = [];
     
-    // 各受信者に個別送信（プライバシー保護のため）
-    for (const recipient of recipients) {
+    // バッチサイズ（Brevoの制限に合わせて調整）
+    const BATCH_SIZE = 50; // 一度に50件まで送信
+    
+    // スケジュール配信の設定
+    let scheduledAtISO = null;
+    if (scheduledAt && scheduledAt !== 'null' && scheduledAt.trim() !== '') {
+      const scheduledDate = new Date(scheduledAt);
+      const now = new Date();
+      
+      console.log('スケジュール配信デバッグ:', {
+        originalInput: scheduledAt,
+        parsedDate: scheduledDate.toISOString(),
+        currentTime: now.toISOString(),
+        timeDifference: scheduledDate.getTime() - now.getTime(),
+        isInFuture: scheduledDate > now
+      });
+      
+      if (!isNaN(scheduledDate.getTime()) && scheduledDate > now) {
+        scheduledAtISO = scheduledDate.toISOString();
+        console.log('✅ スケジュール配信設定:', scheduledAtISO);
+      } else if (scheduledDate <= now) {
+        console.log('⚠️ 過去の時刻が指定されたため即座に送信:', scheduledAt);
+      } else {
+        console.log('❌ 無効な日付のためスケジュール配信をスキップ:', scheduledAt);
+      }
+    }
+    
+    // 受信者をバッチに分割して送信
+    for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+      const batch = recipients.slice(i, i + BATCH_SIZE);
+      
+      // バッチ送信用のデータ準備
       const emailData = {
         sender: {
           name: "NANKANアナリティクス",
           email: "info@keiba.link"
         },
-        to: [{ email: recipient.email }], // 1人ずつ送信
+        to: batch.map(recipient => ({ 
+          email: recipient.email,
+          name: recipient.name || ''
+        })),
         subject: subject,
         htmlContent: htmlContent,
         headers: {
@@ -187,74 +229,144 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
           'charset': 'UTF-8'
         }
       };
+      
+      // スケジュール配信の場合
+      if (scheduledAtISO) {
+        emailData.scheduledAt = scheduledAtISO;
+      }
+      
+      console.log(`バッチ${Math.floor(i/BATCH_SIZE) + 1}: ${batch.length}件送信中...`, {
+        batchSize: batch.length,
+        totalBatches: Math.ceil(recipients.length / BATCH_SIZE),
+        hasScheduledAt: !!emailData.scheduledAt,
+        firstEmail: batch[0]?.email
+      });
 
-      // スケジュール配信の場合（有効な日付のみ）
-      if (scheduledAt && scheduledAt !== 'null' && scheduledAt.trim() !== '') {
-        // 日本時間からUTCに変換
-        const scheduledDate = new Date(scheduledAt);
-        const now = new Date();
-        
-        console.log('スケジュール配信デバッグ:', {
-          originalInput: scheduledAt,
-          parsedDate: scheduledDate.toISOString(),
-          currentTime: now.toISOString(),
-          timeDifference: scheduledDate.getTime() - now.getTime(),
-          isInFuture: scheduledDate > now
+      try {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'api-key': BREVO_API_KEY,
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(emailData)
         });
-        
-        if (!isNaN(scheduledDate.getTime()) && scheduledDate > now) {
-          emailData.scheduledAt = scheduledDate.toISOString();
-          console.log('✅ スケジュール配信設定:', emailData.scheduledAt);
-        } else if (scheduledDate <= now) {
-          console.log('⚠️ 過去の時刻が指定されたため即座に送信:', scheduledAt);
-          // 過去の時刻の場合はscheduledAtを設定しない（即座に送信）
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error(`バッチ${Math.floor(i/BATCH_SIZE) + 1} エラー:`, errorData);
+          
+          // バッチ送信が失敗した場合、個別送信にフォールバック
+          console.log('バッチ送信失敗のため個別送信にフォールバック...');
+          for (const recipient of batch) {
+            try {
+              await sendIndividualEmail({ recipient, subject, htmlContent, scheduledAtISO, BREVO_API_KEY });
+              results.push({
+                email: recipient.email,
+                messageId: 'individual-fallback',
+                status: 'success',
+                method: 'individual-fallback'
+              });
+            } catch (individualError) {
+              console.error('個別送信もエラー:', recipient.email, individualError);
+              failedEmails.push({
+                email: recipient.email,
+                error: individualError.message,
+                plan: recipient.plan
+              });
+            }
+          }
         } else {
-          console.log('❌ 無効な日付のためスケジュール配信をスキップ:', scheduledAt);
+          const result = await response.json();
+          // バッチ送信成功
+          batch.forEach(recipient => {
+            results.push({
+              email: recipient.email,
+              messageId: result.messageId || 'batch-sent',
+              status: 'success',
+              method: 'batch'
+            });
+          });
+          
+          console.log(`✅ バッチ${Math.floor(i/BATCH_SIZE) + 1}送信完了: ${batch.length}件`);
+        }
+        
+      } catch (error) {
+        console.error(`バッチ${Math.floor(i/BATCH_SIZE) + 1} 送信エラー:`, error);
+        
+        // バッチエラーの場合も個別送信でフォールバック
+        for (const recipient of batch) {
+          failedEmails.push({
+            email: recipient.email,
+            error: error.message,
+            plan: recipient.plan
+          });
         }
       }
-
-      console.log('Brevo APIリクエストデータ:', {
-        senderEmail: emailData.sender.email,
-        recipientEmail: emailData.to[0].email, // 個別送信なので1件のみ
-        hasSubject: !!emailData.subject,
-        hasHtmlContent: !!emailData.htmlContent,
-        hasScheduledAt: !!emailData.scheduledAt
-      });
-
-      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: {
-          'accept': 'application/json',
-          'api-key': BREVO_API_KEY,
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify(emailData)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error('Brevo API error:', errorData);
-        throw new Error(`Brevo API error: ${response.status} - ${errorData}`);
+      
+      // バッチ間の待機（API制限回避）
+      if (i + BATCH_SIZE < recipients.length) {
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
-
-      const result = await response.json();
-      results.push({
-        email: recipient.email,
-        messageId: result.messageId || 'sent',
-        status: 'success'
-      });
-
-      // API制限を避けるため少し待機（100ms）
-      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    console.log(`全${recipients.length}件の個別送信完了`);
-    return results;
+    console.log(`✅ バッチ送信完了: 成功${results.length}件、失敗${failedEmails.length}件`);
+    
+    // 失敗したメールがある場合の処理
+    if (failedEmails.length > 0) {
+      console.warn('送信失敗メール:', failedEmails);
+    }
+    
+    return {
+      results,
+      failedEmails,
+      totalSent: results.length,
+      totalFailed: failedEmails.length
+    };
 
   } catch (error) {
     console.error('Error sending via Brevo:', error);
     throw error;
   }
+}
+
+// 個別送信のフォールバック関数
+async function sendIndividualEmail({ recipient, subject, htmlContent, scheduledAtISO, BREVO_API_KEY }) {
+  const emailData = {
+    sender: {
+      name: "NANKANアナリティクス",
+      email: "info@keiba.link"
+    },
+    to: [{ email: recipient.email }],
+    subject: subject,
+    htmlContent: htmlContent,
+    headers: {
+      'X-Mailin-custom': 'newsletter-individual',
+      'charset': 'UTF-8'
+    }
+  };
+  
+  if (scheduledAtISO) {
+    emailData.scheduledAt = scheduledAtISO;
+  }
+  
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': BREVO_API_KEY,
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify(emailData)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.text();
+    throw new Error(`Individual send failed: ${response.status} - ${errorData}`);
+  }
+  
+  return await response.json();
 }
 
 // デフォルトテンプレート生成関数（オプション）
