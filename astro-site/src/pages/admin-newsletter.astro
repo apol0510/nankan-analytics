@@ -703,9 +703,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </div>
                 </div>
 
+                <!-- ⚠️ Brevo制約警告メッセージ -->
+                <div style="background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 10px; padding: 20px; margin-bottom: 20px; color: white; border: 2px solid #b91c1c;">
+                    <h3 style="margin: 0 0 15px 0; color: white; font-weight: 600;">⚠️ 重要：予約配信制限について</h3>
+                    <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                        <h4 style="margin: 0 0 10px 0; color: white;">🚨 現在確認されている問題</h4>
+                        <ul style="margin: 0; padding-left: 20px; color: rgba(255,255,255,0.9);">
+                            <li><strong>Brevo API制限</strong>: 72時間以上先の予約配信が失敗する</li>
+                            <li><strong>配信未到達</strong>: UI上は「成功」表示だが実際は配信されない</li>
+                            <li><strong>履歴不整合</strong>: 配信履歴が実際の状況と異なる</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; text-align: center;">
+                        <div style="font-weight: 600; margin-bottom: 5px;">🛠️ 推奨対処法</div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">72時間以内の予約配信のみ利用するか、手動での即時配信を推奨</div>
+                    </div>
+                </div>
+
                 <!-- 高度な配信スケジュール設定 -->
                 <div style="background: #f8fafc; border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 2px solid #cbd5e0;">
-                    <h3 style="margin: 0 0 15px 0; color: #1e40af; font-weight: 600;">📅 配信スケジュール設定</h3>
+                    <h3 style="margin: 0 0 15px 0; color: #1e40af; font-weight: 600;">📅 配信スケジュール設定 <span style="color: #dc2626; font-size: 0.8rem;">(⚠️制限あり)</span></h3>
                     
                     <!-- 即時/予約選択 -->
                     <div style="margin-bottom: 15px;">
@@ -732,6 +749,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">配信日時</label>
                                 <input type="datetime-local" id="scheduledAt" style="width: 100%; padding: 8px; border: 2px solid #d1d5db; border-radius: 6px;" />
+                                <div id="scheduleWarning" style="display: none; margin-top: 8px; padding: 8px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; color: #dc2626; font-size: 0.8rem;">
+                                    ⚠️ 72時間以上先の予約は配信されない可能性があります
+                                </div>
+                                <div id="scheduleValid" style="display: none; margin-top: 8px; padding: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; color: #16a34a; font-size: 0.8rem;">
+                                    ✅ この時間なら正常に配信されます
+                                </div>
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">タイムゾーン</label>
@@ -5460,7 +5483,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const tomorrow = new Date(now);
             tomorrow.setDate(tomorrow.getDate() + 1);
             tomorrow.setHours(9, 0, 0, 0);
-            setScheduleDateTime(tomorrow);
+            
+            // 72時間以内チェック
+            const hoursDiff = (tomorrow - now) / (1000 * 60 * 60);
+            if (hoursDiff <= 72) {
+                setScheduleDateTime(tomorrow);
+            } else {
+                alert('⚠️ 明日9時は72時間を超えるため、配信されない可能性があります。\n72時間以内の時間を選択してください。');
+            }
         });
         
         document.getElementById('scheduleMonday9AM')?.addEventListener('click', () => {
@@ -5468,7 +5498,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const daysUntilMonday = (1 + 7 - now.getDay()) % 7 || 7;
             nextMonday.setDate(now.getDate() + daysUntilMonday);
             nextMonday.setHours(9, 0, 0, 0);
-            setScheduleDateTime(nextMonday);
+            
+            // 72時間以内チェック
+            const hoursDiff = (nextMonday - now) / (1000 * 60 * 60);
+            if (hoursDiff <= 72) {
+                setScheduleDateTime(nextMonday);
+            } else {
+                alert(`⚠️ 来週月曜日は${Math.round(hoursDiff)}時間後で72時間を超えるため、配信されない可能性があります。\n72時間以内（3日以内）の時間を選択してください。`);
+            }
         });
     }
 
@@ -5483,15 +5520,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     function updateScheduleDateTime() {
         const scheduledAt = document.getElementById('scheduledAt').value;
         const scheduleStatus = document.getElementById('scheduleStatus');
+        const scheduleWarning = document.getElementById('scheduleWarning');
+        const scheduleValid = document.getElementById('scheduleValid');
+        
+        // 警告メッセージを非表示
+        if (scheduleWarning) scheduleWarning.style.display = 'none';
+        if (scheduleValid) scheduleValid.style.display = 'none';
         
         if (scheduledAt) {
             const selectedDate = new Date(scheduledAt);
+            const now = new Date();
             const timezone = document.getElementById('scheduleTimezone').value;
+            const hoursDiff = (selectedDate - now) / (1000 * 60 * 60); // 時間差
             
-            if (selectedDate > new Date()) {
-                scheduleStatus.innerHTML = `📅 ${formatDateTime(selectedDate, timezone)} 配信予定`;
-                scheduleStatus.style.background = '#eff6ff';
-                scheduleStatus.style.color = '#1d4ed8';
+            if (selectedDate > now) {
+                // 72時間制限チェック
+                if (hoursDiff > 72) {
+                    scheduleStatus.innerHTML = `⚠️ ${formatDateTime(selectedDate, timezone)} - 配信失敗リスク高`;
+                    scheduleStatus.style.background = '#fef2f2';
+                    scheduleStatus.style.color = '#dc2626';
+                    if (scheduleWarning) {
+                        scheduleWarning.style.display = 'block';
+                        scheduleWarning.innerHTML = `⚠️ ${Math.round(hoursDiff)}時間後の予約です。72時間を超えると配信されない可能性があります。`;
+                    }
+                } else {
+                    scheduleStatus.innerHTML = `📅 ${formatDateTime(selectedDate, timezone)} 配信予定`;
+                    scheduleStatus.style.background = '#f0fdf4';
+                    scheduleStatus.style.color = '#16a34a';
+                    if (scheduleValid) {
+                        scheduleValid.style.display = 'block';
+                        scheduleValid.innerHTML = `✅ ${Math.round(hoursDiff)}時間後の配信 - 正常に動作します`;
+                    }
+                }
             } else {
                 scheduleStatus.innerHTML = '⚠️ 過去の日時が選択されています';
                 scheduleStatus.style.background = '#fef2f2';
