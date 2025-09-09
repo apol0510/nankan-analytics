@@ -13,9 +13,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             padding: 20px;
         }
         
+        /* 強制的にテキスト色を確保 */
+        .newsletter-admin * {
+            color: inherit !important;
+        }
+        
+        .newsletter-admin h1, 
+        .newsletter-admin h2, 
+        .newsletter-admin h3, 
+        .newsletter-admin h4,
+        .newsletter-admin p,
+        .newsletter-admin span,
+        .newsletter-admin div,
+        .newsletter-admin label,
+        .newsletter-admin small {
+            color: #1f2937 !important;
+        }
+        
         .admin-header {
             text-align: center;
-            color: white;
+            color: white !important;
             margin-bottom: 40px;
             padding: 40px 20px;
             background: rgba(255, 255, 255, 0.15);
@@ -23,6 +40,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             z-index: 1;
+        }
+        
+        .admin-header h1,
+        .admin-header p {
+            color: white !important;
         }
         
         .admin-header h1 {
@@ -52,22 +74,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
         
         .card {
-            background: #ffffff;
+            background: #ffffff !important;
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             border: 1px solid #e2e8f0;
             position: relative;
             z-index: 1;
+            color: #1f2937 !important;
+        }
+        
+        .card * {
+            color: #1f2937 !important;
         }
         
         .card h2 {
-            color: #2d3748;
+            color: #1f2937 !important;
             font-size: 1.5rem;
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 600;
         }
         
         .card h2::before {
@@ -208,52 +236,58 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
         
-        /* 新しいシンプルな履歴スタイル */
+        /* 根本解決: 履歴スタイル */
         .new-history-item {
-            background: #ffffff;
-            border: 1px solid #d1d5db;
+            background: #ffffff !important;
+            border: 2px solid #d1d5db !important;
             border-radius: 8px;
-            padding: 18px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3b82f6 !important;
         }
         
         .new-history-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
+            font-size: 1.2rem !important;
+            font-weight: 700 !important;
+            color: #000000 !important;
+            margin-bottom: 10px;
         }
         
         .new-history-info {
-            font-size: 0.95rem;
-            color: #6b7280;
-            line-height: 1.5;
-            font-weight: 500;
+            font-size: 1rem !important;
+            color: #000000 !important;
+            line-height: 1.6;
+            font-weight: 600 !important;
         }
         
         .new-status-sent {
-            display: inline-block;
-            background: #059669;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-left: 8px;
+            display: inline-block !important;
+            background: #059669 !important;
+            color: #ffffff !important;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            margin-left: 10px;
         }
         
         /* 削除済み - 新しいシンプルなスタイルを使用 */
         
         .new-no-history {
             text-align: center;
-            color: #374151;
-            font-weight: 600;
+            color: #000000 !important;
+            font-weight: 700 !important;
             padding: 40px 20px;
-            background: #ffffff;
+            background: #ffffff !important;
             border-radius: 10px;
-            border: 2px solid #d1d5db;
-            font-size: 1.1rem;
+            border: 2px solid #d1d5db !important;
+            font-size: 1.2rem !important;
+        }
+        
+        /* 強制的にすべてのテキストを見えるようにする */
+        #newHistoryArea * {
+            color: #000000 !important;
+            background-color: transparent !important;
         }
         
         .error {
