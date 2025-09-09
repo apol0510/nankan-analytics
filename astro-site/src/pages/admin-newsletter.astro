@@ -204,6 +204,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         });
 
         try {
+            console.log('配信リクエスト送信中...', {
+                subject,
+                targetPlan,
+                hasHtmlContent: !!htmlContent,
+                scheduledAt
+            });
+
             const response = await fetch('/.netlify/functions/send-newsletter', {
                 method: 'POST',
                 headers: {
@@ -217,22 +224,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 })
             });
 
-            const result = await response.json();
+            console.log('レスポンス受信:', response.status, response.statusText);
+
+            // レスポンスのテキストを先に取得
+            const responseText = await response.text();
+            console.log('レスポンス内容:', responseText);
+
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('JSONパースエラー:', parseError);
+                console.error('パース失敗したテキスト:', responseText);
+                alert(`❌ 配信失敗: サーバーからの応答を解析できませんでした\nステータス: ${response.status}\n詳細はコンソールを確認してください`);
+                return;
+            }
             
             if (response.ok) {
-                alert(`✅ 配信成功！${result.message}`);
+                alert(`✅ 配信成功！${result.message || '処理が完了しました'}`);
                 // フォームをリセット
                 document.getElementById('subject').value = '';
                 document.getElementById('mainContent').value = '';
                 document.getElementById('targetPlan').value = 'all';
                 document.getElementById('templateType').value = 'prediction';
                 document.getElementById('scheduledAt').value = '';
+                // プレビューもクリア
+                document.getElementById('previewArea').innerHTML = '<p class="preview-placeholder">配信内容をプレビューするには「プレビュー」ボタンをクリックしてください</p>';
             } else {
-                alert(`❌ 配信失敗: ${result.error}`);
+                console.error('配信エラー詳細:', result);
+                alert(`❌ 配信失敗: ${result.error || result.details || 'エラーが発生しました'}\n詳細はコンソールを確認してください`);
             }
         } catch (error) {
             console.error('配信エラー:', error);
-            alert('配信中にエラーが発生しました');
+            alert(`配信中にエラーが発生しました: ${error.message}`);
         }
     });
 
