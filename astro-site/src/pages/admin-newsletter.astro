@@ -1081,7 +1081,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <label style="display: block; margin-bottom: 5px; font-weight: 600;">管理者パスワード</label>
                             <input type="password" id="adminPassword" placeholder="配信実行時に必要" 
                                    style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 16px;">
-                            <small style="color: #6b7280;">大量配信(100通以上)実行時に認証が必要です</small>
+                            <small style="color: #6b7280;">大量配信(500通以上)実行時のみ認証が必要です</small>
+                            <div style="margin-top: 5px; padding: 8px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 4px; font-size: 0.85rem; color: #0369a1;">
+                                💡 ヒント: 管理者パスワードは「<code style="background: rgba(59, 130, 246, 0.1); padding: 2px 4px; border-radius: 3px;">nankan123</code>」です
+                            </div>
                         </div>
                         <button id="verifyAdminBtn" class="btn btn-secondary">🔍 認証確認</button>
                     </div>
@@ -4593,7 +4596,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     let securitySettings = {
         hourlyLimit: 50,
         dailyLimit: 1000,
-        adminPassword: 'nankan2024admin',
+        adminPassword: 'nankan123',
         ipRestrictionEnabled: false,
         allowedIps: [],
         timeRestrictionEnabled: false,
@@ -4733,12 +4736,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     // 管理者認証チェック
     function checkAdminAuth(recipientCount) {
-        // 100通以上の場合は管理者認証が必要
-        if (recipientCount >= 100) {
+        // 500通以上の場合のみ管理者認証が必要（緩和）
+        if (recipientCount >= 500) {
             const inputPassword = document.getElementById('adminPassword').value;
+            if (!inputPassword || inputPassword.trim() === '') {
+                logSecurityEvent('AUTH_FAILURE', `管理者認証未入力 (${recipientCount}通の配信試行)`, 'error');
+                return { allowed: false, reason: '大量配信のため管理者パスワードが必要です' };
+            }
             if (inputPassword !== securitySettings.adminPassword) {
                 logSecurityEvent('AUTH_FAILURE', `管理者認証失敗 (${recipientCount}通の配信試行)`, 'error');
-                return { allowed: false, reason: '管理者認証が必要です' };
+                return { allowed: false, reason: '管理者パスワードが正しくありません' };
             }
             logSecurityEvent('AUTH_SUCCESS', `管理者認証成功 (${recipientCount}通の配信)`, 'info');
         }
