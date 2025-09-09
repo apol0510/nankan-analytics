@@ -67,6 +67,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
                 <div class="button-group">
                     <button id="previewBtn" class="btn-secondary">プレビュー</button>
+                    <button id="clearPreviewBtn" class="btn-secondary">プレビューをクリア</button>
                     <button id="sendBtn" class="btn-primary">配信実行</button>
                 </div>
             </div>
@@ -120,6 +121,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             newPrediction.remove();
         });
     });
+
+    // プレビューをクリアする関数
+    function clearPreview() {
+        const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = '<p class="preview-placeholder">配信内容をプレビューするには「プレビュー」ボタンをクリックしてください</p>';
+    }
+
+    // プレビュークリアボタン
+    document.getElementById('clearPreviewBtn')?.addEventListener('click', clearPreview);
+
+    // フォーム入力変更時にプレビューを自動クリア
+    const formInputs = ['subject', 'mainContent', 'targetPlan', 'templateType', 'scheduledAt'];
+    formInputs.forEach(inputId => {
+        const element = document.getElementById(inputId);
+        element?.addEventListener('input', clearPreview);
+        element?.addEventListener('change', clearPreview);
+    });
+
+    // 予想入力フィールドの変更も監視
+    document.getElementById('predictionsContainer')?.addEventListener('input', clearPreview);
 
     // プレビュー生成
     document.getElementById('previewBtn')?.addEventListener('click', async () => {
