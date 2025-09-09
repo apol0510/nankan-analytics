@@ -1,175 +1,281 @@
-// メルマガ送信Function（南関競馬予想配信）
-import { 
-    sendHorseRacingNewsletter,
-    getContactLists,
-    NANKAN_LISTS 
-} from '../../src/lib/brevo-utils.js';
+// Brevoメルマガ配信Function
+// 南関競馬の予想結果や攻略情報を配信
 
-export const handler = async (event, context) => {
-    console.log('📧 メルマガ送信処理開始');
+export default async function handler(request, context) {
+  // CORS対応ヘッダー
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // OPTIONSリクエスト対応
+  if (request.method === 'OPTIONS') {
+    return new Response('', { 
+      status: 200, 
+      headers 
+    });
+  }
+
+  // POSTメソッドのみ受付
+  if (request.method !== 'POST') {
+    return new Response(
+      JSON.stringify({ error: `Method ${request.method} not allowed` }), 
+      {
+        status: 405,
+        headers
+      }
+    );
+  }
+
+  try {
+    const requestBody = await request.text();
+    console.log('Received request body:', requestBody);
     
-    // CORSヘッダー設定
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    const { subject, htmlContent, scheduledAt, targetPlan = 'all', retryEmails } = JSON.parse(requestBody);
+
+    // 必須パラメータチェック
+    if (!subject || !htmlContent) {
+      return new Response(
+        JSON.stringify({ error: 'Subject and htmlContent are required' }),
+        {
+          status: 400,
+          headers
+        }
+      );
+    }
+
+    const isScheduledRequest = !!scheduledAt;
+
+    // 予約配信の場合は自作スケジューラーを使用
+    if (isScheduledRequest) {
+      console.log('📅 予約配信リクエスト - 自作スケジューラーに転送');
+      
+      // 配信リスト取得
+      const recipients = await getRecipientsList(targetPlan);
+      if (recipients.length === 0) {
+        return new Response(
+          JSON.stringify({ error: 'No recipients found for scheduling' }),
+          { status: 400, headers }
+        );
+      }
+
+      // 自作スケジューラーにジョブを登録
+      const baseUrl = request.url.substring(0, request.url.lastIndexOf('/'));
+      const scheduleResponse = await fetch(`${baseUrl}/schedule-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          subject,
+          content: htmlContent,
+          recipients: recipients,
+          scheduledFor: scheduledAt,
+          createdBy: 'admin',
+          targetPlan
+        })
+      });
+
+      if (!scheduleResponse.ok) {
+        const errorText = await scheduleResponse.text();
+        throw new Error(`スケジューラー登録失敗: ${scheduleResponse.status} - ${errorText}`);
+      }
+
+      const scheduleResult = await scheduleResponse.json();
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          isScheduled: true,
+          jobId: scheduleResult.jobId,
+          scheduledFor: scheduledAt,
+          message: `メール予約完了: ${subject}`,
+          data: {
+            subject,
+            recipientCount: recipients.length,
+            scheduledTime: scheduleResult.data.scheduledTime,
+            note: '自作スケジューラーで確実配信予定'
+          },
+          timestamp: new Date().toISOString()
+        }),
+        { status: 200, headers }
+      );
+    }
+
+    // 即座に送信の場合
+    // 配信リスト取得（再送信の場合は再送信リストを使用）
+    let recipients;
+    if (retryEmails && Array.isArray(retryEmails)) {
+      console.log('再送信モード:', retryEmails.length + '件');
+      recipients = retryEmails;
+    } else {
+      recipients = await getRecipientsList(targetPlan);
+    }
+    
+    if (recipients.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'No recipients found' }),
+        {
+          status: 400,
+          headers
+        }
+      );
+    }
+
+    // Brevo APIでメール送信（即座）
+    const result = await sendNewsletterViaBrevo({
+      recipients,
+      subject,
+      htmlContent
+    });
+
+    // 配信履歴はフロントエンドのLocalStorageで管理
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: `Newsletter sent to ${result.totalSent} recipients`,
+        details: result,
+        recipientCount: result.totalSent,
+        failedCount: result.totalFailed,
+        failedEmails: result.failedEmails,
+        isScheduled: false,
+        actualSendTime: new Date().toISOString()
+      }),
+      {
+        status: 200,
+        headers
+      }
+    );
+
+  } catch (error) {
+    console.error('Newsletter send error:', error);
+    
+    return new Response(
+      JSON.stringify({ 
+        error: error.message || 'Unknown error', 
+        timestamp: new Date().toISOString() 
+      }),
+      {
+        status: 500,
+        headers
+      }
+    );
+  }
+}
+
+// Airtableから受信者リストを取得
+async function getRecipientsList(targetPlan) {
+  console.log('配信対象プラン:', targetPlan);
+  
+  const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+  
+  if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+    console.error('Airtable設定が見つかりません');
+    return [];
+  }
+  
+  try {
+    let filterFormula = '';
+    
+    // プランに基づくフィルタリング
+    if (targetPlan === 'free') {
+      filterFormula = "{UserPlan} = 'Free'";
+    } else if (targetPlan === 'standard') {
+      filterFormula = "OR({UserPlan} = 'Standard', {UserPlan} = 'Premium')";
+    } else if (targetPlan === 'premium') {
+      filterFormula = "{UserPlan} = 'Premium'";
+    } else if (targetPlan === 'all') {
+      // 全員に配信
+      filterFormula = '';
+    }
+    
+    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers`;
+    const queryParams = filterFormula ? `?filterByFormula=${encodeURIComponent(filterFormula)}` : '';
+    
+    const response = await fetch(url + queryParams, {
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
         'Content-Type': 'application/json'
-    };
+      }
+    });
     
-    // OPTIONSリクエスト（CORS preflight）
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: ''
-        };
+    if (!response.ok) {
+      throw new Error(`Airtable API error: ${response.status}`);
     }
     
-    // POSTリクエストのみ許可
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            headers,
-            body: JSON.stringify({ error: 'POST method required' })
-        };
-    }
+    const data = await response.json();
+    const recipients = data.records
+      .map(record => record.fields.Email)
+      .filter(email => email && email.includes('@'));
+    
+    console.log(`取得した受信者数: ${recipients.length}`);
+    return recipients;
+    
+  } catch (error) {
+    console.error('受信者リスト取得エラー:', error);
+    return [];
+  }
+}
+
+// Brevo APIでメール送信
+async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
+  const BREVO_API_KEY = process.env.BREVO_API_KEY;
+  
+  if (!BREVO_API_KEY) {
+    throw new Error('Brevo API key not configured');
+  }
+  
+  const batchSize = 100; // Brevoの推奨バッチサイズ
+  const results = {
+    totalSent: 0,
+    totalFailed: 0,
+    failedEmails: []
+  };
+  
+  // バッチごとに送信
+  for (let i = 0; i < recipients.length; i += batchSize) {
+    const batch = recipients.slice(i, i + batchSize);
     
     try {
-        const { 
-            raceDate, 
-            predictions, 
-            targetPlans = ['ALL'],
-            subject = null,
-            testMode = false 
-        } = JSON.parse(event.body || '{}');
-        
-        // 必須パラメータチェック
-        if (!raceDate || !predictions || !Array.isArray(predictions)) {
-            return {
-                statusCode: 400,
-                headers,
-                body: JSON.stringify({ 
-                    error: '必須パラメータが不足しています',
-                    required: ['raceDate', 'predictions'] 
-                })
-            };
-        }
-        
-        // テストモード（実際には送信しない）
-        if (testMode) {
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({
-                    message: 'テストモード: メルマガ作成のみ実行',
-                    raceDate,
-                    predictionsCount: predictions.length,
-                    targetPlans,
-                    htmlPreview: '南関競馬予想メルマガHTMLが生成されました',
-                    timestamp: new Date().toISOString()
-                })
-            };
-        }
-        
-        // 対象リスト特定
-        const lists = await getContactLists();
-        const targetListIds = [];
-        
-        for (const plan of targetPlans) {
-            if (plan === 'ALL') {
-                // 全会員の場合は、Free/Standard/Premium全て
-                const allPlans = ['FREE', 'STANDARD', 'PREMIUM'];
-                for (const p of allPlans) {
-                    const listName = NANKAN_LISTS[p];
-                    const list = lists.lists?.find(l => l.name === listName);
-                    if (list) targetListIds.push(list.id);
-                }
-            } else {
-                const listName = NANKAN_LISTS[plan];
-                const list = lists.lists?.find(l => l.name === listName);
-                if (list) {
-                    targetListIds.push(list.id);
-                } else {
-                    console.warn(`リスト「${listName}」が見つかりません`);
-                }
-            }
-        }
-        
-        if (targetListIds.length === 0) {
-            return {
-                statusCode: 404,
-                headers,
-                body: JSON.stringify({ 
-                    error: '送信対象のリストが見つかりません',
-                    targetPlans,
-                    availableLists: lists.lists?.map(l => l.name) || []
-                })
-            };
-        }
-        
-        // 南関競馬予想メルマガ送信
-        const campaign = await sendHorseRacingNewsletter({
-            predictions,
-            raceDate,
-            listIds: targetListIds,
-            subject
-        });
-        
-        console.log(`✅ メルマガキャンペーン作成成功: ${campaign.id}`);
-        
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({
-                message: '南関競馬予想メルマガを作成しました',
-                campaignId: campaign.id,
-                campaignName: campaign.name,
-                raceDate,
-                predictionsCount: predictions.length,
-                targetListIds,
-                targetPlans,
-                timestamp: new Date().toISOString(),
-                note: 'キャンペーンは作成済みです。送信するには管理画面から実行してください。'
-            })
-        };
-        
-    } catch (error) {
-        console.error('❌ メルマガ送信エラー:', error);
-        
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({
-                error: 'メルマガ送信に失敗しました',
-                details: error.message,
-                timestamp: new Date().toISOString()
-            })
-        };
-    }
-};
-
-/**
- * サンプル予想データ生成（テスト用）
- */
-export function generateSamplePredictions(raceDate) {
-    return [
-        {
-            raceNumber: '11',
-            raceName: 'メインレース',
-            predictions: [
-                { horseName: 'サンプルホース1', confidence: 85 },
-                { horseName: 'サンプルホース2', confidence: 72 },
-                { horseName: 'サンプルホース3', confidence: 68 }
-            ]
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': BREVO_API_KEY
         },
-        {
-            raceNumber: '12',
-            raceName: 'ファイナルレース',
-            predictions: [
-                { horseName: 'テストホース1', confidence: 78 },
-                { horseName: 'テストホース2', confidence: 65 },
-                { horseName: 'テストホース3', confidence: 61 }
-            ]
-        }
-    ];
+        body: JSON.stringify({
+          sender: {
+            name: 'NANKANアナリティクス',
+            email: 'info@keiba.link'
+          },
+          to: batch.map(email => ({ email })),
+          subject,
+          htmlContent,
+          tags: ['newsletter', 'nankan']
+        })
+      });
+      
+      if (response.ok) {
+        results.totalSent += batch.length;
+        console.log(`✅ バッチ送信成功: ${batch.length}件`);
+      } else {
+        const errorData = await response.text();
+        console.error(`❌ バッチ送信失敗:`, errorData);
+        results.totalFailed += batch.length;
+        results.failedEmails.push(...batch);
+      }
+      
+    } catch (error) {
+      console.error(`バッチ送信エラー:`, error);
+      results.totalFailed += batch.length;
+      results.failedEmails.push(...batch);
+    }
+  }
+  
+  return results;
 }
