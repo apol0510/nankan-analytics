@@ -82,7 +82,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             <!-- 配信履歴 -->
             <div class="card">
-                <h2>最近の配信</h2>
+                <h2>配信履歴・予約状況</h2>
+                <div class="history-controls">
+                    <button id="refreshHistoryBtn" class="btn-secondary">履歴を更新</button>
+                </div>
                 <div id="historyArea">
                     <p class="loading">読み込み中...</p>
                 </div>
@@ -141,6 +144,85 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     // 予想入力フィールドの変更も監視
     document.getElementById('predictionsContainer')?.addEventListener('input', clearPreview);
+
+    // 配信履歴を読み込む関数
+    async function loadHistory() {
+        const historyArea = document.getElementById('historyArea');
+        historyArea.innerHTML = '<p class="loading">読み込み中...</p>';
+        
+        try {
+            const response = await fetch('/.netlify/functions/newsletter-history?limit=10');
+            const data = await response.json();
+            
+            if (data.success && data.history.length > 0) {
+                const now = new Date();
+                
+                const historyHTML = data.history.map(item => {
+                    const scheduledDate = new Date(item.scheduledAt);
+                    const isScheduled = item.status === 'scheduled' && scheduledDate > now;
+                    const isCompleted = item.status === 'sent' || (item.status === 'scheduled' && scheduledDate <= now);
+                    
+                    let statusBadge = '';
+                    let statusClass = '';
+                    
+                    if (isScheduled) {
+                        statusBadge = `<span class="status-badge status-scheduled">予約中 📅</span>`;
+                        statusClass = 'history-scheduled';
+                    } else if (isCompleted) {
+                        statusBadge = `<span class="status-badge status-sent">配信済み ✅</span>`;
+                        statusClass = 'history-sent';
+                    } else {
+                        statusBadge = `<span class="status-badge status-unknown">不明</span>`;
+                        statusClass = 'history-unknown';
+                    }
+                    
+                    const formatDate = (dateStr) => {
+                        const date = new Date(dateStr);
+                        return date.toLocaleString('ja-JP', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    };
+                    
+                    return `
+                        <div class="history-item ${statusClass}">
+                            <div class="history-header">
+                                <h4 class="history-subject">${item.subject}</h4>
+                                ${statusBadge}
+                            </div>
+                            <div class="history-details">
+                                <span class="history-plan">対象: ${item.targetPlan}</span>
+                                <span class="history-count">配信数: ${item.recipientCount}件</span>
+                                <span class="history-date">
+                                    ${isScheduled ? '予約日時' : '配信日時'}: ${formatDate(item.scheduledAt)}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                historyArea.innerHTML = `
+                    <div class="history-list">
+                        ${historyHTML}
+                    </div>
+                `;
+            } else {
+                historyArea.innerHTML = '<p class="no-history">配信履歴がありません</p>';
+            }
+        } catch (error) {
+            console.error('履歴読み込みエラー:', error);
+            historyArea.innerHTML = '<p class="error">履歴の読み込みに失敗しました</p>';
+        }
+    }
+
+    // 履歴更新ボタン
+    document.getElementById('refreshHistoryBtn')?.addEventListener('click', loadHistory);
+
+    // 初期表示で履歴を読み込み
+    document.addEventListener('DOMContentLoaded', loadHistory);
 
     // プレビュー生成
     document.getElementById('previewBtn')?.addEventListener('click', async () => {
@@ -262,7 +344,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
             
             if (response.ok) {
-                alert(`✅ 配信成功！${result.message || '処理が完了しました'}`);
+                const successMessage = result.isScheduled 
+                    ? `✅ 配信予約完了！${result.recipientCount}件の配信を予約しました`
+                    : `✅ 配信成功！${result.recipientCount}件に配信しました`;
+                    
+                alert(successMessage);
+                
                 // フォームをリセット
                 document.getElementById('subject').value = '';
                 document.getElementById('mainContent').value = '';
@@ -270,7 +357,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('templateType').value = 'prediction';
                 document.getElementById('scheduledAt').value = '';
                 // プレビューもクリア
-                document.getElementById('previewArea').innerHTML = '<p class="preview-placeholder">配信内容をプレビューするには「プレビュー」ボタンをクリックしてください</p>';
+                clearPreview();
+                
+                // 履歴を更新
+                setTimeout(() => {
+                    loadHistory();
+                }, 1000);
             } else {
                 console.error('配信エラー詳細:', result);
                 alert(`❌ 配信失敗: ${result.error || result.details || 'エラーが発生しました'}\n詳細はコンソールを確認してください`);
@@ -514,5 +606,135 @@ ${mainContent}
         color: #64748b;
         text-align: center;
         padding: 2rem;
+    }
+
+    /* 配信履歴スタイル */
+    .history-controls {
+        margin-bottom: 1rem;
+        text-align: right;
+    }
+
+    .history-list {
+        max-height: 600px;
+        overflow-y: auto;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(51, 65, 85, 0.3);
+    }
+
+    .history-item {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.2);
+        transition: background-color 0.2s ease;
+    }
+
+    .history-item:last-child {
+        border-bottom: none;
+    }
+
+    .history-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .history-scheduled {
+        background: rgba(251, 191, 36, 0.1);
+        border-left: 4px solid #f59e0b;
+    }
+
+    .history-sent {
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 4px solid #10b981;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .history-subject {
+        margin: 0;
+        color: #f1f5f9;
+        font-size: 1.125rem;
+        font-weight: 600;
+        flex: 1;
+        margin-right: 1rem;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .status-scheduled {
+        background: #fbbf24;
+        color: #92400e;
+    }
+
+    .status-sent {
+        background: #10b981;
+        color: #065f46;
+    }
+
+    .status-unknown {
+        background: #6b7280;
+        color: #f3f4f6;
+    }
+
+    .history-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: #94a3b8;
+    }
+
+    .history-plan {
+        color: #3b82f6;
+        font-weight: 500;
+    }
+
+    .history-count {
+        color: #8b5cf6;
+        font-weight: 500;
+    }
+
+    .history-date {
+        color: #64748b;
+    }
+
+    .no-history, .error {
+        text-align: center;
+        padding: 3rem;
+        color: #64748b;
+    }
+
+    .error {
+        color: #ef4444;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+        .history-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .history-subject {
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-details {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .status-badge {
+            align-self: flex-start;
+        }
     }
 </style>
