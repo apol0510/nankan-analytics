@@ -1260,7 +1260,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             originalPrice = '',
             campaignPrice = '',
             campaignDeadline = '',
-            ctaText,
             ctaUrl = 'https://nankan-analytics.keiba.link/pricing/',
             customTheme = 'default',
             customHeadline = '',
@@ -1274,23 +1273,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         } = templateData;
 
         // CTAテキストを適切に設定
-        if (!ctaText || ctaText.trim() === '') {
-            if (customCtaText && customCtaText.trim()) {
-                ctaText = customCtaText;
-            } else {
-                switch(templateType) {
-                    case 'prediction':
-                        ctaText = '🏇 有料プランで全レース予想を見る';
-                        break;
-                    case 'campaign':
-                        ctaText = '🎯 限定オファーを確認する';
-                        break;
-                    case 'result':
-                        ctaText = '📈 詳細な分析結果を見る';
-                        break;
-                    default:
-                        ctaText = '詳細はこちら';
-                }
+        let ctaText;
+        if (customCtaText && customCtaText.trim()) {
+            ctaText = customCtaText;
+        } else {
+            switch(templateType) {
+                case 'prediction':
+                    ctaText = '🏇 有料プランで全レース予想を見る';
+                    break;
+                case 'campaign':
+                    ctaText = '🎯 限定オファーを確認する';
+                    break;
+                case 'result':
+                    ctaText = '📈 詳細な分析結果を見る';
+                    break;
+                default:
+                    ctaText = '詳細はこちら';
             }
         }
 
