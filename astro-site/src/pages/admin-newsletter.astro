@@ -876,7 +876,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     document.getElementById('clearPreviewBtn')?.addEventListener('click', clearPreview);
 
     // フォーム入力変更時にプレビューを自動クリア
-    const formInputs = ['subject', 'mainContent', 'targetPlan', 'templateType', 'scheduledAt'];
+    const formInputs = ['subject', 'mainContent', 'targetPlan', 'templateType', 'scheduledAt', 'layoutOrder', 'predictionNote', 'additionalSection', 'customCtaText', 'customCtaUrl'];
     formInputs.forEach(inputId => {
         const element = document.getElementById(inputId);
         element?.addEventListener('input', clearPreview);
@@ -885,6 +885,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     // 予想入力フィールドの変更も監視
     document.getElementById('predictionsContainer')?.addEventListener('input', clearPreview);
+    
+    // CTAボタンチェックボックスの変更も監視
+    document.getElementById('showCtaButton')?.addEventListener('change', clearPreview);
 
     // 新しいシンプルな履歴読み込み関数
     function loadHistory() {
@@ -1045,7 +1048,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         let templateData = {
             title: subject,
             mainContent: mainContent,
-            templateType: templateType
+            templateType: templateType,
+            layoutOrder: document.getElementById('layoutOrder')?.value || 'content-first',
+            predictionNote: document.getElementById('predictionNote')?.value || '',
+            additionalSection: document.getElementById('additionalSection')?.value || '',
+            showCtaButton: document.getElementById('showCtaButton')?.checked || false,
+            customCtaText: document.getElementById('customCtaText')?.value || '',
+            customCtaUrl: document.getElementById('customCtaUrl')?.value || 'https://nankan-analytics.keiba.link/pricing/'
         };
 
         if (templateType === 'prediction') {
