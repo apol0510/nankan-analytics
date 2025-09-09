@@ -81,12 +81,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         
         .form-group label {
             display: block;
-            font-weight: 700;
-            color: #1a202c;
+            font-weight: 600;
+            color: #374151;
             margin-bottom: 8px;
-            font-size: 1rem;
-            position: relative;
-            z-index: 10;
+            font-size: 0.95rem;
         }
         
         .form-group input,
@@ -127,12 +125,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
         
         .template-section h3 {
-            color: #111827;
+            color: #4b5563;
             margin-bottom: 15px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            position: relative;
-            z-index: 10;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
         
         .input-row {
@@ -215,36 +211,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         /* 新しいシンプルな履歴スタイル */
         .new-history-item {
             background: #ffffff;
-            border: 2px solid #e5e7eb;
+            border: 1px solid #d1d5db;
             border-radius: 8px;
-            padding: 20px;
+            padding: 18px;
             margin-bottom: 15px;
-            border-left: 5px solid #3b82f6;
+            border-left: 4px solid #3b82f6;
         }
         
         .new-history-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
         }
         
         .new-history-info {
-            font-size: 1rem;
-            color: #374151;
-            line-height: 1.6;
-            font-weight: 600;
+            font-size: 0.95rem;
+            color: #6b7280;
+            line-height: 1.5;
+            font-weight: 500;
         }
         
         .new-status-sent {
             display: inline-block;
-            background: #10b981;
+            background: #059669;
             color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-left: 10px;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 8px;
         }
         
         /* 削除済み - 新しいシンプルなスタイルを使用 */
@@ -440,7 +436,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
                 <!-- 予想セクション（予想配信タイプの場合） -->
                 <div id="predictionSection">
-                    <h3 style="color: #111827; font-weight: 700; font-size: 1.3rem;">🎯 予想情報</h3>
+                    <h3 style="color: #4b5563; font-weight: 600; font-size: 1.2rem;">🎯 予想情報</h3>
                     <div id="predictionsContainer">
                         <div class="prediction-input">
                             <input type="text" placeholder="レース名（例: 第11R メインレース）" class="race-name" />
@@ -452,7 +448,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
                 <!-- 結果報告セクション（結果報告タイプの場合） -->
                 <div id="resultSection" style="display: none;">
-                    <h3 style="color: #111827; font-weight: 700; font-size: 1.3rem;">📊 昨日の結果</h3>
+                    <h3 style="color: #4b5563; font-weight: 600; font-size: 1.2rem;">📊 昨日の結果</h3>
                     <div id="resultsContainer">
                         <div class="result-input">
                             <input type="text" placeholder="レース名（例: 第11R メインレース）" class="result-race-name" />
@@ -476,7 +472,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
                 <!-- キャンペーンセクション（キャンペーンタイプの場合） -->
                 <div id="campaignSection" style="display: none;">
-                    <h3 style="color: #111827; font-weight: 700; font-size: 1.3rem;">🎪 キャンペーン情報</h3>
+                    <h3 style="color: #4b5563; font-weight: 600; font-size: 1.2rem;">🎪 キャンペーン情報</h3>
                     <div class="campaign-inputs">
                         <input type="text" placeholder="キャンペーン名（例: 限定50名！特別予想プラン）" id="campaignTitle" />
                         <textarea placeholder="キャンペーン詳細・特典内容" rows="3" id="campaignDetails"></textarea>
@@ -490,9 +486,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
                 <!-- カスタムセクション（カスタムタイプの場合） -->
                 <div id="customSection" style="display: none;">
-                    <h3 style="color: #111827; font-weight: 700; font-size: 1.3rem;">🎨 カスタムレイアウト</h3>
+                    <h3 style="color: #4b5563; font-weight: 600; font-size: 1.2rem;">🎨 カスタムレイアウト</h3>
                     <div class="custom-inputs">
-                        <label style="color: #111827; font-weight: 700;">背景色テーマ</label>
+                        <label style="color: #374151; font-weight: 600;">背景色テーマ</label>
                         <select id="customTheme">
                             <option value="default">デフォルト</option>
                             <option value="gold">🏆 ゴールド（勝利感）</option>
@@ -500,13 +496,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <option value="blue">💎 ブルー（信頼感）</option>
                         </select>
                         
-                        <label style="color: #111827; font-weight: 700;">特別見出し</label>
+                        <label style="color: #374151; font-weight: 600;">特別見出し</label>
                         <input type="text" placeholder="特別見出し（例: 🚨 緊急速報！）" id="customHeadline" />
                         
-                        <label style="color: #111827; font-weight: 700;">アクセント情報</label>
+                        <label style="color: #374151; font-weight: 600;">アクセント情報</label>
                         <textarea placeholder="強調したい情報・数字・実績" rows="2" id="customAccent"></textarea>
                         
-                        <label style="color: #111827; font-weight: 700;">追加CTA</label>
+                        <label style="color: #374151; font-weight: 600;">追加CTA</label>
                         <input type="text" placeholder="追加ボタンテキスト" id="customCtaText" />
                         <input type="url" placeholder="追加ボタンURL" id="customCtaUrl" />
                     </div>
@@ -515,10 +511,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="form-group">
                     <label for="scheduledAt">配信予約（オプション）</label>
                     <input type="datetime-local" id="scheduledAt" />
-                    <small style="color: #374151; font-size: 0.95rem; font-weight: 600; display: block; margin-top: 8px;">
+                    <small style="color: #6b7280; font-size: 0.9rem; font-weight: 500; display: block; margin-top: 8px;">
                         空欄の場合は即時配信されます<br>
-                        <strong style="color: #111827; font-size: 1rem;">現在時刻: <span id="currentTime" style="color: #1f2937;">--:--</span></strong> (日本時間)<br>
-                        <span style="color: #d97706; font-weight: 700;">⚠️ 予約配信は5-10分程度の遅延が発生する場合があります</span>
+                        <strong style="color: #374151; font-size: 0.95rem;">現在時刻: <span id="currentTime" style="color: #4b5563;">--:--</span></strong> (日本時間)<br>
+                        <span style="color: #f59e0b; font-weight: 600;">⚠️ 予約配信は5-10分程度の遅延が発生する場合があります</span>
                     </small>
                 </div>
 
@@ -555,10 +551,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             <!-- 配信履歴 -->
             <div class="card">
-                <h2 style="color: #111827; font-weight: 700;">📋 配信履歴・予約状況</h2>
+                <h2 style="color: #374151; font-weight: 600;">📋 配信履歴・予約状況</h2>
                 <button id="refreshHistoryBtn" class="btn btn-secondary" style="margin-bottom: 20px;">履歴を更新</button>
                 <div id="newHistoryArea" style="background: #f9fafb; border-radius: 10px; padding: 20px; border: 2px solid #d1d5db;">
-                    <div class="simple-loading" style="text-align: center; color: #111827; font-weight: 600; font-size: 1.1rem; padding: 20px;">
+                    <div class="simple-loading" style="text-align: center; color: #6b7280; font-weight: 500; font-size: 1rem; padding: 20px;">
                         📄 読み込み中...
                     </div>
                 </div>
