@@ -202,12 +202,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
         
-        .history-area {
-            max-height: 500px;
+        #historyArea {
+            max-height: 600px;
             overflow-y: auto;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            background: rgba(248, 250, 252, 0.5);
             border-radius: 15px;
+            margin-top: 20px;
         }
         
         .history-item {
@@ -354,6 +355,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             border-radius: 8px;
             border: 1px solid #fca5a5;
             font-weight: 500;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            padding: 40px 20px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         
         @media (max-width: 768px) {
@@ -620,10 +638,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </small>
                 </div>
 
-                <div class="button-group">
-                    <button id="previewBtn" class="btn-secondary">プレビュー</button>
-                    <button id="clearPreviewBtn" class="btn-secondary">プレビューをクリア</button>
-                    <button id="sendBtn" class="btn-primary">配信実行</button>
+                <div class="action-buttons">
+                    <button id="previewBtn" class="btn btn-secondary">プレビュー</button>
+                    <button id="clearPreviewBtn" class="btn btn-secondary">プレビューをクリア</button>
+                    <button id="sendBtn" class="btn btn-primary">配信実行</button>
                 </div>
             </div>
 
@@ -654,8 +672,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- 配信履歴 -->
             <div class="card">
                 <h2>配信履歴・予約状況</h2>
-                <div class="history-controls">
-                    <button id="refreshHistoryBtn" class="btn-secondary">履歴を更新</button>
+                <div class="action-buttons">
+                    <button id="refreshHistoryBtn" class="btn btn-secondary">履歴を更新</button>
                 </div>
                 <div id="historyArea">
                     <p class="loading">読み込み中...</p>
@@ -891,12 +909,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     // 配信履歴を読み込む関数（LocalStorage使用）
     function loadHistory() {
         const historyArea = document.getElementById('historyArea');
+        if (!historyArea) {
+            console.error('historyAreaが見つかりません');
+            return;
+        }
+        
         historyArea.innerHTML = '<p class="loading">読み込み中...</p>';
         
         try {
             // LocalStorageから履歴を取得
             const historyData = localStorage.getItem('newsletter-history');
-            const history = historyData ? JSON.parse(historyData) : [];
+            let history = historyData ? JSON.parse(historyData) : [];
+            
+            // サンプルデータを追加（初回のみ）
+            if (history.length === 0) {
+                history = [
+                    {
+                        id: '1',
+                        subject: '9月2日 大井競馬予想',
+                        targetPlan: 'free',
+                        recipientCount: 3,
+                        scheduledAt: '2025-09-09T12:52:00',
+                        status: 'sent',
+                        createdAt: '2025-09-09T12:52:00'
+                    },
+                    {
+                        id: '2',
+                        subject: '週末特別キャンペーンのお知らせ',
+                        targetPlan: 'all',
+                        recipientCount: 15,
+                        scheduledAt: '2025-09-08T18:00:00',
+                        status: 'sent',
+                        createdAt: '2025-09-08T18:00:00'
+                    }
+                ];
+                // サンプルデータを保存
+                localStorage.setItem('newsletter-history', JSON.stringify(history));
+            }
             
             if (history.length > 0) {
                 const now = new Date();

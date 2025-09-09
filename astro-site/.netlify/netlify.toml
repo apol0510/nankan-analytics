@@ -1,6 +1,6 @@
 functionsDirectory = "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site/netlify/functions"
 functionsDirectoryOrigin = "config"
-headersOrigin = "inline"
+headersOrigin = "config"
 redirectsOrigin = "config"
 plugins = []
 
@@ -33,9 +33,6 @@ command = "npm run dev"
 port = 4321.0
 publish = "dist"
 autoLaunch = false
-
-[images]
-remote_images = []
 
 [functions]
 
@@ -75,12 +72,6 @@ for = "/*.css"
 [headers.values]
 Cache-Control = "public, max-age=31536000"
 
-[[headers]]
-for = "/assets/*"
-
-[headers.values]
-Cache-Control = "public, max-age=31536000, immutable"
-
 [[redirects]]
 from = "/*"
 to = "/index.html"
@@ -109,6 +100,18 @@ force = false
 from = "/old-standard"
 to = "/standard-predictions"
 status = 301.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/api/stripe/webhook"
+to = "/.netlify/functions/stripe-webhook"
+status = 200.0
 force = false
 
 [redirects.query]
