@@ -190,13 +190,26 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
 
       // スケジュール配信の場合（有効な日付のみ）
       if (scheduledAt && scheduledAt !== 'null' && scheduledAt.trim() !== '') {
-        // RFC3339形式に変換（YYYY-MM-DDTHH:mm:ssZ）
+        // 日本時間からUTCに変換
         const scheduledDate = new Date(scheduledAt);
-        if (!isNaN(scheduledDate.getTime())) {
+        const now = new Date();
+        
+        console.log('スケジュール配信デバッグ:', {
+          originalInput: scheduledAt,
+          parsedDate: scheduledDate.toISOString(),
+          currentTime: now.toISOString(),
+          timeDifference: scheduledDate.getTime() - now.getTime(),
+          isInFuture: scheduledDate > now
+        });
+        
+        if (!isNaN(scheduledDate.getTime()) && scheduledDate > now) {
           emailData.scheduledAt = scheduledDate.toISOString();
-          console.log('スケジュール配信設定:', emailData.scheduledAt);
+          console.log('✅ スケジュール配信設定:', emailData.scheduledAt);
+        } else if (scheduledDate <= now) {
+          console.log('⚠️ 過去の時刻が指定されたため即座に送信:', scheduledAt);
+          // 過去の時刻の場合はscheduledAtを設定しない（即座に送信）
         } else {
-          console.log('無効な日付のためスケジュール配信をスキップ:', scheduledAt);
+          console.log('❌ 無効な日付のためスケジュール配信をスキップ:', scheduledAt);
         }
       }
 

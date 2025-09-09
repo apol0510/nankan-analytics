@@ -62,7 +62,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="form-group">
                     <label for="scheduledAt">配信予約（オプション）</label>
                     <input type="datetime-local" id="scheduledAt" />
-                    <small>空欄の場合は即時配信されます</small>
+                    <small>
+                        空欄の場合は即時配信されます<br>
+                        <strong>現在時刻: <span id="currentTime">--:--</span></strong> (日本時間)<br>
+                        <span style="color: #f59e0b;">⚠️ 予約配信は5-10分程度の遅延が発生する場合があります</span>
+                    </small>
                 </div>
 
                 <div class="button-group">
@@ -248,8 +252,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     // 履歴更新ボタン
     document.getElementById('refreshHistoryBtn')?.addEventListener('click', loadHistory);
 
+    // 現在時刻を更新する関数
+    function updateCurrentTime() {
+        const now = new Date();
+        const timeString = now.toLocaleString('ja-JP', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        const currentTimeElement = document.getElementById('currentTime');
+        if (currentTimeElement) {
+            currentTimeElement.textContent = timeString;
+        }
+    }
+
+    // 現在時刻を1秒ごとに更新
+    setInterval(updateCurrentTime, 1000);
+
     // 初期表示で履歴を読み込み
-    document.addEventListener('DOMContentLoaded', loadHistory);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHistory();
+        updateCurrentTime();
+    });
 
     // プレビュー生成
     document.getElementById('previewBtn')?.addEventListener('click', async () => {
