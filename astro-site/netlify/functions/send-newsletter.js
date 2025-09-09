@@ -99,6 +99,12 @@ async function getRecipientsList(targetPlan) {
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   
+  console.log('Airtable環境変数確認:', {
+    hasApiKey: !!AIRTABLE_API_KEY,
+    hasBaseId: !!AIRTABLE_BASE_ID,
+    targetPlan: targetPlan
+  });
+  
   try {
     // プランによるフィルタリング
     let filterFormula = '';
@@ -113,20 +119,28 @@ async function getRecipientsList(targetPlan) {
     }
     // targetPlan === 'all' の場合はフィルタなし
 
-    const response = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?fields%5B%5D=Email&fields%5B%5D=Plan${filterFormula}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_API_KEY}`
-        }
+    const apiUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?fields%5B%5D=Email&fields%5B%5D=Plan${filterFormula}`;
+    console.log('Airtable APIリクエストURL:', apiUrl);
+
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_API_KEY}`
       }
-    );
+    });
+
+    console.log('Airtable APIレスポンス:', response.status, response.statusText);
 
     if (!response.ok) {
-      throw new Error(`Airtable API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Airtable APIエラーの詳細:', errorText);
+      throw new Error(`Airtable API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('取得したAirtableデータ:', {
+      recordCount: data.records?.length || 0,
+      firstRecord: data.records?.[0] || null
+    });
     
     // メールアドレスのリストを作成
     const recipients = data.records
@@ -137,6 +151,8 @@ async function getRecipientsList(targetPlan) {
       }));
 
     console.log(`Found ${recipients.length} recipients for plan: ${targetPlan}`);
+    console.log('Recipients preview:', recipients.slice(0, 3));
+    
     return recipients;
 
   } catch (error) {
