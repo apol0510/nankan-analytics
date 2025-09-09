@@ -48,7 +48,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
 
                 <!-- 予想セクション（予想配信タイプの場合） -->
-                <div id="predictionSection" style="display: none;">
+                <div id="predictionSection">
                     <h3>予想情報</h3>
                     <div id="predictionsContainer">
                         <div class="prediction-input">
@@ -99,17 +99,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+    // テンプレートタイプの表示制御関数
+    function updatePredictionSection() {
+        const templateType = document.getElementById('templateType');
+        const predictionSection = document.getElementById('predictionSection');
+        
+        if (templateType && predictionSection) {
+            if (templateType.value === 'prediction') {
+                predictionSection.style.display = 'block';
+                console.log('予想セクションを表示');
+            } else {
+                predictionSection.style.display = 'none';
+                console.log('予想セクションを非表示');
+            }
+        }
+    }
+
     // テンプレートタイプ変更時の処理
     const templateType = document.getElementById('templateType');
-    const predictionSection = document.getElementById('predictionSection');
-    
-    templateType?.addEventListener('change', () => {
-        if (templateType.value === 'prediction') {
-            predictionSection.style.display = 'block';
-        } else {
-            predictionSection.style.display = 'none';
-        }
-    });
+    templateType?.addEventListener('change', updatePredictionSection);
 
     // 予想追加ボタン
     document.getElementById('addPrediction')?.addEventListener('click', () => {
@@ -276,6 +284,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     document.addEventListener('DOMContentLoaded', () => {
         loadHistory();
         updateCurrentTime();
+        // 初期状態で予想セクションの表示を設定
+        updatePredictionSection();
+        console.log('ページ初期化完了');
     });
 
     // プレビュー生成
@@ -421,6 +432,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('scheduledAt').value = '';
                 // プレビューもクリア
                 clearPreview();
+                
+                // テンプレートタイプをリセット後、予想セクションを更新
+                setTimeout(() => {
+                    updatePredictionSection();
+                }, 100);
                 
                 // 履歴を更新
                 loadHistory();
@@ -775,6 +791,22 @@ ${mainContent}
 
     .error {
         color: #ef4444;
+    }
+
+    /* 予想セクションの初期表示制御 */
+    #predictionSection {
+        display: block; /* デフォルトで表示（予想配信が初期選択のため） */
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: rgba(15, 23, 42, 0.3);
+        border-radius: 0.75rem;
+        border: 1px solid rgba(51, 65, 85, 0.3);
+    }
+
+    #predictionSection h3 {
+        margin-top: 0;
+        color: #f1f5f9;
+        margin-bottom: 1rem;
     }
 
     /* レスポンシブ対応 */
