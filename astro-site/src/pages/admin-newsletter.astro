@@ -5662,19 +5662,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     // クイック設定機能
     function setupQuickSchedule() {
-        const now = new Date();
+        // ボタンクリック時に現在時刻を取得するように修正
         
         document.getElementById('schedule1Hour')?.addEventListener('click', () => {
+            const now = new Date(); // クリック時の現在時刻を取得
             const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
             setScheduleDateTime(oneHourLater);
+            console.log('1時間後設定:', oneHourLater.toLocaleString('ja-JP'));
         });
         
         document.getElementById('schedule3Hours')?.addEventListener('click', () => {
+            const now = new Date(); // クリック時の現在時刻を取得
             const threeHoursLater = new Date(now.getTime() + 3 * 60 * 60 * 1000);
             setScheduleDateTime(threeHoursLater);
+            console.log('3時間後設定:', threeHoursLater.toLocaleString('ja-JP'));
         });
         
         document.getElementById('scheduleTomorrow9AM')?.addEventListener('click', () => {
+            const now = new Date(); // クリック時の現在時刻を取得
             const tomorrow = new Date(now);
             tomorrow.setDate(tomorrow.getDate() + 1);
             tomorrow.setHours(9, 0, 0, 0);
@@ -5683,12 +5688,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const hoursDiff = (tomorrow - now) / (1000 * 60 * 60);
             if (hoursDiff <= 72) {
                 setScheduleDateTime(tomorrow);
+                console.log('明日9時設定:', tomorrow.toLocaleString('ja-JP'));
             } else {
                 alert('⚠️ 明日9時は72時間を超えるため、配信されない可能性があります。\n72時間以内の時間を選択してください。');
             }
         });
         
         document.getElementById('scheduleMonday9AM')?.addEventListener('click', () => {
+            const now = new Date(); // クリック時の現在時刻を取得
             const nextMonday = new Date(now);
             const daysUntilMonday = (1 + 7 - now.getDay()) % 7 || 7;
             nextMonday.setDate(now.getDate() + daysUntilMonday);
@@ -5698,6 +5705,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const hoursDiff = (nextMonday - now) / (1000 * 60 * 60);
             if (hoursDiff <= 72) {
                 setScheduleDateTime(nextMonday);
+                console.log('来週月曜9時設定:', nextMonday.toLocaleString('ja-JP'));
             } else {
                 alert(`⚠️ 来週月曜日は${Math.round(hoursDiff)}時間後で72時間を超えるため、配信されない可能性があります。\n72時間以内（3日以内）の時間を選択してください。`);
             }
