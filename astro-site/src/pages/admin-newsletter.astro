@@ -1000,7 +1000,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- 配信履歴 -->
             <div class="card">
                 <h2 style="color: #374151; font-weight: 600;">📋 配信履歴・予約状況</h2>
+                
+                <!-- 🚨 問題解決通知 -->
+                <div style="background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 10px; padding: 15px; margin-bottom: 20px; color: white;">
+                    <h3 style="margin: 0 0 10px 0; color: white;">🔍 配信状況確認システム</h3>
+                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Brevo APIから実際の配信履歴を取得して、スケジュール配信の問題を特定します</p>
+                </div>
+                
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button id="checkRealDeliveryBtn" class="btn btn-primary">🔍 実際の配信状況確認</button>
                     <button id="refreshHistoryBtn" class="btn btn-secondary">🔄 履歴を更新</button>
                     <button id="clearHistoryBtn" class="btn btn-danger">🗑️ 履歴をクリア</button>
                     <button id="showFailedEmailsBtn" class="btn btn-info">⚠️ 失敗メール確認</button>
@@ -3544,8 +3552,188 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
     }
 
+    // 実際の配信状況確認（Brevo APIから直接取得）
+    async function checkRealDeliveryStatus() {
+        const button = document.getElementById('checkRealDeliveryBtn');
+        const historyArea = document.getElementById('newHistoryArea');
+        
+        // ローディング状態
+        button.textContent = '🔍 確認中...';
+        button.disabled = true;
+        
+        historyArea.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #3b82f6;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🔍</div>
+                <div>Brevo APIから配信状況を確認しています...</div>
+                <div style="font-size: 0.9rem; color: #6b7280; margin-top: 5px;">実際の送信履歴とスケジュール状況を取得中</div>
+            </div>
+        `;
+
+        try {
+            // 本番環境のcheck-delivery-status Function呼び出し
+            const response = await fetch('/.netlify/functions/check-delivery-status', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                displayRealDeliveryStatus(data.data);
+            } else {
+                throw new Error(data.error || '配信状況の取得に失敗');
+            }
+
+        } catch (error) {
+            console.error('配信状況確認エラー:', error);
+            
+            historyArea.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #dc2626;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">❌</div>
+                    <div style="font-weight: 600;">配信状況確認エラー</div>
+                    <div style="font-size: 0.9rem; margin-top: 10px;">${error.message}</div>
+                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">
+                        本番環境でNetlify Functionsを使用してください
+                    </div>
+                </div>
+            `;
+        } finally {
+            // ボタンを元に戻す
+            button.textContent = '🔍 実際の配信状況確認';
+            button.disabled = false;
+        }
+    }
+
+    // 実際の配信状況表示
+    function displayRealDeliveryStatus(data) {
+        const historyArea = document.getElementById('newHistoryArea');
+        const { account, recentEmails, scheduledEmails, summary, stats } = data;
+
+        let html = `
+            <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #15803d;">✅ Brevo配信状況（リアルタイム）</h3>
+                
+                <!-- アカウント情報 -->
+                <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 10px 0; color: #374151;">📊 アカウント概要</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">アカウント</div>
+                            <div style="font-weight: 600;">${account.email || 'N/A'}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">プラン</div>
+                            <div style="font-weight: 600;">${account.plan || 'N/A'}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">会社名</div>
+                            <div style="font-weight: 600;">${account.companyName || 'N/A'}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">ステータス</div>
+                            <div style="font-weight: 600; color: ${summary.accountStatus === 'active' ? '#16a34a' : '#dc2626'};">
+                                ${summary.accountStatus === 'active' ? '✅ アクティブ' : '❌ 不明'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 統計サマリー -->
+                <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 10px 0; color: #374151;">📈 配信統計（24時間）</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; text-align: center;">
+                        <div style="background: #f0f9ff; border-radius: 6px; padding: 10px;">
+                            <div style="font-size: 1.5rem; color: #3b82f6;">${summary.totalSent24h}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">送信済み</div>
+                        </div>
+                        <div style="background: #fef3c7; border-radius: 6px; padding: 10px;">
+                            <div style="font-size: 1.5rem; color: #d97706;">${summary.pendingScheduled}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">予約待ち</div>
+                        </div>
+                    </div>
+                </div>
+        `;
+
+        // スケジュール配信一覧
+        if (scheduledEmails && scheduledEmails.length > 0) {
+            html += `
+                <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 10px 0; color: #d97706;">⏰ スケジュール配信一覧</h4>
+                    ${scheduledEmails.map(email => `
+                        <div style="background: white; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
+                            <div style="font-weight: 600; color: #374151;">${email.subject || 'N/A'}</div>
+                            <div style="font-size: 0.9rem; color: #6b7280;">
+                                予定: ${email.scheduledAt ? new Date(email.scheduledAt).toLocaleString('ja-JP') : 'N/A'}
+                            </div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">
+                                宛先: ${email.to ? email.to.length : 0}件 | 
+                                ステータス: ${email.status || 'unknown'}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            html += `
+                <div style="background: #f0fdf4; border-radius: 8px; padding: 15px; margin-bottom: 15px; text-align: center;">
+                    <div style="color: #16a34a;">✅ スケジュール配信なし</div>
+                    <div style="font-size: 0.9rem; color: #6b7280;">現在予約待ちのメールはありません</div>
+                </div>
+            `;
+        }
+
+        // 最近の配信履歴
+        if (recentEmails && recentEmails.length > 0) {
+            html += `
+                <div style="background: white; border-radius: 8px; padding: 15px;">
+                    <h4 style="margin: 0 0 10px 0; color: #374151;">📧 最近の配信履歴（24時間以内）</h4>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        ${recentEmails.slice(0, 10).map(email => `
+                            <div style="border-bottom: 1px solid #e5e7eb; padding: 8px 0;">
+                                <div style="font-weight: 600; color: #374151;">${email.subject || 'N/A'}</div>
+                                <div style="font-size: 0.9rem; color: #6b7280;">
+                                    送信日時: ${email.date ? new Date(email.date).toLocaleString('ja-JP') : 'N/A'}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">
+                                    宛先: ${email.to ? email.to.length : 0}件 | 
+                                    メッセージID: ${email.messageId || 'N/A'}
+                                </div>
+                                <div style="font-size: 0.8rem;">
+                                    <span style="color: ${email.status === 'sent' ? '#16a34a' : '#dc2626'};">
+                                        ${email.status === 'sent' ? '✅ 送信成功' : '❌ 送信失敗'}
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        } else {
+            html += `
+                <div style="background: #fef2f2; border-radius: 8px; padding: 15px; text-align: center;">
+                    <div style="color: #dc2626;">⚠️ 配信履歴なし</div>
+                    <div style="font-size: 0.9rem; color: #6b7280;">24時間以内に送信されたメールはありません</div>
+                </div>
+            `;
+        }
+
+        html += `</div>`;
+
+        historyArea.innerHTML = html;
+
+        // 結果をログに記録
+        console.log('実際の配信状況:', {
+            totalSent: summary.totalSent24h,
+            scheduled: summary.pendingScheduled,
+            accountStatus: summary.accountStatus
+        });
+    }
+
     // 履歴更新ボタン
     document.getElementById('refreshHistoryBtn')?.addEventListener('click', loadHistory);
+    document.getElementById('checkRealDeliveryBtn')?.addEventListener('click', checkRealDeliveryStatus);
     
     // セグメント機能
     document.getElementById('targetPlan')?.addEventListener('change', toggleSegmentSection);
