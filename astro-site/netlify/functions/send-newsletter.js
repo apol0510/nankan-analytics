@@ -1,8 +1,8 @@
 // Brevoメルマガ配信Function
 // 南関競馬の予想結果や攻略情報を配信
 
-export default async function handler(event) {
-  // CORS対応
+export default async function handler(event, context) {
+  // CORS対応ヘッダー
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -12,16 +12,21 @@ export default async function handler(event) {
 
   // OPTIONSリクエスト対応
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+    return new Response('', { 
+      status: 200, 
+      headers 
+    });
   }
 
   // POSTメソッドのみ受付
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+    return new Response(
+      JSON.stringify({ error: 'Method not allowed' }), 
+      {
+        status: 405,
+        headers
+      }
+    );
   }
 
   try {
@@ -29,22 +34,26 @@ export default async function handler(event) {
 
     // 必須パラメータチェック
     if (!subject || !htmlContent) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Subject and htmlContent are required' })
-      };
+      return new Response(
+        JSON.stringify({ error: 'Subject and htmlContent are required' }),
+        {
+          status: 400,
+          headers
+        }
+      );
     }
 
     // Airtableから配信リスト取得
     const recipients = await getRecipientsList(targetPlan);
     
     if (recipients.length === 0) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'No recipients found' })
-      };
+      return new Response(
+        JSON.stringify({ error: 'No recipients found' }),
+        {
+          status: 400,
+          headers
+        }
+      );
     }
 
     // Brevo APIでメール送信
@@ -55,26 +64,30 @@ export default async function handler(event) {
       scheduledAt
     });
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
+    return new Response(
+      JSON.stringify({
         success: true,
         message: `Newsletter sent to ${recipients.length} recipients`,
         details: result
-      })
-    };
+      }),
+      {
+        status: 200,
+        headers
+      }
+    );
 
   } catch (error) {
     console.error('Newsletter send error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ 
+    return new Response(
+      JSON.stringify({ 
         error: 'Failed to send newsletter',
         details: error.message 
-      })
-    };
+      }),
+      {
+        status: 500,
+        headers
+      }
+    );
   }
 }
 
