@@ -1273,6 +1273,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             showCtaButton = true
         } = templateData;
 
+        // CTAテキスト優先順位デバッグ
+        console.log('CTA Debug:', {
+            customCtaText,
+            ctaText,
+            finalText: customCtaText && customCtaText.trim() ? customCtaText : ctaText
+        });
+
         // モダンテーマ別スタイル
         const modernThemes = {
             gold: {
@@ -1653,9 +1660,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
             `).join('')}
             ${predictionNote ? `
-            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-                <h4 style="color: #92400e; font-size: 16px; font-weight: 700; margin: 0 0 10px 0;">📝 補足・戦略メモ</h4>
-                <div style="color: #78350f; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${predictionNote}</div>
+            <div style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 16px; padding: 20px; margin: 25px 0; border-left: 4px solid #a855f7;">
+                <div style="color: #7c3aed; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${predictionNote}</div>
             </div>
             ` : ''}
             ` : ''}
@@ -1677,17 +1683,13 @@ ${mainContent}
             </div>
             `).join('')}
             ${predictionNote ? `
-            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-                <h4 style="color: #92400e; font-size: 16px; font-weight: 700; margin: 0 0 10px 0;">📝 補足・戦略メモ</h4>
-                <div style="color: #78350f; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${predictionNote}</div>
+            <div style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 16px; padding: 20px; margin: 25px 0; border-left: 4px solid #a855f7;">
+                <div style="color: #7c3aed; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${predictionNote}</div>
             </div>
             ` : ''}
             
             ${additionalSection ? `
-            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 25px; margin: 30px 0; border-left: 4px solid #0284c7;">
-                <h4 style="color: #0c4a6e; font-size: 18px; font-weight: 700; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">📄 追加情報</h4>
-                <div style="color: #164e63; font-size: 16px; line-height: 1.7; white-space: pre-wrap;">${additionalSection}</div>
-            </div>
+            <div style="color: #374151; font-size: 17px; line-height: 1.8; margin: 30px 0; font-weight: 400; white-space: pre-wrap;">${additionalSection}</div>
             ` : ''}
             ` : ''}
             
@@ -1780,7 +1782,7 @@ ${mainContent}
             
             ${showCtaButton ? `
             <div style="text-align: center;">
-                <a href="${customCtaUrl || ctaUrl}" class="cta-button">${customCtaText || ctaText}</a>
+                <a href="${customCtaUrl || ctaUrl}" class="cta-button">${customCtaText && customCtaText.trim() ? customCtaText : ctaText}</a>
             </div>
             ` : ''}
         </div>
