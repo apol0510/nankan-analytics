@@ -106,20 +106,20 @@ async function getRecipientsList(targetPlan) {
   });
   
   try {
-    // プランによるフィルタリング
+    // プランによるフィルタリング（日本語フィールド名「プラン」を使用）
     let filterFormula = '';
     if (targetPlan === 'free') {
-      filterFormula = '&filterByFormula=' + encodeURIComponent("{Plan}='Free'");
+      filterFormula = '&filterByFormula=' + encodeURIComponent("{プラン}='Free'");
     } else if (targetPlan === 'standard') {
-      filterFormula = '&filterByFormula=' + encodeURIComponent("OR({Plan}='Standard',{Plan}='standard')");
+      filterFormula = '&filterByFormula=' + encodeURIComponent("OR({プラン}='Standard',{プラン}='standard')");
     } else if (targetPlan === 'premium') {
-      filterFormula = '&filterByFormula=' + encodeURIComponent("OR({Plan}='Premium',{Plan}='premium')");
+      filterFormula = '&filterByFormula=' + encodeURIComponent("OR({プラン}='Premium',{プラン}='premium')");
     } else if (targetPlan === 'paid') {
-      filterFormula = '&filterByFormula=' + encodeURIComponent("OR({Plan}='Standard',{Plan}='Premium',{Plan}='standard',{Plan}='premium')");
+      filterFormula = '&filterByFormula=' + encodeURIComponent("OR({プラン}='Standard',{プラン}='Premium',{プラン}='standard',{プラン}='premium')");
     }
     // targetPlan === 'all' の場合はフィルタなし
 
-    const apiUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?fields%5B%5D=Email&fields%5B%5D=Plan${filterFormula}`;
+    const apiUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?fields%5B%5D=Email&fields%5B%5D=プラン${filterFormula}`;
     console.log('Airtable APIリクエストURL:', apiUrl);
 
     const response = await fetch(apiUrl, {
@@ -147,7 +147,7 @@ async function getRecipientsList(targetPlan) {
       .filter(record => record.fields.Email)
       .map(record => ({
         email: record.fields.Email,
-        plan: record.fields.Plan || 'Free'
+        plan: record.fields.プラン || 'Free'
       }));
 
     console.log(`Found ${recipients.length} recipients for plan: ${targetPlan}`);
