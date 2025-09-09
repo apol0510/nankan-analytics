@@ -145,19 +145,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     // 予想入力フィールドの変更も監視
     document.getElementById('predictionsContainer')?.addEventListener('input', clearPreview);
 
-    // 配信履歴を読み込む関数
-    async function loadHistory() {
+    // 配信履歴を読み込む関数（LocalStorage使用）
+    function loadHistory() {
         const historyArea = document.getElementById('historyArea');
         historyArea.innerHTML = '<p class="loading">読み込み中...</p>';
         
         try {
-            const response = await fetch('/.netlify/functions/newsletter-history?limit=10');
-            const data = await response.json();
+            // LocalStorageから履歴を取得
+            const historyData = localStorage.getItem('newsletter-history');
+            const history = historyData ? JSON.parse(historyData) : [];
             
-            if (data.success && data.history.length > 0) {
+            if (history.length > 0) {
                 const now = new Date();
                 
-                const historyHTML = data.history.map(item => {
+                // 最新10件のみ表示
+                const recentHistory = history.slice(0, 10);
+                
+                const historyHTML = recentHistory.map(item => {
                     const scheduledDate = new Date(item.scheduledAt);
                     const isScheduled = item.status === 'scheduled' && scheduledDate > now;
                     const isCompleted = item.status === 'sent' || (item.status === 'scheduled' && scheduledDate <= now);
@@ -215,6 +219,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         } catch (error) {
             console.error('履歴読み込みエラー:', error);
             historyArea.innerHTML = '<p class="error">履歴の読み込みに失敗しました</p>';
+        }
+    }
+
+    // 履歴を保存する関数
+    function saveHistoryToLocal(historyItem) {
+        try {
+            const existingHistory = localStorage.getItem('newsletter-history');
+            const history = existingHistory ? JSON.parse(existingHistory) : [];
+            
+            // 新しい履歴を先頭に追加
+            history.unshift({
+                ...historyItem,
+                id: Date.now().toString(), // 簡易ID
+                createdAt: new Date().toISOString()
+            });
+            
+            // 最大50件まで保持
+            const limitedHistory = history.slice(0, 50);
+            
+            localStorage.setItem('newsletter-history', JSON.stringify(limitedHistory));
+            console.log('履歴をLocalStorageに保存:', historyItem);
+        } catch (error) {
+            console.error('履歴保存エラー:', error);
         }
     }
 
@@ -350,6 +377,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     
                 alert(successMessage);
                 
+                // 履歴に保存
+                saveHistoryToLocal({
+                    subject: subject,
+                    targetPlan: targetPlan,
+                    recipientCount: result.recipientCount,
+                    scheduledAt: scheduledAt || new Date().toISOString(),
+                    status: result.isScheduled ? 'scheduled' : 'sent'
+                });
+                
                 // フォームをリセット
                 document.getElementById('subject').value = '';
                 document.getElementById('mainContent').value = '';
@@ -360,9 +396,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 clearPreview();
                 
                 // 履歴を更新
-                setTimeout(() => {
-                    loadHistory();
-                }, 1000);
+                loadHistory();
             } else {
                 console.error('配信エラー詳細:', result);
                 alert(`❌ 配信失敗: ${result.error || result.details || 'エラーが発生しました'}\n詳細はコンソールを確認してください`);

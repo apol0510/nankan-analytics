@@ -67,19 +67,7 @@ export default async function handler(request, context) {
       scheduledAt
     });
 
-    // 配信履歴を保存
-    try {
-      await saveNewsletterHistory({
-        subject,
-        targetPlan,
-        recipientCount: recipients.length,
-        scheduledAt,
-        status: scheduledAt ? 'scheduled' : 'sent'
-      });
-    } catch (historyError) {
-      console.error('配信履歴保存エラー:', historyError);
-      // 履歴保存エラーでも配信は成功とする
-    }
+    // 配信履歴はフロントエンドのLocalStorageで管理
 
     return new Response(
       JSON.stringify({
@@ -346,32 +334,4 @@ export function generateNewsletterTemplate({
   `;
 }
 
-// 配信履歴を保存する関数
-async function saveNewsletterHistory({ subject, targetPlan, recipientCount, scheduledAt, status }) {
-  try {
-    const response = await fetch('/.netlify/functions/newsletter-history', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        subject,
-        targetPlan,
-        recipientCount,
-        scheduledAt,
-        status
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`History save failed: ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log('配信履歴保存成功:', result);
-    return result;
-  } catch (error) {
-    console.error('配信履歴保存エラー:', error);
-    throw error;
-  }
-}
+// 配信履歴はフロントエンドのLocalStorageで管理するため、この関数は不要
