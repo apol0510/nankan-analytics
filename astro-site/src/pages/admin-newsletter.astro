@@ -1260,7 +1260,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             originalPrice = '',
             campaignPrice = '',
             campaignDeadline = '',
-            ctaText = templateType === 'prediction' ? '🏇 有料プランで全レース予想を見る' : templateType === 'campaign' ? '🎯 限定オファーを確認する' : templateType === 'result' ? '📈 詳細な分析結果を見る' : '詳細はこちら',
+            ctaText = customCtaText && customCtaText.trim() ? customCtaText : (templateType === 'prediction' ? '🏇 有料プランで全レース予想を見る' : templateType === 'campaign' ? '🎯 限定オファーを確認する' : templateType === 'result' ? '📈 詳細な分析結果を見る' : '詳細はこちら'),
             ctaUrl = 'https://nankan-analytics.keiba.link/pricing/',
             customTheme = 'default',
             customHeadline = '',
@@ -1689,7 +1689,7 @@ ${mainContent}
             ` : ''}
             
             ${additionalSection ? `
-            <div style="color: #374151; font-size: 17px; line-height: 1.8; margin: 30px 0; font-weight: 400; white-space: pre-wrap;">${additionalSection}</div>
+            <div style="color: #374151; font-size: 17px; line-height: 1.8; margin: 30px 0; font-weight: 400; white-space: pre-wrap; text-align: center;">${additionalSection}</div>
             ` : ''}
             ` : ''}
             
@@ -1782,7 +1782,7 @@ ${mainContent}
             
             ${showCtaButton ? `
             <div style="text-align: center;">
-                <a href="${customCtaUrl || ctaUrl}" class="cta-button">${customCtaText && customCtaText.trim() ? customCtaText : ctaText}</a>
+                <a href="${customCtaUrl || ctaUrl}" class="cta-button">${ctaText}</a>
             </div>
             ` : ''}
         </div>
