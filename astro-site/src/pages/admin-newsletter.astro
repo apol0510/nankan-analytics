@@ -555,8 +555,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <textarea placeholder="強調したい情報・数字・実績" rows="2" id="customAccent"></textarea>
                         
                         <label style="color: #374151; font-weight: 600;">追加CTA</label>
-                        <input type="text" placeholder="追加ボタンテキスト" id="customCtaText" />
-                        <input type="url" placeholder="追加ボタンURL" id="customCtaUrl" />
+                        <input type="text" placeholder="追加ボタンテキスト" id="customSectionCtaText" />
+                        <input type="url" placeholder="追加ボタンURL" id="customSectionCtaUrl" />
                     </div>
                 </div>
 
@@ -1090,8 +1090,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             templateData.customTheme = document.getElementById('customTheme')?.value || 'default';
             templateData.customHeadline = document.getElementById('customHeadline')?.value || '';
             templateData.customAccent = document.getElementById('customAccent')?.value || '';
-            templateData.customCtaText = document.getElementById('customCtaText')?.value || '';
-            templateData.customCtaUrl = document.getElementById('customCtaUrl')?.value || '';
+            templateData.customSectionCtaText = document.getElementById('customSectionCtaText')?.value || '';
+            templateData.customSectionCtaUrl = document.getElementById('customSectionCtaUrl')?.value || '';
         }
 
         // HTMLテンプレート生成
@@ -1259,12 +1259,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             customTheme = 'default',
             customHeadline = '',
             customAccent = '',
-            customCtaText = '',
-            customCtaUrl = '',
+            customSectionCtaText = '',
+            customSectionCtaUrl = '',
             layoutOrder = 'content-first',
             predictionNote = '',
             additionalSection = '',
-            showCtaButton = true
+            showCtaButton = true,
+            customCtaText = '',
+            customCtaUrl = ''
         } = templateData;
 
         // CTAテキストを適切に設定
@@ -1682,7 +1684,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                                         <table border="0" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td align="center" style="background-color: #3b82f6; border-radius: 12px; box-shadow: 0 4px 15px rgba(59,130,246,0.3);">
-                                                    <a href="${customCtaUrl || ctaUrl}" style="
+                                                    <a href="${customCtaUrl && customCtaUrl.trim() ? customCtaUrl : ctaUrl}" style="
                                                         display: inline-block; 
                                                         padding: 16px 32px; 
                                                         color: #ffffff; 
