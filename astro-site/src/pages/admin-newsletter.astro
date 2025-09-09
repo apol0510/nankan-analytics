@@ -3482,9 +3482,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         new Date(item.scheduledAt).toLocaleString('ja-JP') : 
                         new Date(item.createdAt).toLocaleString('ja-JP');
                     
-                    // ステータス表示
-                    const statusText = item.status === 'scheduled' ? '予約済み' : '配信済み';
-                    const statusIcon = item.status === 'scheduled' ? '📅' : '✅';
+                    // ステータス表示（72時間制限チェック付き）
+                    let statusText = '配信済み';
+                    let statusIcon = '✅';
+                    let statusColor = '#16a34a';
+                    
+                    if (item.status === 'scheduled') {
+                        const scheduledDate = new Date(item.scheduledAt);
+                        const createdDate = new Date(item.timestamp);
+                        const hoursDiff = (scheduledDate - createdDate) / (1000 * 60 * 60);
+                        
+                        if (hoursDiff > 72) {
+                            statusText = '予約済み（配信保証なし）';
+                            statusIcon = '⚠️';
+                            statusColor = '#dc2626';
+                        } else {
+                            statusText = '予約済み';
+                            statusIcon = '📅';
+                            statusColor = '#3b82f6';
+                        }
+                    }
                     
                     // プラン表示を日本語化
                     const planText = {
@@ -7156,7 +7173,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 
                 let successMessage;
                 if (result.isScheduled) {
-                    successMessage = `✅ 配信予約完了！${result.recipientCount}件の配信を予約しました`;
+                    // 予約配信の場合は警告を含めたメッセージ
+                    const scheduledDate = new Date(scheduledAt);
+                    const now = new Date();
+                    const hoursDiff = (scheduledDate - now) / (1000 * 60 * 60);
+                    
+                    if (hoursDiff > 72) {
+                        successMessage = `⚠️ 予約登録完了（配信保証なし）\n\n` +
+                            `予約時刻: ${scheduledDate.toLocaleString('ja-JP')}\n` +
+                            `${Math.round(hoursDiff)}時間後の配信\n\n` +
+                            `🚨 警告: 72時間を超える予約はBrevo制限により配信されない可能性があります。\n` +
+                            `実際の配信状況は「🔍 実際の配信状況確認」ボタンで確認してください。`;
+                    } else {
+                        successMessage = `📅 配信予約完了！\n\n` +
+                            `予約時刻: ${scheduledDate.toLocaleString('ja-JP')}\n` +
+                            `対象: ${result.recipientCount}件\n` +
+                            `${Math.round(hoursDiff)}時間後に配信予定\n\n` +
+                            `💡 配信状況は「🔍 実際の配信状況確認」で確認できます`;
+                    }
                 } else if (result.failedCount > 0) {
                     successMessage = `⚠️ 配信完了！成功: ${result.recipientCount}件、失敗: ${result.failedCount}件`;
                 } else {
