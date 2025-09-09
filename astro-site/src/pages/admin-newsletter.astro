@@ -592,6 +592,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="action-buttons">
                     <button id="previewBtn" class="btn btn-secondary">プレビュー</button>
                     <button id="clearPreviewBtn" class="btn btn-secondary">プレビューをクリア</button>
+                    <button id="saveTemplateBtn" class="btn btn-info">💾 テンプレート保存</button>
+                    <button id="loadTemplateBtn" class="btn btn-info">📂 テンプレート読込</button>
                     <button id="sendBtn" class="btn btn-primary">配信実行</button>
                 </div>
             </div>
@@ -650,6 +652,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <button id="hideReportBtn" class="btn btn-secondary">❌ 閉じる</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- テンプレート選択モーダル -->
+    <div id="templateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 12px; max-width: 600px; width: 90%; max-height: 80%; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+            <div style="padding: 25px; border-bottom: 1px solid #e5e7eb;">
+                <h3 style="margin: 0; color: #374151;">📂 保存済みテンプレート</h3>
+            </div>
+            <div id="templateList" style="padding: 20px; max-height: 400px; overflow-y: auto;"></div>
+            <div style="padding: 20px; border-top: 1px solid #e5e7eb; display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="closeTemplateModalBtn" class="btn btn-secondary">キャンセル</button>
+                <button id="deleteAllTemplatesBtn" class="btn btn-danger">🗑️ 全削除</button>
             </div>
         </div>
     </div>
@@ -1397,8 +1413,310 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
     }
 
+    // テンプレート管理機能
+    document.getElementById('saveTemplateBtn')?.addEventListener('click', saveCurrentTemplate);
+    document.getElementById('loadTemplateBtn')?.addEventListener('click', showTemplateModal);
+    document.getElementById('closeTemplateModalBtn')?.addEventListener('click', hideTemplateModal);
+    document.getElementById('deleteAllTemplatesBtn')?.addEventListener('click', deleteAllTemplates);
+
+    // 現在の設定をテンプレートとして保存
+    function saveCurrentTemplate() {
+        const subject = document.getElementById('subject')?.value;
+        const mainContent = document.getElementById('mainContent')?.value;
+        const templateType = document.getElementById('templateType')?.value;
+        
+        if (!subject || !mainContent) {
+            alert('件名と本文を入力してからテンプレートを保存してください');
+            return;
+        }
+        
+        const templateName = prompt('テンプレート名を入力してください:', subject.substring(0, 30));
+        if (!templateName) {
+            return;
+        }
+        
+        try {
+            // 現在のフォームデータを収集
+            const templateData = {
+                id: Date.now().toString(),
+                name: templateName,
+                subject: subject,
+                mainContent: mainContent,
+                templateType: templateType,
+                targetPlan: document.getElementById('targetPlan')?.value || 'all',
+                customCtaText: document.getElementById('customCtaText')?.value || '',
+                customCtaUrl: document.getElementById('customCtaUrl')?.value || '',
+                showCtaButton: document.getElementById('showCtaButton')?.checked || true,
+                createdAt: new Date().toISOString(),
+                
+                // テンプレートタイプ別のデータ
+                predictions: [],
+                results: [],
+                predictionNote: document.getElementById('predictionNote')?.value || '',
+                additionalSection: document.getElementById('additionalSection')?.value || '',
+                
+                // カスタムフィールド
+                customHeadline: document.getElementById('customHeadline')?.value || '',
+                customAccent: document.getElementById('customAccent')?.value || '',
+                
+                // キャンペーンフィールド
+                campaignTitle: document.getElementById('campaignTitle')?.value || '',
+                campaignDetails: document.getElementById('campaignDetails')?.value || '',
+                originalPrice: document.getElementById('originalPrice')?.value || '',
+                campaignPrice: document.getElementById('campaignPrice')?.value || '',
+                campaignDeadline: document.getElementById('campaignDeadline')?.value || ''
+            };
+            
+            // 予想データの収集（予想タイプの場合）
+            if (templateType === 'prediction') {
+                const predictionInputs = document.querySelectorAll('.prediction-input');
+                predictionInputs.forEach(input => {
+                    const raceName = input.querySelector('.race-name-input')?.value;
+                    const horses = input.querySelector('.horses-input')?.value;
+                    if (raceName && horses) {
+                        templateData.predictions.push({
+                            raceName: raceName,
+                            horses: horses.split('\n').filter(h => h.trim())
+                        });
+                    }
+                });
+            }
+            
+            // 結果データの収集（結果タイプの場合）
+            if (templateType === 'result') {
+                const resultInputs = document.querySelectorAll('.result-input');
+                resultInputs.forEach(input => {
+                    const raceName = input.querySelector('.race-name-input')?.value;
+                    const winner = input.querySelector('.winner-input')?.value;
+                    const payout = input.querySelector('.payout-input')?.value;
+                    const status = input.querySelector('.status-select')?.value;
+                    if (raceName && winner) {
+                        templateData.results.push({
+                            raceName: raceName,
+                            winner: winner,
+                            payout: payout,
+                            status: status || 'miss'
+                        });
+                    }
+                });
+            }
+            
+            // LocalStorageに保存
+            const existingTemplates = JSON.parse(localStorage.getItem('email-templates') || '[]');
+            existingTemplates.unshift(templateData); // 最新を先頭に
+            
+            // 最大20件まで保持
+            const limitedTemplates = existingTemplates.slice(0, 20);
+            localStorage.setItem('email-templates', JSON.stringify(limitedTemplates));
+            
+            alert(`テンプレート「${templateName}」を保存しました`);
+            console.log('✅ テンプレート保存完了:', templateData);
+            
+        } catch (error) {
+            console.error('テンプレート保存エラー:', error);
+            alert('テンプレートの保存に失敗しました: ' + error.message);
+        }
+    }
+
+    // テンプレート選択モーダルを表示
+    function showTemplateModal() {
+        loadTemplateList();
+        document.getElementById('templateModal').style.display = 'block';
+    }
+
+    // テンプレート選択モーダルを非表示
+    function hideTemplateModal() {
+        document.getElementById('templateModal').style.display = 'none';
+    }
+
+    // テンプレート一覧を読み込み
+    function loadTemplateList() {
+        const templateList = document.getElementById('templateList');
+        const templates = JSON.parse(localStorage.getItem('email-templates') || '[]');
+        
+        if (templates.length === 0) {
+            templateList.innerHTML = `
+                <div style="text-align: center; color: #6b7280; padding: 40px;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">📝</div>
+                    <p>保存されたテンプレートがありません</p>
+                    <small>テンプレートを作成して「テンプレート保存」ボタンを押してください</small>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        templates.forEach((template, index) => {
+            const createdDate = new Date(template.createdAt).toLocaleDateString('ja-JP');
+            const templateTypeName = {
+                'prediction': '🎯 予想',
+                'result': '📊 結果',
+                'campaign': '🎪 キャンペーン',
+                'custom': '✨ カスタム'
+            }[template.templateType] || template.templateType;
+            
+            html += `
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 15px; background: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <div>
+                            <h4 style="margin: 0 0 5px 0; color: #374151;">${template.name}</h4>
+                            <div style="font-size: 0.9em; color: #6b7280;">
+                                ${templateTypeName} | ${createdDate} | 対象: ${getTargetPlanName(template.targetPlan)}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="loadTemplate(${index})" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.9em;">📂 読込</button>
+                            <button onclick="deleteTemplate(${index})" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.9em;">🗑️</button>
+                        </div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 12px; border-radius: 6px; font-size: 0.9em; color: #4b5563;">
+                        <strong>件名:</strong> ${template.subject}<br>
+                        <strong>本文:</strong> ${template.mainContent.substring(0, 100)}${template.mainContent.length > 100 ? '...' : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        templateList.innerHTML = html;
+    }
+
+    // プラン名を日本語に変換
+    function getTargetPlanName(plan) {
+        const planNames = {
+            'all': '全会員',
+            'free': '無料会員',
+            'paid': '有料会員',
+            'standard': 'Standard会員',
+            'premium': 'Premium会員'
+        };
+        return planNames[plan] || plan;
+    }
+
+    // テンプレートを読み込み
+    function loadTemplate(index) {
+        try {
+            const templates = JSON.parse(localStorage.getItem('email-templates') || '[]');
+            if (index < 0 || index >= templates.length) {
+                alert('テンプレートが見つかりません');
+                return;
+            }
+            
+            const template = templates[index];
+            
+            // 確認ダイアログ
+            if (!confirm(`テンプレート「${template.name}」を読み込みますか？\n現在の入力内容は上書きされます。`)) {
+                return;
+            }
+            
+            // フォームに値を設定
+            document.getElementById('subject').value = template.subject || '';
+            document.getElementById('mainContent').value = template.mainContent || '';
+            document.getElementById('templateType').value = template.templateType || 'prediction';
+            document.getElementById('targetPlan').value = template.targetPlan || 'all';
+            document.getElementById('customCtaText').value = template.customCtaText || '';
+            document.getElementById('customCtaUrl').value = template.customCtaUrl || '';
+            
+            if (document.getElementById('showCtaButton')) {
+                document.getElementById('showCtaButton').checked = template.showCtaButton !== false;
+            }
+            
+            // テンプレートタイプ固有の設定
+            if (template.predictionNote) {
+                const predNoteEl = document.getElementById('predictionNote');
+                if (predNoteEl) predNoteEl.value = template.predictionNote;
+            }
+            
+            if (template.additionalSection) {
+                const addSectionEl = document.getElementById('additionalSection');
+                if (addSectionEl) addSectionEl.value = template.additionalSection;
+            }
+            
+            // カスタムフィールド
+            if (template.customHeadline) {
+                const customHeadlineEl = document.getElementById('customHeadline');
+                if (customHeadlineEl) customHeadlineEl.value = template.customHeadline;
+            }
+            
+            if (template.customAccent) {
+                const customAccentEl = document.getElementById('customAccent');
+                if (customAccentEl) customAccentEl.value = template.customAccent;
+            }
+            
+            // キャンペーンフィールド
+            if (template.campaignTitle) {
+                const campaignTitleEl = document.getElementById('campaignTitle');
+                if (campaignTitleEl) campaignTitleEl.value = template.campaignTitle;
+            }
+            
+            // テンプレートタイプのセクションを更新
+            setTimeout(() => {
+                updateTemplateSection();
+            }, 100);
+            
+            // プレビューをクリア
+            clearPreview();
+            
+            // モーダルを閉じる
+            hideTemplateModal();
+            
+            alert(`テンプレート「${template.name}」を読み込みました`);
+            console.log('✅ テンプレート読み込み完了:', template);
+            
+        } catch (error) {
+            console.error('テンプレート読み込みエラー:', error);
+            alert('テンプレートの読み込みに失敗しました: ' + error.message);
+        }
+    }
+
+    // テンプレートを削除
+    function deleteTemplate(index) {
+        try {
+            const templates = JSON.parse(localStorage.getItem('email-templates') || '[]');
+            if (index < 0 || index >= templates.length) {
+                alert('テンプレートが見つかりません');
+                return;
+            }
+            
+            const template = templates[index];
+            if (!confirm(`テンプレート「${template.name}」を削除しますか？\nこの操作は元に戻せません。`)) {
+                return;
+            }
+            
+            templates.splice(index, 1);
+            localStorage.setItem('email-templates', JSON.stringify(templates));
+            
+            // リストを更新
+            loadTemplateList();
+            
+            alert(`テンプレート「${template.name}」を削除しました`);
+            
+        } catch (error) {
+            console.error('テンプレート削除エラー:', error);
+            alert('テンプレートの削除に失敗しました: ' + error.message);
+        }
+    }
+
+    // 全テンプレートを削除
+    function deleteAllTemplates() {
+        const templates = JSON.parse(localStorage.getItem('email-templates') || '[]');
+        if (templates.length === 0) {
+            alert('削除するテンプレートがありません');
+            return;
+        }
+        
+        if (!confirm(`すべてのテンプレート（${templates.length}件）を削除しますか？\nこの操作は元に戻せません。`)) {
+            return;
+        }
+        
+        localStorage.removeItem('email-templates');
+        loadTemplateList();
+        alert('すべてのテンプレートを削除しました');
+    }
+
     // グローバル関数として定義（HTMLからアクセス可能にするため）
     window.removeFailedEmail = removeFailedEmail;
+    window.loadTemplate = loadTemplate;
+    window.deleteTemplate = deleteTemplate;
 
     // 現在時刻を更新する関数
     function updateCurrentTime() {
