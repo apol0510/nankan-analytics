@@ -7204,16 +7204,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }
                 
                 let successMessage;
-                if (result.wasScheduledRequest) {
-                    // 予約配信リクエストだったが、実際は即座に送信された
+                if (result.isScheduled) {
+                    // 予約配信成功
                     const scheduledDate = new Date(scheduledAt);
-                    successMessage = `📧 メール配信完了！\n\n` +
-                        `リクエスト: ${scheduledDate.toLocaleString('ja-JP')}に予約配信\n` +
-                        `実際: 即座に送信されました\n` +
-                        `対象: ${result.recipientCount}件\n\n` +
-                        `⚠️ 重要: Brevo制限により予約配信は動作しません。\n` +
-                        `すべてのメールは即座に送信されます。\n\n` +
-                        `💡 予約配信が必要な場合は、指定時刻に手動で配信してください。`;
+                    successMessage = `🚀 予約配信登録完了！\n\n` +
+                        `件名: ${result.data.subject}\n` +
+                        `配信予定: ${result.data.scheduledTime}\n` +
+                        `対象: ${result.data.recipientCount}件\n` +
+                        `ジョブID: ${result.jobId}\n\n` +
+                        `✅ 自作スケジューラーで確実配信されます！\n` +
+                        `${result.data.note}`;
                 } else if (result.failedCount > 0) {
                     successMessage = `⚠️ 配信完了！成功: ${result.recipientCount}件、失敗: ${result.failedCount}件`;
                 } else {
