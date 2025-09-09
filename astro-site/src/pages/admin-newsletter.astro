@@ -1653,6 +1653,303 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </div>
                 </div>
             </div>
+
+            <!-- 配信キューシステム -->
+            <div class="card">
+                <h2 style="color: #7c2d12; font-weight: 600;">⚡ 配信キューシステム</h2>
+                <div style="background: linear-gradient(135deg, #7c2d12 0%, #dc2626 100%); border-radius: 10px; padding: 20px; margin-bottom: 20px; color: white;">
+                    <div style="text-align: center;">
+                        <h3 style="margin: 0 0 10px 0; color: white;">🚀 高速・確実な配信管理</h3>
+                        <p style="margin: 0; opacity: 0.9; font-size: 0.95rem;">配信順序を最適化し、大量メール送信を効率的に処理します</p>
+                    </div>
+                </div>
+                
+                <!-- キュー監視ダッシュボード -->
+                <div style="background: #f8fafc; border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 2px solid #cbd5e0;">
+                    <h3 style="margin: 0 0 15px 0; color: #7c2d12; font-weight: 600;">📊 キュー監視ダッシュボード</h3>
+                    
+                    <!-- リアルタイム統計 -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #dc2626, #ef4444); color: white; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold;" id="queueTotalJobs">0</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">総キュー数</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold;" id="queuePendingJobs">0</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">待機中</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold;" id="queueProcessingJobs">0</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">処理中</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #10b981, #34d399); color: white; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold;" id="queueCompletedJobs">0</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">完了</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #9333ea, #a855f7); color: white; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold;" id="queueFailedJobs">0</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">失敗</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #059669, #10b981); color: white; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: bold;" id="queueThroughput">0</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">処理速度/分</div>
+                        </div>
+                    </div>
+                    
+                    <!-- キューコントロール -->
+                    <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e5e7eb;">
+                        <h4 style="margin: 0 0 15px 0; color: #374151;">🎛️ キューコントロール</h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <button id="startQueueBtn" class="btn btn-success">▶️ キュー開始</button>
+                            <button id="pauseQueueBtn" class="btn btn-warning">⏸️ 一時停止</button>
+                            <button id="stopQueueBtn" class="btn btn-danger">⏹️ 停止</button>
+                            <button id="clearQueueBtn" class="btn btn-secondary">🗑️ キュークリア</button>
+                            <div style="margin-left: 20px; display: flex; align-items: center; gap: 10px;">
+                                <label style="font-weight: 600;">処理速度:</label>
+                                <select id="queueProcessingSpeed" style="padding: 5px 10px; border: 2px solid #d1d5db; border-radius: 4px;">
+                                    <option value="1">低速 (1件/秒)</option>
+                                    <option value="5" selected>標準 (5件/秒)</option>
+                                    <option value="10">高速 (10件/秒)</option>
+                                    <option value="20">最高速 (20件/秒)</option>
+                                </select>
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <span id="queueStatus" style="padding: 4px 12px; background: #e5e7eb; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">⏹️ 停止中</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 処理進行状況 -->
+                    <div style="background: white; border-radius: 8px; padding: 15px; border: 1px solid #e5e7eb;">
+                        <h4 style="margin: 0 0 15px 0; color: #374151;">📈 処理進行状況</h4>
+                        <div style="margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span style="font-weight: 600; color: #374151;">全体の進行率</span>
+                                <span id="queueOverallProgress" style="font-weight: 600; color: #3b82f6;">0%</span>
+                            </div>
+                            <div style="background: #e5e7eb; height: 12px; border-radius: 6px; overflow: hidden;">
+                                <div id="queueProgressBar" style="background: linear-gradient(90deg, #3b82f6, #10b981); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 6px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 0.9rem;">
+                            <div>
+                                <span style="color: #6b7280;">推定残り時間:</span>
+                                <div id="queueEstimatedTime" style="font-weight: 600; color: #374151;">--</div>
+                            </div>
+                            <div>
+                                <span style="color: #6b7280;">最後の処理:</span>
+                                <div id="queueLastProcessed" style="font-weight: 600; color: #374151;">--:--</div>
+                            </div>
+                            <div>
+                                <span style="color: #6b7280;">平均処理時間:</span>
+                                <div id="queueAverageTime" style="font-weight: 600; color: #374151;">--ms</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- キュー管理 -->
+                <div style="background: #f1f5f9; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 15px 0; color: #0f172a; font-weight: 600;">📋 キュー管理</h3>
+                    
+                    <!-- 優先度設定 -->
+                    <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e5e7eb;">
+                        <h4 style="margin: 0 0 15px 0; color: #374151;">🔥 優先度設定</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">配信優先度</label>
+                                <select id="emailPriority" style="width: 100%; padding: 8px; border: 2px solid #d1d5db; border-radius: 6px;">
+                                    <option value="low">低 - 通常配信</option>
+                                    <option value="normal" selected>標準 - 定期配信</option>
+                                    <option value="high">高 - 重要通知</option>
+                                    <option value="urgent">緊急 - 即座に処理</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">バッチサイズ</label>
+                                <select id="batchSize" style="width: 100%; padding: 8px; border: 2px solid #d1d5db; border-radius: 6px;">
+                                    <option value="10">小 (10件/バッチ)</option>
+                                    <option value="50" selected>標準 (50件/バッチ)</option>
+                                    <option value="100">大 (100件/バッチ)</option>
+                                    <option value="250">特大 (250件/バッチ)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">再試行回数</label>
+                                <select id="retryCount" style="width: 100%; padding: 8px; border: 2px solid #d1d5db; border-radius: 6px;">
+                                    <option value="0">なし</option>
+                                    <option value="1">1回</option>
+                                    <option value="3" selected>3回 (推奨)</option>
+                                    <option value="5">5回</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- キューアクション -->
+                    <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e5e7eb;">
+                        <h4 style="margin: 0 0 15px 0; color: #374151;">⚡ クイックアクション</h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button id="addToQueueBtn" class="btn btn-primary">➕ キューに追加</button>
+                            <button id="priorityQueueBtn" class="btn btn-warning">🔥 優先キューに追加</button>
+                            <button id="scheduleQueueBtn" class="btn btn-info">📅 スケジュール追加</button>
+                            <button id="bulkQueueBtn" class="btn btn-secondary">📦 一括追加</button>
+                        </div>
+                    </div>
+                    
+                    <!-- スケジュール配信 -->
+                    <div id="scheduleQueueSection" style="display: none; background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 2px solid #3b82f6;">
+                        <h4 style="margin: 0 0 15px 0; color: #1e40af;">📅 スケジュール配信設定</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">配信日時</label>
+                                <input type="datetime-local" id="scheduleDateTime" style="width: 100%; padding: 8px; border: 2px solid #d1d5db; border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">タイムゾーン</label>
+                                <select id="scheduleTimezone" style="width: 100%; padding: 8px; border: 2px solid #d1d5db; border-radius: 6px;">
+                                    <option value="Asia/Tokyo">日本時間 (JST)</option>
+                                    <option value="UTC">協定世界時 (UTC)</option>
+                                    <option value="America/New_York">東部時間 (EST)</option>
+                                    <option value="Europe/London">グリニッジ標準時 (GMT)</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: end;">
+                                <button id="confirmScheduleBtn" class="btn btn-success" style="width: 100%;">✅ スケジュール確定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- キューリスト表示 -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid #e5e7eb;">
+                    <h3 style="margin: 0 0 15px 0; color: #374151; font-weight: 600;">📋 キュー一覧</h3>
+                    
+                    <!-- フィルター・ソート -->
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e5e7eb;">
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem;">フィルター</label>
+                                <select id="queueFilter" style="padding: 6px 12px; border: 2px solid #d1d5db; border-radius: 4px; font-size: 0.9rem;">
+                                    <option value="all">全て</option>
+                                    <option value="pending">待機中</option>
+                                    <option value="processing">処理中</option>
+                                    <option value="completed">完了</option>
+                                    <option value="failed">失敗</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem;">ソート</label>
+                                <select id="queueSort" style="padding: 6px 12px; border: 2px solid #d1d5db; border-radius: 4px; font-size: 0.9rem;">
+                                    <option value="priority">優先度順</option>
+                                    <option value="created">作成日時</option>
+                                    <option value="scheduled">予定日時</option>
+                                    <option value="status">ステータス</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem;">表示件数</label>
+                                <select id="queueLimit" style="padding: 6px 12px; border: 2px solid #d1d5db; border-radius: 4px; font-size: 0.9rem;">
+                                    <option value="10">10件</option>
+                                    <option value="25" selected>25件</option>
+                                    <option value="50">50件</option>
+                                    <option value="100">100件</option>
+                                </select>
+                            </div>
+                            <div style="margin-left: auto;">
+                                <button id="refreshQueueBtn" class="btn btn-info" style="padding: 6px 12px; font-size: 0.9rem;">🔄 更新</button>
+                                <button id="exportQueueBtn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.9rem;">💾 エクスポート</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- キューリスト -->
+                    <div id="queueListContainer" style="max-height: 500px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <div style="text-align: center; padding: 40px; color: #6b7280;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">⚡</div>
+                            <p style="margin: 0;">キュー項目が表示されます</p>
+                            <small>「キューに追加」ボタンでメール配信をキューに登録してください</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- キュー統計・パフォーマンス -->
+                <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 10px; padding: 20px; border: 1px solid #cbd5e0;">
+                    <h3 style="margin: 0 0 15px 0; color: #374151; font-weight: 600;">📊 パフォーマンス統計</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                        <!-- 処理時間統計 -->
+                        <div style="background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h4 style="margin: 0 0 15px 0; color: #374151;">⏱️ 処理時間統計</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div style="text-align: center; padding: 10px; background: #dbeafe; border-radius: 6px;">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #1e40af;" id="avgProcessingTime">--</div>
+                                    <div style="font-size: 0.8rem; color: #1e40af;">平均処理時間</div>
+                                </div>
+                                <div style="text-align: center; padding: 10px; background: #ecfdf5; border-radius: 6px;">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #047857;" id="minProcessingTime">--</div>
+                                    <div style="font-size: 0.8rem; color: #047857;">最短時間</div>
+                                </div>
+                                <div style="text-align: center; padding: 10px; background: #fef3c7; border-radius: 6px;">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #92400e;" id="maxProcessingTime">--</div>
+                                    <div style="font-size: 0.8rem; color: #92400e;">最長時間</div>
+                                </div>
+                                <div style="text-align: center; padding: 10px; background: #f3e8ff; border-radius: 6px;">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #7c2d12;" id="totalProcessingTime">--</div>
+                                    <div style="font-size: 0.8rem; color: #7c2d12;">累積時間</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- エラー統計 -->
+                        <div style="background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h4 style="margin: 0 0 15px 0; color: #374151;">⚠️ エラー統計</h4>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>成功率:</span>
+                                    <span id="queueSuccessRate" style="font-weight: 600; color: #059669;">--</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>エラー率:</span>
+                                    <span id="queueErrorRate" style="font-weight: 600; color: #dc2626;">--</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>再試行率:</span>
+                                    <span id="queueRetryRate" style="font-weight: 600; color: #f59e0b;">--</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>総処理数:</span>
+                                    <span id="queueTotalProcessed" style="font-weight: 600; color: #3b82f6;">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- システム健康状態 -->
+                    <div style="background: white; border-radius: 8px; padding: 15px; border-left: 4px solid #10b981;">
+                        <h4 style="margin: 0 0 10px 0; color: #047857;">💚 システム健康状態</h4>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem;">
+                            <div>
+                                <span style="color: #6b7280;">メモリ使用量:</span>
+                                <span id="memoryUsage" style="font-weight: 600; color: #374151;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: #6b7280;">CPU使用率:</span>
+                                <span id="cpuUsage" style="font-weight: 600; color: #374151;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: #6b7280;">アップタイム:</span>
+                                <span id="systemUptime" style="font-weight: 600; color: #374151;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: #6b7280;">最後の健康チェック:</span>
+                                <span id="lastHealthCheck" style="font-weight: 600; color: #374151;">--:--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -5569,6 +5866,771 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
     };
 
+    // ====================
+    // 6. 配信キューシステム JavaScript実装
+    // ====================
+
+    // キューマネージャー
+    const queueManager = {
+        // キューの状態
+        isRunning: false,
+        isPaused: false,
+        currentQueue: [],
+        processingQueue: [],
+        completedQueue: [],
+        failedQueue: [],
+        
+        // 設定
+        config: {
+            maxConcurrent: 3,
+            batchSize: 50,
+            retryCount: 3,
+            retryDelay: 5000,
+            processDelay: 1000,
+            priority: 'normal' // high, normal, low
+        },
+
+        // 統計
+        stats: {
+            totalProcessed: 0,
+            totalSuccess: 0,
+            totalFailed: 0,
+            startTime: null,
+            lastProcessedTime: null,
+            averageProcessingTime: 0,
+            throughput: 0
+        },
+
+        // キューにジョブを追加
+        addJob(job) {
+            const queueJob = {
+                id: `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                type: job.type || 'email',
+                priority: job.priority || this.config.priority,
+                data: job.data,
+                recipients: job.recipients || [],
+                createdAt: new Date().toISOString(),
+                status: 'pending',
+                attempts: 0,
+                maxAttempts: job.maxAttempts || this.config.retryCount,
+                estimatedProcessingTime: this.estimateProcessingTime(job),
+                progress: 0
+            };
+
+            // 優先度に基づいてソート挿入
+            this.insertByPriority(queueJob);
+            this.updateQueueDisplay();
+            this.updateStats();
+            
+            console.log(`✅ キューにジョブを追加: ${queueJob.id} (${queueJob.type})`);
+            this.logActivity(`新しいジョブが追加されました: ${queueJob.type}`, 'info');
+            
+            return queueJob.id;
+        },
+
+        // 優先度に基づいてキューに挿入
+        insertByPriority(job) {
+            const priorityOrder = { high: 0, normal: 1, low: 2 };
+            const jobPriority = priorityOrder[job.priority] || 1;
+            
+            let insertIndex = this.currentQueue.length;
+            for (let i = 0; i < this.currentQueue.length; i++) {
+                const existingPriority = priorityOrder[this.currentQueue[i].priority] || 1;
+                if (jobPriority < existingPriority) {
+                    insertIndex = i;
+                    break;
+                }
+            }
+            
+            this.currentQueue.splice(insertIndex, 0, job);
+        },
+
+        // 処理時間を推定
+        estimateProcessingTime(job) {
+            const baseTime = {
+                email: 2000,
+                sms: 1000,
+                push: 500
+            };
+            
+            const recipientCount = job.recipients ? job.recipients.length : 1;
+            const typeTime = baseTime[job.type] || 2000;
+            
+            return typeTime * Math.ceil(recipientCount / this.config.batchSize);
+        },
+
+        // キュー処理開始
+        async startQueue() {
+            if (this.isRunning) {
+                console.log('⚠️ キューは既に実行中です');
+                return;
+            }
+
+            this.isRunning = true;
+            this.isPaused = false;
+            this.stats.startTime = new Date().toISOString();
+            
+            console.log('🚀 キュー処理を開始します');
+            this.logActivity('キュー処理を開始しました', 'success');
+            
+            this.updateQueueControls();
+            this.processQueue();
+        },
+
+        // キュー処理停止
+        stopQueue() {
+            this.isRunning = false;
+            this.isPaused = false;
+            
+            console.log('⏹️ キュー処理を停止しました');
+            this.logActivity('キュー処理を停止しました', 'warning');
+            
+            this.updateQueueControls();
+        },
+
+        // キュー処理一時停止
+        pauseQueue() {
+            this.isPaused = !this.isPaused;
+            
+            const status = this.isPaused ? '一時停止' : '再開';
+            console.log(`⏸️ キュー処理を${status}しました`);
+            this.logActivity(`キュー処理を${status}しました`, 'info');
+            
+            this.updateQueueControls();
+            
+            if (!this.isPaused && this.isRunning) {
+                this.processQueue();
+            }
+        },
+
+        // メインの処理ループ
+        async processQueue() {
+            while (this.isRunning && this.currentQueue.length > 0) {
+                if (this.isPaused) {
+                    await this.delay(1000);
+                    continue;
+                }
+
+                // 同時実行数制御
+                if (this.processingQueue.length >= this.config.maxConcurrent) {
+                    await this.delay(500);
+                    continue;
+                }
+
+                // 次のジョブを取得
+                const job = this.currentQueue.shift();
+                if (!job) break;
+
+                // 処理キューに移動
+                job.status = 'processing';
+                job.startTime = new Date().toISOString();
+                this.processingQueue.push(job);
+                
+                this.updateQueueDisplay();
+                
+                // ジョブを非同期で処理
+                this.processJob(job).catch(error => {
+                    console.error(`❌ ジョブ処理エラー: ${job.id}`, error);
+                });
+
+                // 処理間隔
+                await this.delay(this.config.processDelay);
+            }
+
+            // 全ジョブ完了チェック
+            if (this.isRunning && this.currentQueue.length === 0 && this.processingQueue.length === 0) {
+                this.completeQueue();
+            }
+        },
+
+        // 個別ジョブ処理
+        async processJob(job) {
+            try {
+                console.log(`📧 ジョブ処理開始: ${job.id} (${job.type})`);
+                this.logActivity(`ジョブ処理開始: ${job.type} - ${job.recipients.length}件`, 'info');
+
+                // バッチごとに処理
+                const batches = this.createBatches(job.recipients, this.config.batchSize);
+                let successCount = 0;
+                let failedCount = 0;
+
+                for (let i = 0; i < batches.length; i++) {
+                    const batch = batches[i];
+                    const batchResult = await this.processBatch(job, batch, i + 1, batches.length);
+                    
+                    successCount += batchResult.success;
+                    failedCount += batchResult.failed;
+                    
+                    // プログレスの更新
+                    job.progress = Math.round(((i + 1) / batches.length) * 100);
+                    this.updateJobProgress(job);
+                    
+                    // バッチ間の待機
+                    if (i < batches.length - 1) {
+                        await this.delay(this.config.processDelay);
+                    }
+                }
+
+                // ジョブ完了処理
+                job.endTime = new Date().toISOString();
+                job.status = failedCount === 0 ? 'completed' : 'partial';
+                job.results = {
+                    total: job.recipients.length,
+                    success: successCount,
+                    failed: failedCount,
+                    processingTime: Date.now() - new Date(job.startTime).getTime()
+                };
+
+                // 統計の更新
+                this.stats.totalProcessed++;
+                this.stats.totalSuccess += successCount;
+                this.stats.totalFailed += failedCount;
+                this.stats.lastProcessedTime = new Date().toISOString();
+                
+                this.updateAverageProcessingTime(job.results.processingTime);
+
+                // 処理キューから完了キューに移動
+                this.moveJobToCompleted(job);
+
+                console.log(`✅ ジョブ完了: ${job.id} - 成功: ${successCount}, 失敗: ${failedCount}`);
+                this.logActivity(`ジョブ完了: ${job.type} - 成功: ${successCount}, 失敗: ${failedCount}`, 
+                               failedCount === 0 ? 'success' : 'warning');
+
+            } catch (error) {
+                console.error(`❌ ジョブ処理失敗: ${job.id}`, error);
+                
+                job.attempts++;
+                job.lastError = error.message;
+                job.status = 'error';
+
+                // リトライ処理
+                if (job.attempts < job.maxAttempts) {
+                    console.log(`🔄 ジョブをリトライします: ${job.id} (${job.attempts}/${job.maxAttempts})`);
+                    this.logActivity(`ジョブをリトライします: ${job.type} (${job.attempts}/${job.maxAttempts})`, 'warning');
+                    
+                    // リトライ用にキューに戻す
+                    setTimeout(() => {
+                        job.status = 'pending';
+                        this.insertByPriority(job);
+                        this.removeFromProcessing(job);
+                    }, this.config.retryDelay);
+                } else {
+                    // 失敗キューに移動
+                    job.status = 'failed';
+                    this.moveJobToFailed(job);
+                    this.logActivity(`ジョブが最大リトライ回数に達しました: ${job.type}`, 'error');
+                }
+            }
+        },
+
+        // バッチ処理
+        async processBatch(job, recipients, batchNum, totalBatches) {
+            try {
+                console.log(`📦 バッチ処理 ${batchNum}/${totalBatches}: ${recipients.length}件`);
+                
+                let successCount = 0;
+                let failedCount = 0;
+
+                // ジョブタイプに応じた処理
+                switch (job.type) {
+                    case 'email':
+                        const emailResult = await this.sendEmailBatch(job.data, recipients);
+                        successCount = emailResult.success;
+                        failedCount = emailResult.failed;
+                        break;
+                    
+                    case 'sms':
+                        const smsResult = await this.sendSMSBatch(job.data, recipients);
+                        successCount = smsResult.success;
+                        failedCount = smsResult.failed;
+                        break;
+                    
+                    default:
+                        // テスト処理（実際の送信をシミュレート）
+                        await this.delay(Math.random() * 2000 + 1000);
+                        successCount = recipients.length;
+                        failedCount = 0;
+                }
+
+                return { success: successCount, failed: failedCount };
+
+            } catch (error) {
+                console.error('❌ バッチ処理エラー:', error);
+                return { success: 0, failed: recipients.length };
+            }
+        },
+
+        // メール送信シミュレーション（実装時は実際のAPI呼び出しに置き換え）
+        async sendEmailBatch(emailData, recipients) {
+            await this.delay(Math.random() * 1000 + 500);
+            
+            // 90%成功率でシミュレート
+            const successRate = 0.9;
+            const successCount = Math.floor(recipients.length * successRate);
+            const failedCount = recipients.length - successCount;
+            
+            return { success: successCount, failed: failedCount };
+        },
+
+        // SMSバッチ送信（将来の実装用）
+        async sendSMSBatch(smsData, recipients) {
+            await this.delay(Math.random() * 800 + 300);
+            
+            // SMS送信シミュレーション
+            const successCount = recipients.length;
+            const failedCount = 0;
+            
+            return { success: successCount, failed: failedCount };
+        },
+
+        // 受信者リストをバッチに分割
+        createBatches(recipients, batchSize) {
+            const batches = [];
+            for (let i = 0; i < recipients.length; i += batchSize) {
+                batches.push(recipients.slice(i, i + batchSize));
+            }
+            return batches;
+        },
+
+        // ジョブを完了キューに移動
+        moveJobToCompleted(job) {
+            this.removeFromProcessing(job);
+            this.completedQueue.unshift(job); // 最新を先頭に
+            
+            // 完了キューの上限管理（最新100件まで保持）
+            if (this.completedQueue.length > 100) {
+                this.completedQueue = this.completedQueue.slice(0, 100);
+            }
+            
+            this.updateQueueDisplay();
+        },
+
+        // ジョブを失敗キューに移動
+        moveJobToFailed(job) {
+            this.removeFromProcessing(job);
+            this.failedQueue.unshift(job);
+            
+            // 失敗キューの上限管理
+            if (this.failedQueue.length > 50) {
+                this.failedQueue = this.failedQueue.slice(0, 50);
+            }
+            
+            this.updateQueueDisplay();
+        },
+
+        // 処理キューからジョブを削除
+        removeFromProcessing(job) {
+            this.processingQueue = this.processingQueue.filter(j => j.id !== job.id);
+        },
+
+        // キュー全体完了処理
+        completeQueue() {
+            this.isRunning = false;
+            this.isPaused = false;
+            
+            const processingTime = this.stats.startTime ? 
+                Date.now() - new Date(this.stats.startTime).getTime() : 0;
+            
+            console.log(`🎉 全キュー処理完了 - 処理時間: ${Math.round(processingTime / 1000)}秒`);
+            this.logActivity(`全キュー処理完了 - 処理時間: ${Math.round(processingTime / 1000)}秒`, 'success');
+            
+            this.updateQueueControls();
+            this.updateThroughput();
+        },
+
+        // スループット更新
+        updateThroughput() {
+            if (this.stats.startTime && this.stats.totalProcessed > 0) {
+                const elapsedMinutes = (Date.now() - new Date(this.stats.startTime).getTime()) / (1000 * 60);
+                this.stats.throughput = Math.round(this.stats.totalProcessed / elapsedMinutes);
+            }
+        },
+
+        // 平均処理時間更新
+        updateAverageProcessingTime(processingTime) {
+            if (this.stats.averageProcessingTime === 0) {
+                this.stats.averageProcessingTime = processingTime;
+            } else {
+                this.stats.averageProcessingTime = Math.round(
+                    (this.stats.averageProcessingTime + processingTime) / 2
+                );
+            }
+        },
+
+        // ジョブの進捗更新
+        updateJobProgress(job) {
+            const jobElement = document.querySelector(`[data-job-id="${job.id}"]`);
+            if (jobElement) {
+                const progressBar = jobElement.querySelector('.progress-bar');
+                const progressText = jobElement.querySelector('.progress-text');
+                
+                if (progressBar) {
+                    progressBar.style.width = `${job.progress}%`;
+                }
+                if (progressText) {
+                    progressText.textContent = `${job.progress}%`;
+                }
+            }
+        },
+
+        // UIコントロール更新
+        updateQueueControls() {
+            const startBtn = document.getElementById('startQueueBtn');
+            const pauseBtn = document.getElementById('pauseQueueBtn');
+            const stopBtn = document.getElementById('stopQueueBtn');
+            
+            if (startBtn) {
+                startBtn.disabled = this.isRunning;
+                startBtn.textContent = this.isRunning ? '実行中...' : 'キュー開始';
+            }
+            
+            if (pauseBtn) {
+                pauseBtn.disabled = !this.isRunning;
+                pauseBtn.textContent = this.isPaused ? '再開' : '一時停止';
+            }
+            
+            if (stopBtn) {
+                stopBtn.disabled = !this.isRunning;
+            }
+        },
+
+        // キュー表示の更新
+        updateQueueDisplay() {
+            this.updateQueueList('pending', this.currentQueue);
+            this.updateQueueList('processing', this.processingQueue);
+            this.updateQueueList('completed', this.completedQueue);
+            this.updateQueueList('failed', this.failedQueue);
+            this.updateStats();
+        },
+
+        // 個別キューリスト更新
+        updateQueueList(type, queue) {
+            const container = document.getElementById(`${type}QueueList`);
+            if (!container) return;
+
+            if (queue.length === 0) {
+                container.innerHTML = `<div class="queue-empty">キューにジョブがありません</div>`;
+                return;
+            }
+
+            const queueHtml = queue.map(job => `
+                <div class="queue-item ${job.priority}" data-job-id="${job.id}">
+                    <div class="job-header">
+                        <div class="job-info">
+                            <span class="job-id">${job.id}</span>
+                            <span class="job-type">${this.getJobTypeIcon(job.type)} ${job.type.toUpperCase()}</span>
+                            <span class="job-priority priority-${job.priority}">
+                                ${job.priority.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="job-actions">
+                            ${this.getJobActions(job)}
+                        </div>
+                    </div>
+                    <div class="job-details">
+                        <div class="job-recipients">
+                            📧 受信者: ${job.recipients.length}件
+                        </div>
+                        <div class="job-time">
+                            ⏰ 作成: ${new Date(job.createdAt).toLocaleTimeString()}
+                            ${job.startTime ? `| 開始: ${new Date(job.startTime).toLocaleTimeString()}` : ''}
+                            ${job.endTime ? `| 完了: ${new Date(job.endTime).toLocaleTimeString()}` : ''}
+                        </div>
+                        ${job.status === 'processing' ? `
+                            <div class="job-progress">
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: ${job.progress}%"></div>
+                                </div>
+                                <span class="progress-text">${job.progress}%</span>
+                            </div>
+                        ` : ''}
+                        ${job.results ? `
+                            <div class="job-results">
+                                ✅ 成功: ${job.results.success} | ❌ 失敗: ${job.results.failed}
+                                | ⏱️ 処理時間: ${Math.round(job.results.processingTime / 1000)}秒
+                            </div>
+                        ` : ''}
+                        ${job.lastError ? `
+                            <div class="job-error">❌ エラー: ${job.lastError}</div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = queueHtml;
+        },
+
+        // ジョブタイプアイコン取得
+        getJobTypeIcon(type) {
+            const icons = {
+                email: '📧',
+                sms: '💬',
+                push: '🔔'
+            };
+            return icons[type] || '📋';
+        },
+
+        // ジョブアクション取得
+        getJobActions(job) {
+            const actions = [];
+            
+            if (job.status === 'pending') {
+                actions.push(`<button class="btn-small" onclick="queueManager.removeJob('${job.id}')">削除</button>`);
+                actions.push(`<button class="btn-small" onclick="queueManager.prioritizeJob('${job.id}')">優先化</button>`);
+            }
+            
+            if (job.status === 'failed') {
+                actions.push(`<button class="btn-small" onclick="queueManager.retryJob('${job.id}')">再実行</button>`);
+            }
+            
+            return actions.join(' ');
+        },
+
+        // ジョブ削除
+        removeJob(jobId) {
+            this.currentQueue = this.currentQueue.filter(job => job.id !== jobId);
+            this.updateQueueDisplay();
+            this.logActivity(`ジョブを削除しました: ${jobId}`, 'warning');
+        },
+
+        // ジョブ優先化
+        prioritizeJob(jobId) {
+            const job = this.currentQueue.find(j => j.id === jobId);
+            if (job) {
+                job.priority = 'high';
+                this.currentQueue = this.currentQueue.filter(j => j.id !== jobId);
+                this.insertByPriority(job);
+                this.updateQueueDisplay();
+                this.logActivity(`ジョブを優先化しました: ${jobId}`, 'info');
+            }
+        },
+
+        // ジョブ再実行
+        retryJob(jobId) {
+            const job = this.failedQueue.find(j => j.id === jobId);
+            if (job) {
+                job.status = 'pending';
+                job.attempts = 0;
+                job.lastError = null;
+                
+                this.failedQueue = this.failedQueue.filter(j => j.id !== jobId);
+                this.insertByPriority(job);
+                this.updateQueueDisplay();
+                this.logActivity(`ジョブを再実行に設定しました: ${jobId}`, 'info');
+            }
+        },
+
+        // 統計更新
+        updateStats() {
+            const elements = {
+                totalJobs: document.getElementById('totalJobs'),
+                pendingJobs: document.getElementById('pendingJobs'),
+                processingJobs: document.getElementById('processingJobs'),
+                completedJobs: document.getElementById('completedJobs'),
+                failedJobs: document.getElementById('failedJobs'),
+                successRate: document.getElementById('successRate'),
+                avgProcessingTime: document.getElementById('avgProcessingTime'),
+                throughput: document.getElementById('throughput')
+            };
+
+            const totalJobs = this.currentQueue.length + this.processingQueue.length + 
+                            this.completedQueue.length + this.failedQueue.length;
+            
+            const successRate = this.stats.totalProcessed > 0 ? 
+                Math.round((this.stats.totalSuccess / (this.stats.totalSuccess + this.stats.totalFailed)) * 100) : 0;
+
+            if (elements.totalJobs) elements.totalJobs.textContent = totalJobs;
+            if (elements.pendingJobs) elements.pendingJobs.textContent = this.currentQueue.length;
+            if (elements.processingJobs) elements.processingJobs.textContent = this.processingQueue.length;
+            if (elements.completedJobs) elements.completedJobs.textContent = this.completedQueue.length;
+            if (elements.failedJobs) elements.failedJobs.textContent = this.failedQueue.length;
+            if (elements.successRate) elements.successRate.textContent = `${successRate}%`;
+            if (elements.avgProcessingTime) {
+                elements.avgProcessingTime.textContent = `${Math.round(this.stats.averageProcessingTime / 1000)}秒`;
+            }
+            if (elements.throughput) elements.throughput.textContent = `${this.stats.throughput}/分`;
+        },
+
+        // アクティビティログ
+        logActivity(message, type = 'info') {
+            const activityLog = document.getElementById('queueActivityLog');
+            if (!activityLog) return;
+
+            const logEntry = document.createElement('div');
+            logEntry.className = `activity-entry ${type}`;
+            logEntry.innerHTML = `
+                <span class="activity-time">${new Date().toLocaleTimeString()}</span>
+                <span class="activity-message">${message}</span>
+            `;
+
+            activityLog.insertBefore(logEntry, activityLog.firstChild);
+
+            // ログ上限管理（最新50件まで）
+            while (activityLog.children.length > 50) {
+                activityLog.removeChild(activityLog.lastChild);
+            }
+        },
+
+        // 設定更新
+        updateConfig(newConfig) {
+            this.config = { ...this.config, ...newConfig };
+            this.logActivity('キュー設定を更新しました', 'info');
+            console.log('📝 キュー設定更新:', this.config);
+        },
+
+        // キューリセット
+        resetQueue() {
+            if (this.isRunning) {
+                this.stopQueue();
+            }
+            
+            this.currentQueue = [];
+            this.processingQueue = [];
+            this.completedQueue = [];
+            this.failedQueue = [];
+            this.stats = {
+                totalProcessed: 0,
+                totalSuccess: 0,
+                totalFailed: 0,
+                startTime: null,
+                lastProcessedTime: null,
+                averageProcessingTime: 0,
+                throughput: 0
+            };
+            
+            this.updateQueueDisplay();
+            this.logActivity('キューをリセットしました', 'warning');
+        },
+
+        // ユーティリティ: 遅延
+        delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    };
+
+    // キューシステムのイベントハンドラー
+    function setupQueueEventHandlers() {
+        // キュー開始ボタン
+        const startQueueBtn = document.getElementById('startQueueBtn');
+        if (startQueueBtn) {
+            startQueueBtn.addEventListener('click', () => {
+                queueManager.startQueue();
+            });
+        }
+
+        // キュー一時停止ボタン
+        const pauseQueueBtn = document.getElementById('pauseQueueBtn');
+        if (pauseQueueBtn) {
+            pauseQueueBtn.addEventListener('click', () => {
+                queueManager.pauseQueue();
+            });
+        }
+
+        // キュー停止ボタン
+        const stopQueueBtn = document.getElementById('stopQueueBtn');
+        if (stopQueueBtn) {
+            stopQueueBtn.addEventListener('click', () => {
+                queueManager.stopQueue();
+            });
+        }
+
+        // キューリセットボタン
+        const resetQueueBtn = document.getElementById('resetQueueBtn');
+        if (resetQueueBtn) {
+            resetQueueBtn.addEventListener('click', () => {
+                if (confirm('本当にキューをリセットしますか？全てのジョブが削除されます。')) {
+                    queueManager.resetQueue();
+                }
+            });
+        }
+
+        // 設定更新フォーム
+        const queueConfigForm = document.getElementById('queueConfigForm');
+        if (queueConfigForm) {
+            queueConfigForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(queueConfigForm);
+                const config = {
+                    maxConcurrent: parseInt(formData.get('maxConcurrent')) || 3,
+                    batchSize: parseInt(formData.get('batchSize')) || 50,
+                    retryCount: parseInt(formData.get('retryCount')) || 3,
+                    processDelay: parseInt(formData.get('processDelay')) || 1000,
+                    priority: formData.get('priority') || 'normal'
+                };
+                
+                queueManager.updateConfig(config);
+                showNotification('キュー設定を更新しました', 'success');
+            });
+        }
+
+        // テストジョブ追加ボタン
+        const addTestJobBtn = document.getElementById('addTestJobBtn');
+        if (addTestJobBtn) {
+            addTestJobBtn.addEventListener('click', () => {
+                const testJob = {
+                    type: 'email',
+                    priority: 'normal',
+                    data: {
+                        subject: 'テストメール',
+                        content: 'これはキューシステムのテストです。'
+                    },
+                    recipients: Array.from({ length: 10 }, (_, i) => ({
+                        email: `test${i + 1}@example.com`,
+                        name: `テストユーザー${i + 1}`
+                    }))
+                };
+                
+                const jobId = queueManager.addJob(testJob);
+                showNotification(`テストジョブを追加しました: ${jobId}`, 'success');
+            });
+        }
+
+        // 定期的な統計更新（5秒間隔）
+        setInterval(() => {
+            if (queueManager.isRunning) {
+                queueManager.updateThroughput();
+                queueManager.updateStats();
+            }
+        }, 5000);
+    }
+
+    // メールフォームからのキュージョブ作成
+    function createQueueJobFromEmail() {
+        const recipients = getSelectedRecipients();
+        if (recipients.length === 0) {
+            showNotification('受信者を選択してください', 'error');
+            return;
+        }
+
+        const emailData = {
+            subject: document.getElementById('subject')?.value || '',
+            content: document.getElementById('content')?.value || '',
+            contentHtml: document.getElementById('contentHtml')?.value || '',
+            senderName: document.getElementById('senderName')?.value || 'NANKANアナリティクス',
+            priority: document.getElementById('emailPriority')?.value || 'normal'
+        };
+
+        if (!emailData.subject || !emailData.content) {
+            showNotification('件名と本文は必須です', 'error');
+            return;
+        }
+
+        const job = {
+            type: 'email',
+            priority: emailData.priority,
+            data: emailData,
+            recipients: recipients,
+            maxAttempts: 3
+        };
+
+        const jobId = queueManager.addJob(job);
+        showNotification(`メール配信ジョブをキューに追加しました: ${jobId}`, 'success');
+        
+        // キュータブに切り替え
+        document.querySelector('[data-tab="queue"]')?.click();
+    }
+
     // 初期表示で履歴を読み込み
     document.addEventListener('DOMContentLoaded', () => {
         loadHistory();
@@ -5580,6 +6642,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         updateUnsubscribeStats();
         setupQuickSchedule();
         initializeRecurringSettings();
+        setupQueueEventHandlers(); // キューシステムのイベントハンドラーを設定
         // 初期状態でテンプレートセクションの表示を設定
         updateTemplateSection();
         // CTAボタン設定の初期状態を設定
