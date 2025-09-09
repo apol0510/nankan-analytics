@@ -1,0 +1,473 @@
+---
+// 管理者用メルマガ配信ページ
+export const prerender = false;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="メルマガ配信管理 - NANKANアナリティクス">
+    <div class="newsletter-admin">
+        <div class="admin-header">
+            <h1>📧 メルマガ配信管理</h1>
+            <p class="subtitle">NANKANアナリティクスのメールマガジンを配信</p>
+        </div>
+
+        <div class="admin-container">
+            <!-- 配信フォーム -->
+            <div class="card">
+                <h2>新規配信作成</h2>
+                
+                <div class="form-group">
+                    <label for="subject">件名</label>
+                    <input type="text" id="subject" placeholder="例: 【NANKANアナリティクス】本日の注目レース予想" />
+                </div>
+
+                <div class="form-group">
+                    <label for="targetPlan">配信対象</label>
+                    <select id="targetPlan">
+                        <option value="all">全会員</option>
+                        <option value="free">無料会員のみ</option>
+                        <option value="paid">有料会員のみ（Standard + Premium）</option>
+                        <option value="standard">Standard会員のみ</option>
+                        <option value="premium">Premium会員のみ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="templateType">テンプレートタイプ</label>
+                    <select id="templateType">
+                        <option value="prediction">予想配信</option>
+                        <option value="result">結果報告</option>
+                        <option value="campaign">キャンペーン</option>
+                        <option value="custom">カスタム</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mainContent">本文</label>
+                    <textarea id="mainContent" rows="10" placeholder="メールの本文を入力してください"></textarea>
+                </div>
+
+                <!-- 予想セクション（予想配信タイプの場合） -->
+                <div id="predictionSection" style="display: none;">
+                    <h3>予想情報</h3>
+                    <div id="predictionsContainer">
+                        <div class="prediction-input">
+                            <input type="text" placeholder="レース名（例: 第11R メインレース）" class="race-name" />
+                            <textarea placeholder="予想馬（改行区切り）" rows="3" class="race-horses"></textarea>
+                        </div>
+                    </div>
+                    <button type="button" id="addPrediction" class="btn-secondary">+ 予想を追加</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="scheduledAt">配信予約（オプション）</label>
+                    <input type="datetime-local" id="scheduledAt" />
+                    <small>空欄の場合は即時配信されます</small>
+                </div>
+
+                <div class="button-group">
+                    <button id="previewBtn" class="btn-secondary">プレビュー</button>
+                    <button id="sendBtn" class="btn-primary">配信実行</button>
+                </div>
+            </div>
+
+            <!-- プレビューエリア -->
+            <div class="card">
+                <h2>メールプレビュー</h2>
+                <div id="previewArea" class="preview-container">
+                    <p class="preview-placeholder">配信内容をプレビューするには「プレビュー」ボタンをクリックしてください</p>
+                </div>
+            </div>
+
+            <!-- 配信履歴 -->
+            <div class="card">
+                <h2>最近の配信</h2>
+                <div id="historyArea">
+                    <p class="loading">読み込み中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
+
+<script>
+    // テンプレートタイプ変更時の処理
+    const templateType = document.getElementById('templateType');
+    const predictionSection = document.getElementById('predictionSection');
+    
+    templateType?.addEventListener('change', () => {
+        if (templateType.value === 'prediction') {
+            predictionSection.style.display = 'block';
+        } else {
+            predictionSection.style.display = 'none';
+        }
+    });
+
+    // 予想追加ボタン
+    document.getElementById('addPrediction')?.addEventListener('click', () => {
+        const container = document.getElementById('predictionsContainer');
+        const newPrediction = document.createElement('div');
+        newPrediction.className = 'prediction-input';
+        newPrediction.innerHTML = `
+            <input type="text" placeholder="レース名" class="race-name" />
+            <textarea placeholder="予想馬（改行区切り）" rows="3" class="race-horses"></textarea>
+            <button type="button" class="remove-prediction">削除</button>
+        `;
+        container.appendChild(newPrediction);
+        
+        // 削除ボタンの処理
+        newPrediction.querySelector('.remove-prediction')?.addEventListener('click', () => {
+            newPrediction.remove();
+        });
+    });
+
+    // プレビュー生成
+    document.getElementById('previewBtn')?.addEventListener('click', async () => {
+        const subject = document.getElementById('subject').value;
+        const mainContent = document.getElementById('mainContent').value;
+        const templateType = document.getElementById('templateType').value;
+        
+        if (!subject || !mainContent) {
+            alert('件名と本文を入力してください');
+            return;
+        }
+
+        // 予想データ収集
+        let predictions = [];
+        if (templateType === 'prediction') {
+            const predictionInputs = document.querySelectorAll('.prediction-input');
+            predictions = Array.from(predictionInputs).map(input => {
+                const raceName = input.querySelector('.race-name').value;
+                const horses = input.querySelector('.race-horses').value
+                    .split('\n')
+                    .filter(h => h.trim())
+                    .map(h => h.trim());
+                return { raceName, horses };
+            }).filter(p => p.raceName && p.horses.length > 0);
+        }
+
+        // HTMLテンプレート生成
+        const htmlContent = generateNewsletterHTML({
+            title: subject,
+            mainContent: mainContent,
+            predictions: predictions
+        });
+
+        // プレビュー表示
+        const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = `
+            <div class="email-frame">
+                <div class="email-header">
+                    <strong>件名:</strong> ${subject}
+                </div>
+                <iframe srcdoc="${htmlContent.replace(/"/g, '&quot;')}" style="width: 100%; height: 600px; border: 1px solid #ddd;"></iframe>
+            </div>
+        `;
+    });
+
+    // 配信実行
+    document.getElementById('sendBtn')?.addEventListener('click', async () => {
+        const subject = document.getElementById('subject').value;
+        const mainContent = document.getElementById('mainContent').value;
+        const targetPlan = document.getElementById('targetPlan').value;
+        const templateType = document.getElementById('templateType').value;
+        const scheduledAt = document.getElementById('scheduledAt').value;
+        
+        if (!subject || !mainContent) {
+            alert('件名と本文を入力してください');
+            return;
+        }
+
+        if (!confirm(`${targetPlan === 'all' ? '全会員' : targetPlan + '会員'}に配信してよろしいですか？`)) {
+            return;
+        }
+
+        // 予想データ収集
+        let predictions = [];
+        if (templateType === 'prediction') {
+            const predictionInputs = document.querySelectorAll('.prediction-input');
+            predictions = Array.from(predictionInputs).map(input => {
+                const raceName = input.querySelector('.race-name').value;
+                const horses = input.querySelector('.race-horses').value
+                    .split('\n')
+                    .filter(h => h.trim())
+                    .map(h => h.trim());
+                return { raceName, horses };
+            }).filter(p => p.raceName && p.horses.length > 0);
+        }
+
+        // HTMLテンプレート生成
+        const htmlContent = generateNewsletterHTML({
+            title: subject,
+            mainContent: mainContent,
+            predictions: predictions
+        });
+
+        try {
+            const response = await fetch('/.netlify/functions/send-newsletter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    subject,
+                    htmlContent,
+                    targetPlan,
+                    scheduledAt: scheduledAt || null
+                })
+            });
+
+            const result = await response.json();
+            
+            if (response.ok) {
+                alert(`✅ 配信成功！${result.message}`);
+                // フォームをリセット
+                document.getElementById('subject').value = '';
+                document.getElementById('mainContent').value = '';
+                document.getElementById('targetPlan').value = 'all';
+                document.getElementById('templateType').value = 'prediction';
+                document.getElementById('scheduledAt').value = '';
+            } else {
+                alert(`❌ 配信失敗: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('配信エラー:', error);
+            alert('配信中にエラーが発生しました');
+        }
+    });
+
+    // HTMLテンプレート生成関数
+    function generateNewsletterHTML({ title, mainContent, predictions = [] }) {
+        return `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 40px 30px; text-align: center; }
+        .logo { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .tagline { font-size: 14px; color: #94a3b8; }
+        .content { padding: 40px 30px; }
+        .section-title { font-size: 24px; color: #0f172a; margin-bottom: 20px; font-weight: bold; }
+        .prediction-card { background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #3b82f6; }
+        .race-title { font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 10px; }
+        .horses { margin: 10px 0; }
+        .horse-item { padding: 5px 0; color: #475569; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 30px 0; }
+        .footer { background: #f1f5f9; padding: 30px; text-align: center; color: #64748b; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏇 NANKANアナリティクス</div>
+            <div class="tagline">AI・機械学習で勝つ南関競馬</div>
+        </div>
+        
+        <div class="content">
+            <div style="color: #475569; line-height: 1.8; white-space: pre-wrap;">
+${mainContent}
+            </div>
+            
+            ${predictions.length > 0 ? `
+            <h3 style="color: #1e293b; margin-top: 40px; margin-bottom: 20px;">🎯 本日の注目予想</h3>
+            ${predictions.map(p => `
+            <div class="prediction-card">
+                <div class="race-title">🏁 ${p.raceName}</div>
+                <div class="horses">
+                    ${p.horses.map(h => `<div class="horse-item">◎ ${h}</div>`).join('')}
+                </div>
+            </div>
+            `).join('')}
+            ` : ''}
+            
+            <div style="text-align: center;">
+                <a href="https://nankan-analytics.keiba.link/pricing/" class="cta-button">
+                    有料プランで全レース予想を見る
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 NANKANアナリティクス</p>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+    }
+</script>
+
+<style>
+    .newsletter-admin {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #e2e8f0;
+        padding: 2rem;
+    }
+
+    .admin-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .admin-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: #94a3b8;
+        font-size: 1.125rem;
+    }
+
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        gap: 2rem;
+    }
+
+    .card {
+        background: rgba(30, 41, 59, 0.9);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid rgba(51, 65, 85, 0.5);
+    }
+
+    .card h2 {
+        margin-top: 0;
+        color: #f1f5f9;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 0.5rem;
+        color: #e2e8f0;
+        font-size: 1rem;
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 0.25rem;
+        color: #64748b;
+    }
+
+    .prediction-input {
+        background: rgba(15, 23, 42, 0.3);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .prediction-input input,
+    .prediction-input textarea {
+        width: 100%;
+        padding: 0.5rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 0.25rem;
+        color: #e2e8f0;
+    }
+
+    .remove-prediction {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secondary {
+        background: #475569;
+        color: #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #64748b;
+    }
+
+    .preview-container {
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        min-height: 200px;
+    }
+
+    .preview-placeholder {
+        color: #64748b;
+        text-align: center;
+        padding: 3rem;
+    }
+
+    .email-frame {
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .email-header {
+        background: #f1f5f9;
+        padding: 1rem;
+        color: #1e293b;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .loading {
+        color: #64748b;
+        text-align: center;
+        padding: 2rem;
+    }
+</style>
