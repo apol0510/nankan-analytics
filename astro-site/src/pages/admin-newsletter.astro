@@ -258,6 +258,116 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const previewArea = document.getElementById('previewArea');
         previewArea.innerHTML = '<p class="preview-placeholder">配信内容をプレビューするには「プレビュー」ボタンをクリックしてください</p>';
     }
+    
+    // プレビュー生成関数 - 全テンプレートタイプ対応
+    function generatePreview() {
+        try {
+            const subject = document.getElementById('subject').value;
+            const templateType = document.getElementById('templateType').value;
+            const mainContent = document.getElementById('mainContent').value;
+            
+            if (!subject) {
+                document.getElementById('previewArea').innerHTML = '<p class="error">件名を入力してください</p>';
+                return;
+            }
+
+            // テンプレートタイプ別データ収集
+            let templateData = {
+                subject: subject,
+                templateType: templateType,
+                theme: document.getElementById('customTheme')?.value || 'blue'
+            };
+
+            if (templateType === 'prediction') {
+                templateData.predictions = collectPredictionData();
+            } else if (templateType === 'result') {
+                templateData.results = collectResultData();
+            } else if (templateType === 'campaign') {
+                templateData.campaign = collectCampaignData();
+            } else if (templateType === 'custom') {
+                templateData.custom = collectCustomData();
+            }
+
+            // 高度なHTML生成
+            const htmlContent = generateAdvancedNewsletterHTML(templateData);
+            
+            // プレビューエリアに表示
+            const previewFrame = document.getElementById('previewFrame');
+            if (previewFrame) {
+                previewFrame.srcdoc = htmlContent;
+                console.log('✅ プレビュー生成完了 - テンプレートタイプ:', templateType);
+            }
+            
+            // HTMLコンテンツフィールドも更新
+            const htmlContentField = document.getElementById('htmlContent');
+            if (htmlContentField) {
+                htmlContentField.value = htmlContent;
+            }
+            
+        } catch (error) {
+            console.error('プレビュー生成エラー:', error);
+            document.getElementById('previewArea').innerHTML = '<p class="error">プレビュー生成エラー: ' + error.message + '</p>';
+        }
+    }
+    
+    // 予想データ収集
+    function collectPredictionData() {
+        const races = [];
+        for (let i = 1; i <= 3; i++) {
+            const raceName = document.getElementById(`race${i}Name`)?.value;
+            const horses = [];
+            for (let j = 1; j <= 3; j++) {
+                const horse = document.getElementById(`race${i}Horse${j}`)?.value;
+                if (horse) horses.push(horse);
+            }
+            if (raceName || horses.length > 0) {
+                races.push({ name: raceName || `第${i}レース`, horses });
+            }
+        }
+        return { races, highlight: document.getElementById('predictionHighlight')?.value || '' };
+    }
+    
+    // 結果データ収集
+    function collectResultData() {
+        const results = [];
+        for (let i = 1; i <= 3; i++) {
+            const raceName = document.getElementById(`result${i}Race`)?.value;
+            const prediction = document.getElementById(`result${i}Prediction`)?.value;
+            const actual = document.getElementById(`result${i}Actual`)?.value;
+            const status = document.getElementById(`result${i}Status`)?.value;
+            if (raceName || prediction) {
+                results.push({ raceName, prediction, actual, status });
+            }
+        }
+        return {
+            results,
+            monthlyHitRate: document.getElementById('monthlyHitRate')?.value || '',
+            monthlyROI: document.getElementById('monthlyROI')?.value || ''
+        };
+    }
+    
+    // キャンペーンデータ収集
+    function collectCampaignData() {
+        return {
+            title: document.getElementById('campaignTitle')?.value || '',
+            description: document.getElementById('campaignDescription')?.value || '',
+            discount: document.getElementById('campaignDiscount')?.value || '',
+            period: document.getElementById('campaignPeriod')?.value || '',
+            beforePrice: document.getElementById('campaignBeforePrice')?.value || '',
+            afterPrice: document.getElementById('campaignAfterPrice')?.value || ''
+        };
+    }
+    
+    // カスタムデータ収集
+    function collectCustomData() {
+        return {
+            headline: document.getElementById('customHeadline')?.value || '',
+            message: document.getElementById('customMessage')?.value || '',
+            feature1: document.getElementById('customFeature1')?.value || '',
+            feature2: document.getElementById('customFeature2')?.value || '',
+            feature3: document.getElementById('customFeature3')?.value || ''
+        };
+    }
 
     // プレビュークリアボタン
     document.getElementById('clearPreviewBtn')?.addEventListener('click', clearPreview);
@@ -375,6 +485,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     // 履歴更新ボタン
     document.getElementById('refreshHistoryBtn')?.addEventListener('click', loadHistory);
+    
+    // プレビューボタン
+    document.getElementById('generatePreviewBtn')?.addEventListener('click', generatePreview);
 
     // 現在時刻を更新する関数
     function updateCurrentTime() {
@@ -402,6 +515,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         updateCurrentTime();
         // 初期状態でテンプレートセクションの表示を設定
         updateTemplateSection();
+        
+        // プレビューボタンが見つからない場合の代替処理
+        const previewBtn = document.getElementById('generatePreviewBtn');
+        if (!previewBtn) {
+            console.warn('プレビューボタンが見つかりません');
+            // プレビューボタンを動的に作成
+            const previewArea = document.getElementById('previewArea');
+            if (previewArea && !document.getElementById('generatePreviewBtn')) {
+                const newPreviewBtn = document.createElement('button');
+                newPreviewBtn.id = 'generatePreviewBtn';
+                newPreviewBtn.type = 'button';
+                newPreviewBtn.textContent = '🔍 プレビュー生成';
+                newPreviewBtn.className = 'btn btn-secondary';
+                newPreviewBtn.style.marginBottom = '20px';
+                
+                previewArea.parentNode.insertBefore(newPreviewBtn, previewArea);
+                newPreviewBtn.addEventListener('click', generatePreview);
+                
+                console.log('✅ プレビューボタンを動的に作成しました');
+            }
+        } else {
+            console.log('✅ プレビューボタンが見つかりました');
+        }
+        
         console.log('ページ初期化完了');
     });
 
@@ -416,11 +553,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             return;
         }
 
-        // 予想データ収集
-        let predictions = [];
+        // テンプレートタイプ別のデータ収集
+        let templateData = {
+            title: subject,
+            mainContent: mainContent,
+            templateType: templateType
+        };
+
         if (templateType === 'prediction') {
+            // 予想データ収集
             const predictionInputs = document.querySelectorAll('.prediction-input');
-            predictions = Array.from(predictionInputs).map(input => {
+            templateData.predictions = Array.from(predictionInputs).map(input => {
                 const raceName = input.querySelector('.race-name').value;
                 const horses = input.querySelector('.race-horses').value
                     .split('\n')
@@ -428,14 +571,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     .map(h => h.trim());
                 return { raceName, horses };
             }).filter(p => p.raceName && p.horses.length > 0);
+        } else if (templateType === 'result') {
+            // 結果データ収集
+            const resultInputs = document.querySelectorAll('.result-input');
+            templateData.results = Array.from(resultInputs).map(input => {
+                const raceName = input.querySelector('.result-race-name').value;
+                const winner = input.querySelector('.result-winner').value;
+                const payout = input.querySelector('.result-payout').value;
+                const status = input.querySelector('.result-status').value;
+                return { raceName, winner, payout, status };
+            }).filter(r => r.raceName);
+            
+            templateData.monthlyHitRate = document.getElementById('monthlyHitRate')?.value || '';
+            templateData.monthlyProfit = document.getElementById('monthlyProfit')?.value || '';
+        } else if (templateType === 'campaign') {
+            // キャンペーンデータ収集
+            templateData.campaignTitle = document.getElementById('campaignTitle')?.value || '';
+            templateData.campaignDetails = document.getElementById('campaignDetails')?.value || '';
+            templateData.originalPrice = document.getElementById('originalPrice')?.value || '';
+            templateData.campaignPrice = document.getElementById('campaignPrice')?.value || '';
+            templateData.campaignDeadline = document.getElementById('campaignDeadline')?.value || '';
+            templateData.ctaText = document.getElementById('ctaText')?.value || '今すぐ申し込む';
+            templateData.ctaUrl = document.getElementById('ctaUrl')?.value || 'https://nankan-analytics.keiba.link/pricing/';
+        } else if (templateType === 'custom') {
+            // カスタムデータ収集
+            templateData.customTheme = document.getElementById('customTheme')?.value || 'default';
+            templateData.customHeadline = document.getElementById('customHeadline')?.value || '';
+            templateData.customAccent = document.getElementById('customAccent')?.value || '';
+            templateData.customCtaText = document.getElementById('customCtaText')?.value || '';
+            templateData.customCtaUrl = document.getElementById('customCtaUrl')?.value || '';
         }
 
         // HTMLテンプレート生成
-        const htmlContent = generateNewsletterHTML({
-            title: subject,
-            mainContent: mainContent,
-            predictions: predictions
-        });
+        const htmlContent = generateAdvancedNewsletterHTML(templateData);
 
         // プレビュー表示
         const previewArea = document.getElementById('previewArea');
@@ -566,8 +734,419 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
     });
 
-    // HTMLテンプレート生成関数
+    // 新しい統合テンプレート生成関数
+    function generateAdvancedNewsletterHTML(templateData) {
+        const { 
+            title, 
+            mainContent, 
+            templateType,
+            predictions = [],
+            results = [],
+            monthlyHitRate = '',
+            monthlyProfit = '',
+            campaignTitle = '',
+            campaignDetails = '',
+            originalPrice = '',
+            campaignPrice = '',
+            campaignDeadline = '',
+            ctaText = '今すぐ申し込む',
+            ctaUrl = 'https://nankan-analytics.keiba.link/pricing/',
+            customTheme = 'default',
+            customHeadline = '',
+            customAccent = '',
+            customCtaText = '',
+            customCtaUrl = ''
+        } = templateData;
+
+        // テーマ別のスタイル
+        let themeStyles = '';
+        let headerClass = 'header';
+        
+        if (customTheme === 'gold') {
+            themeStyles = `
+                .header { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+                .prediction-card, .result-card, .campaign-card { border-left-color: #f59e0b; background: #fefbf3; }
+                .cta-button { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+            `;
+        } else if (customTheme === 'red') {
+            themeStyles = `
+                .header { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+                .prediction-card, .result-card, .campaign-card { border-left-color: #ef4444; background: #fef2f2; }
+                .cta-button { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+            `;
+        } else if (customTheme === 'blue') {
+            themeStyles = `
+                .header { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+                .prediction-card, .result-card, .campaign-card { border-left-color: #3b82f6; background: #eff6ff; }
+                .cta-button { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+            `;
+        }
+
+        // カスタムヘッドライン
+        const customHeadlineHTML = customHeadline ? `
+            <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); padding: 20px; margin: 20px 0; border-radius: 12px; border-left: 4px solid #ef4444; text-align: center;">
+                <h2 style="color: #dc2626; font-size: 24px; font-weight: bold; margin: 0;">${customHeadline}</h2>
+            </div>
+        ` : '';
+
+        // カスタムアクセント
+        const customAccentHTML = customAccent ? `
+            <div style="background: #f0f9ff; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #0ea5e9;">
+                <div style="color: #0c4a6e; font-size: 18px; font-weight: 600; line-height: 1.6; white-space: pre-wrap;">${customAccent}</div>
+            </div>
+        ` : '';
+
+        return `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 40px 30px; text-align: center; }
+        .logo { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .tagline { font-size: 14px; color: #94a3b8; }
+        .content { padding: 40px 30px; }
+        .prediction-card, .result-card, .campaign-card { background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #3b82f6; }
+        .race-title { font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 10px; }
+        .horses, .result-details { margin: 10px 0; }
+        .horse-item, .result-item { padding: 5px 0; color: #475569; }
+        .hit-status { font-weight: bold; }
+        .hit-status.hit { color: #059669; }
+        .hit-status.miss { color: #dc2626; }
+        .hit-status.near { color: #d97706; }
+        .campaign-highlight { background: #fef3c7; border-radius: 8px; padding: 15px; margin: 15px 0; border-left: 4px solid #f59e0b; }
+        .price-comparison { display: flex; align-items: center; gap: 15px; margin: 15px 0; }
+        .original-price { text-decoration: line-through; color: #6b7280; font-size: 18px; }
+        .campaign-price { color: #dc2626; font-size: 24px; font-weight: bold; }
+        .deadline { background: #fee2e2; color: #dc2626; padding: 8px 12px; border-radius: 6px; font-weight: bold; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 30px 0; }
+        .stats-section { background: #f0f9ff; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #0ea5e9; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .stat-item { text-align: center; background: white; padding: 15px; border-radius: 8px; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #0c4a6e; }
+        .stat-label { font-size: 14px; color: #64748b; }
+        .footer { background: #f1f5f9; padding: 30px; text-align: center; color: #64748b; font-size: 12px; }
+        ${themeStyles}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏇 NANKANアナリティクス</div>
+            <div class="tagline">AI・機械学習で勝つ南関競馬</div>
+        </div>
+        
+        <div class="content">
+            ${customHeadlineHTML}
+            
+            <div style="color: #475569; line-height: 1.8; white-space: pre-wrap;">
+${mainContent}
+            </div>
+            
+            ${customAccentHTML}
+            
+            ${templateType === 'prediction' && predictions.length > 0 ? `
+            <h3 style="color: #1e293b; margin-top: 40px; margin-bottom: 20px;">🎯 本日の注目予想</h3>
+            ${predictions.map(p => `
+            <div class="prediction-card">
+                <div class="race-title">🏁 ${p.raceName}</div>
+                <div class="horses">
+                    ${p.horses.map(h => `<div class="horse-item">◎ ${h}</div>`).join('')}
+                </div>
+            </div>
+            `).join('')}
+            ` : ''}
+            
+            ${templateType === 'result' && results.length > 0 ? `
+            <h3 style="color: #1e293b; margin-top: 40px; margin-bottom: 20px;">📊 昨日の結果</h3>
+            ${results.map(r => `
+            <div class="result-card">
+                <div class="race-title">🏁 ${r.raceName}</div>
+                <div class="result-details">
+                    <div class="result-item">1着: <strong>${r.winner}</strong></div>
+                    <div class="result-item">配当: <strong>${r.payout}</strong></div>
+                    <div class="result-item hit-status ${r.status}">${r.status === 'hit' ? '🎯 的中！' : r.status === 'near' ? '📈 惜しい！' : '❌ 不的中'}</div>
+                </div>
+            </div>
+            `).join('')}
+            ${(monthlyHitRate || monthlyProfit) ? `
+            <div class="stats-section">
+                <h4 style="color: #0c4a6e; margin-top: 0;">📈 今月の実績</h4>
+                <div class="stats-grid">
+                    ${monthlyHitRate ? `
+                    <div class="stat-item">
+                        <div class="stat-number">${monthlyHitRate}</div>
+                        <div class="stat-label">的中率</div>
+                    </div>` : ''}
+                    ${monthlyProfit ? `
+                    <div class="stat-item">
+                        <div class="stat-number">${monthlyProfit}</div>
+                        <div class="stat-label">収支</div>
+                    </div>` : ''}
+                </div>
+            </div>
+            ` : ''}
+            ` : ''}
+            
+            ${templateType === 'campaign' && campaignTitle ? `
+            <div class="campaign-highlight">
+                <h3 style="color: #92400e; margin-top: 0;">🎪 ${campaignTitle}</h3>
+                <p style="color: #78350f; line-height: 1.6;">${campaignDetails}</p>
+                ${originalPrice && campaignPrice ? `
+                <div class="price-comparison">
+                    <span class="original-price">${originalPrice}</span>
+                    <span style="color: #dc2626;">→</span>
+                    <span class="campaign-price">${campaignPrice}</span>
+                </div>
+                ` : ''}
+                ${campaignDeadline ? `<div class="deadline">期限: ${campaignDeadline}</div>` : ''}
+            </div>
+            ` : ''}
+            
+            <div style="text-align: center;">
+                <a href="${ctaUrl}" class="cta-button">${ctaText}</a>
+                ${customCtaText && customCtaUrl ? `
+                <br><a href="${customCtaUrl}" class="cta-button" style="margin-top: 10px;">${customCtaText}</a>
+                ` : ''}
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 NANKANアナリティクス</p>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+    }
+
+    // 旧バージョンとの互換性のための関数
+    // 高度なニューズレターHTML生成 - 全テンプレートタイプ対応
+    function generateAdvancedNewsletterHTML(data) {
+        const themeColors = {
+            gold: { primary: '#f59e0b', secondary: '#fbbf24', background: '#fef3c7', text: '#92400e' },
+            red: { primary: '#dc2626', secondary: '#ef4444', background: '#fee2e2', text: '#991b1b' },
+            blue: { primary: '#3b82f6', secondary: '#60a5fa', background: '#dbeafe', text: '#1e40af' }
+        };
+        const theme = themeColors[data.theme] || themeColors.blue;
+        
+        let contentSection = '';
+        
+        if (data.templateType === 'prediction' && data.predictions) {
+            contentSection = generatePredictionContent(data.predictions, theme);
+        } else if (data.templateType === 'result' && data.results) {
+            contentSection = generateResultContent(data.results, theme);
+        } else if (data.templateType === 'campaign' && data.campaign) {
+            contentSection = generateCampaignContent(data.campaign, theme);
+        } else if (data.templateType === 'custom' && data.custom) {
+            contentSection = generateCustomContent(data.custom, theme);
+        }
+        
+        return `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.subject}</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 40px 30px; text-align: center; }
+        .logo { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .tagline { font-size: 14px; color: #94a3b8; }
+        .content { padding: 40px 30px; }
+        .section-title { font-size: 24px; color: #0f172a; margin-bottom: 20px; font-weight: bold; }
+        .themed-card { background: ${theme.background}; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid ${theme.primary}; }
+        .themed-text { color: ${theme.text}; }
+        .themed-button { display: inline-block; background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 10px 5px; }
+        .footer { background: #f1f5f9; padding: 30px; text-align: center; color: #64748b; font-size: 12px; }
+        .highlight-box { background: linear-gradient(135deg, ${theme.primary}20 0%, ${theme.secondary}20 100%); padding: 20px; border-radius: 8px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏇 NANKANアナリティクス</div>
+            <div class="tagline">AI・機械学習で勝つ南関競馬</div>
+        </div>
+        
+        <div class="content">
+            <h2 class="section-title">${data.subject}</h2>
+            ${contentSection}
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://nankan-analytics.keiba.link/pricing/" class="themed-button">有料プランで全レース予想を見る</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>このメールは NANKANアナリティクス から配信されています。</p>
+            <p>© 2025 NANKANアナリティクス All Rights Reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+    }
+    
+    // 予想テンプレートコンテンツ生成
+    function generatePredictionContent(predictions, theme) {
+        let content = `
+            <div class="highlight-box">
+                <h3 style="color: ${theme.text}; margin-top: 0;">🎯 AI解析による本日の厳選予想</h3>
+                <p style="color: ${theme.text};">機械学習アルゴリズムが導き出した高確率予想をお届けします。</p>
+            </div>
+        `;
+        
+        if (predictions.highlight) {
+            content += `
+                <div class="themed-card">
+                    <h4 class="themed-text">✨ 本日のハイライト</h4>
+                    <p class="themed-text">${predictions.highlight}</p>
+                </div>
+            `;
+        }
+        
+        if (predictions.races && predictions.races.length > 0) {
+            content += '<h3 style="margin-top: 30px;">🏁 レース予想</h3>';
+            predictions.races.forEach(race => {
+                content += `
+                    <div class="themed-card">
+                        <h4 class="themed-text">🏇 ${race.name}</h4>
+                        ${race.horses.map(horse => `<p class="themed-text">• ${horse}</p>`).join('')}
+                    </div>
+                `;
+            });
+        }
+        
+        return content;
+    }
+    
+    // 結果報告テンプレートコンテンツ生成
+    function generateResultContent(results, theme) {
+        let content = `
+            <div class="highlight-box">
+                <h3 style="color: ${theme.text}; margin-top: 0;">📊 昨日の予想結果報告</h3>
+                <p style="color: ${theme.text};">透明性のある結果報告で信頼をお届けします。</p>
+            </div>
+        `;
+        
+        if (results.monthlyHitRate || results.monthlyROI) {
+            content += `
+                <div class="themed-card">
+                    <h4 class="themed-text">📈 今月の実績サマリー</h4>
+                    ${results.monthlyHitRate ? `<p class="themed-text">的中率: <strong>${results.monthlyHitRate}</strong></p>` : ''}
+                    ${results.monthlyROI ? `<p class="themed-text">投資収益率: <strong>${results.monthlyROI}</strong></p>` : ''}
+                </div>
+            `;
+        }
+        
+        if (results.results && results.results.length > 0) {
+            content += '<h3 style="margin-top: 30px;">🎯 個別レース結果</h3>';
+            results.results.forEach(result => {
+                const statusIcon = result.status === 'hit' ? '✅' : result.status === 'miss' ? '❌' : '⏳';
+                const statusText = result.status === 'hit' ? '的中' : result.status === 'miss' ? '不的中' : '未確定';
+                content += `
+                    <div class="themed-card">
+                        <h4 class="themed-text">${statusIcon} ${result.raceName || '予想レース'}</h4>
+                        <p class="themed-text">予想: ${result.prediction}</p>
+                        ${result.actual ? `<p class="themed-text">結果: ${result.actual}</p>` : ''}
+                        <p class="themed-text">判定: <strong>${statusText}</strong></p>
+                    </div>
+                `;
+            });
+        }
+        
+        return content;
+    }
+    
+    // キャンペーンテンプレートコンテンツ生成
+    function generateCampaignContent(campaign, theme) {
+        let content = `
+            <div class="highlight-box">
+                <h3 style="color: ${theme.text}; margin-top: 0;">🎪 ${campaign.title || '特別キャンペーン開催中'}</h3>
+                <p style="color: ${theme.text};">期間限定の特別オファーをお見逃しなく！</p>
+            </div>
+        `;
+        
+        if (campaign.description) {
+            content += `
+                <div class="themed-card">
+                    <h4 class="themed-text">📋 キャンペーン詳細</h4>
+                    <p class="themed-text">${campaign.description}</p>
+                </div>
+            `;
+        }
+        
+        if (campaign.beforePrice && campaign.afterPrice) {
+            content += `
+                <div class="themed-card">
+                    <h4 class="themed-text">💰 特別価格</h4>
+                    <p class="themed-text">通常価格: <span style="text-decoration: line-through; color: #6b7280;">${campaign.beforePrice}</span></p>
+                    <p class="themed-text">特別価格: <strong style="color: ${theme.primary}; font-size: 1.2em;">${campaign.afterPrice}</strong></p>
+                    ${campaign.discount ? `<p class="themed-text">割引額: <strong>${campaign.discount}</strong></p>` : ''}
+                </div>
+            `;
+        }
+        
+        if (campaign.period) {
+            content += `
+                <div class="themed-card">
+                    <h4 class="themed-text">⏰ キャンペーン期間</h4>
+                    <p class="themed-text">${campaign.period}</p>
+                </div>
+            `;
+        }
+        
+        return content;
+    }
+    
+    // カスタムテンプレートコンテンツ生成
+    function generateCustomContent(custom, theme) {
+        let content = '';
+        
+        if (custom.headline) {
+            content += `
+                <div class="highlight-box">
+                    <h3 style="color: ${theme.text}; margin-top: 0;">${custom.headline}</h3>
+                </div>
+            `;
+        }
+        
+        if (custom.message) {
+            content += `
+                <div class="themed-card">
+                    <p class="themed-text">${custom.message}</p>
+                </div>
+            `;
+        }
+        
+        const features = [custom.feature1, custom.feature2, custom.feature3].filter(f => f);
+        if (features.length > 0) {
+            content += `
+                <div class="themed-card">
+                    <h4 class="themed-text">✨ 特徴・メリット</h4>
+                    ${features.map(feature => `<p class="themed-text">• ${feature}</p>`).join('')}
+                </div>
+            `;
+        }
+        
+        return content;
+    }
+    
     function generateNewsletterHTML({ title, mainContent, predictions = [] }) {
+        return generateAdvancedNewsletterHTML({
+            title,
+            mainContent,
+            templateType: 'prediction',
+            predictions
+        });
+    }
         return `
 <!DOCTYPE html>
 <html lang="ja">
