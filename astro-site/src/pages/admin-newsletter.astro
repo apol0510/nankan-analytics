@@ -7204,25 +7204,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }
                 
                 let successMessage;
-                if (result.isScheduled) {
-                    // 予約配信の場合は警告を含めたメッセージ
+                if (result.wasScheduledRequest) {
+                    // 予約配信リクエストだったが、実際は即座に送信された
                     const scheduledDate = new Date(scheduledAt);
-                    const now = new Date();
-                    const hoursDiff = (scheduledDate - now) / (1000 * 60 * 60);
-                    
-                    if (hoursDiff > 72) {
-                        successMessage = `⚠️ 予約登録完了（配信保証なし）\n\n` +
-                            `予約時刻: ${scheduledDate.toLocaleString('ja-JP')}\n` +
-                            `${Math.round(hoursDiff)}時間後の配信\n\n` +
-                            `🚨 警告: 72時間を超える予約はBrevo制限により配信されない可能性があります。\n` +
-                            `実際の配信状況は「🔍 実際の配信状況確認」ボタンで確認してください。`;
-                    } else {
-                        successMessage = `📅 配信予約完了！\n\n` +
-                            `予約時刻: ${scheduledDate.toLocaleString('ja-JP')}\n` +
-                            `対象: ${result.recipientCount}件\n` +
-                            `${Math.round(hoursDiff)}時間後に配信予定\n\n` +
-                            `💡 配信状況は「🔍 実際の配信状況確認」で確認できます`;
-                    }
+                    successMessage = `📧 メール配信完了！\n\n` +
+                        `リクエスト: ${scheduledDate.toLocaleString('ja-JP')}に予約配信\n` +
+                        `実際: 即座に送信されました\n` +
+                        `対象: ${result.recipientCount}件\n\n` +
+                        `⚠️ 重要: Brevo制限により予約配信は動作しません。\n` +
+                        `すべてのメールは即座に送信されます。\n\n` +
+                        `💡 予約配信が必要な場合は、指定時刻に手動で配信してください。`;
                 } else if (result.failedCount > 0) {
                     successMessage = `⚠️ 配信完了！成功: ${result.recipientCount}件、失敗: ${result.failedCount}件`;
                 } else {

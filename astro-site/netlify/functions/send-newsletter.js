@@ -83,7 +83,11 @@ export default async function handler(request, context) {
         recipientCount: result.totalSent,
         failedCount: result.totalFailed,
         failedEmails: result.failedEmails,
-        isScheduled: !!scheduledAt
+        isScheduled: false, // 予約配信は実装上不可能のため常にfalse
+        wasScheduledRequest: isScheduledRequest, // 予約リクエストだったかを記録
+        scheduledFor: scheduledAt, // リクエストされた時刻を記録
+        actualSendTime: new Date().toISOString(), // 実際の送信時刻
+        note: isScheduledRequest ? 'Brevo制限により即座に送信されました' : null
       }),
       {
         status: 200,
@@ -184,28 +188,25 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
     // バッチサイズ（Brevoの制限に合わせて調整）
     const BATCH_SIZE = 50; // 一度に50件まで送信
     
-    // スケジュール配信の設定
-    let scheduledAtISO = null;
+    // 重要: Brevo SMTPの予約配信は動作しないため、常に即座に送信
+    // scheduledAtパラメータは履歴記録用にのみ使用
+    let isScheduledRequest = false;
     if (scheduledAt && scheduledAt !== 'null' && scheduledAt.trim() !== '') {
       const scheduledDate = new Date(scheduledAt);
       const now = new Date();
       
-      console.log('スケジュール配信デバッグ:', {
-        originalInput: scheduledAt,
+      console.log('予約配信リクエスト（注意: 即座に送信されます）:', {
+        requestedTime: scheduledAt,
         parsedDate: scheduledDate.toISOString(),
         currentTime: now.toISOString(),
-        timeDifference: scheduledDate.getTime() - now.getTime(),
-        isInFuture: scheduledDate > now
+        note: 'Brevo制限により即座送信、履歴には予約として記録'
       });
       
-      if (!isNaN(scheduledDate.getTime()) && scheduledDate > now) {
-        scheduledAtISO = scheduledDate.toISOString();
-        console.log('✅ スケジュール配信設定:', scheduledAtISO);
-      } else if (scheduledDate <= now) {
-        console.log('⚠️ 過去の時刻が指定されたため即座に送信:', scheduledAt);
-      } else {
-        console.log('❌ 無効な日付のためスケジュール配信をスキップ:', scheduledAt);
-      }
+      // 予約配信リクエストであることを記録（実際は即座に送信）
+      isScheduledRequest = true;
+      
+      // 重要: scheduledAtISO は設定しない（Brevoの予約機能は使わない）
+      // scheduledAtISO = null; // 明示的にnullを維持
     }
     
     // 受信者をバッチに分割して送信
@@ -230,15 +231,15 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
         }
       };
       
-      // スケジュール配信の場合
-      if (scheduledAtISO) {
-        emailData.scheduledAt = scheduledAtISO;
-      }
+      // 重要: scheduledAtは設定しない（Brevoの予約機能は動作しないため）
+      // if (scheduledAtISO) {
+      //   emailData.scheduledAt = scheduledAtISO;
+      // }
       
       console.log(`バッチ${Math.floor(i/BATCH_SIZE) + 1}: ${batch.length}件送信中...`, {
         batchSize: batch.length,
         totalBatches: Math.ceil(recipients.length / BATCH_SIZE),
-        hasScheduledAt: !!emailData.scheduledAt,
+        hasScheduledAt: false, // 常にfalse（予約機能は使わない）
         firstEmail: batch[0]?.email
       });
 
@@ -261,7 +262,7 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent, schedu
           console.log('バッチ送信失敗のため個別送信にフォールバック...');
           for (const recipient of batch) {
             try {
-              await sendIndividualEmail({ recipient, subject, htmlContent, scheduledAtISO, BREVO_API_KEY });
+              await sendIndividualEmail({ recipient, subject, htmlContent, scheduledAtISO: null, BREVO_API_KEY });
               results.push({
                 email: recipient.email,
                 messageId: 'individual-fallback',
