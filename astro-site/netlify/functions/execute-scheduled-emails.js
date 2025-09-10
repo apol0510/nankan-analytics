@@ -110,11 +110,7 @@ export default async function handler(request, context) {
         const brevoResult = await brevoResponse.json();
         
         // 送信成功 - ステータス更新
-        await updateEmailStatus(recordId, 'SENT', AIRTABLE_API_KEY, AIRTABLE_BASE_ID, {
-          SentAt: now.toISOString(),
-          MessageId: brevoResult.messageId || 'unknown',
-          ResultDetails: JSON.stringify(brevoResult)
-        });
+        await updateEmailStatus(recordId, 'SENT', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
 
         results.push({
           jobId: JobId,
@@ -180,10 +176,11 @@ async function updateEmailStatus(recordId, status, apiKey, baseId, additionalFie
   const updateData = {
     fields: {
       Status: status,
-      LastUpdated: new Date().toISOString(),
       ...additionalFields
     }
   };
+
+  console.log(`🔄 Updating status for ${recordId} to ${status}:`, updateData);
 
   const response = await fetch(
     `https://api.airtable.com/v0/${baseId}/ScheduledEmails/${recordId}`,
@@ -198,7 +195,11 @@ async function updateEmailStatus(recordId, status, apiKey, baseId, additionalFie
   );
 
   if (!response.ok) {
-    console.error(`Status update failed for ${recordId}:`, await response.text());
+    const errorText = await response.text();
+    console.error(`❌ Status update failed for ${recordId}:`, errorText);
+    throw new Error(`Status update failed: ${errorText}`);
+  } else {
+    console.log(`✅ Status updated successfully for ${recordId} to ${status}`);
   }
   
   return response.ok;
