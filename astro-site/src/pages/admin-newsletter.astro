@@ -7171,7 +7171,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     subject,
                     htmlContent,
                     targetPlan,
-                    scheduledAt: scheduledAt || null
+                    scheduledAt: scheduledAt ? new Date(scheduledAt + ':00+09:00').toISOString() : null
                 })
             });
 
