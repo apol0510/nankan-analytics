@@ -268,11 +268,11 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
             name: 'NANKANアナリティクス',
             email: 'info@keiba.link'
           },
-          to: [{ email: 'info@keiba.link' }], // 送信者自身をToに設定
-          bcc: batch.map(email => ({ email })), // 受信者はBCCで送信（プライバシー保護）
+          to: batch.map(email => ({ email })), // 🚨 緊急テスト: 直接配信（BCC無効化）
+          // bcc: batch.map(email => ({ email })), // 一時的にコメントアウト
           subject,
           htmlContent,
-          tags: ['newsletter', 'nankan']
+          tags: ['newsletter', 'nankan', 'emergency-test']
         })
       });
       
