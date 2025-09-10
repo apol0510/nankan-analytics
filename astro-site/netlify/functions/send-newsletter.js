@@ -228,7 +228,12 @@ async function getRecipientsList(targetPlan) {
       .filter(email => email && email.includes('@'));
     
     console.log(`📧 取得した受信者数: ${recipients.length}`, recipients);
-    return recipients;
+    
+    // バウンス管理: 無効なメールアドレスをフィルタリング
+    const validRecipients = await filterValidEmails(recipients);
+    console.log(`✅ 有効な受信者数: ${validRecipients.length} (除外: ${recipients.length - validRecipients.length}件)`);
+    
+    return validRecipients;
     
   } catch (error) {
     console.error('受信者リスト取得エラー:', error);
@@ -293,4 +298,179 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
   }
   
   return results;
+}
+
+// 🛡️ 高度なバウンス管理システム
+async function filterValidEmails(emails) {
+  const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+  
+  if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+    console.log('⚠️ バウンス管理: 環境変数未設定のため全メール有効として処理');
+    return emails;
+  }
+
+  const validEmails = [];
+  const invalidEmails = [];
+  const quarantinedEmails = []; // 検疫中のメール
+  
+  for (const email of emails) {
+    try {
+      // 基本的なフォーマットチェック
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        invalidEmails.push({ email, reason: 'invalid-format' });
+        continue;
+      }
+      
+      // バウンス履歴チェック
+      const bounceStatus = await checkBounceHistory(email);
+      
+      if (bounceStatus.isBlacklisted) {
+        invalidEmails.push({ 
+          email, 
+          reason: bounceStatus.reason,
+          bounceCount: bounceStatus.bounceCount,
+          lastBounce: bounceStatus.lastBounceDate
+        });
+        continue;
+      }
+      
+      if (bounceStatus.isQuarantined) {
+        quarantinedEmails.push({
+          email,
+          reason: 'soft-bounce-warning',
+          bounceCount: bounceStatus.bounceCount,
+          remainingAttempts: 5 - bounceStatus.bounceCount
+        });
+        // 検疫中でも配信は継続（最後のチャンス）
+      }
+      
+      validEmails.push(email);
+      
+    } catch (error) {
+      console.error(`バウンス管理エラー ${email}:`, error);
+      // エラー時は安全のため有効として扱う
+      validEmails.push(email);
+    }
+  }
+  
+  // 詳細ログ出力
+  if (invalidEmails.length > 0) {
+    console.log('🚫 ブラックリスト除外:', invalidEmails);
+  }
+  if (quarantinedEmails.length > 0) {
+    console.log('⚠️ 検疫中（最後のチャンス）:', quarantinedEmails);
+  }
+  
+  console.log(`📊 バウンス管理結果: 有効${validEmails.length}件, 除外${invalidEmails.length}件, 検疫${quarantinedEmails.length}件`);
+  
+  return validEmails;
+}
+
+// バウンス履歴の詳細チェック
+async function checkBounceHistory(email) {
+  const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+  
+  try {
+    const response = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist?filterByFormula=SEARCH('${email}',{Email})`,
+      {
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      return { isBlacklisted: false, isQuarantined: false };
+    }
+    
+    const data = await response.json();
+    
+    if (data.records.length === 0) {
+      return { isBlacklisted: false, isQuarantined: false };
+    }
+    
+    const record = data.records[0].fields;
+    const bounceCount = record.BounceCount || 0;
+    const bounceType = record.BounceType || 'unknown';
+    const status = record.Status || 'UNKNOWN';
+    const lastBounceDate = record.LastBounceDate;
+    
+    // 永続的エラー（Hard Bounce）= 即座にブラックリスト
+    if (bounceType === 'hard' || status === 'HARD_BOUNCE' || status === 'COMPLAINT') {
+      return {
+        isBlacklisted: true,
+        isQuarantined: false,
+        reason: bounceType === 'hard' ? 'hard-bounce' : 'complaint',
+        bounceCount,
+        lastBounceDate
+      };
+    }
+    
+    // 一時的エラー（Soft Bounce）= 5回で昇格
+    if (bounceType === 'soft' && bounceCount >= 5) {
+      // 5回に達したので永続的エラーに昇格
+      await upgradeToHardBounce(email, record);
+      return {
+        isBlacklisted: true,
+        isQuarantined: false,
+        reason: 'soft-bounce-upgraded',
+        bounceCount,
+        lastBounceDate
+      };
+    }
+    
+    // 一時的エラー（Soft Bounce）= 検疫中（3-4回）
+    if (bounceType === 'soft' && bounceCount >= 3) {
+      return {
+        isBlacklisted: false,
+        isQuarantined: true,
+        reason: 'soft-bounce-warning',
+        bounceCount,
+        lastBounceDate
+      };
+    }
+    
+    // その他は有効
+    return { isBlacklisted: false, isQuarantined: false };
+    
+  } catch (error) {
+    console.error(`バウンス履歴チェックエラー ${email}:`, error);
+    return { isBlacklisted: false, isQuarantined: false };
+  }
+}
+
+// Soft BounceをHard Bounceに昇格
+async function upgradeToHardBounce(email, currentRecord) {
+  const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+  
+  try {
+    const recordId = currentRecord.id || currentRecord.recordId;
+    
+    await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist/${recordId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fields: {
+          Status: 'HARD_BOUNCE',
+          BounceType: 'hard',
+          UpgradedAt: new Date().toISOString(),
+          Notes: `Soft bounce上限(5回)に達したため永続エラーに昇格`
+        }
+      })
+    });
+    
+    console.log(`🔄 ${email}: Soft→Hard Bounce昇格完了`);
+    
+  } catch (error) {
+    console.error(`Bounce昇格エラー ${email}:`, error);
+  }
 }
