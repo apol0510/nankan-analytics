@@ -196,6 +196,12 @@ async function getRecipientsList(targetPlan) {
     const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers`;
     const queryParams = filterFormula ? `?filterByFormula=${encodeURIComponent(filterFormula)}` : '';
     
+    console.log('🔍 Airtable検索:', {
+      url: url + queryParams,
+      filterFormula,
+      targetPlan: '指定されたプラン'
+    });
+    
     const response = await fetch(url + queryParams, {
       headers: {
         'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
@@ -208,11 +214,20 @@ async function getRecipientsList(targetPlan) {
     }
     
     const data = await response.json();
+    
+    console.log('📋 Airtable生データ:', {
+      recordCount: data.records?.length || 0,
+      records: data.records?.slice(0, 3).map(r => ({
+        email: r.fields.Email,
+        plan: r.fields['プラン'] || r.fields.Plan
+      })) || []
+    });
+    
     const recipients = data.records
       .map(record => record.fields.Email)
       .filter(email => email && email.includes('@'));
     
-    console.log(`取得した受信者数: ${recipients.length}`);
+    console.log(`📧 取得した受信者数: ${recipients.length}`, recipients);
     return recipients;
     
   } catch (error) {
