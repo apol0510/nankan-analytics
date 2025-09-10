@@ -74,7 +74,6 @@ export default async function handler(request, context) {
         ScheduledFor: scheduledTime.toISOString(),
         Status: 'PENDING',
         CreatedBy: createdBy,
-        CreatedAt: now.toISOString(),
         JobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       }
     };
