@@ -188,6 +188,8 @@ async function getRecipientsList(targetPlan) {
       filterFormula = "OR({プラン} = 'Standard', {プラン} = 'Premium')";
     } else if (targetPlan === 'premium') {
       filterFormula = "{プラン} = 'Premium'";
+    } else if (targetPlan === 'test') {
+      filterFormula = "{プラン} = 'Test'"; // バウンス管理テスト専用
     } else if (targetPlan === 'all') {
       // 全員に配信
       filterFormula = '';
