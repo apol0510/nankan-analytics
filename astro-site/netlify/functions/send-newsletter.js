@@ -183,11 +183,11 @@ async function getRecipientsList(targetPlan) {
     
     // プランに基づくフィルタリング
     if (targetPlan === 'free') {
-      filterFormula = "{UserPlan} = 'Free'";
+      filterFormula = "{プラン} = 'Free'";
     } else if (targetPlan === 'standard') {
-      filterFormula = "OR({UserPlan} = 'Standard', {UserPlan} = 'Premium')";
+      filterFormula = "OR({プラン} = 'Standard', {プラン} = 'Premium')";
     } else if (targetPlan === 'premium') {
-      filterFormula = "{UserPlan} = 'Premium'";
+      filterFormula = "{プラン} = 'Premium'";
     } else if (targetPlan === 'all') {
       // 全員に配信
       filterFormula = '';
