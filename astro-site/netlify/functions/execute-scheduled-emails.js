@@ -82,7 +82,7 @@ export default async function handler(request, context) {
         // 受信者リストを解析
         const recipientList = Recipients.split(',').map(email => email.trim()).filter(Boolean);
 
-        // Brevo APIでメール送信
+        // Brevo APIでメール送信（プライバシー保護でBCC使用）
         const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
           method: 'POST',
           headers: {
@@ -95,7 +95,8 @@ export default async function handler(request, context) {
               name: 'NANKANアナリティクス',
               email: 'info@keiba.link'
             },
-            to: recipientList.map(email => ({ email })),
+            to: [{ email: 'info@keiba.link' }], // 送信者自身をToに設定
+            bcc: recipientList.map(email => ({ email })), // 受信者はBCCで送信
             subject: Subject,
             htmlContent: Content,
             tags: ['scheduled', 'newsletter']

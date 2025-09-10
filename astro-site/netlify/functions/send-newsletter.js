@@ -253,7 +253,8 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
             name: 'NANKANアナリティクス',
             email: 'info@keiba.link'
           },
-          to: batch.map(email => ({ email })),
+          to: [{ email: 'info@keiba.link' }], // 送信者自身をToに設定
+          bcc: batch.map(email => ({ email })), // 受信者はBCCで送信（プライバシー保護）
           subject,
           htmlContent,
           tags: ['newsletter', 'nankan']
