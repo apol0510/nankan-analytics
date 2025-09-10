@@ -82,44 +82,62 @@ export default async function handler(request, context) {
         // 受信者リストを解析
         const recipientList = Recipients.split(',').map(email => email.trim()).filter(Boolean);
 
-        // Brevo APIでメール送信（プライバシー保護でBCC使用）
-        const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'api-key': BREVO_API_KEY
-          },
-          body: JSON.stringify({
-            sender: {
-              name: 'NANKANアナリティクス',
-              email: 'info@keiba.link'
-            },
-            to: [{ email: 'info@keiba.link' }], // 送信者自身をToに設定
-            bcc: recipientList.map(email => ({ email })), // 受信者はBCCで送信
-            subject: Subject,
-            htmlContent: Content,
-            tags: ['scheduled', 'newsletter']
-          })
-        });
-
-        if (!brevoResponse.ok) {
-          const errorData = await brevoResponse.text();
-          throw new Error(`Brevo送信失敗: ${errorData}`);
+        // 🔐 プライバシー保護個別配信（Brevo BCC問題対応）
+        let successCount = 0;
+        let failedCount = 0;
+        
+        for (const email of recipientList) {
+          try {
+            const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'api-key': BREVO_API_KEY
+              },
+              body: JSON.stringify({
+                sender: {
+                  name: 'NANKANアナリティクス',
+                  email: 'info@keiba.link'
+                },
+                to: [{ email: email.trim() }], // 個別配信でプライバシー完全保護
+                subject: Subject,
+                htmlContent: Content,
+                tags: ['scheduled', 'newsletter', 'individual-delivery']
+              })
+            });
+            
+            if (brevoResponse.ok) {
+              successCount++;
+              console.log(`✅ 個別送信成功: ${email}`);
+            } else {
+              failedCount++;
+              const errorData = await brevoResponse.text();
+              console.error(`❌ 個別送信失敗 ${email}:`, errorData);
+            }
+          } catch (individualError) {
+            failedCount++;
+            console.error(`個別送信エラー ${email}:`, individualError);
+          }
         }
 
-        const brevoResult = await brevoResponse.json();
-        
-        // 送信成功 - ステータス更新
-        await updateEmailStatus(recordId, 'SENT', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
-
-        results.push({
-          jobId: JobId,
-          subject: Subject,
-          recipientCount: recipientList.length,
-          status: 'SUCCESS',
-          messageId: brevoResult.messageId
-        });
+        // 送信結果に基づく処理
+        if (successCount > 0) {
+          // 全部または一部成功
+          await updateEmailStatus(recordId, 'SENT', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
+          
+          results.push({
+            jobId: JobId,
+            subject: Subject,
+            recipientCount: recipientList.length,
+            successCount,
+            failedCount,
+            status: failedCount === 0 ? 'SUCCESS' : 'PARTIAL_SUCCESS'
+          });
+        } else {
+          // 全て失敗
+          throw new Error(`全受信者への送信に失敗`);
+        }
 
         console.log(`✅ 送信完了: ${Subject}`);
 

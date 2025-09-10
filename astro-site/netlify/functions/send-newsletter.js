@@ -251,9 +251,9 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
     failedEmails: []
   };
   
-  // バッチごとに送信
-  for (let i = 0; i < recipients.length; i += batchSize) {
-    const batch = recipients.slice(i, i + batchSize);
+  // 🔐 プライバシー保護個別配信システム（BCC問題対応）
+  for (let i = 0; i < recipients.length; i++) {
+    const recipient = recipients[i];
     
     try {
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -268,28 +268,27 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
             name: 'NANKANアナリティクス',
             email: 'info@keiba.link'
           },
-          to: batch.map(email => ({ email })), // 🚨 緊急テスト: 直接配信（BCC無効化）
-          // bcc: batch.map(email => ({ email })), // 一時的にコメントアウト
+          to: [{ email: recipient }], // 個別配信でプライバシー完全保護
           subject,
           htmlContent,
-          tags: ['newsletter', 'nankan', 'emergency-test']
+          tags: ['newsletter', 'nankan', 'individual-delivery']
         })
       });
       
       if (response.ok) {
-        results.totalSent += batch.length;
-        console.log(`✅ バッチ送信成功: ${batch.length}件`);
+        results.totalSent += 1;
+        console.log(`✅ 個別送信成功: ${recipient}`);
       } else {
         const errorData = await response.text();
-        console.error(`❌ バッチ送信失敗:`, errorData);
-        results.totalFailed += batch.length;
-        results.failedEmails.push(...batch);
+        console.error(`❌ 個別送信失敗 ${recipient}:`, errorData);
+        results.totalFailed += 1;
+        results.failedEmails.push(recipient);
       }
       
     } catch (error) {
-      console.error(`バッチ送信エラー:`, error);
-      results.totalFailed += batch.length;
-      results.failedEmails.push(...batch);
+      console.error(`個別送信エラー ${recipient}:`, error);
+      results.totalFailed += 1;
+      results.failedEmails.push(recipient);
     }
   }
   
