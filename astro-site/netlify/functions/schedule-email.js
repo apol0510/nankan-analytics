@@ -75,6 +75,7 @@ export default async function handler(request, context) {
         Status: 'PENDING',
         CreatedBy: createdBy,
         JobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        // CreatedAtは削除 - 計算フィールドのため
       }
     };
 

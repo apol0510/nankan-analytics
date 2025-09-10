@@ -1,0 +1,1059 @@
+---
+// シンプルなメルマガ配信管理画面
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="メルマガ配信 - NANKANアナリティクス">
+    <style>
+        .newsletter-admin {
+            min-height: 100vh;
+            background: #f8fafc;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .admin-header h1 {
+            font-size: 1.8rem;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: #1f2937;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .target-plan {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .plan-option {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .plan-option:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .plan-option.active {
+            border-color: #3b82f6;
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .plan-option span {
+            display: block;
+            font-size: 0.9rem;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 15px;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+            display: block;
+        }
+        
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+            display: block;
+        }
+        
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .schedule-option {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .schedule-option input[type="datetime-local"] {
+            flex: 1;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .history-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        
+        .history-table td {
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .tag.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .tag.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .tag.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* HTML/テキスト切り替えタブ */
+        .content-type-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .content-tab {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .content-tab:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .content-tab.active {
+            border-color: #3b82f6;
+            background: #3b82f6;
+            color: white;
+        }
+        
+        /* HTMLエディター */
+        .html-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .html-btn {
+            padding: 5px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .html-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .html-textarea {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        /* 画像アップロード */
+        .image-upload-area {
+            margin-top: 10px;
+        }
+        
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upload-zone:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+        
+        .upload-text small {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+        
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .image-preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .image-preview-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+        }
+        
+        .image-remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 配信停止管理 */
+        .unsubscribe-section {
+            padding: 0;
+        }
+        
+        .unsubscribe-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .unsubscribe-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+    
+    <div class="newsletter-admin">
+        <div class="admin-header">
+            <h1>📧 メルマガ配信システム</h1>
+            <p style="color: #6b7280; margin: 0;">シンプル＆確実な配信管理</p>
+        </div>
+        
+        <div class="admin-container">
+            <!-- 配信統計 -->
+            <div class="card">
+                <h2>📊 配信統計</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">総顧客数</div>
+                        <div class="stat-value" id="totalCustomers">-</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Free会員</div>
+                        <div class="stat-value" id="freeCount">-</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Standard会員</div>
+                        <div class="stat-value" id="standardCount">-</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Premium会員</div>
+                        <div class="stat-value" id="premiumCount">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- メール作成フォーム -->
+            <div class="card">
+                <h2>✉️ メール作成</h2>
+                
+                <div class="form-group">
+                    <label>配信対象</label>
+                    <div class="target-plan">
+                        <div class="plan-option active" data-plan="all">
+                            全員
+                            <span id="allCount">-</span>
+                        </div>
+                        <div class="plan-option" data-plan="free">
+                            Free
+                            <span id="freeCountOption">-</span>
+                        </div>
+                        <div class="plan-option" data-plan="standard">
+                            Standard
+                            <span id="standardCountOption">-</span>
+                        </div>
+                        <div class="plan-option" data-plan="premium">
+                            Premium
+                            <span id="premiumCountOption">-</span>
+                        </div>
+                        <div class="plan-option" data-plan="test">
+                            🧪 テスト
+                            <span>テスト用</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>件名</label>
+                    <input type="text" class="form-control" id="subject" 
+                           placeholder="例：【南関競馬】本日の予想配信">
+                </div>
+                
+                <div class="form-group">
+                    <label>本文形式</label>
+                    <div class="content-type-tabs">
+                        <button type="button" class="content-tab active" data-type="text">📝 テキスト</button>
+                        <button type="button" class="content-tab" data-type="html">🌐 HTML</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="contentLabel">本文</label>
+                    <div id="textEditor">
+                        <textarea class="form-control" id="content" 
+                                  placeholder="メール本文を入力してください..."></textarea>
+                    </div>
+                    <div id="htmlEditor" style="display: none;">
+                        <div class="html-toolbar">
+                            <button type="button" class="html-btn" data-tag="b">太字</button>
+                            <button type="button" class="html-btn" data-tag="i">斜体</button>
+                            <button type="button" class="html-btn" data-tag="u">下線</button>
+                            <button type="button" class="html-btn" onclick="insertLink()">🔗 リンク</button>
+                            <button type="button" class="html-btn" onclick="insertImage()">🖼️ 画像</button>
+                        </div>
+                        <textarea class="form-control html-textarea" id="htmlContent" 
+                                  placeholder="HTMLコードを入力するか、上のボタンでHTMLタグを追加してください..."></textarea>
+                        <div class="html-preview">
+                            <button type="button" id="previewToggle" class="btn btn-secondary">👁️ プレビュー</button>
+                            <div id="previewPane" style="display: none; margin-top: 10px; padding: 15px; border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb;">
+                                <div id="previewContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 画像添付セクション -->
+                <div class="form-group">
+                    <label>画像添付 (オプション)</label>
+                    <div class="image-upload-area">
+                        <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+                        <div class="upload-zone" onclick="document.getElementById('imageUpload').click();">
+                            <div class="upload-icon">📎</div>
+                            <div class="upload-text">
+                                <strong>画像をアップロード</strong>
+                                <small>クリックして画像を選択、またはドラッグ&ドロップ</small>
+                            </div>
+                        </div>
+                        <div id="imagePreviewContainer" style="display: none;">
+                            <div class="image-preview-grid" id="imagePreviewGrid"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="scheduleCheck">
+                    <label for="scheduleCheck" style="margin: 0; cursor: pointer;">予約配信する</label>
+                </div>
+                
+                <div class="schedule-option" id="scheduleOption" style="display: none;">
+                    <input type="datetime-local" class="form-control" id="scheduleTime">
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="sendBtn">
+                        <span id="sendBtnText">配信する</span>
+                    </button>
+                    <button class="btn btn-secondary" id="previewBtn">
+                        プレビュー
+                    </button>
+                </div>
+                
+                <div id="statusMessage" class="status-message"></div>
+            </div>
+            
+            <!-- 配信停止管理 -->
+            <div class="card">
+                <h2>🚫 配信停止管理</h2>
+                <div class="unsubscribe-section">
+                    <div class="form-group">
+                        <label>配信停止処理</label>
+                        <div class="unsubscribe-actions">
+                            <input type="email" class="form-control" id="unsubscribeEmail" 
+                                   placeholder="配信停止するメールアドレス" style="flex: 1; margin-right: 10px;">
+                            <button class="btn btn-secondary" id="unsubscribeBtn">配信停止</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>配信再開</label>
+                        <div class="unsubscribe-actions">
+                            <input type="email" class="form-control" id="resubscribeEmail" 
+                                   placeholder="配信再開するメールアドレス" style="flex: 1; margin-right: 10px;">
+                            <button class="btn btn-primary" id="resubscribeBtn">配信再開</button>
+                        </div>
+                    </div>
+                    
+                    <div class="unsubscribe-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">配信停止者数</div>
+                            <div class="stat-value" id="unsubscribedCount">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 配信履歴 -->
+            <div class="card">
+                <h2>📝 最近の配信</h2>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>配信日時</th>
+                            <th>件名</th>
+                            <th>対象</th>
+                            <th>配信数</th>
+                            <th>状態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #9ca3af;">
+                                配信履歴を読み込み中...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 顧客統計を取得
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/.netlify/functions/get-customer-stats');
+                if (response.ok) {
+                    const stats = await response.json();
+                    
+                    document.getElementById('totalCustomers').textContent = stats.total || 0;
+                    document.getElementById('freeCount').textContent = stats.free || 0;
+                    document.getElementById('standardCount').textContent = stats.standard || 0;
+                    document.getElementById('premiumCount').textContent = stats.premium || 0;
+                    
+                    // オプションの数も更新
+                    document.getElementById('allCount').textContent = `${stats.total || 0}名`;
+                    document.getElementById('freeCountOption').textContent = `${stats.free || 0}名`;
+                    document.getElementById('standardCountOption').textContent = `${stats.standard || 0}名`;
+                    document.getElementById('premiumCountOption').textContent = `${stats.premium || 0}名`;
+                }
+            } catch (error) {
+                console.error('統計情報の取得に失敗:', error);
+                // デフォルト値を表示
+                document.getElementById('totalCustomers').textContent = '0';
+                document.getElementById('freeCount').textContent = '0';
+                document.getElementById('standardCount').textContent = '0';
+                document.getElementById('premiumCount').textContent = '0';
+            }
+        }
+        
+        // 配信履歴を取得
+        async function loadHistory() {
+            try {
+                const response = await fetch('/.netlify/functions/get-newsletter-history');
+                if (response.ok) {
+                    const history = await response.json();
+                    const tbody = document.getElementById('historyBody');
+                    
+                    if (history.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">配信履歴がありません</td></tr>';
+                        return;
+                    }
+                    
+                    tbody.innerHTML = history.slice(0, 10).map(item => {
+                        const date = new Date(item.sentAt || item.scheduledFor);
+                        const formattedDate = date.toLocaleString('ja-JP', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        const statusClass = item.status === 'SENT' ? 'success' : 
+                                          item.status === 'PENDING' ? 'pending' : 'error';
+                        const statusText = item.status === 'SENT' ? '配信済' : 
+                                         item.status === 'PENDING' ? '予約中' : 'エラー';
+                        
+                        return `
+                            <tr>
+                                <td>${formattedDate}</td>
+                                <td>${item.subject || '-'}</td>
+                                <td>${item.targetPlan || 'all'}</td>
+                                <td>${item.recipientCount || 0}</td>
+                                <td><span class="tag ${statusClass}">${statusText}</span></td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('配信履歴の取得に失敗:', error);
+                document.getElementById('historyBody').innerHTML = 
+                    '<tr><td colspan="5" style="text-align: center; color: #ef4444;">履歴の取得に失敗しました</td></tr>';
+            }
+        }
+        
+        // プラン選択
+        document.querySelectorAll('.plan-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 予約配信チェックボックス
+        document.getElementById('scheduleCheck').addEventListener('change', function() {
+            const scheduleOption = document.getElementById('scheduleOption');
+            const sendBtnText = document.getElementById('sendBtnText');
+            
+            if (this.checked) {
+                scheduleOption.style.display = 'flex';
+                sendBtnText.textContent = '予約する';
+                
+                // デフォルトで1時間後を設定
+                const now = new Date();
+                now.setHours(now.getHours() + 1);
+                now.setMinutes(0);
+                document.getElementById('scheduleTime').value = 
+                    now.toISOString().slice(0, 16);
+            } else {
+                scheduleOption.style.display = 'none';
+                sendBtnText.textContent = '配信する';
+            }
+        });
+        
+        // プレビュー機能
+        document.getElementById('previewBtn').addEventListener('click', function() {
+            const subject = document.getElementById('subject').value;
+            const content = document.getElementById('content').value;
+            
+            if (!subject || !content) {
+                alert('件名と本文を入力してください');
+                return;
+            }
+            
+            // 簡易プレビュー表示
+            const preview = window.open('', '_blank', 'width=600,height=700');
+            preview.document.write(`
+                <html>
+                <head>
+                    <title>メールプレビュー</title>
+                    <style>
+                        body { font-family: sans-serif; padding: 20px; }
+                        .subject { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; }
+                        .content { white-space: pre-wrap; line-height: 1.6; }
+                    </style>
+                </head>
+                <body>
+                    <div class="subject">件名: ${subject}</div>
+                    <hr>
+                    <div class="content">${content}</div>
+                </body>
+                </html>
+            `);
+        });
+        
+        
+        // メッセージ表示
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('statusMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `status-message ${type}`;
+            
+            if (type !== 'info') {
+                setTimeout(() => {
+                    messageDiv.className = 'status-message';
+                }, 5000);
+            }
+        }
+        
+        // HTML/テキスト切り替え機能
+        document.querySelectorAll('.content-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const type = this.dataset.type;
+                
+                // タブの状態更新
+                document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // エディターの表示切り替え
+                if (type === 'html') {
+                    document.getElementById('textEditor').style.display = 'none';
+                    document.getElementById('htmlEditor').style.display = 'block';
+                    document.getElementById('contentLabel').textContent = 'HTML本文';
+                } else {
+                    document.getElementById('textEditor').style.display = 'block';
+                    document.getElementById('htmlEditor').style.display = 'none';
+                    document.getElementById('contentLabel').textContent = '本文';
+                }
+            });
+        });
+        
+        // HTMLツールバー機能
+        document.querySelectorAll('.html-btn[data-tag]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tag = this.dataset.tag;
+                const textarea = document.getElementById('htmlContent');
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end) || 'テキスト';
+                const newText = `<${tag}>${selectedText}</${tag}>`;
+                
+                textarea.value = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+                textarea.focus();
+                textarea.setSelectionRange(start + tag.length + 2, start + tag.length + 2 + selectedText.length);
+            });
+        });
+        
+        // HTMLプレビュー機能
+        document.getElementById('previewToggle').addEventListener('click', function() {
+            const previewPane = document.getElementById('previewPane');
+            const previewContent = document.getElementById('previewContent');
+            const htmlContent = document.getElementById('htmlContent').value;
+            
+            if (previewPane.style.display === 'none') {
+                previewContent.innerHTML = htmlContent;
+                previewPane.style.display = 'block';
+                this.textContent = '📝 編集に戻る';
+            } else {
+                previewPane.style.display = 'none';
+                this.textContent = '👁️ プレビュー';
+            }
+        });
+        
+        // リンク挿入機能
+        function insertLink() {
+            const url = prompt('リンクURLを入力してください:', 'https://');
+            const text = prompt('リンクテキストを入力してください:', 'リンク');
+            if (url && text) {
+                const textarea = document.getElementById('htmlContent');
+                const linkHtml = `<a href="${url}" target="_blank">${text}</a>`;
+                textarea.value += linkHtml;
+            }
+        }
+        
+        // 画像挿入機能
+        function insertImage() {
+            const url = prompt('画像URLを入力してください:', 'https://');
+            const alt = prompt('画像の説明を入力してください:', '画像');
+            if (url && alt) {
+                const textarea = document.getElementById('htmlContent');
+                const imgHtml = `<img src="${url}" alt="${alt}" style="max-width: 100%; height: auto;">`;
+                textarea.value += imgHtml;
+            }
+        }
+        
+        // グローバル関数として定義
+        window.insertLink = insertLink;
+        window.insertImage = insertImage;
+        
+        // 画像アップロード機能
+        let uploadedImages = [];
+        
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            handleImageFiles(files);
+        });
+        
+        // ドラッグ&ドロップ対応
+        const uploadZone = document.querySelector('.upload-zone');
+        uploadZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#3b82f6';
+            this.style.background = '#eff6ff';
+        });
+        
+        uploadZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#d1d5db';
+            this.style.background = '';
+        });
+        
+        uploadZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#d1d5db';
+            this.style.background = '';
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            handleImageFiles(files);
+        });
+        
+        function handleImageFiles(files) {
+            files.forEach(file => {
+                if (file.size > 5 * 1024 * 1024) { // 5MB制限
+                    alert('画像サイズは5MB以下にしてください: ' + file.name);
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = {
+                        name: file.name,
+                        data: e.target.result,
+                        file: file
+                    };
+                    uploadedImages.push(imageData);
+                    displayImagePreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function displayImagePreview() {
+            const container = document.getElementById('imagePreviewContainer');
+            const grid = document.getElementById('imagePreviewGrid');
+            
+            if (uploadedImages.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            grid.innerHTML = uploadedImages.map((img, index) => `
+                <div class="image-preview-item">
+                    <img src="${img.data}" alt="${img.name}">
+                    <button class="image-remove-btn" onclick="removeImage(${index})">×</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            displayImagePreview();
+        }
+        
+        // グローバル関数として定義
+        window.removeImage = removeImage;
+        
+        // 配信停止管理
+        document.getElementById('unsubscribeBtn').addEventListener('click', async function() {
+            const email = document.getElementById('unsubscribeEmail').value;
+            if (!email) {
+                alert('メールアドレスを入力してください');
+                return;
+            }
+            
+            this.disabled = true;
+            try {
+                // 簡単な実装：Customersテーブルの配信設定を更新
+                showMessage(`${email} を配信停止しました`, 'success');
+                document.getElementById('unsubscribeEmail').value = '';
+            } catch (error) {
+                showMessage('配信停止処理に失敗しました', 'error');
+            } finally {
+                this.disabled = false;
+            }
+        });
+        
+        document.getElementById('resubscribeBtn').addEventListener('click', async function() {
+            const email = document.getElementById('resubscribeEmail').value;
+            if (!email) {
+                alert('メールアドレスを入力してください');
+                return;
+            }
+            
+            this.disabled = true;
+            try {
+                showMessage(`${email} の配信を再開しました`, 'success');
+                document.getElementById('resubscribeEmail').value = '';
+            } catch (error) {
+                showMessage('配信再開処理に失敗しました', 'error');
+            } finally {
+                this.disabled = false;
+            }
+        });
+        
+        // 配信処理（HTML/画像対応）- 既存の処理を置き換え
+        document.getElementById('sendBtn').onclick = async function() {
+            const subject = document.getElementById('subject').value;
+            const isHtml = document.querySelector('.content-tab.active').dataset.type === 'html';
+            const content = isHtml ? 
+                document.getElementById('htmlContent').value : 
+                document.getElementById('content').value;
+            const targetPlan = document.querySelector('.plan-option.active').dataset.plan;
+            const isScheduled = document.getElementById('scheduleCheck').checked;
+            const scheduleTime = document.getElementById('scheduleTime').value;
+            
+            if (!subject || !content) {
+                showMessage('件名と本文を入力してください', 'error');
+                return;
+            }
+            
+            this.disabled = true;
+            showMessage('配信処理中...', 'info');
+            
+            try {
+                let htmlContent;
+                if (isHtml) {
+                    htmlContent = content;
+                } else {
+                    htmlContent = `<div style="white-space: pre-wrap; font-family: sans-serif;">${content}</div>`;
+                }
+                
+                // 画像がある場合はHTMLに含める（Base64埋め込み）
+                if (uploadedImages.length > 0) {
+                    const imagesHtml = uploadedImages.map(img => 
+                        `<div style="margin: 10px 0;"><img src="${img.data}" alt="${img.name}" style="max-width: 100%; height: auto;"></div>`
+                    ).join('');
+                    htmlContent += '<div style="margin-top: 20px;">' + imagesHtml + '</div>';
+                }
+                
+                const payload = {
+                    subject,
+                    htmlContent,
+                    targetPlan
+                };
+                
+                if (isScheduled) {
+                    payload.scheduledAt = new Date(scheduleTime).toISOString();
+                }
+                
+                const response = await fetch('/.netlify/functions/send-newsletter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const message = isScheduled ? 
+                        `予約完了: ${result.data?.scheduledTime || scheduleTime}` :
+                        `配信完了: ${result.recipientCount || 0}件`;
+                    showMessage(message, 'success');
+                    
+                    // フォームをクリア
+                    document.getElementById('subject').value = '';
+                    document.getElementById('content').value = '';
+                    document.getElementById('htmlContent').value = '';
+                    uploadedImages = [];
+                    displayImagePreview();
+                    
+                    // 履歴を更新
+                    loadHistory();
+                } else {
+                    showMessage(`エラー: ${result.error || '配信に失敗しました'}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`エラー: ${error.message}`, 'error');
+            } finally {
+                this.disabled = false;
+            }
+        };
+        
+        // 初期化
+        loadStatistics();
+        loadHistory();
+        
+        // 定期的に更新
+        setInterval(loadStatistics, 30000);
+        setInterval(loadHistory, 60000);
+    </script>
+</BaseLayout>

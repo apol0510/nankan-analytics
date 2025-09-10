@@ -35,6 +35,14 @@ export default async function handler(request, context) {
     
     const { subject, htmlContent, scheduledAt, targetPlan = 'all', retryEmails } = JSON.parse(requestBody);
 
+    // 🔍 デバッグログ追加
+    console.log('🎯 パラメータ詳細確認:', {
+      subject,
+      targetPlan,
+      scheduledAt,
+      hasRetryEmails: !!retryEmails
+    });
+
     // 必須パラメータチェック
     if (!subject || !htmlContent) {
       return new Response(
@@ -283,11 +291,20 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
       });
       
       if (response.ok) {
+        const responseData = await response.json();
         results.totalSent += 1;
-        console.log(`✅ 個別送信成功: ${recipient}`);
+        console.log(`✅ 個別送信成功: ${recipient}`, responseData);
       } else {
         const errorData = await response.text();
         console.error(`❌ 個別送信失敗 ${recipient}:`, errorData);
+        
+        // 🔍 Brevoエラー詳細解析でバウンス検知
+        const bounceInfo = await analyzeBrevoBounce(recipient, response.status, errorData);
+        if (bounceInfo.isBounce) {
+          await updateBounceRecord(recipient, bounceInfo);
+          console.log(`🚫 バウンス検知・記録更新: ${recipient} (${bounceInfo.type})`);
+        }
+        
         results.totalFailed += 1;
         results.failedEmails.push(recipient);
       }
@@ -474,5 +491,165 @@ async function upgradeToHardBounce(email, currentRecord) {
     
   } catch (error) {
     console.error(`Bounce昇格エラー ${email}:`, error);
+  }
+}
+
+// 🔍 Brevoエラー詳細解析でバウンス種別判定
+async function analyzeBrevoBounce(email, statusCode, errorData) {
+  const bounceInfo = {
+    isBounce: false,
+    type: 'unknown',
+    reason: 'unknown'
+  };
+
+  try {
+    // Brevo APIエラーレスポンス解析
+    let errorObj;
+    try {
+      errorObj = JSON.parse(errorData);
+    } catch {
+      errorObj = { message: errorData };
+    }
+
+    const errorMessage = (errorObj.message || errorData || '').toLowerCase();
+    
+    // Hard Bounce判定条件
+    const hardBounceIndicators = [
+      'invalid',
+      'not exist',
+      'unknown user',
+      'mailbox not found',
+      'no such user',
+      'user unknown',
+      'recipient address rejected'
+    ];
+    
+    // Soft Bounce判定条件
+    const softBounceIndicators = [
+      'mailbox full',
+      'quota',
+      'temporary failure',
+      'deferred',
+      'try again later',
+      'service unavailable'
+    ];
+
+    // Hard Bounce判定
+    if (statusCode === 400 || hardBounceIndicators.some(indicator => errorMessage.includes(indicator))) {
+      bounceInfo.isBounce = true;
+      bounceInfo.type = 'hard';
+      bounceInfo.reason = 'hard-bounce';
+    }
+    // Soft Bounce判定
+    else if (statusCode === 421 || statusCode === 450 || softBounceIndicators.some(indicator => errorMessage.includes(indicator))) {
+      bounceInfo.isBounce = true;
+      bounceInfo.type = 'soft';
+      bounceInfo.reason = 'soft-bounce';
+    }
+    // 一般的な送信エラー（400番台）もバウンスとして扱う
+    else if (statusCode >= 400 && statusCode < 500) {
+      bounceInfo.isBounce = true;
+      bounceInfo.type = 'hard'; // 安全のためHard Bounceとして扱う
+      bounceInfo.reason = 'send-error';
+    }
+
+    console.log(`🔍 バウンス解析結果 ${email}:`, {
+      statusCode,
+      errorMessage: errorMessage.substring(0, 100),
+      bounceInfo
+    });
+
+  } catch (error) {
+    console.error(`バウンス解析エラー ${email}:`, error);
+  }
+
+  return bounceInfo;
+}
+
+// 📝 バウンス記録更新・新規作成
+async function updateBounceRecord(email, bounceInfo) {
+  const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+
+  if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+    console.log('⚠️ Airtable環境変数未設定のためバウンス記録をスキップ');
+    return;
+  }
+
+  try {
+    // 既存記録チェック
+    const existingRecordResponse = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist?filterByFormula=SEARCH('${email}',{Email})`,
+      {
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!existingRecordResponse.ok) {
+      throw new Error(`既存記録検索失敗: ${existingRecordResponse.status}`);
+    }
+
+    const existingData = await existingRecordResponse.json();
+    const now = new Date().toISOString();
+
+    if (existingData.records.length > 0) {
+      // 既存記録更新
+      const record = existingData.records[0];
+      const currentCount = record.fields.BounceCount || 0;
+      const newCount = currentCount + 1;
+      
+      // Soft Bounceが5回に達したらHard Bounceに昇格
+      const finalType = bounceInfo.type === 'soft' && newCount >= 5 ? 'hard' : bounceInfo.type;
+      const finalStatus = finalType === 'hard' ? 'HARD_BOUNCE' : 'SOFT_BOUNCE';
+
+      await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist/${record.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fields: {
+            BounceCount: newCount,
+            BounceType: finalType,
+            Status: finalStatus,
+            LastBounceDate: now,
+            Notes: `${bounceInfo.reason} (${currentCount}→${newCount}回)${newCount >= 5 && bounceInfo.type === 'soft' ? ' [自動昇格]' : ''}`
+          }
+        })
+      });
+
+      console.log(`📝 バウンス記録更新完了: ${email} (${currentCount}→${newCount}回, ${finalType})`);
+
+    } else {
+      // 新規記録作成
+      await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fields: {
+            Email: email,
+            BounceCount: 1,
+            BounceType: bounceInfo.type,
+            Status: bounceInfo.type === 'hard' ? 'HARD_BOUNCE' : 'SOFT_BOUNCE',
+            LastBounceDate: now,
+            AddedAt: now,
+            Source: 'Brevo API Direct',
+            Notes: `初回バウンス: ${bounceInfo.reason}`
+          }
+        })
+      });
+
+      console.log(`📝 新規バウンス記録作成: ${email} (${bounceInfo.type})`);
+    }
+
+  } catch (error) {
+    console.error(`バウンス記録更新エラー ${email}:`, error);
   }
 }

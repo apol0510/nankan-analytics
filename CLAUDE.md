@@ -258,7 +258,7 @@ Brevoの予約配信制限を完全に克服する独自システムを構築し
 2. **メール配信システム**
    - 即時配信：Brevo API直接送信 ✅
    - 予約配信：自作スケジューラー ✅
-   - 管理画面：admin-newsletter.astro ✅
+   - 管理画面：admin-newsletter-simple.astro ✅
 
 3. **Netlify Functions完全稼働**
    - auth-user.js：認証＋顧客登録
@@ -296,7 +296,7 @@ git push origin main
 - alphanumeric、ハイフン、アンダースコアのみ使用可能
 
 ### 📧 **メール配信パラメータ**
-admin-newsletter.astroから送信時の必須パラメータ：
+admin-newsletter-simple.astroから送信時の必須パラメータ：
 - `subject`: 件名（必須）
 - `htmlContent`: HTML本文（必須）
 - `targetPlan`: 配信対象（'all'/'free'/'standard'/'premium'）
@@ -324,7 +324,7 @@ curl http://localhost:8888/.netlify/functions/get-scheduled-jobs
 - 環境変数設定確認（AIRTABLE_API_KEY, AIRTABLE_BASE_ID）
 
 ### 3. **メール配信テスト**
-- admin-newsletter.astroから即時配信テスト
+- admin-newsletter-simple.astroから即時配信テスト
 - 予約配信テスト（5分後に設定）
 
 ---
@@ -352,4 +352,24 @@ curl http://localhost:8888/.netlify/functions/get-scheduled-jobs
 ## 🚀 **マコ&クロの最強コンビ成果**
 予約メール配信の根本問題を独自システムで完全解決！
 技術的制約に負けず、新しいアプローチで突破しました！ 🌟✨🚀
+
+---
+
+## 📝 **管理画面使用方法（2025-09-10更新）**
+
+### 🎯 **メール配信管理画面**
+**使用ファイル**: `admin-newsletter-simple.astro`  
+**アクセスURL**: `/admin-newsletter-simple`
+
+### ✨ **主な機能**
+1. **即時配信**: 件名・本文・配信対象を設定してすぐ配信
+2. **予約配信**: 日時指定での自動配信（独自スケジューラー使用）
+3. **配信履歴確認**: 過去の配信状況・統計確認
+4. **エラー監視**: 配信失敗時の詳細ログ表示
+
+### 🔧 **次回作業時の注意点**
+- ❌ 旧ファイル `admin-newsletter.astro` は削除済み
+- ✅ 新ファイル `admin-newsletter-simple.astro` を使用
+- 配信テスト時は必ず5分後の予約配信で動作確認
+
 **Next Priority**: Payment Links + Zapier実装
