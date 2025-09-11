@@ -87,33 +87,53 @@ export default async function handler(request, context) {
     // 既存ユーザーの情報取得
     const user = records[0];
     const currentPoints = user.get('ポイント') || 0;
-    const plan = user.get('プラン') || 'free';
+    const currentPlan = user.get('プラン') || 'free';
     const lastLogin = user.get('最終ポイント付与日');
+    const lastPlanCheck = user.get('最終プランチェック日') || '';
     const today = new Date().toISOString().split('T')[0];
 
-    // ログインポイント付与チェック
+    // ログインポイント付与チェック + プラン変更ボーナス
     let pointsAdded = 0;
     let newPoints = currentPoints;
+    let updateData = {};
     
+    const POINTS_BY_PLAN = {
+      'free': 1,
+      'Free': 1,
+      'standard': 10,
+      'Standard': 10,
+      'premium': 50,
+      'Premium': 50
+    };
+
+    // 通常のログインポイント（1日1回）
     if (lastLogin !== today) {
-      // 本日初ログイン - ポイント付与
-      const POINTS_BY_PLAN = {
-        'free': 1,
-        'Free': 1,
-        'standard': 10,
+      pointsAdded += POINTS_BY_PLAN[currentPlan] || 1;
+      updateData['最終ポイント付与日'] = today;
+    }
+
+    // プラン変更ボーナス（プランアップグレード時の特別ポイント）
+    if (lastPlanCheck !== today) {
+      // プランが Standard/Premium の場合、追加でプラン変更ボーナスを付与
+      const PLAN_CHANGE_BONUS = {
+        'standard': 10,  // Standard登録で+10pt
         'Standard': 10,
-        'premium': 50,
+        'premium': 50,   // Premium登録で+50pt  
         'Premium': 50
       };
       
-      pointsAdded = POINTS_BY_PLAN[plan] || 1;
-      newPoints = currentPoints + pointsAdded;
+      if (PLAN_CHANGE_BONUS[currentPlan]) {
+        pointsAdded += PLAN_CHANGE_BONUS[currentPlan];
+        updateData['最終プランチェック日'] = today;
+      }
+    }
 
+    if (pointsAdded > 0) {
+      newPoints = currentPoints + pointsAdded;
+      updateData['ポイント'] = newPoints;
+      
       // Airtable更新
-      await base('Customers').update(user.id, {
-        'ポイント': newPoints,
-        '最終ポイント付与日': today
-      });
+      await base('Customers').update(user.id, updateData);
     }
 
     return new Response(
@@ -122,7 +142,7 @@ export default async function handler(request, context) {
         isNewUser: false,
         user: {
           email,
-          plan,
+          plan: currentPlan,
           points: newPoints,
           pointsAdded,
           lastLogin: today,
