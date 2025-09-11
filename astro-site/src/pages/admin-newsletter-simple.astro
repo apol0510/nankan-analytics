@@ -299,8 +299,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         
         .html-textarea {
             font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.4;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 250px;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            tab-size: 4;
         }
         
         /* 画像アップロード */
@@ -481,6 +486,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <button type="button" class="html-btn" data-tag="u">下線</button>
                             <button type="button" class="html-btn" onclick="insertLink()">🔗 リンク</button>
                             <button type="button" class="html-btn" onclick="insertImage()">🖼️ 画像</button>
+                            <button type="button" class="html-btn" onclick="formatHTML()" style="margin-left: 10px; background: #10b981; color: white;">📝 整形</button>
                         </div>
                         <textarea class="form-control html-textarea" id="htmlContent" 
                                   placeholder="HTMLコードを入力するか、上のボタンでHTMLタグを追加してください..."></textarea>
@@ -813,9 +819,57 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         }
         
+        // HTML整形機能
+        function formatHTML() {
+            const textarea = document.getElementById('htmlContent');
+            const html = textarea.value;
+            
+            if (!html.trim()) {
+                alert('整形するHTMLコードを入力してください');
+                return;
+            }
+            
+            try {
+                // HTMLを整形する
+                let formatted = html
+                    // タグの前後に改行を追加
+                    .replace(/></g, '>\n<')
+                    // 開始タグの後に改行
+                    .replace(/(<\/?)(\w+)([^>]*>)/g, '$1$2$3\n')
+                    // 閉じタグの前に改行
+                    .replace(/\n<\//g, '\n</')
+                    // 余分な改行を削除
+                    .replace(/\n\s*\n/g, '\n')
+                    // インライン要素は同じ行に保持
+                    .replace(/(<(?:b|i|u|strong|em|span|a)[^>]*>)\n/g, '$1')
+                    .replace(/\n(<\/(?:b|i|u|strong|em|span|a)>)/g, '$1')
+                    // pタグの中身は同じ行に
+                    .replace(/(<p[^>]*>)\n([^<]+)\n(<\/p>)/g, '$1$2$3')
+                    // 先頭と末尾の改行をトリム
+                    .trim();
+                
+                textarea.value = formatted;
+                
+                // 成功メッセージを表示
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ 完了';
+                button.style.background = '#059669';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '#10b981';
+                }, 1500);
+                
+            } catch (error) {
+                alert('HTML整形中にエラーが発生しました: ' + error.message);
+            }
+        }
+        
         // グローバル関数として定義
         window.insertLink = insertLink;
         window.insertImage = insertImage;
+        window.formatHTML = formatHTML;
         
         // テンプレート機能
         const emailTemplates = {
