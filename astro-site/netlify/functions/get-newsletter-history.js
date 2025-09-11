@@ -52,8 +52,8 @@ export default async function handler(request, context) {
     const history = data.records.map(record => {
       const fields = record.fields;
       
-      // 配信対象の日本語化
-      let targetPlanJa = fields.targetPlan || 'all';
+      // 配信対象の日本語化（TargetPlanフィールドに対応）
+      let targetPlanJa = fields.TargetPlan || fields.targetPlan || 'all';
       switch(targetPlanJa) {
         case 'free': targetPlanJa = 'Free会員'; break;
         case 'standard': targetPlanJa = 'Standard会員'; break;
@@ -73,7 +73,9 @@ export default async function handler(request, context) {
         sentAt: fields.SentAt,
         createdAt: fields.ScheduledFor,
         jobId: fields.JobId,
-        errorMessage: fields.ErrorMessage
+        errorMessage: fields.ErrorMessage,
+        failedCount: fields.FailedCount || 0,
+        notes: fields.Notes || ''
       };
     });
 

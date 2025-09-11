@@ -139,7 +139,54 @@ export default async function handler(request, context) {
       htmlContent
     });
 
-    // 配信履歴はフロントエンドのLocalStorageで管理
+    // 即時配信もAirtableに履歴を保存
+    const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+    const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+    
+    if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
+      try {
+        const now = new Date();
+        const historyData = {
+          fields: {
+            Subject: subject,
+            Content: htmlContent.substring(0, 10000), // 最初の10000文字のみ保存
+            Recipients: recipients.slice(0, 100).join(', '), // 最初の100件のメールのみ
+            ScheduledFor: now.toISOString(),
+            Status: 'SENT',
+            JobId: `immediate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            CreatedBy: 'admin',
+            SentAt: now.toISOString(),
+            MessageId: result.messageId || `msg_${Date.now()}`,
+            RecipientCount: result.totalSent,
+            FailedCount: result.totalFailed,
+            TargetPlan: targetPlan || 'all',
+            Notes: `即時配信: 成功${result.totalSent}件, 失敗${result.totalFailed}件`
+          }
+        };
+        
+        console.log('📝 即時配信履歴をAirtableに保存中...');
+        
+        const airtableResponse = await fetch(
+          `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/ScheduledEmails`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(historyData)
+          }
+        );
+        
+        if (airtableResponse.ok) {
+          console.log('✅ 即時配信履歴をAirtableに保存しました');
+        } else {
+          console.error('⚠️ 履歴保存に失敗しましたが、配信は成功しています');
+        }
+      } catch (historyError) {
+        console.error('履歴保存エラー（配信は成功）:', historyError);
+      }
+    }
 
     return new Response(
       JSON.stringify({
