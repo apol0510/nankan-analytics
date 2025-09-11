@@ -508,7 +508,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <textarea class="form-control" id="templateContent" rows="8" 
                                       placeholder="テンプレートを選択すると、編集可能なコンテンツが表示されます..."></textarea>
                             <small style="color: #6b7280; font-size: 12px;">
-                                💡 ヒント: {USER_NAME}, {DATE}, {CONFIDENCE} などの変数が使用できます
+                                💡 ヒント: 動的な変数の置換が可能です
                             </small>
                         </div>
                         
@@ -845,35 +845,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             newsletter: {
                 name: '📧 基本ニュースレター',
                 description: 'シンプルで読みやすい基本テンプレート',
-                content: `<h2>🎯 今週の予想実績</h2>
-<p>先週は6戦4勝の好成績！的中率66.7%を記録しました。</p>
-
-<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">
-<h3>📊 週間ハイライト</h3>
-<ul>
-<li><strong>川崎11R:</strong> 3連複 ¥8,460的中 (推奨¥500 → 利益¥3,730)</li>
-<li><strong>大井10R:</strong> 馬単 ¥3,280的中 (推奨¥1,000 → 利益¥2,280)</li>
-<li><strong>浦和12R:</strong> 3連単 ¥15,890的中 (推奨¥200 → 利益¥2,978)</li>
-</ul>
-</div>
-
-<h2>🚀 来週の注目レース</h2>
-<p>来週は<strong>川崎記念</strong>の前哨戦が開催予定。重賞候補の動向に注目です。</p>`
+                content: '<h2>🎯 今週の予想実績</h2>' +
+'<p>先週は6戦4勝の好成績！的中率66.7%を記録しました。</p>' +
+'<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">' +
+'<h3>📊 週間ハイライト</h3>' +
+'<ul>' +
+'<li><strong>川崎11R:</strong> 3連複 ¥8,460的中 (推奨¥500 → 利益¥3,730)</li>' +
+'<li><strong>大井10R:</strong> 馬単 ¥3,280的中 (推奨¥1,000 → 利益¥2,280)</li>' +
+'<li><strong>浦和12R:</strong> 3連単 ¥15,890的中 (推奨¥200 → 利益¥2,978)</li>' +
+'</ul>' +
+'</div>' +
+'<h2>🚀 来週の注目レース</h2>' +
+'<p>来週は<strong>川崎記念</strong>の前哨戦が開催予定。重賞候補の動向に注目です。</p>'
             },
             prediction: {
                 name: '🎯 予想配信テンプレート',
                 description: '競馬予想に特化したレイアウト',
-                content: '<h2>🏇 {DATE} 南関競馬AI予想</h2>' +
+                content: '<h2>🏇 今日の南関競馬AI予想</h2>' +
 '<div style="background-color: #334155; padding: 20px; border-radius: 12px; margin: 20px 0;">' +
 '<h3 style="color: #ffffff; margin: 0 0 15px 0;">川崎12R サラ系3歳以上</h3>' +
-'<div style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">📅 {DATE} | ⏰ 20:45発走 | 🏃 1400m</div>' +
+'<div style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">📅 本日 | ⏰ 20:45発走 | 🏃 1400m</div>' +
 '<div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #475569;">' +
 '<div style="font-size: 24px; width: 40px; text-align: center;">◎</div>' +
 '<div style="flex: 1; margin-left: 15px;">' +
 '<h4 style="color: #ffffff; margin: 0;">8番 キチョウ</h4>' +
 '<p style="color: #94a3b8; font-size: 13px; margin: 3px 0 0 0;">前走好内容。今回も上位期待。</p>' +
 '</div>' +
-'<div style="background-color: #059669; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 12px;">信頼度 {CONFIDENCE}%</div>' +
+'<div style="background-color: #059669; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 12px;">信頼度 85%</div>' +
 '</div>' +
 '<div style="background-color: #065f46; padding: 15px; margin: 15px 0; border-radius: 8px;">' +
 '<h3 style="color: #ffffff; margin: 0 0 10px 0;">💡 推奨投資戦略</h3>' +
@@ -889,8 +887,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 content: '<h2>🎊 期間限定特別キャンペーン</h2>' +
 '<div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; border: 2px solid #f59e0b;">' +
 '<h3 style="color: #92400e; margin: 0 0 10px 0;">💎 Premium会員</h3>' +
-'<div style="font-size: 36px; color: #dc2626; font-weight: 800; margin: 10px 0;">¥{PRICE}/月</div>' +
-'<p style="color: #059669; font-weight: 600; margin: 0;">🎯 初月{DISCOUNT}%OFF!</p>' +
+'<div style="font-size: 36px; color: #dc2626; font-weight: 800; margin: 10px 0;">¥4,990/月</div>' +
+'<p style="color: #059669; font-weight: 600; margin: 0;">🎯 初月50%OFF!</p>' +
 '</div>' +
 '<h3>🌟 特典内容</h3>' +
 '<ul>' +
@@ -906,7 +904,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             welcome: {
                 name: '👋 ウェルカムメール',
                 description: '新規登録者向けの歓迎メール',
-                content: '<h2>👋 {USER_NAME}さん、ようこそ！</h2>' +
+                content: '<h2>👋 ようこそ、NANKANアナリティクスへ！</h2>' +
 '<p>NANKANアナリティクスへのご登録、ありがとうございます！</p>' +
 '<h3>🎁 登録特典のご案内</h3>' +
 '<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">' +
@@ -937,7 +935,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 '</div>' +
 '<p>詳細についてご質問がございましたら、<a href="mailto:info@keiba.link" style="color: #0ea5e9;">info@keiba.link</a> までお気軽にお問い合わせください。</p>' +
 '<div style="background-color: #f3f4f6; padding: 10px 15px; border-radius: 6px; color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">' +
-'📅 発信日: {DATE}' +
+'📅 発信日: 本日' +
 '</div>'
             }
         };
@@ -991,7 +989,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const defaults = {
                 '{DATE}': new Date().toLocaleDateString('ja-JP'),
                 '{CONFIDENCE}': '85',
-                '{USER_NAME}': '会員',
                 '{PRICE}': '4,990',
                 '{DISCOUNT}': '50'
             };
