@@ -234,53 +234,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             cursor: pointer;
         }
         
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        
-        .history-table th,
-        .history-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .history-table th {
-            background: #f9fafb;
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.9rem;
-        }
-        
-        .history-table td {
-            color: #4b5563;
-            font-size: 0.9rem;
-        }
-        
-        .tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .tag.success {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        
-        .tag.pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .tag.error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
         
         /* HTML/テキスト切り替えタブ */
         .content-type-tabs {
@@ -642,28 +595,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
             </div>
             
-            <!-- 配信履歴 -->
-            <div class="card">
-                <h2>📝 最近の配信</h2>
-                <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>配信日時</th>
-                            <th>件名</th>
-                            <th>対象</th>
-                            <th>配信数</th>
-                            <th>状態</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyBody">
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: #9ca3af;">
-                                配信履歴を読み込み中...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
     
@@ -696,51 +627,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         }
         
-        // 配信履歴を取得
-        async function loadHistory() {
-            try {
-                const response = await fetch('/.netlify/functions/get-newsletter-history');
-                if (response.ok) {
-                    const history = await response.json();
-                    const tbody = document.getElementById('historyBody');
-                    
-                    if (history.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">配信履歴がありません</td></tr>';
-                        return;
-                    }
-                    
-                    tbody.innerHTML = history.slice(0, 10).map(item => {
-                        const date = new Date(item.sentAt || item.scheduledFor);
-                        const formattedDate = date.toLocaleString('ja-JP', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                        
-                        const statusClass = item.status === 'SENT' ? 'success' : 
-                                          item.status === 'PENDING' ? 'pending' : 'error';
-                        const statusText = item.status === 'SENT' ? '配信済' : 
-                                         item.status === 'PENDING' ? '予約中' : 'エラー';
-                        
-                        return `
-                            <tr>
-                                <td>${formattedDate}</td>
-                                <td>${item.subject || '-'}</td>
-                                <td>${item.targetPlan || 'all'}</td>
-                                <td>${item.recipientCount || 0}</td>
-                                <td><span class="tag ${statusClass}">${statusText}</span></td>
-                            </tr>
-                        `;
-                    }).join('');
-                }
-            } catch (error) {
-                console.error('配信履歴の取得に失敗:', error);
-                document.getElementById('historyBody').innerHTML = 
-                    '<tr><td colspan="5" style="text-align: center; color: #ef4444;">履歴の取得に失敗しました</td></tr>';
-            }
-        }
         
         // プラン選択
         document.querySelectorAll('.plan-option').forEach(option => {
@@ -1136,9 +1022,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     document.getElementById('htmlContent').value = '';
                     uploadedImages = [];
                     displayImagePreview();
-                    
-                    // 履歴を更新
-                    loadHistory();
                 } else {
                     showMessage(`エラー: ${result.error || '配信に失敗しました'}`, 'error');
                 }
@@ -1151,10 +1034,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         
         // 初期化
         loadStatistics();
-        loadHistory();
         
         // 定期的に更新
         setInterval(loadStatistics, 30000);
-        setInterval(loadHistory, 60000);
     </script>
 </BaseLayout>
