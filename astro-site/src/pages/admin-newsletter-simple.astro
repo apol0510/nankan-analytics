@@ -456,6 +456,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <div class="content-type-tabs">
                         <button type="button" class="content-tab active" data-type="text">📝 テキスト</button>
                         <button type="button" class="content-tab" data-type="html">🌐 HTML</button>
+                        <button type="button" class="content-tab" data-type="template">🎨 テンプレート</button>
                     </div>
                 </div>
                 
@@ -480,6 +481,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div id="previewPane" style="display: none; margin-top: 10px; padding: 15px; border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb;">
                                 <div id="previewContent"></div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- テンプレートエディター -->
+                    <div id="templateEditor" style="display: none;">
+                        <div class="template-selector" style="margin-bottom: 15px;">
+                            <label>📋 テンプレート選択</label>
+                            <select class="form-control" id="templateSelect" style="margin-top: 8px;">
+                                <option value="">テンプレートを選択...</option>
+                                <option value="newsletter">📧 基本ニュースレター</option>
+                                <option value="prediction">🎯 予想配信テンプレート</option>
+                                <option value="promotion">🎉 プロモーション</option>
+                                <option value="welcome">👋 ウェルカムメール</option>
+                                <option value="announcement">📢 お知らせ</option>
+                            </select>
+                        </div>
+                        
+                        <div id="templateDescription" style="display: none; background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #0ea5e9;">
+                            <h4 style="margin: 0 0 8px 0; color: #0c4a6e;" id="templateName"></h4>
+                            <p style="margin: 0; color: #0369a1; font-size: 14px;" id="templateDesc"></p>
+                        </div>
+                        
+                        <div class="template-content" style="margin-bottom: 15px;">
+                            <label>✏️ コンテンツ</label>
+                            <textarea class="form-control" id="templateContent" rows="8" 
+                                      placeholder="テンプレートを選択すると、編集可能なコンテンツが表示されます..."></textarea>
+                            <small style="color: #6b7280; font-size: 12px;">
+                                💡 ヒント: {USER_NAME}, {DATE}, {CONFIDENCE} などの変数が使用できます
+                            </small>
+                        </div>
+                        
+                        <div class="template-variables" style="margin-bottom: 15px;">
+                            <label>🔧 カスタム変数 (オプション)</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+                                <input type="text" class="form-control" id="customVar1" placeholder="変数名 (例: PRICE)">
+                                <input type="text" class="form-control" id="customVal1" placeholder="値 (例: 4,990)">
+                                <input type="text" class="form-control" id="customVar2" placeholder="変数名 (例: DISCOUNT)">
+                                <input type="text" class="form-control" id="customVal2" placeholder="値 (例: 50)">
+                            </div>
+                        </div>
+                        
+                        <div class="template-actions">
+                            <button type="button" class="btn btn-secondary" id="templatePreview">👁️ プレビュー</button>
+                            <button type="button" class="btn btn-primary" id="useTemplate">✅ このテンプレートを使用</button>
+                        </div>
+                        
+                        <div id="templatePreviewPane" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #d1d5db; border-radius: 8px; background: #ffffff; max-height: 400px; overflow-y: auto;">
+                            <h4 style="margin: 0 0 10px 0; color: #1f2937;">📧 メールプレビュー</h4>
+                            <div id="templatePreviewContent"></div>
                         </div>
                     </div>
                 </div>
@@ -705,7 +755,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         }
         
-        // HTML/テキスト切り替え機能
+        // HTML/テキスト/テンプレート切り替え機能
         document.querySelectorAll('.content-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 const type = this.dataset.type;
@@ -715,13 +765,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 this.classList.add('active');
                 
                 // エディターの表示切り替え
+                document.getElementById('textEditor').style.display = 'none';
+                document.getElementById('htmlEditor').style.display = 'none';
+                document.getElementById('templateEditor').style.display = 'none';
+                
                 if (type === 'html') {
-                    document.getElementById('textEditor').style.display = 'none';
                     document.getElementById('htmlEditor').style.display = 'block';
                     document.getElementById('contentLabel').textContent = 'HTML本文';
+                } else if (type === 'template') {
+                    document.getElementById('templateEditor').style.display = 'block';
+                    document.getElementById('contentLabel').textContent = 'テンプレート';
                 } else {
                     document.getElementById('textEditor').style.display = 'block';
-                    document.getElementById('htmlEditor').style.display = 'none';
                     document.getElementById('contentLabel').textContent = '本文';
                 }
             });
@@ -784,6 +839,205 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // グローバル関数として定義
         window.insertLink = insertLink;
         window.insertImage = insertImage;
+        
+        // テンプレート機能
+        const emailTemplates = {
+            newsletter: {
+                name: '📧 基本ニュースレター',
+                description: 'シンプルで読みやすい基本テンプレート',
+                content: `<h2>🎯 今週の予想実績</h2>
+<p>先週は6戦4勝の好成績！的中率66.7%を記録しました。</p>
+
+<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">
+<h3>📊 週間ハイライト</h3>
+<ul>
+<li><strong>川崎11R:</strong> 3連複 ¥8,460的中 (推奨¥500 → 利益¥3,730)</li>
+<li><strong>大井10R:</strong> 馬単 ¥3,280的中 (推奨¥1,000 → 利益¥2,280)</li>
+<li><strong>浦和12R:</strong> 3連単 ¥15,890的中 (推奨¥200 → 利益¥2,978)</li>
+</ul>
+</div>
+
+<h2>🚀 来週の注目レース</h2>
+<p>来週は<strong>川崎記念</strong>の前哨戦が開催予定。重賞候補の動向に注目です。</p>`
+            },
+            prediction: {
+                name: '🎯 予想配信テンプレート',
+                description: '競馬予想に特化したレイアウト',
+                content: `<h2>🏇 {DATE} 南関競馬AI予想</h2>
+
+<div style="background-color: #334155; padding: 20px; border-radius: 12px; margin: 20px 0;">
+<h3 style="color: #ffffff; margin: 0 0 15px 0;">川崎12R サラ系3歳以上</h3>
+<div style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">📅 {DATE} | ⏰ 20:45発走 | 🏃 1400m</div>
+
+<div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #475569;">
+<div style="font-size: 24px; width: 40px; text-align: center;">◎</div>
+<div style="flex: 1; margin-left: 15px;">
+<h4 style="color: #ffffff; margin: 0;">8番 キチョウ</h4>
+<p style="color: #94a3b8; font-size: 13px; margin: 3px 0 0 0;">前走好内容。今回も上位期待。</p>
+</div>
+<div style="background-color: #059669; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 12px;">信頼度 {CONFIDENCE}%</div>
+</div>
+
+<div style="background-color: #065f46; padding: 15px; margin: 15px 0; border-radius: 8px;">
+<h3 style="color: #ffffff; margin: 0 0 10px 0;">💡 推奨投資戦略</h3>
+<p style="color: #ffffff; margin: 0;"><strong>馬単:</strong> 8→6 (1,000円)<br>
+<strong>3連複:</strong> 6-8-2 (500円)<br>
+<strong>期待収益:</strong> +2,400円 (240%)</p>
+</div>
+</div>`
+            },
+            promotion: {
+                name: '🎉 プロモーション',
+                description: 'キャンペーンや特別オファー用',
+                content: `<h2>🎊 期間限定特別キャンペーン</h2>
+
+<div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; border: 2px solid #f59e0b;">
+<h3 style="color: #92400e; margin: 0 0 10px 0;">💎 Premium会員</h3>
+<div style="font-size: 36px; color: #dc2626; font-weight: 800; margin: 10px 0;">¥{PRICE}/月</div>
+<p style="color: #059669; font-weight: 600; margin: 0;">🎯 初月{DISCOUNT}%OFF!</p>
+</div>
+
+<h3>🌟 特典内容</h3>
+<ul>
+<li>🤖 <strong>AI予想</strong>: 機械学習による高精度予想</li>
+<li>📱 <strong>リアルタイム</strong>: レース直前まで更新</li>
+<li>💰 <strong>投資戦略</strong>: リスク管理も完璧</li>
+<li>📊 <strong>透明性</strong>: 予想根拠を完全公開</li>
+</ul>
+
+<p style="text-align: center;">
+<a href="https://nankan-analytics.keiba.link/pricing" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px;">今すぐ始める 🚀</a>
+</p>`
+            },
+            welcome: {
+                name: '👋 ウェルカムメール',
+                description: '新規登録者向けの歓迎メール',
+                content: `<h2>👋 {USER_NAME}さん、ようこそ！</h2>
+<p>NANKANアナリティクスへのご登録、ありがとうございます！</p>
+
+<h3>🎁 登録特典のご案内</h3>
+<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">
+<ul>
+<li>🎯 <strong>無料予想</strong>: 毎日のメインレース予想</li>
+<li>📊 <strong>戦略ガイド</strong>: 効率的な馬券購入方法</li>
+<li>💰 <strong>投資管理</strong>: リスク管理の基本</li>
+</ul>
+</div>
+
+<h3>🚀 始め方（3ステップ）</h3>
+<ol>
+<li><strong>🔍 無料予想をチェック</strong><br>まずは無料のメインレース予想で、AI予想の精度を体感してください。</li>
+<li><strong>📊 予想の見方を学習</strong><br>信頼度、戦略、投資金額の見方を理解しましょう。</li>
+<li><strong>💎 有料プランを検討</strong><br>より詳細な分析と全レース予想で、本格的な競馬投資を始めてみませんか？</li>
+</ol>
+
+<p style="text-align: center;">
+<a href="https://nankan-analytics.keiba.link/free-prediction" style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700;">🎯 無料予想を見る</a>
+</p>`
+            },
+            announcement: {
+                name: '📢 お知らせ',
+                description: 'システム更新やお知らせ用のシンプルテンプレート',
+                content: `<h2>📢 重要なお知らせ</h2>
+<p>いつもNANKANアナリティクスをご利用いただき、ありがとうございます。</p>
+
+<div style="background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 15px 20px; margin: 20px 0; border-radius: 4px;">
+<h3 style="color: #0c4a6e; margin: 0 0 10px 0;">💡 今回のお知らせ内容</h3>
+<p style="color: #0369a1; margin: 0;">こちらにお知らせの詳細内容を記載してください。システムの更新情報、新機能の追加、メンテナンス情報など。</p>
+</div>
+
+<p>詳細についてご質問がございましたら、<a href="mailto:info@keiba.link" style="color: #0ea5e9;">info@keiba.link</a> までお気軽にお問い合わせください。</p>
+
+<div style="background-color: #f3f4f6; padding: 10px 15px; border-radius: 6px; color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
+📅 発信日: {DATE}
+</div>`
+            }
+        };
+        
+        // テンプレート選択イベント
+        document.getElementById('templateSelect').addEventListener('change', function() {
+            const templateKey = this.value;
+            const description = document.getElementById('templateDescription');
+            const templateName = document.getElementById('templateName');
+            const templateDesc = document.getElementById('templateDesc');
+            const templateContent = document.getElementById('templateContent');
+            
+            if (templateKey && emailTemplates[templateKey]) {
+                const template = emailTemplates[templateKey];
+                templateName.textContent = template.name;
+                templateDesc.textContent = template.description;
+                templateContent.value = template.content;
+                description.style.display = 'block';
+            } else {
+                description.style.display = 'none';
+                templateContent.value = '';
+            }
+        });
+        
+        // テンプレートプレビュー
+        document.getElementById('templatePreview').addEventListener('click', function() {
+            const templateKey = document.getElementById('templateSelect').value;
+            const content = document.getElementById('templateContent').value;
+            const previewPane = document.getElementById('templatePreviewPane');
+            const previewContent = document.getElementById('templatePreviewContent');
+            
+            if (!templateKey || !content) {
+                alert('テンプレートを選択してコンテンツを入力してください');
+                return;
+            }
+            
+            // カスタム変数を取得
+            const variables = {};
+            const var1 = document.getElementById('customVar1').value;
+            const val1 = document.getElementById('customVal1').value;
+            const var2 = document.getElementById('customVar2').value;
+            const val2 = document.getElementById('customVal2').value;
+            
+            if (var1 && val1) variables[var1.toUpperCase()] = val1;
+            if (var2 && val2) variables[var2.toUpperCase()] = val2;
+            
+            // 変数の置換
+            let processedContent = content;
+            
+            // デフォルト変数
+            const defaults = {
+                '{DATE}': new Date().toLocaleDateString('ja-JP'),
+                '{CONFIDENCE}': '85',
+                '{USER_NAME}': '会員',
+                '{PRICE}': '4,990',
+                '{DISCOUNT}': '50'
+            };
+            
+            // カスタム変数を優先
+            Object.keys(variables).forEach(key => {
+                const placeholder = `{${key}}`;
+                processedContent = processedContent.replace(new RegExp(placeholder, 'g'), variables[key]);
+            });
+            
+            // デフォルト変数で残りを置換
+            Object.keys(defaults).forEach(placeholder => {
+                processedContent = processedContent.replace(new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'), defaults[placeholder]);
+            });
+            
+            previewContent.innerHTML = processedContent;
+            previewPane.style.display = 'block';
+        });
+        
+        // テンプレート使用
+        document.getElementById('useTemplate').addEventListener('click', function() {
+            const content = document.getElementById('templateContent').value;
+            
+            if (!content) {
+                alert('コンテンツを入力してください');
+                return;
+            }
+            
+            // HTMLエディターに切り替えてコンテンツを設定
+            document.querySelector('[data-type="html"]').click();
+            document.getElementById('htmlContent').value = content;
+            
+            showMessage('テンプレートをHTMLエディターに設定しました', 'success');
+        });
         
         // 画像アップロード機能
         let uploadedImages = [];
@@ -957,13 +1211,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         });
         
-        // 配信処理（HTML/画像対応）- 既存の処理を置き換え
+        // 配信処理（HTML/画像/テンプレート対応）- 既存の処理を置き換え
         document.getElementById('sendBtn').onclick = async function() {
             const subject = document.getElementById('subject').value;
-            const isHtml = document.querySelector('.content-tab.active').dataset.type === 'html';
-            const content = isHtml ? 
-                document.getElementById('htmlContent').value : 
-                document.getElementById('content').value;
+            const activeType = document.querySelector('.content-tab.active').dataset.type;
+            
+            let content;
+            if (activeType === 'html') {
+                content = document.getElementById('htmlContent').value;
+            } else if (activeType === 'template') {
+                content = document.getElementById('templateContent').value;
+            } else {
+                content = document.getElementById('content').value;
+            }
+            
             const targetPlan = document.querySelector('.plan-option.active').dataset.plan;
             const isScheduled = document.getElementById('scheduleCheck').checked;
             const scheduleTime = document.getElementById('scheduleTime').value;
@@ -978,7 +1239,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             
             try {
                 let htmlContent;
-                if (isHtml) {
+                if (activeType === 'html' || activeType === 'template') {
                     htmlContent = content;
                 } else {
                     htmlContent = `<div style="white-space: pre-wrap; font-family: sans-serif;">${content}</div>`;
@@ -1020,6 +1281,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     document.getElementById('subject').value = '';
                     document.getElementById('content').value = '';
                     document.getElementById('htmlContent').value = '';
+                    document.getElementById('templateContent').value = '';
+                    document.getElementById('templateSelect').value = '';
+                    document.getElementById('templateDescription').style.display = 'none';
                     uploadedImages = [];
                     displayImagePreview();
                 } else {
