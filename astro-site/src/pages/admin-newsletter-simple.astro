@@ -493,6 +493,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                                 <option value="newsletter">📧 基本ニュースレター</option>
                                 <option value="prediction">🎯 予想配信テンプレート</option>
                                 <option value="promotion">🎉 プロモーション</option>
+                                <option value="stripePromo">🎁 Stripeプロモーションコード</option>
                                 <option value="welcome">👋 ウェルカムメール</option>
                                 <option value="announcement">📢 お知らせ</option>
                             </select>
@@ -937,6 +938,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 '<div style="background-color: #f3f4f6; padding: 10px 15px; border-radius: 6px; color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">' +
 '📅 発信日: 本日' +
 '</div>'
+            },
+            stripePromo: {
+                name: '🎁 Stripeプロモーションコード',
+                description: '割引コード・クーポン配布用テンプレート',
+                content: '<h2>🎁 特別プロモーションコードのお知らせ</h2>' +
+'<p>日頃のご愛顧に感謝を込めて、期間限定の特別割引コードをご用意しました！</p>' +
+'<div style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); padding: 25px; border-radius: 16px; margin: 25px 0; text-align: center; border: 2px solid #6366f1; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);">' +
+'<div style="color: #4c1d95; font-size: 14px; font-weight: 600; margin-bottom: 10px;">🎊 期間限定プロモーションコード 🎊</div>' +
+'<div style="background-color: #ffffff; padding: 15px 25px; border-radius: 8px; display: inline-block; margin: 10px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">' +
+'<div style="font-size: 32px; color: #4c1d95; font-weight: 800; letter-spacing: 2px; font-family: monospace;">NANKAN50</div>' +
+'</div>' +
+'<div style="color: #dc2626; font-size: 24px; font-weight: 700; margin: 15px 0;">初月50%OFF!</div>' +
+'<div style="color: #6b21a8; font-size: 14px; margin-top: 10px;">有効期限: 2025年1月31日まで</div>' +
+'</div>' +
+'<h3>✨ プロモーションコードの使い方</h3>' +
+'<ol style="line-height: 1.8;">' +
+'<li>下記のボタンからプラン選択ページへアクセス</li>' +
+'<li>ご希望のプラン（Standard/Premium）を選択</li>' +
+'<li>Stripe決済画面で「プロモーションコード」欄にコードを入力</li>' +
+'<li>「適用」ボタンで割引が自動適用されます</li>' +
+'</ol>' +
+'<div style="background-color: #fef3c7; border: 1px solid #fbbf24; padding: 15px; border-radius: 8px; margin: 20px 0;">' +
+'<h4 style="color: #92400e; margin: 0 0 10px 0;">📌 ご利用条件</h4>' +
+'<ul style="color: #78350f; margin: 0; padding-left: 20px;">' +
+'<li>新規ご登録のお客様限定</li>' +
+'<li>初月のみ50%割引（2ヶ月目以降は通常料金）</li>' +
+'<li>Standard会員: <s>¥5,980</s> → <strong>¥2,990/初月</strong></li>' +
+'<li>Premium会員: <s>¥9,980</s> → <strong>¥4,990/初月</strong></li>' +
+'</ul>' +
+'</div>' +
+'<div style="text-align: center; margin: 30px 0;">' +
+'<a href="https://nankan-analytics.keiba.link/pricing/" style="display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 16px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); transition: all 0.3s;">' +
+'🚀 今すぐプロモーションコードを使う' +
+'</a>' +
+'</div>' +
+'<div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">' +
+'<h4 style="color: #374151; margin: 0 0 10px 0;">🎯 なぜ今がチャンス？</h4>' +
+'<ul style="color: #6b7280; margin: 0; padding-left: 20px; line-height: 1.6;">' +
+'<li><strong>AI予想精度向上</strong>: 最新アルゴリズムで的中率が大幅UP</li>' +
+'<li><strong>年末年始の大レース</strong>: 重賞レースが目白押し</li>' +
+'<li><strong>実績証明済み</strong>: 先月の回収率156%達成</li>' +
+'</ul>' +
+'</div>' +
+'<p style="text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px;">' +
+'このメールは特別オファーの対象者様にのみお送りしています。<br>' +
+'プロモーションコードの譲渡・転売は固くお断りしております。' +
+'</p>'
             }
         };
         
