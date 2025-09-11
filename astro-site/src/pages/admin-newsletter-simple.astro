@@ -863,94 +863,82 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             prediction: {
                 name: '🎯 予想配信テンプレート',
                 description: '競馬予想に特化したレイアウト',
-                content: `<h2>🏇 {DATE} 南関競馬AI予想</h2>
-
-<div style="background-color: #334155; padding: 20px; border-radius: 12px; margin: 20px 0;">
-<h3 style="color: #ffffff; margin: 0 0 15px 0;">川崎12R サラ系3歳以上</h3>
-<div style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">📅 {DATE} | ⏰ 20:45発走 | 🏃 1400m</div>
-
-<div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #475569;">
-<div style="font-size: 24px; width: 40px; text-align: center;">◎</div>
-<div style="flex: 1; margin-left: 15px;">
-<h4 style="color: #ffffff; margin: 0;">8番 キチョウ</h4>
-<p style="color: #94a3b8; font-size: 13px; margin: 3px 0 0 0;">前走好内容。今回も上位期待。</p>
-</div>
-<div style="background-color: #059669; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 12px;">信頼度 {CONFIDENCE}%</div>
-</div>
-
-<div style="background-color: #065f46; padding: 15px; margin: 15px 0; border-radius: 8px;">
-<h3 style="color: #ffffff; margin: 0 0 10px 0;">💡 推奨投資戦略</h3>
-<p style="color: #ffffff; margin: 0;"><strong>馬単:</strong> 8→6 (1,000円)<br>
-<strong>3連複:</strong> 6-8-2 (500円)<br>
-<strong>期待収益:</strong> +2,400円 (240%)</p>
-</div>
-</div>`
+                content: '<h2>🏇 {DATE} 南関競馬AI予想</h2>' +
+'<div style="background-color: #334155; padding: 20px; border-radius: 12px; margin: 20px 0;">' +
+'<h3 style="color: #ffffff; margin: 0 0 15px 0;">川崎12R サラ系3歳以上</h3>' +
+'<div style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">📅 {DATE} | ⏰ 20:45発走 | 🏃 1400m</div>' +
+'<div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #475569;">' +
+'<div style="font-size: 24px; width: 40px; text-align: center;">◎</div>' +
+'<div style="flex: 1; margin-left: 15px;">' +
+'<h4 style="color: #ffffff; margin: 0;">8番 キチョウ</h4>' +
+'<p style="color: #94a3b8; font-size: 13px; margin: 3px 0 0 0;">前走好内容。今回も上位期待。</p>' +
+'</div>' +
+'<div style="background-color: #059669; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 12px;">信頼度 {CONFIDENCE}%</div>' +
+'</div>' +
+'<div style="background-color: #065f46; padding: 15px; margin: 15px 0; border-radius: 8px;">' +
+'<h3 style="color: #ffffff; margin: 0 0 10px 0;">💡 推奨投資戦略</h3>' +
+'<p style="color: #ffffff; margin: 0;"><strong>馬単:</strong> 8→6 (1,000円)<br>' +
+'<strong>3連複:</strong> 6-8-2 (500円)<br>' +
+'<strong>期待収益:</strong> +2,400円 (240%)</p>' +
+'</div>' +
+'</div>'
             },
             promotion: {
                 name: '🎉 プロモーション',
                 description: 'キャンペーンや特別オファー用',
-                content: `<h2>🎊 期間限定特別キャンペーン</h2>
-
-<div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; border: 2px solid #f59e0b;">
-<h3 style="color: #92400e; margin: 0 0 10px 0;">💎 Premium会員</h3>
-<div style="font-size: 36px; color: #dc2626; font-weight: 800; margin: 10px 0;">¥{PRICE}/月</div>
-<p style="color: #059669; font-weight: 600; margin: 0;">🎯 初月{DISCOUNT}%OFF!</p>
-</div>
-
-<h3>🌟 特典内容</h3>
-<ul>
-<li>🤖 <strong>AI予想</strong>: 機械学習による高精度予想</li>
-<li>📱 <strong>リアルタイム</strong>: レース直前まで更新</li>
-<li>💰 <strong>投資戦略</strong>: リスク管理も完璧</li>
-<li>📊 <strong>透明性</strong>: 予想根拠を完全公開</li>
-</ul>
-
-<p style="text-align: center;">
-<a href="https://nankan-analytics.keiba.link/pricing" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px;">今すぐ始める 🚀</a>
-</p>`
+                content: '<h2>🎊 期間限定特別キャンペーン</h2>' +
+'<div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; border: 2px solid #f59e0b;">' +
+'<h3 style="color: #92400e; margin: 0 0 10px 0;">💎 Premium会員</h3>' +
+'<div style="font-size: 36px; color: #dc2626; font-weight: 800; margin: 10px 0;">¥{PRICE}/月</div>' +
+'<p style="color: #059669; font-weight: 600; margin: 0;">🎯 初月{DISCOUNT}%OFF!</p>' +
+'</div>' +
+'<h3>🌟 特典内容</h3>' +
+'<ul>' +
+'<li>🤖 <strong>AI予想</strong>: 機械学習による高精度予想</li>' +
+'<li>📱 <strong>リアルタイム</strong>: レース直前まで更新</li>' +
+'<li>💰 <strong>投資戦略</strong>: リスク管理も完璧</li>' +
+'<li>📊 <strong>透明性</strong>: 予想根拠を完全公開</li>' +
+'</ul>' +
+'<p style="text-align: center;">' +
+'<a href="https://nankan-analytics.keiba.link/pricing" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px;">今すぐ始める 🚀</a>' +
+'</p>'
             },
             welcome: {
                 name: '👋 ウェルカムメール',
                 description: '新規登録者向けの歓迎メール',
-                content: `<h2>👋 {USER_NAME}さん、ようこそ！</h2>
-<p>NANKANアナリティクスへのご登録、ありがとうございます！</p>
-
-<h3>🎁 登録特典のご案内</h3>
-<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">
-<ul>
-<li>🎯 <strong>無料予想</strong>: 毎日のメインレース予想</li>
-<li>📊 <strong>戦略ガイド</strong>: 効率的な馬券購入方法</li>
-<li>💰 <strong>投資管理</strong>: リスク管理の基本</li>
-</ul>
-</div>
-
-<h3>🚀 始め方（3ステップ）</h3>
-<ol>
-<li><strong>🔍 無料予想をチェック</strong><br>まずは無料のメインレース予想で、AI予想の精度を体感してください。</li>
-<li><strong>📊 予想の見方を学習</strong><br>信頼度、戦略、投資金額の見方を理解しましょう。</li>
-<li><strong>💎 有料プランを検討</strong><br>より詳細な分析と全レース予想で、本格的な競馬投資を始めてみませんか？</li>
-</ol>
-
-<p style="text-align: center;">
-<a href="https://nankan-analytics.keiba.link/free-prediction" style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700;">🎯 無料予想を見る</a>
-</p>`
+                content: '<h2>👋 {USER_NAME}さん、ようこそ！</h2>' +
+'<p>NANKANアナリティクスへのご登録、ありがとうございます！</p>' +
+'<h3>🎁 登録特典のご案内</h3>' +
+'<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">' +
+'<ul>' +
+'<li>🎯 <strong>無料予想</strong>: 毎日のメインレース予想</li>' +
+'<li>📊 <strong>戦略ガイド</strong>: 効率的な馬券購入方法</li>' +
+'<li>💰 <strong>投資管理</strong>: リスク管理の基本</li>' +
+'</ul>' +
+'</div>' +
+'<h3>🚀 始め方（3ステップ）</h3>' +
+'<ol>' +
+'<li><strong>🔍 無料予想をチェック</strong><br>まずは無料のメインレース予想で、AI予想の精度を体感してください。</li>' +
+'<li><strong>📊 予想の見方を学習</strong><br>信頼度、戦略、投資金額の見方を理解しましょう。</li>' +
+'<li><strong>💎 有料プランを検討</strong><br>より詳細な分析と全レース予想で、本格的な競馬投資を始めてみませんか？</li>' +
+'</ol>' +
+'<p style="text-align: center;">' +
+'<a href="https://nankan-analytics.keiba.link/free-prediction" style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700;">🎯 無料予想を見る</a>' +
+'</p>'
             },
             announcement: {
                 name: '📢 お知らせ',
                 description: 'システム更新やお知らせ用のシンプルテンプレート',
-                content: `<h2>📢 重要なお知らせ</h2>
-<p>いつもNANKANアナリティクスをご利用いただき、ありがとうございます。</p>
-
-<div style="background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 15px 20px; margin: 20px 0; border-radius: 4px;">
-<h3 style="color: #0c4a6e; margin: 0 0 10px 0;">💡 今回のお知らせ内容</h3>
-<p style="color: #0369a1; margin: 0;">こちらにお知らせの詳細内容を記載してください。システムの更新情報、新機能の追加、メンテナンス情報など。</p>
-</div>
-
-<p>詳細についてご質問がございましたら、<a href="mailto:info@keiba.link" style="color: #0ea5e9;">info@keiba.link</a> までお気軽にお問い合わせください。</p>
-
-<div style="background-color: #f3f4f6; padding: 10px 15px; border-radius: 6px; color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
-📅 発信日: {DATE}
-</div>`
+                content: '<h2>📢 重要なお知らせ</h2>' +
+'<p>いつもNANKANアナリティクスをご利用いただき、ありがとうございます。</p>' +
+'<div style="background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 15px 20px; margin: 20px 0; border-radius: 4px;">' +
+'<h3 style="color: #0c4a6e; margin: 0 0 10px 0;">💡 今回のお知らせ内容</h3>' +
+'<p style="color: #0369a1; margin: 0;">こちらにお知らせの詳細内容を記載してください。システムの更新情報、新機能の追加、メンテナンス情報など。</p>' +
+'</div>' +
+'<p>詳細についてご質問がございましたら、<a href="mailto:info@keiba.link" style="color: #0ea5e9;">info@keiba.link</a> までお気軽にお問い合わせください。</p>' +
+'<div style="background-color: #f3f4f6; padding: 10px 15px; border-radius: 6px; color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">' +
+'📅 発信日: {DATE}' +
+'</div>'
             }
         };
         
