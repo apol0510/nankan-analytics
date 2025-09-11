@@ -132,23 +132,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
         
         .btn-primary {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
         
         .btn-primary:hover {
-            background: #2563eb;
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border-color: #1d4ed8;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
         }
         
         .btn-secondary {
             background: #6b7280;
             color: white;
+            border: 2px solid #9ca3af;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
         }
         
         .btn-secondary:hover {
             background: #4b5563;
+            transform: translateY(-1px);
+            border-color: #6b7280;
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.6);
         }
         
         .btn:disabled {
@@ -899,7 +907,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 '<li>📊 <strong>透明性</strong>: 予想根拠を完全公開</li>' +
 '</ul>' +
 '<p style="text-align: center;">' +
-'<a href="https://nankan-analytics.keiba.link/pricing" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px;">今すぐ始める 🚀</a>' +
+'<a href="https://nankan-analytics.keiba.link/pricing" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px; border: 2px solid #059669; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">今すぐ始める 🚀</a>' +
 '</p>'
             },
             welcome: {
@@ -922,7 +930,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 '<li><strong>💎 有料プランを検討</strong><br>より詳細な分析と全レース予想で、本格的な競馬投資を始めてみませんか？</li>' +
 '</ol>' +
 '<p style="text-align: center;">' +
-'<a href="https://nankan-analytics.keiba.link/free-prediction" style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700;">🎯 無料予想を見る</a>' +
+'<a href="https://nankan-analytics.keiba.link/free-prediction" style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700; border: 2px solid #059669; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">🎯 無料予想を見る</a>' +
 '</p>'
             },
             announcement: {
@@ -969,7 +977,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 '</ul>' +
 '</div>' +
 '<div style="text-align: center; margin: 30px 0;">' +
-'<a href="https://nankan-analytics.keiba.link/pricing/" style="display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 16px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); transition: all 0.3s;">' +
+'<a href="https://nankan-analytics.keiba.link/pricing/" style="display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 16px; border: 2px solid #4f46e5; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);">' +
 '🚀 今すぐプロモーションコードを使う' +
 '</a>' +
 '</div>' +
