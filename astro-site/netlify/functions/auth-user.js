@@ -32,8 +32,13 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    console.log('🔍 Event received:', JSON.stringify(event, null, 2));
+    console.log('🔍 Event body:', event.body);
+    console.log('🔍 Event httpMethod:', event.httpMethod);
+    
     // リクエストボディ取得
     const { email } = JSON.parse(event.body || '{}');
+    console.log('🔍 Parsed email:', email);
 
     if (!email) {
       return {
@@ -44,6 +49,9 @@ exports.handler = async (event, context) => {
     }
 
     // Airtable設定
+    console.log('🔍 Environment check - AIRTABLE_API_KEY exists:', !!process.env.AIRTABLE_API_KEY);
+    console.log('🔍 Environment check - AIRTABLE_BASE_ID exists:', !!process.env.AIRTABLE_BASE_ID);
+    
     const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
       .base(process.env.AIRTABLE_BASE_ID);
 
