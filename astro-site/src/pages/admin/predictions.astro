@@ -1314,21 +1314,42 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
 
         function generateHorsesDataForRace(raceData) {
             const horses = {};
-            const mainHorse = raceData.horses.find(h => h.mark === '◎');
-            const subHorse = raceData.horses.find(h => h.mark === '○' || h.mark === '◯');
-            const darkHorses = raceData.horses.filter(h => h.mark === '▲'); // 複数頭対応
+            
+            // スコアベースでの自動役割割り当て
+            const sortedHorses = [...raceData.horses].sort((a, b) => {
+                const scoreA = a.score || 70;
+                const scoreB = b.score || 70;
+                if (scoreB === scoreA) {
+                    // 同点の場合は登場順（配列のインデックス）で決定
+                    return raceData.horses.indexOf(a) - raceData.horses.indexOf(b);
+                }
+                return scoreB - scoreA;
+            });
+            
+            // 役割自動割り当て（スコア順・同点なら登場順）
+            const mainHorse = sortedHorses[0]; // 最高スコア→本命（1頭固定）
+            const subHorse = sortedHorses[1]; // 2番目→対抗（1頭固定）
+            const darkHorses = sortedHorses.slice(2, 4); // 3-4番目→単穴（最大2頭）
+            
+            // 互換性のため、従来の印による分類も併用
+            const legacyMainHorse = raceData.horses.find(h => h.mark === '◎');
+            const legacySubHorse = raceData.horses.find(h => h.mark === '○' || h.mark === '◯');
+            const legacyDarkHorses = raceData.horses.filter(h => h.mark === '▲');
 
-            if (mainHorse) {
+            // スコアベース（優先）または従来の印ベースで本命を設定
+            const selectedMain = mainHorse || legacyMainHorse;
+            if (selectedMain) {
                 horses.main = {
-                    number: mainHorse.number,
-                    name: mainHorse.name,
+                    number: selectedMain.number,
+                    name: selectedMain.name,
                     type: "本命",
                     confidence: (85 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `能力指数: ${(85 + Math.random() * 10).toFixed(1)} (1位)`},
                         {icon: "★", text: `安定性スコア: ${(88 + Math.random() * 10).toFixed(1)}%`},
                         {icon: "★", text: "展開適性: S評価"},
-                        {icon: "★", text: `過去5走偏差値: ${(55 + Math.random() * 10).toFixed(1)}`}
+                        {icon: "★", text: `過去5走偏差値: ${(55 + Math.random() * 10).toFixed(1)}`},
+                        ...(selectedMain.score ? [{icon: "🎯", text: `累積スコア: ${selectedMain.score}pt`}] : [])
                     ],
                     importance: [
                         {label: "安定性", value: 0.90 + Math.random() * 0.08},
@@ -1338,17 +1359,20 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 };
             }
 
-            if (subHorse) {
+            // スコアベース（優先）または従来の印ベースで対抗を設定
+            const selectedSub = subHorse || legacySubHorse;
+            if (selectedSub) {
                 horses.sub = {
-                    number: subHorse.number,
-                    name: subHorse.name,
+                    number: selectedSub.number,
+                    name: selectedSub.name,
                     type: "対抗",
                     confidence: (75 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `スピード指数: ${(75 + Math.random() * 10).toFixed(1)}`},
                         {icon: "★", text: `先行力: ${(82 + Math.random() * 15).toFixed(1)}%`},
                         {icon: "★", text: "枠順優位性: A級"},
-                        {icon: "★", text: "持続力評価: B+"}
+                        {icon: "★", text: "持続力評価: B+"},
+                        ...(selectedSub.score ? [{icon: "🎯", text: `累積スコア: ${selectedSub.score}pt`}] : [])
                     ],
                     importance: [
                         {label: "先行力", value: 0.85 + Math.random() * 0.10},
@@ -2387,15 +2411,39 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     continue;
                 }
 
-                // 馬情報の検出（◎○▲△×）
-                const horseMatch = line.match(/^([◎○▲△×])(\d+)(.+)/);
+                // 馬情報の検出
+                // 新形式: "8番 ◎ ○ ▲ ▲ キチョウ" 
+                // 旧形式: "◎8キチョウ" も継続対応
+                const newFormatMatch = line.match(/^(\d+)番\s+([◎○▲△×\s]+)\s+(.+)/);
+                const oldFormatMatch = line.match(/^([◎○▲△×])(\d+)(.+)/);
                 
-                if (horseMatch && currentRace) {
-                    const [, mark, number, name] = horseMatch;
+                if (newFormatMatch && currentRace) {
+                    const [, number, marksStr, name] = newFormatMatch;
+                    const marks = marksStr.trim().split(/\s+/).filter(mark => /[◎○▲△×]/.test(mark));
+                    
+                    // 累積スコア計算（ベース70pt + 印の値）
+                    const markValues = {'◎': 7, '○': 6, '▲': 5, '△': 4, '×': 0};
+                    const totalScore = 70 + marks.reduce((sum, mark) => sum + (markValues[mark] || 0), 0);
+                    
+                    currentRace.horses.push({
+                        mark: marks[0] || '△', // 最初の印を表示用マークとして使用
+                        marks: marks, // 全印を保存
+                        number: parseInt(number),
+                        name: name.trim(),
+                        score: totalScore
+                    });
+                } else if (oldFormatMatch && currentRace) {
+                    // 旧形式対応（後方互換性）
+                    const [, mark, number, name] = oldFormatMatch;
+                    const markValues = {'◎': 7, '○': 6, '▲': 5, '△': 4, '×': 0};
+                    const totalScore = 70 + (markValues[mark] || 0);
+                    
                     currentRace.horses.push({
                         mark: mark,
+                        marks: [mark],
                         number: parseInt(number),
-                        name: name.trim()
+                        name: name.trim(),
+                        score: totalScore
                     });
                 }
             }
