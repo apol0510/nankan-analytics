@@ -108,7 +108,7 @@ exports.handler = async (event, context) => {
     const currentPoints = user.get('ポイント') || 0;
     const currentPlan = user.get('プラン') || 'free';
     const lastLogin = user.get('最終ポイント付与日');
-    const lastPlanCheck = user.get('最終プランチェック日') || '';
+    // 最終プランチェック日フィールドは現在使用しない（Airtableに存在しないため）
     const today = new Date().toISOString().split('T')[0];
 
     // ログインポイント付与チェック + プラン変更ボーナス
@@ -131,21 +131,9 @@ exports.handler = async (event, context) => {
       updateData['最終ポイント付与日'] = today;
     }
 
-    // プラン変更ボーナス（プランアップグレード時の特別ポイント）
-    if (lastPlanCheck !== today) {
-      // プランが Standard/Premium の場合、追加でプラン変更ボーナスを付与
-      const PLAN_CHANGE_BONUS = {
-        'standard': 10,  // Standard登録で+10pt
-        'Standard': 10,
-        'premium': 50,   // Premium登録で+50pt  
-        'Premium': 50
-      };
-      
-      if (PLAN_CHANGE_BONUS[currentPlan]) {
-        pointsAdded += PLAN_CHANGE_BONUS[currentPlan];
-        updateData['最終プランチェック日'] = today;
-      }
-    }
+    // プラン変更ボーナス（現在は無効化 - Airtableフィールド不足のため）
+    // TODO: 最終プランチェック日フィールドをAirtableに追加後に有効化
+    console.log('📝 プラン変更ボーナス機能は一時無効化中（Airtableフィールド準備中）');
 
     if (pointsAdded > 0) {
       newPoints = currentPoints + pointsAdded;
