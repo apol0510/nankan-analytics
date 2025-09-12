@@ -868,43 +868,23 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         // ===== 全レース予想管理システム =====
         window.loadAllRaces = async function() {
             try {
-                logAllRaces('📥 サンプルデータを表示します...');
+                logAllRaces('📥 実際のJSONデータを読み込み中...');
                 
-                // サンプルデータを表示
-                const sampleData = {
-                    raceDate: "2025-08-22",
-                    track: "川崎競馬",
-                    totalRaces: 12,
-                    races: []
-                };
-
-                // 1R-12Rのサンプルレース作成
-                for (let i = 1; i <= 12; i++) {
-                    sampleData.races.push({
-                        raceNumber: `${i}R`,
-                        raceName: getDefaultRaceName(i),
-                        // race-config.jsから一元管理された設定を使用
-                        tier: getRaceTier(i),
-                        isMainRace: isMainRace(i),
-                        raceInfo: {
-                            confidence: (Math.random() * 30 + 60).toFixed(1),
-                            abilityIndex: (Math.random() * 40 + 40).toFixed(1),
-                            recommendation: ["A+", "A", "B+", "B", "C+", "C"][Math.floor(Math.random() * 6)]
-                        },
-                        horses: {
-                            main: {
-                                number: Math.floor(Math.random() * 12) + 1,
-                                name: `サンプル馬${i}`,
-                                type: "本命",
-                                confidence: (Math.random() * 30 + 60).toFixed(1)
-                            }
-                        }
-                    });
+                // 実際のallRacesPrediction.jsonを読み込み
+                const response = await fetch('/src/data/allRacesPrediction.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
-                allRacesData = sampleData;
+                
+                const jsonData = await response.json();
+                allRacesData = jsonData; // グローバル変数に設定
+                
+                logAllRaces(`✅ ${jsonData.raceDate} ${jsonData.track} ${jsonData.totalRaces}レース分のデータを読み込み完了`);
+                
+                // UI更新
                 updateRaceStatus();
-                logAllRaces('✅ サンプルデータ読み込み完了');
+                generateRaceEditButtons();
+                
                 
                 // データ検証と自動修正
                 const validation = validateAllRacesPredictionInternal(allRacesData);
@@ -915,10 +895,11 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 
                 // 既存のデータ検証
                 validateRaceConfiguration(allRacesData);
-                showAlert('サンプルデータを表示しました。実際のデータは allRacesPrediction.json から読み込んでください。', 'success');
+                showAlert('実際のJSONデータを読み込み完了しました', 'success');
                 
             } catch (error) {
                 logAllRaces(`❌ エラー: ${error.message}`);
+                logAllRaces('💡 ヒント: 先に外部予想→AI予想変換でJSONデータを生成してください');
                 handleError(error, 'データ読み込み');
             }
         };
