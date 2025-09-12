@@ -426,7 +426,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             
             try {
                 const functionsUrl = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:9999/.netlify/functions/auth-user'
+                    ? 'http://localhost:8888/.netlify/functions/auth-user'
                     : '/.netlify/functions/auth-user';
                 
                 // auth-user Functionを使用（get-user-pointsは削除済み）
@@ -492,7 +492,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 try {
                     // 開発環境では直接Functions サーバーを呼び出す
                     const functionsUrl = window.location.hostname === 'localhost' 
-                        ? 'http://localhost:9999/.netlify/functions/auth-user'
+                        ? 'http://localhost:8888/.netlify/functions/auth-user'
                         : '/.netlify/functions/auth-user';
                     
                     response = await fetch(functionsUrl, {
