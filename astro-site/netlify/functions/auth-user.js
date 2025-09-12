@@ -1,7 +1,11 @@
 // ユーザー認証関数（メールアドレスでシンプル認証）+ Brevoメール送信
-import Airtable from 'airtable';
+const Airtable = require('airtable');
 
-export default async function handler(request, context) {
+exports.handler = async (event, context) => {
+  const request = {
+    method: event.httpMethod,
+    json: () => JSON.parse(event.body || '{}')
+  };
   // CORSヘッダー
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -11,26 +15,32 @@ export default async function handler(request, context) {
 
   // OPTIONS対応
   if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 200, headers });
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
   }
 
   // POSTメソッドのみ許可
   if (request.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
-      { status: 405, headers: { ...headers, 'Content-Type': 'application/json' } }
-    );
+    return {
+      statusCode: 405,
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
   }
 
   try {
     // リクエストボディ取得
-    const { email } = await request.json();
+    const { email } = JSON.parse(event.body || '{}');
 
     if (!email) {
-      return new Response(
-        JSON.stringify({ error: 'Email is required' }),
-        { status: 400, headers: { ...headers, 'Content-Type': 'application/json' } }
-      );
+      return {
+        statusCode: 400,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: 'Email is required' })
+      };
     }
 
     // Airtable設定
@@ -65,8 +75,10 @@ export default async function handler(request, context) {
         // メール失敗してもユーザー登録は成功とする
       }
 
-      return new Response(
-        JSON.stringify({
+      return {
+        statusCode: 200,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           success: true,
           isNewUser: true,
           user: {
@@ -79,9 +91,8 @@ export default async function handler(request, context) {
           message: emailSent 
             ? '新規ユーザー登録完了！初回ログインポイント1pt付与＆ウェルカムメール送信'
             : '新規ユーザー登録完了！初回ログインポイント1pt付与（メール送信エラー）'
-        }, null, 2),
-        { status: 200, headers: { ...headers, 'Content-Type': 'application/json' } }
-      );
+        }, null, 2)
+      };
     }
 
     // 既存ユーザーの情報取得
@@ -136,8 +147,10 @@ export default async function handler(request, context) {
       await base('Customers').update(user.id, updateData);
     }
 
-    return new Response(
-      JSON.stringify({
+    return {
+      statusCode: 200,
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         success: true,
         isNewUser: false,
         user: {
@@ -151,19 +164,19 @@ export default async function handler(request, context) {
         message: pointsAdded > 0 
           ? `ログイン成功！本日のポイント${pointsAdded}pt付与` 
           : 'ログイン成功！（本日のポイントは付与済み）'
-      }, null, 2),
-      { status: 200, headers: { ...headers, 'Content-Type': 'application/json' } }
-    );
+      }, null, 2)
+    };
 
   } catch (error) {
     console.error('Auth error:', error);
-    return new Response(
-      JSON.stringify({ 
+    return {
+      statusCode: 500,
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
         error: 'Internal server error',
         details: error.message
-      }),
-      { status: 500, headers: { ...headers, 'Content-Type': 'application/json' } }
-    );
+      })
+    };
   }
 }
 
