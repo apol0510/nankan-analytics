@@ -1329,7 +1329,9 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             // 役割自動割り当て（スコア順・同点なら登場順）
             const mainHorse = sortedHorses[0]; // 最高スコア→本命（1頭固定）
             const subHorse = sortedHorses[1]; // 2番目→対抗（1頭固定）
-            const darkHorses = sortedHorses.slice(2, 4); // 3-4番目→単穴（最大2頭）
+            const darkHorses = sortedHorses.slice(2, 4); // 3-4番目→単穴（2頭固定）
+            const underHorses = sortedHorses.slice(4, 8); // 5-8番目→連下（1-4頭）
+            const pressHorses = sortedHorses.slice(8); // 9番目以降→×抑え（0-4頭）
             
             // 互換性のため、従来の印による分類も併用
             const legacyMainHorse = raceData.horses.find(h => h.mark === '◎');
@@ -1507,21 +1509,50 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         }
 
         function generateAllHorsesDataForRace(raceData) {
-            return raceData.horses.map(horse => ({
-                number: horse.number,
-                name: horse.name,
-                mark: horse.mark,
-                confidence: (50 + Math.random() * 40).toFixed(1),
-                type: horse.mark === '◎' ? '本命' : 
-                      horse.mark === '○' || horse.mark === '◯' ? '対抗' : 
-                      horse.mark === '▲' ? '単穴' : 
-                      horse.mark === '△' ? '連下' : 
-                      horse.mark === '×' ? '押さえ' : 'その他',
-                factors: [
-                    {icon: "★", text: `信頼度: ${(50 + Math.random() * 40).toFixed(1)}%`}, 
-                    {icon: "★", text: horse.mark === '×' ? "大穴適性: 高変動" : "適性評価: B級"}
-                ]
-            }));
+            // スコアベースで役割を決定
+            const sortedHorses = [...raceData.horses].sort((a, b) => {
+                const scoreA = a.score || 70;
+                const scoreB = b.score || 70;
+                if (scoreB === scoreA) {
+                    return raceData.horses.indexOf(a) - raceData.horses.indexOf(b);
+                }
+                return scoreB - scoreA;
+            });
+            
+            return raceData.horses.map(horse => {
+                const index = sortedHorses.indexOf(horse);
+                let type, displayMark;
+                
+                if (index === 0) {
+                    type = '本命';
+                    displayMark = '◎';
+                } else if (index === 1) {
+                    type = '対抗';
+                    displayMark = '○';
+                } else if (index >= 2 && index <= 3) {
+                    type = '単穴';
+                    displayMark = '▲';
+                } else if (index >= 4 && index <= 7) {
+                    type = '連下';
+                    displayMark = '△';
+                } else {
+                    type = '押さえ';
+                    displayMark = '×';
+                }
+                
+                return {
+                    number: horse.number,
+                    name: horse.name,
+                    mark: displayMark,
+                    confidence: (50 + Math.random() * 40).toFixed(1),
+                    type: type,
+                    factors: [
+                        {icon: "★", text: `信頼度: ${(50 + Math.random() * 40).toFixed(1)}%`}, 
+                        {icon: "★", text: type === '押さえ' ? "大穴適性: 高変動" : "適性評価: B級"},
+                        ...(horse.score ? [{icon: "🎯", text: `累積スコア: ${horse.score}pt`}] : [])
+                    ]
+                };
+            });
         }
 
         // 外部予想解析
