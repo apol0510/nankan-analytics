@@ -176,13 +176,17 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Auth error:', error);
+    console.error('🚨 Auth error:', error);
+    console.error('🚨 Error stack:', error.stack);
+    console.error('🚨 Event details:', JSON.stringify(event));
+    
     return {
       statusCode: 500,
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         error: 'Internal server error',
-        details: error.message
+        details: error.message,
+        stack: error.stack
       })
     };
   }
