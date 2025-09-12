@@ -504,7 +504,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     });
                     
                     if (!response.ok) {
-                        throw new Error(`Functions error: ${response.status}`);
+                        // レスポンステキストを取得してログ出力
+                        const errorText = await response.text();
+                        console.error('🚨 Response error text:', errorText);
+                        throw new Error(`Functions error: ${response.status} - ${errorText}`);
                     }
                     
                     data = await response.json();
