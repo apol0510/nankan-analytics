@@ -382,10 +382,10 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
 
         <!-- 全レース予想管理システム -->
         <div class="form-section" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border: 2px solid rgba(16, 185, 129, 0.3);">
-            <h2 class="section-title">🏇 全レース予想管理システム</h2>
+            <h2 class="section-title">✅ 生成データ確認・編集システム</h2>
             <p style="color: #94a3b8; margin-bottom: 20px;">
-                allRacesPrediction.jsonの全レースデータを一括管理します。<br>
-                1つの更新で プレミアム・スタンダード・無料の全ページに自動反映されます。
+                <strong>📋 簡単3ステップ:</strong> ①変換実行 → ②データ確認 → ③JSONコピー<br>
+                上記で生成されたデータを確認・微調整してから本番に反映します。
             </p>
             
             <!-- 現在のデータ状況 -->
@@ -396,12 +396,17 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 </div>
             </div>
             
-            <!-- 操作ボタン -->
-            <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button class="btn btn-primary" onclick="loadAllRaces()">📥 データ読み込み</button>
-                <button class="btn btn-success" onclick="saveAllRaces()">💾 JSONをクリップボードにコピー</button>
-                <button class="btn btn-secondary" onclick="validateAllRaces()">🔍 データ検証</button>
-                <button class="btn btn-secondary" onclick="generatePreview()">👁️ プレビュー生成</button>
+            <!-- 簡素化された操作ボタン -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;">
+                <button class="btn btn-success" onclick="copyGeneratedJSON()" style="font-size: 1.1rem; padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    📋 JSONをコピーして完了
+                </button>
+                <button class="btn btn-secondary" onclick="refreshGeneratedData()" style="padding: 12px 20px;">
+                    🔄 生成データ表示
+                </button>
+                <button class="btn btn-secondary" onclick="validateGeneratedData()" style="padding: 12px 20px;">
+                    ✅ データ検証
+                </button>
             </div>
             
             <!-- レース別クイック編集 -->
@@ -865,44 +870,102 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             log.scrollTop = log.scrollHeight;
         }
 
-        // ===== 全レース予想管理システム =====
-        window.loadAllRaces = async function() {
-            try {
-                logAllRaces('📥 実際のJSONデータを読み込み中...');
-                
-                // 実際のallRacesPrediction.jsonを読み込み
-                const response = await fetch('/src/data/allRacesPrediction.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const jsonData = await response.json();
-                allRacesData = jsonData; // グローバル変数に設定
-                
-                logAllRaces(`✅ ${jsonData.raceDate} ${jsonData.track} ${jsonData.totalRaces}レース分のデータを読み込み完了`);
-                
-                // UI更新
-                updateRaceStatus();
-                generateRaceEditButtons();
-                
-                
-                // データ検証と自動修正
-                const validation = validateAllRacesPredictionInternal(allRacesData);
-                if (!validation.valid && validation.warnings.length > 0) {
-                    logAllRaces(`⚠️ ${validation.warnings.length}件の警告を自動修正しました`);
-                    allRacesData = validation.fixed || allRacesData;
-                }
-                
-                // 既存のデータ検証
-                validateRaceConfiguration(allRacesData);
-                showAlert('実際のJSONデータを読み込み完了しました', 'success');
-                
-            } catch (error) {
-                logAllRaces(`❌ エラー: ${error.message}`);
-                logAllRaces('💡 ヒント: 先に外部予想→AI予想変換でJSONデータを生成してください');
-                handleError(error, 'データ読み込み');
+        // ===== 生成データ確認・編集システム =====
+        // 外部変数: 変換システムで生成されたデータを保持
+        let generatedRacesData = null;
+        
+        // 変換システムからデータを受け取る関数（変換完了時に呼び出される）
+        window.setGeneratedData = function(jsonData) {
+            generatedRacesData = jsonData;
+            allRacesData = jsonData; // 後方互換性のため
+            refreshGeneratedData();
+            logAllRaces(`✅ ${jsonData.totalRaces}レース分のデータを受け取りました`);
+        };
+        
+        // 生成データを表示
+        window.refreshGeneratedData = function() {
+            if (!generatedRacesData) {
+                showAlert('まず上の「全レース一括変換・JSON生成」を実行してください', 'info');
+                updateDataStatus('変換実行待ち');
+                return;
+            }
+            
+            logAllRaces(`📊 ${generatedRacesData.raceDate} ${generatedRacesData.track} データを表示中...`);
+            
+            // UI更新
+            updateDataStatus(`${generatedRacesData.totalRaces}レース生成済み`);
+            updateRaceStatus();
+            generateRaceEditButtons();
+            
+            logAllRaces('✅ 生成データの表示完了');
+            showAlert('生成データを表示しました', 'success');
+        };
+        
+        // 最終JSONをコピー
+        window.copyGeneratedJSON = function() {
+            if (!generatedRacesData) {
+                showAlert('まず変換を実行してデータを生成してください', 'error');
+                return;
+            }
+            
+            const jsonString = JSON.stringify(generatedRacesData, null, 2);
+            
+            // クリップボードにコピー
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(jsonString).then(() => {
+                    logAllRaces('✅ JSONをクリップボードにコピーしました');
+                    showAlert('JSONをクリップボードにコピーしました！\nallRacesPrediction.jsonに貼り付けてコミットしてください。', 'success');
+                }).catch(() => {
+                    fallbackCopy(jsonString);
+                });
+            } else {
+                fallbackCopy(jsonString);
             }
         };
+        
+        // データ検証
+        window.validateGeneratedData = function() {
+            if (!generatedRacesData) {
+                showAlert('検証するデータがありません', 'error');
+                return;
+            }
+            
+            logAllRaces('🔍 データ検証を実行中...');
+            
+            const validation = validateAllRacesPredictionInternal(generatedRacesData);
+            
+            if (validation.valid) {
+                logAllRaces('✅ データ検証: 問題なし');
+                showAlert('データ検証完了: すべて正常です', 'success');
+            } else {
+                logAllRaces(`⚠️ ${validation.errors.length}個の問題を発見`);
+                showAlert(`データに${validation.errors.length}個の問題があります`, 'warning');
+            }
+        };
+        
+        // ヘルパー関数
+        function updateDataStatus(message) {
+            const statusElement = document.getElementById('data-status');
+            if (statusElement) {
+                statusElement.textContent = message;
+            }
+        }
+        
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                logAllRaces('✅ JSONをコピーしました（フォールバック方式）');
+                showAlert('JSONをコピーしました！', 'success');
+            } catch (err) {
+                logAllRaces('❌ コピーに失敗しました');
+                showAlert('コピーに失敗しました', 'error');
+            }
+            document.body.removeChild(textArea);
+        }
 
         window.validateAllRaces = function() {
             if (!allRacesData) {
@@ -2343,6 +2406,11 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 
                 showConversionProgress(`✅ 完了！全${parsedData.races.length}レースのAI予想JSONを生成しました`);
                 showAlert(`外部予想を正常にAI予想形式に変換しました（${parsedData.races.length}レース）`, 'success');
+                
+                // 新システムにデータを渡す
+                if (typeof setGeneratedData === 'function') {
+                    setGeneratedData(allRacesData);
+                }
                 
                 updateRaceStatus();
                 
