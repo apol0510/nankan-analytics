@@ -28,14 +28,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         ログイン
                     </button>
                 </form>
-                
-                <!-- 緊急対応：クイックログインボタン -->
-                <div class="quick-login-section" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(148, 163, 184, 0.3);">
-                    <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem;">⚡ クイックログイン（既存会員様用）</p>
-                    <button type="button" id="test-login-btn" class="submit-btn" style="background: #0ea5e9; margin-bottom: 0.5rem;">
-                        テストアカウントでログイン
-                    </button>
-                </div>
                 <div id="success-message" class="success-message" style="display: none;"></div>
                 <div id="error-message" class="error-message" style="display: none;"></div>
             </div>
@@ -518,9 +510,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     data = await response.json();
                 } catch (fetchError) {
                     console.error('Functions呼び出しエラー:', fetchError);
+                    console.error('エラー詳細:', {
+                        message: fetchError.message,
+                        stack: fetchError.stack,
+                        response: response ? {
+                            status: response.status,
+                            statusText: response.statusText,
+                            url: response.url
+                        } : null
+                    });
                     
-                    // エラー表示して処理を停止
-                    throw new Error('認証システムエラー。再度お試しください。');
+                    // 具体的なエラーメッセージを表示
+                    throw new Error(`認証API接続エラー: ${fetchError.message}`);
                 }
                 
                 if (data.success && data.user) {
@@ -1281,57 +1282,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             if (loginInfoCloseBtn) {
                 loginInfoCloseBtn.addEventListener('click', () => {
                     document.getElementById('login-info-section').style.display = 'none';
-                });
-            }
-            
-            // 緊急対応：テストログインボタン
-            const testLoginBtn = document.getElementById('test-login-btn');
-            if (testLoginBtn) {
-                testLoginBtn.addEventListener('click', async () => {
-                    testLoginBtn.disabled = true;
-                    testLoginBtn.textContent = 'ログイン中...';
-                    
-                    try {
-                        // test@example.comで自動ログイン
-                        const email = 'test@example.com';
-                        document.getElementById('email-input').value = email;
-                        
-                        // 直接認証API呼び出し
-                        const functionsUrl = window.location.hostname === 'localhost' 
-                            ? 'http://localhost:8888/.netlify/functions/auth-user'
-                            : '/.netlify/functions/auth-user';
-                        
-                        const response = await fetch(functionsUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: email })
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error(`HTTP ${response.status}`);
-                        }
-                        
-                        const data = await response.json();
-                        
-                        if (data.success && data.user) {
-                            // セッション情報保存
-                            localStorage.setItem('isLoggedIn', 'true');
-                            localStorage.setItem('userEmail', data.user.email);
-                            localStorage.setItem('userPlan', data.user.plan);
-                            
-                            // ダッシュボード表示
-                            showDashboard(data.user);
-                            showSuccess('✅ テストアカウントでログインしました！');
-                        } else {
-                            throw new Error(data.message || '認証に失敗しました');
-                        }
-                    } catch (error) {
-                        console.error('Test login error:', error);
-                        showError(`ログインエラー: ${error.message}`);
-                    } finally {
-                        testLoginBtn.disabled = false;
-                        testLoginBtn.textContent = 'テストアカウントでログイン';
-                    }
                 });
             }
             
