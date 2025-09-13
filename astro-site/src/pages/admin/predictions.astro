@@ -381,54 +381,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
 
 
         <!-- [DELETED] 不要なセクション削除済み -->
-        <div class="form-section" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border: 2px solid rgba(16, 185, 129, 0.3);">
-            <h2 class="section-title">❌ このセクションは削除予定</h2>
-            <p style="color: #ef4444; margin-bottom: 20px; text-align: center;">
-                上の「外部予想 → AI予想変換」だけ使ってください。<br>
-                下の「生成JSON」セクションでコピーできます。
-            </p>
-            
-            <!-- 現在のデータ状況 -->
-            <div style="background: rgba(15, 23, 42, 0.5); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(71, 85, 105, 0.3);">
-                <h3 style="color: #10b981; margin-bottom: 15px;">📊 現在のデータ状況</h3>
-                <div id="all-races-status" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                    <!-- JavaScriptで生成 -->
-                </div>
-            </div>
-            
-            <!-- 簡素化された操作ボタン -->
-            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;">
-                <button class="btn btn-success" onclick="copyGeneratedJSON()" style="font-size: 1.1rem; padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                    📋 JSONをコピーして完了
-                </button>
-                <button class="btn btn-secondary" onclick="refreshGeneratedData()" style="padding: 12px 20px;">
-                    🔄 生成データ表示
-                </button>
-                <button class="btn btn-secondary" onclick="validateGeneratedData()" style="padding: 12px 20px;">
-                    ✅ データ検証
-                </button>
-            </div>
-            
-            <!-- レース別クイック編集 -->
-            <div style="background: rgba(15, 23, 42, 0.5); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(71, 85, 105, 0.3);">
-                <h3 style="color: #3b82f6; margin-bottom: 15px;">🎯 レース別クイック編集</h3>
-                <p style="color: #94a3b8; margin-bottom: 15px; font-size: 0.9rem;">
-                    個別レース調整が必要な場合は、該当レースボタンをクリックして詳細編集を開始
-                </p>
-                <div id="raceEditButtons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                    <!-- ボタンは動的に生成 -->
-                </div>
-            </div>
-            
-            <!-- ステータス表示 -->
-            <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 8px; border: 1px solid rgba(71, 85, 105, 0.3);">
-                <h3 style="color: #8b5cf6; margin-bottom: 10px;">📋 操作ログ</h3>
-                <div id="all-races-log" class="operation-log">
-                    <!-- ログ内容 -->
-                    ログ: システム準備完了
-                </div>
-            </div>
-        </div>
 
         <!-- 特徴量重要度バー編集 -->
         <div class="form-section" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
@@ -509,8 +461,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <input type="text" id="edit-race-name" placeholder="レース名" 
                                style="padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 6px; color: white;">
-                        <input type="text" id="edit-confidence" placeholder="信頼度 (%)" 
-                               style="padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 6px; color: white;">
                         <input type="text" id="edit-ability-index" placeholder="能力指数" 
                                style="padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 6px; color: white;">
                         <select id="edit-recommendation" 
@@ -539,8 +489,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                                    style="width: 70px; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                             <input type="text" id="edit-main-name" placeholder="馬名" 
                                    style="flex: 1; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                            <input type="text" id="edit-main-confidence" placeholder="信頼度" 
-                                   style="width: 80px; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                         </div>
                     </div>
 
@@ -552,8 +500,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                                    style="width: 70px; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                             <input type="text" id="edit-sub1-name" placeholder="馬名" 
                                    style="flex: 1; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                            <input type="text" id="edit-sub1-confidence" placeholder="信頼度" 
-                                   style="width: 80px; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                         </div>
                     </div>
 
@@ -565,8 +511,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                                    style="width: 70px; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                             <input type="text" id="edit-sub2-name" placeholder="馬名" 
                                    style="flex: 1; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                            <input type="text" id="edit-sub2-confidence" placeholder="信頼度" 
-                                   style="width: 80px; padding: 6px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                         </div>
                     </div>
                 </div>
@@ -1327,13 +1271,8 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     track: allRacesData.track,
                     raceNumber: (raceData.raceNumber || 1) + 'R',
                     raceName: raceData.raceName || getDefaultRaceName(raceData.raceNumber || raceNum),
-                    confidence: raceData.confidence.toFixed(1),
                     abilityIndex: (50 + Math.random() * 40).toFixed(1),
-                    recommendation: raceData.confidence > 90 ? "A+" : 
-                                  raceData.confidence > 85 ? "A" : 
-                                  raceData.confidence > 80 ? "B+" : 
-                                  raceData.confidence > 75 ? "B" : 
-                                  raceData.confidence > 70 ? "C+" : "C",
+                    recommendation: "B+",
                     expectedReturn: (70 + Math.random() * 80).toFixed(0),
                     // 新規追加：レース詳細情報
                     distance: raceData.raceDistance ? raceData.raceDistance + 'm' : '',
@@ -1386,7 +1325,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     number: selectedMain.number,
                     name: selectedMain.name,
                     type: "本命",
-                    confidence: (85 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `能力指数: ${(85 + Math.random() * 10).toFixed(1)} (1位)`},
                         {icon: "★", text: `安定性スコア: ${(88 + Math.random() * 10).toFixed(1)}%`},
@@ -1409,7 +1347,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     number: selectedSub.number,
                     name: selectedSub.name,
                     type: "対抗",
-                    confidence: (75 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `スピード指数: ${(75 + Math.random() * 10).toFixed(1)}`},
                         {icon: "★", text: `先行力: ${(82 + Math.random() * 15).toFixed(1)}%`},
@@ -1431,7 +1368,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     number: darkHorses[0].number,
                     name: darkHorses[0].name,
                     type: "単穴",
-                    confidence: (65 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `爆発力指数: ${(80 + Math.random() * 15).toFixed(1)}`},
                         {icon: "★", text: "ムラ係数: 高変動"},
@@ -1445,7 +1381,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                         number: darkHorses[1].number,
                         name: darkHorses[1].name,
                         type: "単穴2",
-                        confidence: (60 + Math.random() * 10).toFixed(1),
                         factors: [
                             {icon: "★", text: `爆発力指数: ${(75 + Math.random() * 15).toFixed(1)}`},
                             {icon: "★", text: "穴馬適性: B+"},
@@ -1475,7 +1410,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             return {
                 safe: {
                     title: "戦略A: 高的中率型",
-                    recommendation: raceData.confidence > 80 ? 4 : 3,
+                    recommendation: 3,
                     hitRate: (70 + Math.random() * 15).toFixed(1),
                     returnRate: (110 + Math.random() * 30).toFixed(0),
                     riskLevel: "low",
@@ -1489,7 +1424,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 },
                 balance: {
                     title: "戦略B: バランス型",
-                    recommendation: raceData.confidence > 75 ? 3 : 2,
+                    recommendation: 2,
                     hitRate: (55 + Math.random() * 15).toFixed(1),
                     returnRate: (140 + Math.random() * 40).toFixed(0),
                     riskLevel: "medium",
@@ -1503,7 +1438,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 },
                 aggressive: {
                     title: "戦略C: 高配当追求型",
-                    recommendation: raceData.confidence > 70 ? 2 : 1,
+                    recommendation: 2,
                     hitRate: (25 + Math.random() * 20).toFixed(1),
                     returnRate: (250 + Math.random() * 200).toFixed(0),
                     riskLevel: "high",
@@ -1527,12 +1462,11 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         function generateAnalysisForRace(raceData) {
             const mainHorse = raceData.horses.find(h => h.mark === '◎');
             return {
-                raceExpected: `XGBoostモデル: ◎${mainHorse ? mainHorse.number + mainHorse.name : '本命馬'}の安定性を評価（スコア${raceData.confidence.toFixed(1)}）`,
+                raceExpected: `XGBoostモデル: ◎${mainHorse ? mainHorse.number + mainHorse.name : '本命馬'}の安定性を評価`,
                 keyIndicators: {
                     accuracy: (70 + Math.random() * 20).toFixed(1),
                     similarRaces: `${Math.floor(15 + Math.random() * 35)}件`,
-                    confidenceInterval: `±${(3 + Math.random() * 5).toFixed(1)}`,
-                    recommendedInvestment: raceData.confidence > 80 ? "資金の2-4%" : raceData.confidence > 70 ? "資金の1-2%" : "資金の0.5-1%"
+                    recommendedInvestment: "資金の1-2%"
                 }
             };
         }
@@ -1544,8 +1478,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             return {
                 summary: `推奨投資戦略: ${mainHorse ? mainHorse.name : '本命'}${subHorse ? '、' + subHorse.name : ''}を中心とした馬単、期待値+${(5 + Math.random() * 25).toFixed(1)}%`,
                 features: "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
-                riskAnalysis: raceData.confidence > 85 ? "低リスク、安定収益型" : 
-                             raceData.confidence > 75 ? "中リスク、バランス型" : "低配当、堅実型"
+                riskAnalysis: "中リスク、バランス型"
             };
         }
 
@@ -1585,10 +1518,9 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     number: horse.number,
                     name: horse.name,
                     mark: displayMark,
-                    confidence: (50 + Math.random() * 40).toFixed(1),
                     type: type,
                     factors: [
-                        {icon: "★", text: `信頼度: ${(50 + Math.random() * 40).toFixed(1)}%`}, 
+ 
                         {icon: "★", text: type === '押さえ' ? "大穴適性: 高変動" : "総合評価:★★★"},
                         ...(horse.score ? [{icon: "🎯", text: `累積スコア: ${horse.score}pt`}] : [])
                     ]
@@ -1606,7 +1538,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 raceNumber: null,
                 raceName: null,
                 raceDistance: null,
-                confidence: 85,
                 // 新規追加項目
                 horseCount: 0,
                 startTime: '',
@@ -1731,15 +1662,11 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             });
             result.horses = limitedHorses;
 
-            // 信頼度を印の分布から計算
             const mainCount = result.horses.filter(h => h.mark === '◎').length;
             const subCount = result.horses.filter(h => h.mark === '○' || h.mark === '◯').length;
             if (mainCount === 1 && subCount <= 2) {
-                result.confidence = 88 + Math.random() * 7; // 88-95%
             } else if (mainCount === 1) {
-                result.confidence = 82 + Math.random() * 6; // 82-88%
             } else {
-                result.confidence = 75 + Math.random() * 7; // 75-82%
             }
 
             return result;
@@ -1785,7 +1712,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     number: mainHorse.number,
                     name: mainHorse.name,
                     type: "本命",
-                    confidence: (85 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `能力指数: ${(85 + Math.random() * 10).toFixed(1)} (1位)`},
                         {icon: "★", text: `安定性スコア: ${(88 + Math.random() * 10).toFixed(1)}%`},
@@ -1805,7 +1731,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     number: subHorse.number,
                     name: subHorse.name,
                     type: "対抗",
-                    confidence: (75 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `スピード指数: ${(75 + Math.random() * 10).toFixed(1)}`},
                         {icon: "★", text: `先行力: ${(82 + Math.random() * 15).toFixed(1)}%`},
@@ -1825,7 +1750,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     number: darkHorse.number,
                     name: darkHorse.name,
                     type: "単穴",
-                    confidence: (65 + Math.random() * 10).toFixed(1),
                     factors: [
                         {icon: "★", text: `爆発力指数: ${(80 + Math.random() * 15).toFixed(1)}`},
                         {icon: "★", text: "ムラ係数: 高変動"},
@@ -1899,11 +1823,10 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         function generateAnalysis(parsed) {
             const mainHorse = parsed.horses.find(h => h.mark === '◎');
             return {
-                raceExpected: `XGBoostモデル: ◎${mainHorse ? mainHorse.number + mainHorse.name : '本命馬'}の安定性を評価（スコア${parsed.confidence.toFixed(1)}）`,
+                raceExpected: `XGBoostモデル: ◎${mainHorse ? mainHorse.number + mainHorse.name : '本命馬'}の安定性を評価`,
                 keyIndicators: {
                     accuracy: (75 + Math.random() * 15).toFixed(1),
                     similarRaces: `${Math.floor(20 + Math.random() * 30)}件`,
-                    confidenceInterval: `±${(3 + Math.random() * 4).toFixed(1)}`,
                     recommendedInvestment: "資金の2-4%"
                 }
             };
@@ -1916,7 +1839,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             return {
                 summary: `推奨投資戦略: ${mainHorse ? mainHorse.name : '本命'}${subHorse ? '、' + subHorse.name : ''}を中心とした馬単、期待値+${(10 + Math.random() * 20).toFixed(1)}%`,
                 features: "特徴量重要度: 安定性(0.95)、能力上位性(0.88)、展開利(0.82)",
-                riskAnalysis: parsed.confidence > 85 ? "低リスク、安定収益型" : "中リスク、バランス型"
+                riskAnalysis: "中リスク、バランス型"
             };
         }
 
@@ -1925,12 +1848,11 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 number: horse.number,
                 name: horse.name,
                 mark: horse.mark,
-                confidence: (60 + Math.random() * 30).toFixed(1),
                 type: horse.mark === '◎' ? '本命' : 
                       horse.mark === '○' || horse.mark === '◯' ? '対抗' : 
                       horse.mark === '▲' ? '単穴' : 
                       horse.mark === '△' ? '連下' : '押さえ',
-                factors: [{icon: "★", text: `信頼度: ${(60 + Math.random() * 30).toFixed(1)}%`}, {icon: "★", text: "総合評価:★★★"}]
+                factors: [{icon: "★", text: "総合評価:★★★"}]
             }));
         }
 
@@ -1973,7 +1895,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         function loadRaceDataToForm(raceData) {
             // レース基本情報を読み込み
             document.getElementById('edit-race-name').value = raceData.raceName || '';
-            document.getElementById('edit-confidence').value = raceData.raceInfo?.confidence || '';
             document.getElementById('edit-ability-index').value = raceData.raceInfo?.abilityIndex || '';
             document.getElementById('edit-recommendation').value = raceData.raceInfo?.recommendation || 'B+';
             document.getElementById('edit-expected-return').value = raceData.raceInfo?.expectedReturn || '';
@@ -1982,19 +1903,16 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             if (raceData.horses?.main) {
                 document.getElementById('edit-main-number').value = raceData.horses.main.number || '';
                 document.getElementById('edit-main-name').value = raceData.horses.main.name || '';
-                document.getElementById('edit-main-confidence').value = raceData.horses.main.confidence || '';
             }
             
             if (raceData.horses?.sub1) {
                 document.getElementById('edit-sub1-number').value = raceData.horses.sub1.number || '';
                 document.getElementById('edit-sub1-name').value = raceData.horses.sub1.name || '';
-                document.getElementById('edit-sub1-confidence').value = raceData.horses.sub1.confidence || '';
             }
             
             if (raceData.horses?.sub2) {
                 document.getElementById('edit-sub2-number').value = raceData.horses.sub2.number || '';
                 document.getElementById('edit-sub2-name').value = raceData.horses.sub2.name || '';
-                document.getElementById('edit-sub2-confidence').value = raceData.horses.sub2.confidence || '';
             }
         }
 
@@ -2003,7 +1921,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             const raceNum = parseInt(raceNumber.replace('R', ''));
             
             document.getElementById('edit-race-name').value = `サラ系3歳以上`;
-            document.getElementById('edit-confidence').value = (85 + Math.random() * 10).toFixed(1);
             document.getElementById('edit-ability-index').value = (75 + Math.random() * 20).toFixed(1);
             document.getElementById('edit-recommendation').value = raceNum === 11 ? 'A+' : 'B+';
             document.getElementById('edit-expected-return').value = (120 + Math.random() * 50).toFixed(0);
@@ -2011,15 +1928,12 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             // デフォルト馬情報
             document.getElementById('edit-main-number').value = Math.floor(Math.random() * 12) + 1;
             document.getElementById('edit-main-name').value = `本命馬${raceNum}`;
-            document.getElementById('edit-main-confidence').value = (85 + Math.random() * 10).toFixed(1);
             
             document.getElementById('edit-sub1-number').value = Math.floor(Math.random() * 12) + 1;
             document.getElementById('edit-sub1-name').value = `対抗馬${raceNum}`;
-            document.getElementById('edit-sub1-confidence').value = (75 + Math.random() * 10).toFixed(1);
             
             document.getElementById('edit-sub2-number').value = Math.floor(Math.random() * 12) + 1;
             document.getElementById('edit-sub2-name').value = `単穴馬${raceNum}`;
-            document.getElementById('edit-sub2-confidence').value = (65 + Math.random() * 10).toFixed(1);
         }
 
         window.saveRaceEdit = function() {
@@ -2042,7 +1956,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                         track: "川崎競馬",
                         raceNumber: currentEditingRace,
                         raceName: document.getElementById('edit-race-name').value,
-                        confidence: document.getElementById('edit-confidence').value,
                         abilityIndex: document.getElementById('edit-ability-index').value,
                         recommendation: document.getElementById('edit-recommendation').value,
                         expectedReturn: document.getElementById('edit-expected-return').value
@@ -2052,19 +1965,16 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                             number: parseInt(document.getElementById('edit-main-number').value),
                             name: document.getElementById('edit-main-name').value,
                             type: '本命',
-                            confidence: document.getElementById('edit-main-confidence').value
                         },
                         sub1: {
                             number: parseInt(document.getElementById('edit-sub1-number').value),
                             name: document.getElementById('edit-sub1-name').value,
                             type: '対抗',
-                            confidence: document.getElementById('edit-sub1-confidence').value
                         },
                         sub2: {
                             number: parseInt(document.getElementById('edit-sub2-number').value),
                             name: document.getElementById('edit-sub2-name').value,
                             type: '単穴',
-                            confidence: document.getElementById('edit-sub2-confidence').value
                         }
                     }
                 };
@@ -2240,7 +2150,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             
             // 編集フォームに値を設定
             document.getElementById('edit-race-name').value = race.raceName || '';
-            document.getElementById('edit-confidence').value = race.raceInfo?.confidence || '';
             document.getElementById('edit-ability-index').value = race.raceInfo?.abilityIndex || '';
             document.getElementById('edit-recommendation').value = race.raceInfo?.recommendation || 'A';
             document.getElementById('edit-expected-return').value = race.raceInfo?.expectedReturn || '';
@@ -2249,19 +2158,16 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             if (race.horses?.main) {
                 document.getElementById('edit-main-number').value = race.horses.main.number || '';
                 document.getElementById('edit-main-name').value = race.horses.main.name || '';
-                document.getElementById('edit-main-confidence').value = race.horses.main.confidence || '';
             }
             
             if (race.horses?.sub) {
                 document.getElementById('edit-sub1-number').value = race.horses.sub.number || '';
                 document.getElementById('edit-sub1-name').value = race.horses.sub.name || '';
-                document.getElementById('edit-sub1-confidence').value = race.horses.sub.confidence || '';
             }
             
             if (race.horses?.sub1) {
                 document.getElementById('edit-sub2-number').value = race.horses.sub1.number || '';
                 document.getElementById('edit-sub2-name').value = race.horses.sub1.name || '';
-                document.getElementById('edit-sub2-confidence').value = race.horses.sub1.confidence || '';
             }
             
             // 編集セクションを表示
@@ -2288,7 +2194,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     currentEditingRace.raceInfo = {};
                 }
                 
-                currentEditingRace.raceInfo.confidence = document.getElementById('edit-confidence').value || currentEditingRace.raceInfo.confidence;
                 currentEditingRace.raceInfo.abilityIndex = document.getElementById('edit-ability-index').value || currentEditingRace.raceInfo.abilityIndex;
                 currentEditingRace.raceInfo.recommendation = document.getElementById('edit-recommendation').value || currentEditingRace.raceInfo.recommendation;
                 currentEditingRace.raceInfo.expectedReturn = document.getElementById('edit-expected-return').value || currentEditingRace.raceInfo.expectedReturn;
@@ -2301,31 +2206,25 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                 if (currentEditingRace.horses?.main) {
                     const mainNumber = document.getElementById('edit-main-number').value;
                     const mainName = document.getElementById('edit-main-name').value;
-                    const mainConf = document.getElementById('edit-main-confidence').value;
                     
                     if (mainNumber) currentEditingRace.horses.main.number = parseInt(mainNumber);
                     if (mainName) currentEditingRace.horses.main.name = mainName;
-                    if (mainConf) currentEditingRace.horses.main.confidence = mainConf;
                 }
                 
                 if (currentEditingRace.horses?.sub) {
                     const subNumber = document.getElementById('edit-sub1-number').value;
                     const subName = document.getElementById('edit-sub1-name').value;
-                    const subConf = document.getElementById('edit-sub1-confidence').value;
                     
                     if (subNumber) currentEditingRace.horses.sub.number = parseInt(subNumber);
                     if (subName) currentEditingRace.horses.sub.name = subName;
-                    if (subConf) currentEditingRace.horses.sub.confidence = subConf;
                 }
                 
                 if (currentEditingRace.horses?.sub1) {
                     const sub2Number = document.getElementById('edit-sub2-number').value;
                     const sub2Name = document.getElementById('edit-sub2-name').value;
-                    const sub2Conf = document.getElementById('edit-sub2-confidence').value;
                     
                     if (sub2Number) currentEditingRace.horses.sub1.number = parseInt(sub2Number);
                     if (sub2Name) currentEditingRace.horses.sub1.name = sub2Name;
-                    if (sub2Conf) currentEditingRace.horses.sub1.confidence = sub2Conf;
                 }
                 
                 // lastUpdatedを更新
@@ -2481,7 +2380,6 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                         horseCount: parseInt(horseCount),
                         startTime: startTime,
                         horses: [],
-                        confidence: 75 + Math.random() * 20 // 基本の信頼度
                     };
                     
                     showConversionProgress(`📝 ${raceNum}R ${raceName} を解析中...`);
