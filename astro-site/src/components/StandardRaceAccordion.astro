@@ -26,7 +26,6 @@ const toggleFunction = `toggleRace${raceNumber}()`;
             <div class="race-meta">{raceInfo.distance} | {raceInfo.startTime}発走 | {raceInfo.horseCount}頭</div>
         </div>
         <div class="race-stats">
-            <div class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo.confidence || '0'))}%</div>
             <div class="expected-return">期待回収率 {raceInfo.expectedReturn}%</div>
             <div class="recommendation-badge">{raceInfo.recommendation}</div>
         </div>

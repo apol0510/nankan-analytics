@@ -19,7 +19,6 @@ const { raceInfo, horses, strategies, analysis } = raceData;
             <div class="race-meta">{raceInfo.distance} | {raceInfo.startTime}発走</div>
         </div>
         <div class="race-stats">
-            <div class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo.confidence || '0'))}%</div>
             <div class="expected-return">期待回収率 {raceInfo.expectedReturn}%</div>
         </div>
         <div class="accordion-toggle">
@@ -38,13 +37,11 @@ const { raceInfo, horses, strategies, analysis } = raceData;
                         <div class="horse-number">{horses.main.number}</div>
                         <div class="horse-name">{horses.main.name}</div>
                         <div class="horse-type">{horses.main.type}</div>
-                        <div class="confidence">信頼度 {horses.main.confidence}%</div>
                     </div>
                     <div class="horse-card sub">
                         <div class="horse-number">{horses.sub.number}</div>
                         <div class="horse-name">{horses.sub.name}</div>
                         <div class="horse-type">{horses.sub.type}</div>
-                        <div class="confidence">信頼度 {horses.sub.confidence}%</div>
                     </div>
                 </div>
             </div>
