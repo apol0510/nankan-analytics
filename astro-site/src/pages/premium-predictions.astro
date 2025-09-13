@@ -4,6 +4,57 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 
+// 印に基づく統一信頼度計算関数（多重印対応・累積加算式）
+function calculateMarkBasedConfidence(horse) {
+    const baseConfidence = 70;
+    
+    // multiMarkがある場合はそれを優先使用
+    const targetMark = horse.multiMark || horse.mark;
+    
+    // 多重印対応: スペース区切りの複数印を累積加算
+    if (typeof targetMark === 'string' && targetMark.includes(' ')) {
+        // スペースで分割して複数印を処理
+        const marks = targetMark.split(' ').filter(m => m.trim());
+        const totalValue = marks.reduce((sum, m) => {
+            switch (m.trim()) {
+                case '◎': return sum + 7;
+                case '○': return sum + 6;
+                case '▲': return sum + 5;
+                case '△': return sum + 4;
+                default: return sum;
+            }
+        }, 0);
+        
+        return baseConfidence + totalValue;
+    }
+    
+    // 単一印の場合
+    switch (targetMark) {
+        case '◎': return baseConfidence + 7; // 77
+        case '○': return baseConfidence + 6; // 76
+        case '▲': return baseConfidence + 5; // 75
+        case '△': return baseConfidence + 4; // 74
+        default: return baseConfidence; // 70
+    }
+}
+
+// 馬の印に基づく信頼度を計算する関数（多重印対応）
+function getHorseConfidenceFromMark(horse) {
+    return calculateMarkBasedConfidence(horse);
+}
+
+// レース全体の信頼度を主力馬の平均で計算する関数
+function getRaceConfidence(horses) {
+    const mainHorses = horses.filter(horse => 
+        horse.type === '本命' || horse.type === '対抗' || horse.type === '単穴'
+    );
+    if (mainHorses.length === 0) return 70;
+    
+    const totalConfidence = mainHorses.reduce((sum, horse) => 
+        sum + getHorseConfidenceFromMark(horse), 0);
+    return Math.round(totalConfidence / mainHorses.length);
+}
+
 // メインレース（11R）のデータを取得
 const mainRace = allRacesData.races.find(race => race.isMainRace === true);
 const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses } = mainRace;
@@ -57,7 +108,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第1レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-1r">▼</span>
                 </div>
             </div>
@@ -83,13 +133,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -121,13 +170,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -159,13 +207,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -186,7 +233,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -216,7 +262,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -351,7 +396,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第2レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-2r">▼</span>
                 </div>
             </div>
@@ -376,13 +420,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -413,13 +456,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -450,13 +492,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -476,7 +517,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -505,7 +545,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -636,7 +675,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第3レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-3r">▼</span>
                 </div>
             </div>
@@ -661,13 +699,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -698,13 +735,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -735,13 +771,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -761,7 +796,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -790,7 +824,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -921,7 +954,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第4レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-4r">▼</span>
                 </div>
             </div>
@@ -946,13 +978,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -983,13 +1014,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1020,13 +1050,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1046,7 +1075,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -1075,7 +1103,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -1207,7 +1234,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第5レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-5r">▼</span>
                 </div>
             </div>
@@ -1231,13 +1257,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1268,13 +1293,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1305,13 +1329,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1331,7 +1354,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -1360,7 +1382,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -1491,7 +1512,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第6レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-6r">▼</span>
                 </div>
             </div>
@@ -1515,13 +1535,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1552,13 +1571,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1589,13 +1607,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1615,7 +1632,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -1644,7 +1660,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -1775,7 +1790,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第7レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-7r">▼</span>
                 </div>
             </div>
@@ -1799,13 +1813,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1836,13 +1849,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1873,13 +1885,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -1899,7 +1910,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -1928,7 +1938,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -2059,7 +2068,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第8レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-8r">▼</span>
                 </div>
             </div>
@@ -2083,13 +2091,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2120,13 +2127,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2157,13 +2163,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2183,7 +2188,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -2212,7 +2216,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -2343,7 +2346,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第9レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-9r">▼</span>
                 </div>
             </div>
@@ -2367,13 +2369,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2404,13 +2405,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2441,13 +2441,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2467,7 +2466,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -2496,7 +2494,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -2627,7 +2624,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">第10レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-10r">▼</span>
                 </div>
             </div>
@@ -2651,13 +2647,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2688,13 +2683,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2725,13 +2719,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2751,7 +2744,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -2780,7 +2772,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -2911,7 +2902,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">メインレース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {raceInfo.confidence}%</span>
                     <span class="toggle-icon" id="toggle-11r">▼</span>
                 </div>
             </div>
@@ -2936,13 +2926,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -2974,13 +2963,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -3012,13 +3000,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -3039,7 +3026,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -3069,7 +3055,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -3394,7 +3379,6 @@ console.log('race12R:', race12R);
                     <span class="race-tier-badge">最終レース</span>
                 </div>
                 <div class="race-preview">
-                    <span class="confidence">信頼度 {race12R?.raceInfo?.confidence}%</span>
                     <span class="toggle-icon" id="toggle-12r">▼</span>
                 </div>
             </div>
@@ -3419,13 +3403,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
                         </div>
-                        <span class="confidence-score" style="font-size: 1.2rem; color: #10b981;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -3457,13 +3440,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
                         </div>
-                        <span class="confidence-score" style="color: #3b82f6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -3495,13 +3477,12 @@ console.log('race12R:', race12R);
                             <span class="horse-name">{horse.name}</span>
                             <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                         </div>
-                        <span class="confidence-score" style="color: #8b5cf6;">信頼度 {horse.confidence}%</span>
                     </div>
                     <div class="ai-factors">
                         {horse.factors.map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
+                                <span>{factor.text.includes('信頼度:') ? `信頼度: ${getHorseConfidenceFromMark(horse)}%` : factor.text}</span>
                             </div>
                         ))}
                     </div>
@@ -3522,7 +3503,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
@@ -3552,7 +3532,6 @@ console.log('race12R:', race12R);
                             <div class="horse-grid-item">
                                 <span class="horse-number-small">{horse.number}</span>
                                 <span class="horse-name-small">{horse.name}</span>
-                                <span class="confidence-small">({horse.confidence}%)</span>
                             </div>
                         ))}
                     </div>
