@@ -266,10 +266,6 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.safe.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.safe.payoutType}</div>
-                </div>
                 <div class="premium-overlay">
                     <div class="premium-content">
                         <div class="premium-icon">🔒</div>
@@ -300,10 +296,6 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                     <div class="risk-bar active risk-medium" style="width: 60%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
-                </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.balance.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.balance.payoutType}</div>
                 </div>
                 <div class="premium-overlay">
                     <div class="premium-content">
@@ -336,10 +328,6 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.aggressive.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.aggressive.payoutType}</div>
-                </div>
                 <div class="premium-overlay">
                     <div class="premium-content">
                         <div class="premium-icon">🔒</div>
@@ -352,19 +340,6 @@ const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses 
         </div>
 
         <!-- AI分析サマリー -->
-        <div class="analysis-section">
-            <h2 class="section-title">
-                <span>📈</span>
-                <span>AIモデル総合評価</span>
-            </h2>
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.2);">
-                <h3 style="color: #10b981; margin-bottom: 15px;">レース展開予測</h3>
-                <ul style="line-height: 1.8; color: #e2e8f0;">
-                    <li>XGBoostモデル: ⑧番の安定性と持続力を最高評価（スコア94.2）</li>
-                    <li>LSTMモデル: 時系列分析で③番の急激な上昇トレンドを検知</li>
-                    <li>ニューラルネット: ⑤番の爆発的パフォーマンス可能性を示唆</li>
-                    <li>アンサンブル予測: 先行〜中団からの⑧番の抜け出しが最有力パターン</li>
-                </ul>
                 
                 <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
                     <h4 style="color: #3b82f6; margin-bottom: 10px;">重要指標</h4>

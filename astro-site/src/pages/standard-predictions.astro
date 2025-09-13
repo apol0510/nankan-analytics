@@ -243,10 +243,6 @@ console.log('race12R:', race12R);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.safe.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.safe.payoutType}</div>
-                </div>
             </div>
             <!-- 戦略2: バランス型 - プレミアム版では完全表示 -->
             <div class="bet-strategy">
@@ -268,10 +264,6 @@ console.log('race12R:', race12R);
                     <div class="risk-bar active risk-medium" style="width: 60%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
-                </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.balance.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.balance.payoutType}</div>
                 </div>
             </div>
             <!-- 戦略3: 高配当狙い - プレミアム版では完全表示 -->
@@ -295,28 +287,9 @@ console.log('race12R:', race12R);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.aggressive.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.aggressive.payoutType}</div>
-                </div>
             </div>
         </div>
         <!-- AI分析サマリー -->
-        <div class="analysis-section">
-            <h2 class="section-title">
-                <span>📈</span>
-                <span>AIモデル総合評価</span>
-            </h2>
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.2);">
-                <h3 style="color: #10b981; margin-bottom: 15px;">レース展開予測</h3>
-                <ul style="line-height: 1.8; color: #e2e8f0;">
-                    <li>XGBoostモデル: ⑤番の安定性と持続力を最高評価（スコア94.2）</li>
-                    <li>LSTMモデル: 時系列分析で⑦番の急激な上昇トレンドを検知</li>
-                    <li>ニューラルネット: ③番の爆発的パフォーマンス可能性を示唆</li>
-                    <li>アンサンブル予測: 先行〜中団からの⑤番の抜け出しが最有力パターン</li>
-                </ul>
-            </div>
-        </div>
                 </div>
             </div>
         </div>
@@ -545,10 +518,6 @@ console.log('race12R:', race12R);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.safe.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.safe.payoutType}</div>
-                </div>
             </div>
 
             <!-- 戦略2: バランス型 - プレミアム版では完全表示 -->
@@ -571,10 +540,6 @@ console.log('race12R:', race12R);
                     <div class="risk-bar active risk-medium" style="width: 60%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
-                </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.balance.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.balance.payoutType}</div>
                 </div>
                 {/* プレミアム版専用の詳細分析 */}
                 <div class="premium-strategy-details">
@@ -608,15 +573,10 @@ console.log('race12R:', race12R);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.aggressive.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.aggressive.payoutType}</div>
-                </div>
                 {/* プレミアム版専用の詳細分析 */}
                 <div class="premium-strategy-details">
                     <h4 style="color: #ef4444; font-size: 0.9rem; margin: 15px 0 10px 0;">ハイリスク戦略詳細</h4>
                     <ul style="color: #94a3b8; font-size: 0.85rem; line-height: 1.6; margin-left: 15px;">
-                        <li>大穴的中時の期待配当: 50-100倍</li>
                         <li>推奨資金配分: 全体の1-2%以下</li>
                         <li>成功パターン: 展開が向いた場合の爆発力</li>
                     </ul>
@@ -974,10 +934,6 @@ console.log('race12R:', race12R);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.safe.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.safe.payoutType}</div>
-                </div>
             </div>
 
             <!-- 戦略2: バランス型 - プレミアム版では完全表示 -->
@@ -1000,10 +956,6 @@ console.log('race12R:', race12R);
                     <div class="risk-bar active risk-medium" style="width: 60%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
-                </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.balance.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.balance.payoutType}</div>
                 </div>
             </div>
 
@@ -1028,29 +980,10 @@ console.log('race12R:', race12R);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="expected-return">
-                    <div class="return-value">推定配当 {strategies.aggressive.expectedPayout}</div>
-                    <div style="color: #94a3b8; font-size: 0.9rem;">{strategies.aggressive.payoutType}</div>
-                </div>
             </div>
         </div>
 
         <!-- AI分析サマリー -->
-        <div class="analysis-section">
-            <h2 class="section-title">
-                <span>📈</span>
-                <span>AIモデル総合評価</span>
-            </h2>
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.2);">
-                <h3 style="color: #10b981; margin-bottom: 15px;">レース展開予測</h3>
-                <ul style="line-height: 1.8; color: #e2e8f0;">
-                    <li>XGBoostモデル: ⑤番の安定性と持続力を最高評価（スコア94.2）</li>
-                    <li>LSTMモデル: 時系列分析で⑦番の急激な上昇トレンドを検知</li>
-                    <li>ニューラルネット: ③番の爆発的パフォーマンス可能性を示唆</li>
-                    <li>アンサンブル予測: 先行〜中団からの⑤番の抜け出しが最有力パターン</li>
-                </ul>
-            </div>
-        </div>
                 </div>
             </div>
         </div>
