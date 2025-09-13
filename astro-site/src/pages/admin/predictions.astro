@@ -1589,7 +1589,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     type: type,
                     factors: [
                         {icon: "★", text: `信頼度: ${(50 + Math.random() * 40).toFixed(1)}%`}, 
-                        {icon: "★", text: type === '押さえ' ? "大穴適性: 高変動" : "⭐⭐⭐"},
+                        {icon: "★", text: type === '押さえ' ? "大穴適性: 高変動" : "総合評価:★★★"},
                         ...(horse.score ? [{icon: "🎯", text: `累積スコア: ${horse.score}pt`}] : [])
                     ]
                 };
@@ -1930,7 +1930,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                       horse.mark === '○' || horse.mark === '◯' ? '対抗' : 
                       horse.mark === '▲' ? '単穴' : 
                       horse.mark === '△' ? '連下' : '押さえ',
-                factors: [{icon: "★", text: `信頼度: ${(60 + Math.random() * 30).toFixed(1)}%`}, {icon: "★", text: "⭐⭐⭐"}]
+                factors: [{icon: "★", text: `信頼度: ${(60 + Math.random() * 30).toFixed(1)}%`}, {icon: "★", text: "総合評価:★★★"}]
             }));
         }
 
