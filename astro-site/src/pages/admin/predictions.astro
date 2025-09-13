@@ -2,6 +2,7 @@
 export const prerender = true;// 簡略化された管理者用予想入力ページ
 import { getRaceTier, isMainRace, getRaceDisplayName, getMainRaceNumber } from '../../lib/race-config.js';
 import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '../../lib/data-validator.js';
+import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
 ---
 
 <!DOCTYPE html>
@@ -365,7 +366,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
 【重要】
 ・新形式: 馬番 印1 印2 印3... 馬名（スコア自動計算・役割自動割り当て）
 ・各レース行: 月/日＋競馬場名＋レース番号＋距離＋頭数＋発走時刻＋レース名
-・印の点数: ◎+7, ○+6, ▲+5, △+4, ×+0（ベース70pt）"></textarea>
+・印の点数: ◎+7, ○+6, ▲+5, △+4, ×+0（ベース62pt）"></textarea>
             </div>
             
             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
@@ -1297,8 +1298,8 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
             
             // スコアベースでの自動役割割り当て
             const sortedHorses = [...raceData.horses].sort((a, b) => {
-                const scoreA = a.score || 70;
-                const scoreB = b.score || 70;
+                const scoreA = a.score || 62;
+                const scoreB = b.score || 62;
                 if (scoreB === scoreA) {
                     // 同点の場合は登場順（配列のインデックス）で決定
                     return raceData.horses.indexOf(a) - raceData.horses.indexOf(b);
@@ -1485,8 +1486,8 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
         function generateAllHorsesDataForRace(raceData) {
             // スコアベースで役割を決定
             const sortedHorses = [...raceData.horses].sort((a, b) => {
-                const scoreA = a.score || 70;
-                const scoreB = b.score || 70;
+                const scoreA = a.score || 62;
+                const scoreB = b.score || 62;
                 if (scoreB === scoreA) {
                     return raceData.horses.indexOf(a) - raceData.horses.indexOf(b);
                 }
@@ -1521,7 +1522,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     type: type,
                     factors: [
  
-                        {icon: "★", text: type === '押さえ' ? "大穴適性: 高変動" : "総合評価:★★★"},
+                        {icon: "★", text: type === '押さえ' ? "大穴適性: 高変動" : convertToStarRating("総合評価:★★★", type, horse.score)},
                         ...(horse.score ? [{icon: "🎯", text: `累積スコア: ${horse.score}pt`}] : [])
                     ]
                 };
@@ -1852,7 +1853,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                       horse.mark === '○' || horse.mark === '◯' ? '対抗' : 
                       horse.mark === '▲' ? '単穴' : 
                       horse.mark === '△' ? '連下' : '押さえ',
-                factors: [{icon: "★", text: "総合評価:★★★"}]
+                factors: [{icon: "★", text: convertToStarRating("総合評価:★★★", horse.mark === '◎' ? '本命' : horse.mark === '○' || horse.mark === '◯' ? '対抗' : horse.mark === '▲' ? '単穴' : horse.mark === '△' ? '連下' : '押さえ', horse.score)}]
             }));
         }
 
@@ -2396,9 +2397,9 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     const [, number, marksStr, name] = newFormatMatch;
                     const marks = marksStr.trim().split(/\s+/).filter(mark => /[◎○▲△×]/.test(mark));
                     
-                    // 累積スコア計算（ベース70pt + 印の値）
+                    // 累積スコア計算（ベース62pt + 印の値）
                     const markValues = {'◎': 7, '○': 6, '▲': 5, '△': 4, '×': 0};
-                    const totalScore = 70 + marks.reduce((sum, mark) => sum + (markValues[mark] || 0), 0);
+                    const totalScore = 62 + marks.reduce((sum, mark) => sum + (markValues[mark] || 0), 0);
                     
                     currentRace.horses.push({
                         mark: marks[0] || '△', // 最初の印を表示用マークとして使用
@@ -2411,7 +2412,7 @@ import { validateAllRacesPrediction, autoFixData, getValidationSummary } from '.
                     // 旧形式対応（後方互換性）
                     const [, mark, number, name] = oldFormatMatch;
                     const markValues = {'◎': 7, '○': 6, '▲': 5, '△': 4, '×': 0};
-                    const totalScore = 70 + (markValues[mark] || 0);
+                    const totalScore = 62 + (markValues[mark] || 0);
                     
                     currentRace.horses.push({
                         mark: mark,
