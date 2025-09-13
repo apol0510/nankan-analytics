@@ -3,11 +3,11 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
+import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData } from '../lib/shared-prediction-logic.js';
 
-// メインレース（11R）のデータを取得
-const mainRace = allRacesData.races.find(race => race.isMainRace === true);
+// 共有ロジックを使用してデータを処理
+const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
 const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses } = mainRace;
-const race12R = allRacesData.races.find(r => r.raceNumber === '12R');
 console.log('race12R:', race12R);
 ---
 

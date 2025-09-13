@@ -2,9 +2,10 @@
 export const prerender = true; // 静的サイト生成用に戻す
 import BaseLayout from '../layouts/BaseLayout.astro';
 import allRacesData from '../data/allRacesPrediction.json';
+import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData } from '../lib/shared-prediction-logic.js';
 
-// メインレース（11R）を取得
-const mainRace = allRacesData.races.find(race => race.isMainRace === true);
+// 共有ロジックを使用してデータを処理
+const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
 
 if (!mainRace) {
     throw new Error('メインレースが見つかりません。allRacesPrediction.jsonのデータを確認してください。');
