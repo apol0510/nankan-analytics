@@ -312,20 +312,51 @@ admin-newsletter-simple.astroから送信時の必須パラメータ：
 
 ### 1. **環境確認**
 ```bash
+# 作業ディレクトリ移動
+cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
+
 # 開発サーバー起動
 npm run dev
 
 # Netlify Functions動作確認
 curl http://localhost:8888/.netlify/functions/get-scheduled-jobs
+
+# ビルドテスト（エラーチェック）
+npm run build
 ```
 
-### 2. **Airtable設定確認**
+### 2. **システム状況確認**
+- ✅ **動的リスクシステム**: 完全実装済み（戦略A/B/C対応）
+- ✅ **ベース信頼度**: 62pt統一完了
+- ✅ **星評価システム**: 89pt閾値完了
+- ✅ **標準化買い目**: 戦略別パターン生成完了
+- ✅ **全予想ページ**: premium/standard/free実装完了
+
+### 3. **Airtable設定確認**
 - ScheduledEmailsテーブル存在確認
 - 環境変数設定確認（AIRTABLE_API_KEY, AIRTABLE_BASE_ID）
 
-### 3. **メール配信テスト**
+### 4. **メール配信テスト**
 - admin-newsletter-simple.astroから即時配信テスト
 - 予約配信テスト（5分後に設定）
+
+### 5. **動的リスクシステム動作確認**
+```bash
+# 予想ページアクセステスト
+open http://localhost:4321/premium-predictions
+open http://localhost:4321/standard-predictions  
+open http://localhost:4321/free-prediction
+
+# 管理画面アクセステスト
+open http://localhost:4321/admin/predictions
+```
+
+### 6. **実装完了事項（確認不要）**
+- 動的リスク計算（戦略別累積スコア対応）
+- 標準化買い目生成（→・⇔記法統一）
+- ベース信頼度62pt統一
+- 星評価89pt閾値調整
+- 全予想ページ統一実装
 
 ---
 
@@ -394,13 +425,32 @@ curl http://localhost:8888/.netlify/functions/get-scheduled-jobs
 ---
 
 **📅 最終更新日**: 2025-09-14  
-**🏁 Project Phase**: ベース信頼度・星評価システム統一完了  
-**🎯 Current Priority**: マーケティング強化・顧客獲得  
-**✨ 本日の成果**: ベース信頼度70→62変更・星評価閾値95→89pt調整達成！
+**🏁 Project Phase**: 動的リスクシステム完全実装完了 ★★★  
+**🎯 Next Priority**: マーケティング強化・顧客獲得  
+**✨ 本日の成果**: ベース信頼度62pt統一・動的リスク計算システム完成・戦略別買い目生成実装達成！
 
 ---
 
 ## 🎊 **本日完了タスク（2025-09-14）**
+
+### ⚡ **動的リスクシステム完全実装**
+1. **戦略別動的リスク計算**
+   - 戦略A（少点数的中型）: 本命のみのスコアでリスク判定
+   - 戦略B（バランス型）: 本命+対抗の平均スコアでリスク判定
+   - 戦略C（高配当追求型）: 本命+対抗の平均スコアでリスク判定
+   - 89pt以上で-15%、88pt以下で+15%の動的調整
+
+2. **標準化買い目生成システム**
+   - 戦略A: 馬単 本命→{対抗,単穴1,単穴2} 3点
+   - 戦略B: 馬単 本命⇔{連下4頭} + 対抗→{本命,単穴1,単穴2} 11点
+   - 戦略C: 馬単 本命→{押さえ2頭} + 対抗⇔{連下4頭,押さえ2頭} 14点
+   - →（固定）・⇔（双方向）記法で買い目明確化
+
+3. **全予想ページ統一実装**
+   - `premium-predictions.astro`: 動的リスク計算・買い目生成完全対応
+   - `standard-predictions.astro`: 同システム完全実装
+   - `free-prediction.astro`: メインレース用動的システム実装
+   - UI表示: リスクレベル文字表示・スコア基準明示
 
 ### ✅ **ベース信頼度システム統一変更**
 1. **shared-prediction-logic.js 基礎値変更**
@@ -419,15 +469,19 @@ curl http://localhost:8888/.netlify/functions/get-scheduled-jobs
    - `convertToStarRating`関数で動的星評価実装
 
 ### 📋 **技術的成果**
+- **動的リスクシステム**: 累積スコアベースの戦略別リスク調整完成
 - **信頼度統一**: 全予想ページ（premium/standard/free）で62pt基準統一
 - **星評価改善**: より多くの馬が4つ星評価を受けやすくなるよう調整
+- **買い目標準化**: 戦略別の一貫した買い目パターン生成
 - **管理画面同期**: admin/predictionsも新基準で予想データ生成
 - **自動反映**: shared-prediction-logic.js経由で全コンポーネント自動更新
 
 ### 🔧 **実装ファイル**
-- `src/lib/shared-prediction-logic.js`: ベース62pt・星評価89pt閾値実装
+- `src/lib/shared-prediction-logic.js`: ベース62pt・星評価89pt閾値・動的リスクシステム実装
+- `src/pages/premium-predictions.astro`: 動的リスクシステム完全実装
+- `src/pages/standard-predictions.astro`: 同システム完全実装
+- `src/pages/free-prediction.astro`: メインレース用実装
 - `src/pages/admin/predictions.astro`: 管理画面スコア計算5箇所更新
-- 予想表示ページ3ファイル: 自動的に新基準適用（インポート済み）
 
 ### 📊 **スコア・評価システム変更履歴**
 
@@ -543,4 +597,39 @@ curl http://localhost:8888/.netlify/functions/get-scheduled-jobs
 - ✅ 新ファイル `admin-newsletter-simple.astro` を使用
 - 配信テスト時は必ず5分後の予約配信で動作確認
 
-**Next Priority**: Payment Links + Zapier実装
+### ⚡ **現在のシステム状況（2025-09-14）**
+**✅ 実装完了済み**
+- 動的リスクシステム: 戦略A/B/C対応・累積スコアベース
+- ベース信頼度62pt: 全システム統一済み
+- 星評価89pt閾値: 4つ星判定緩和済み
+- 標準化買い目生成: 戦略別パターン完成
+- 全予想ページ実装: premium/standard/free完全対応
+
+**🎯 Next Priority**: マーケティング強化・顧客獲得・UI/UX改善
+
+---
+
+## 🚀 **重要なファイル構成（2025-09-14最新版）**
+
+### 📁 **コアロジックファイル**
+- `src/lib/shared-prediction-logic.js`: **最重要** - 全予想計算の中枢
+  - ベース信頼度62pt統一
+  - 動的リスク計算システム（戦略A/B/C対応）
+  - 星評価89pt閾値システム
+  - 標準化買い目生成機能
+  - 多重印累積計算対応
+
+### 📁 **予想表示ページ**
+- `src/pages/premium-predictions.astro`: プレミアム会員予想（全レース）
+- `src/pages/standard-predictions.astro`: スタンダード会員予想（後半レース）
+- `src/pages/free-prediction.astro`: 無料予想（メインレースのみ）
+- **全ページ共通**: 動的リスクシステム・標準化買い目・62pt基準統一実装済み
+
+### 📁 **管理画面ファイル**
+- `src/pages/admin/predictions.astro`: 競馬予想管理（多重印対応・62pt基準）
+- `src/pages/admin-newsletter-simple.astro`: メール配信管理（自作スケジューラー）
+
+### 📁 **データファイル**
+- `src/data/allRacesPrediction.json`: 予想データ（multiMarkフィールド対応）
+
+**🔧 全ファイル ready-to-go状態 - 次回はそのまま作業開始可能！**
