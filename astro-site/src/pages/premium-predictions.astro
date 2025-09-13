@@ -229,12 +229,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -258,12 +262,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -513,12 +521,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -541,12 +553,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -792,12 +808,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -820,12 +840,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1071,12 +1095,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1099,12 +1127,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1350,12 +1382,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1378,12 +1414,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1628,12 +1668,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1656,12 +1700,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1906,12 +1954,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -1934,12 +1986,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -2184,12 +2240,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -2212,12 +2272,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -2462,12 +2526,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -2490,12 +2558,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -2740,12 +2812,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -2768,12 +2844,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -3022,12 +3102,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -3051,12 +3135,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -3499,12 +3587,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '△').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '△').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
@@ -3528,12 +3620,16 @@ console.log('race12R:', race12R);
                         </div>
                     </div>
                     <div class="horse-grid">
-                        {allHorses.filter(h => h.mark === '×').map(horse => (
-                            <div class="horse-grid-item">
-                                <span class="horse-number-small">{horse.number}</span>
-                                <span class="horse-name-small">{horse.name}</span>
-                            </div>
-                        ))}
+                        {allHorses.filter(h => h.mark === '×').map(horse => {
+                            const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                            const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                            return (
+                                <div class="horse-grid-item">
+                                    <span class="horse-number-small">{horse.number}</span>
+                                    <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* プレミアム版では詳細分析を表示 */}
                     <div class="premium-analysis">
