@@ -34,11 +34,25 @@ export function calculateMarkBasedConfidence(horse) {
     }
 }
 
-// 馬の実際の累積スコアを取得する関数（factorsから取得優先）
+// 馬の実際の累積スコアを取得する関数（multiMark最優先）
 export function getHorseConfidenceFromMark(horse) {
     if (!horse) return 62;
 
-    // factors内の累積スコアを最優先で取得
+    // multiMarkがある場合は最優先でそれを使って計算（最新のベース62pt基準）
+    if (horse.multiMark) {
+        const calculated = calculateMarkBasedConfidence(horse);
+        console.log(`${horse.name}: multiMark "${horse.multiMark}" → ${calculated}pt`);
+        return calculated;
+    }
+
+    // 単一印の場合は通常の計算
+    if (horse.mark) {
+        const calculated = calculateMarkBasedConfidence(horse);
+        console.log(`${horse.name}: mark "${horse.mark}" → ${calculated}pt`);
+        return calculated;
+    }
+
+    // factors内の累積スコアは古い可能性があるので参考程度
     if (horse.factors && Array.isArray(horse.factors)) {
         const scoreText = horse.factors.find(factor =>
             factor.text && factor.text.includes('累積スコア')
@@ -46,13 +60,14 @@ export function getHorseConfidenceFromMark(horse) {
         if (scoreText) {
             const match = scoreText.text.match(/(\d+)pt/);
             if (match) {
-                return parseInt(match[1]);
+                const oldScore = parseInt(match[1]);
+                console.log(`${horse.name}: 古いfactors内スコア ${oldScore}pt (参考値)`);
+                // 古いスコアは使わず、印ベース計算を使用
             }
         }
     }
 
-    // フォールバック: 印による計算
-    return calculateMarkBasedConfidence(horse);
+    return 62; // デフォルト
 }
 
 // レース全体の信頼度を主力馬の平均で計算する関数
