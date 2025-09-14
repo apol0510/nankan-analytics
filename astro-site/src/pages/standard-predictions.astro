@@ -81,8 +81,17 @@ const raceStrategiesNew = {
 // strategiesをraceStrategiesNewで置き換え
 const strategies = raceStrategiesNew;
 
+// 本番デバッグ用ログ
+console.log('🔥 本番環境デバッグ - strategies:', JSON.stringify(strategies, null, 2));
+console.log('🔥 戦略A買い目数:', strategies.safe?.bets?.length || 0);
+console.log('🔥 戦略B買い目数:', strategies.balance?.bets?.length || 0);
+console.log('🔥 戦略C買い目数:', strategies.aggressive?.bets?.length || 0);
+console.log('🔥 戦略A買い目:', strategies.safe?.bets);
+console.log('🔥 戦略B買い目:', strategies.balance?.bets);
+console.log('🔥 戦略C買い目:', strategies.aggressive?.bets);
+
 // ★★★ 買い目システム完全実装完了 ★★★
-// Updated: 2025-09-14T13:50 - 希望通りの買い目・点数表示実装
+// Updated: 2025-09-14T14:05 - 本番環境デバッグログ追加
 ---
 
 <BaseLayout title={`スタンダード予想 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬後半3レース（10R-12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
