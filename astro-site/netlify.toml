@@ -8,10 +8,12 @@
   NPM_VERSION = "10"
   # Force cache clear
   NETLIFY_CACHE_VERSION = "v5"
-  # Force new build
-  BUILD_TIMESTAMP = "2025-09-14-13:24"
-  # Cache busting for bet display fix
-  BET_DISPLAY_VERSION = "v2"
+  # Force new build - MAJOR UPDATE
+  BUILD_TIMESTAMP = "2025-09-14-13:30-CRITICAL"
+  # Cache busting for bet display fix - FORCE UPDATE
+  BET_DISPLAY_VERSION = "v3-FINAL-FIX"
+  # Complete cache invalidation
+  FORCE_UPDATE = "TRUE"
 
 [[headers]]
   for = "/*"

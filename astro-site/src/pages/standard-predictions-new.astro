@@ -81,10 +81,8 @@ const raceStrategiesNew = {
 // strategiesをraceStrategiesNewで置き換え
 const strategies = raceStrategiesNew;
 
-// ★★★ CRITICAL UPDATE MARKER - BET FORMAT FIXED ★★★
-// Updated: 2025-09-14T13:30 - FINAL FIX APPLIED
+// Cache busting timestamp: 2025-09-14T13:24
 console.log('race12R:', race12R);
-console.log('strategies debug:', strategies);
 ---
 
 <BaseLayout title={`スタンダード予想 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬後半3レース（10R-12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
@@ -2009,7 +2007,3 @@ console.log('strategies debug:', strategies);
 </script>
     </AccessControl>
 </BaseLayout>
-
-<!-- ★★★ CRITICAL UPDATE APPLIED ★★★ -->
-<!-- BET FORMAT FIXED: 2025-09-14T13:30 -->
-<!-- Version: v3-FINAL-FIX -->
