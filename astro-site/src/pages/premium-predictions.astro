@@ -3,82 +3,20 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity } from '../lib/shared-prediction-logic.js';
+import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
-const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
-const { raceInfo, horses, strategies, analysis, preview, allHorses, totalHorses } = mainRace;
+const { mainRace, race12R: originalRace12R, sortedRaces } = processRaceData(allRacesData);
 
-// 動的リスクシステム適用
-const mainHorseScore = horses.main ? getHorseConfidenceFromMark(horses.main) : 62;
-const subHorseScore = horses.sub ? getHorseConfidenceFromMark(horses.sub) : 62;
+// 統一処理関数でデータを正規化（すべてのページで同じ処理）
+const processedMainRace = processUnifiedRaceData(mainRace);
+const processedRace12R = processUnifiedRaceData(originalRace12R);
 
-// 戦略別動的計算
-const strategyA = {
-    type: 'A',
-    title: '少点数的中型',
-    risk: calculateDynamicRisk('A', mainHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
-};
-strategyA.riskText = getRiskLevelText(strategyA.risk);
-strategyA.recommendation = getRecommendationStars(strategyA.risk);
-const { hitRate: hitRateA, returnRate: returnRateA } = calculateHitRateAndReturn('A', strategyA.risk);
-strategyA.hitRate = hitRateA;
-strategyA.returnRate = returnRateA;
+// 処理済みデータから必要な情報を抽出
+const { raceInfo } = processedMainRace;
+const race12R = processedRace12R;
 
-const strategyB = {
-    type: 'B',
-    title: 'バランス型',
-    risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
-};
-strategyB.riskText = getRiskLevelText(strategyB.risk);
-strategyB.recommendation = getRecommendationStars(strategyB.risk);
-const { hitRate: hitRateB, returnRate: returnRateB } = calculateHitRateAndReturn('B', strategyB.risk);
-strategyB.hitRate = hitRateB;
-strategyB.returnRate = returnRateB;
 
-const strategyC = {
-    type: 'C',
-    title: '高配当追求型',
-    risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
-};
-strategyC.riskText = getRiskLevelText(strategyC.risk);
-strategyC.recommendation = getRecommendationStars(strategyC.risk);
-const { hitRate: hitRateC, returnRate: returnRateC } = calculateHitRateAndReturn('C', strategyC.risk);
-strategyC.hitRate = hitRateC;
-strategyC.returnRate = returnRateC;
-
-// 新しい戦略データを作成（既存のraceStrategies変数と互換性維持）
-const raceStrategiesNew = {
-    safe: {
-        title: strategyA.title,
-        recommendation: strategyA.recommendation.length,
-        hitRate: strategyA.hitRate,
-        returnRate: strategyA.returnRate,
-        riskLevel: strategyA.riskText,
-        bets: strategyA.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '3-6倍' }))
-    },
-    balance: {
-        title: strategyB.title,
-        recommendation: strategyB.recommendation.length,
-        hitRate: strategyB.hitRate,
-        returnRate: strategyB.returnRate,
-        riskLevel: strategyB.riskText,
-        bets: strategyB.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '6-12倍' }))
-    },
-    aggressive: {
-        title: strategyC.title,
-        recommendation: strategyC.recommendation.length,
-        hitRate: strategyC.hitRate,
-        returnRate: strategyC.returnRate,
-        riskLevel: strategyC.riskText,
-        bets: strategyC.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '12倍以上' }))
-    }
-};
-
-console.log('race12R:', race12R);
 ---
 
 <BaseLayout title={`プレミアム予想 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想の有料版を提供中。`}>

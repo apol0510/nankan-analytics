@@ -40,12 +40,31 @@ export function getHorseConfidenceFromMark(horse) {
 
     // multiMarkがある場合は最優先でそれを使って計算（最新のベース62pt基準）
     if (horse.multiMark) {
-        return calculateMarkBasedConfidence(horse);
+        const calculated = calculateMarkBasedConfidence(horse);
+        console.log(`${horse.name}: multiMark "${horse.multiMark}" → ${calculated}pt`);
+        return calculated;
     }
 
     // 単一印の場合は通常の計算
     if (horse.mark) {
-        return calculateMarkBasedConfidence(horse);
+        const calculated = calculateMarkBasedConfidence(horse);
+        console.log(`${horse.name}: mark "${horse.mark}" → ${calculated}pt`);
+        return calculated;
+    }
+
+    // factors内の累積スコアは古い可能性があるので参考程度
+    if (horse.factors && Array.isArray(horse.factors)) {
+        const scoreText = horse.factors.find(factor =>
+            factor.text && factor.text.includes('累積スコア')
+        );
+        if (scoreText) {
+            const match = scoreText.text.match(/(\d+)pt/);
+            if (match) {
+                const oldScore = parseInt(match[1]);
+                console.log(`${horse.name}: 古いfactors内スコア ${oldScore}pt (参考値)`);
+                // 古いスコアは使わず、印ベース計算を使用
+            }
+        }
     }
 
     return 62; // デフォルト
@@ -258,128 +277,14 @@ export function processRaceData(allRacesData) {
     // メインレース（11R）のデータを取得
     const mainRace = allRacesData.races.find(race => race.isMainRace === true);
     const race12R = allRacesData.races.find(r => r.raceNumber === '12R');
-
+    
     // 全レースデータを表示順でソート
     const sortedRaces = allRacesData.races.sort((a, b) => a.displayOrder - b.displayOrder);
-
+    
     return {
         mainRace,
         race12R,
         sortedRaces
-    };
-}
-
-// 統一レース処理関数：全予想ページで同じ処理を保証
-export function processUnifiedRaceData(raceData) {
-    if (!raceData || !raceData.horses) {
-        return null;
-    }
-
-    const { horses, allHorses } = raceData;
-
-    // 累積スコア取得（multiMark最優先）
-    const mainScore = getHorseConfidenceFromMark(horses.main);
-    const subScore = getHorseConfidenceFromMark(horses.sub);
-
-    // 星評価システム適用
-    const mainStars = convertToStarRating("総合評価", "本命", mainScore);
-    const subStars = convertToStarRating("総合評価", "対抗", subScore);
-
-    // 特徴量重要度（バリエーション付き）
-    const mainImportance = [
-        {label: "安定性", value: Math.round((mainScore + 3 + Math.random() * 4 - 2)) / 100},
-        {label: "能力上位性", value: Math.round((mainScore + 3 + Math.random() * 4 - 2)) / 100},
-        {label: "展開利", value: Math.round((mainScore - 6 + Math.random() * 4 - 2)) / 100}
-    ];
-
-    const subImportance = [
-        {label: "安定性", value: Math.round((subScore + 3 + Math.random() * 4 - 2)) / 100},
-        {label: "能力上位性", value: Math.round((subScore + 3 + Math.random() * 4 - 2)) / 100},
-        {label: "展開利", value: Math.round((subScore - 6 + Math.random() * 4 - 2)) / 100}
-    ];
-
-    // 動的リスクシステム適用（allHorsesを含めてgenerateStandardizedBetsに渡す）
-    const strategyA = {
-        riskPercent: calculateDynamicRisk('A', mainScore),
-        riskText: getRiskLevelText(calculateDynamicRisk('A', mainScore)),
-        hitRate: calculateHitRateAndReturn('A', calculateDynamicRisk('A', mainScore)).hitRate,
-        returnRate: calculateHitRateAndReturn('A', calculateDynamicRisk('A', mainScore)).returnRate,
-        bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
-    };
-
-    const strategyB = {
-        riskPercent: calculateDynamicRisk('B', mainScore, subScore),
-        riskText: getRiskLevelText(calculateDynamicRisk('B', mainScore, subScore)),
-        hitRate: calculateHitRateAndReturn('B', calculateDynamicRisk('B', mainScore, subScore)).hitRate,
-        returnRate: calculateHitRateAndReturn('B', calculateDynamicRisk('B', mainScore, subScore)).returnRate,
-        bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
-    };
-
-    const strategyC = {
-        riskPercent: calculateDynamicRisk('C', mainScore, subScore),
-        riskText: getRiskLevelText(calculateDynamicRisk('C', mainScore, subScore)),
-        hitRate: calculateHitRateAndReturn('C', calculateDynamicRisk('C', mainScore, subScore)).hitRate,
-        returnRate: calculateHitRateAndReturn('C', calculateDynamicRisk('C', mainScore, subScore)).returnRate,
-        bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
-    };
-
-    // 統一データ形式で返す
-    return {
-        ...raceData,
-        horses: {
-            main: {
-                ...horses.main,
-                score: mainScore,
-                factors: [
-                    {icon: "★", text: mainStars},
-                    {icon: "★", text: `累積スコア: ${mainScore}pt`}
-                ],
-                importance: mainImportance
-            },
-            sub: {
-                ...horses.sub,
-                score: subScore,
-                factors: [
-                    {icon: "★", text: subStars},
-                    {icon: "★", text: `累積スコア: ${subScore}pt`}
-                ],
-                importance: subImportance
-            },
-            sub1: horses.sub1,
-            sub2: horses.sub2
-        },
-        strategies: {
-            safe: {
-                title: '戦略A: 高的中率型',
-                recommendation: getRecommendationStars(strategyA.riskPercent),
-                hitRate: strategyA.hitRate,
-                returnRate: strategyA.returnRate,
-                riskLevel: strategyA.riskText,
-                bets: strategyA.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '3-6倍' })),
-                expectedPayout: '3-6倍',
-                payoutType: '堅実決着想定'
-            },
-            balance: {
-                title: '戦略B: バランス型',
-                recommendation: getRecommendationStars(strategyB.riskPercent),
-                hitRate: strategyB.hitRate,
-                returnRate: strategyB.returnRate,
-                riskLevel: strategyB.riskText,
-                bets: strategyB.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '6-12倍' })),
-                expectedPayout: '6-12倍',
-                payoutType: '中穴配当想定'
-            },
-            aggressive: {
-                title: '戦略C: 高配当追求型',
-                recommendation: getRecommendationStars(strategyC.riskPercent),
-                hitRate: strategyC.hitRate,
-                returnRate: strategyC.returnRate,
-                riskLevel: strategyC.riskText,
-                bets: strategyC.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '12倍以上' })),
-                expectedPayout: '12倍以上',
-                payoutType: '大穴視野'
-            }
-        }
     };
 }
 
