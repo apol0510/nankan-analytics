@@ -1369,9 +1369,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         ...(selectedMain.score ? [{icon: "★", text: `累積スコア: ${selectedMain.score}pt`}] : [])
                     ],
                     importance: [
-                        {label: "安定性", value: ((selectedMain.score || 85) + 3) / 100},
-                        {label: "能力上位性", value: ((selectedMain.score || 85) + 3) / 100},
-                        {label: "展開利", value: ((selectedMain.score || 85) - 6) / 100}
+                        {label: "安定性", value: ((selectedMain.score || 85) + 3 + Math.random() * 4 - 2) / 100},
+                        {label: "能力上位性", value: ((selectedMain.score || 85) + 3 + Math.random() * 4 - 2) / 100},
+                        {label: "展開利", value: ((selectedMain.score || 85) - 6 + Math.random() * 4 - 2) / 100}
                     ]
                 };
             }
@@ -1388,9 +1388,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         ...(selectedSub.score ? [{icon: "★", text: `累積スコア: ${selectedSub.score}pt`}] : [])
                     ],
                     importance: [
-                        {label: "先行力", value: ((selectedSub.score || 85) + 8) / 100},
-                        {label: "スピード指数", value: ((selectedSub.score || 85) - 6) / 100},
-                        {label: "枠順優位", value: ((selectedSub.score || 85) - 2) / 100}
+                        {label: "先行力", value: ((selectedSub.score || 85) + 8 + Math.random() * 6 - 3) / 100},
+                        {label: "スピード指数", value: ((selectedSub.score || 85) - 6 + Math.random() * 6 - 3) / 100},
+                        {label: "枠順優位", value: ((selectedSub.score || 85) - 2 + Math.random() * 6 - 3) / 100}
                     ]
                 };
             }
