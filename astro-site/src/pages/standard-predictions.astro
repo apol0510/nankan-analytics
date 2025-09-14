@@ -8,13 +8,13 @@ import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateData
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
 
-// Standard会員向け: 後半3レース（メインレース除く10R, 12R）
+// Standard会員向け: 後半3レース（10R, 11R=メインレース, 12R）
 const standardRaces = sortedRaces.filter(race =>
-    race.raceNumber === '10R' || race.raceNumber === '12R'
+    race.raceNumber === '10R' || race.raceNumber === '11R' || race.raceNumber === '12R'
 );
 ---
 
-<BaseLayout title="スタンダード会員予想" description="AI技術による川崎競馬後半レース（10R, 12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。">
+<BaseLayout title="スタンダード会員予想" description="AI技術による川崎競馬後半3レース（10R, 11R, 12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。">
     <AccessControl requiredPlan="standard">
         <div class="page-container">
         <!-- ヘッダーセクション -->
@@ -23,14 +23,14 @@ const standardRaces = sortedRaces.filter(race =>
                 <span class="pulse"></span>
                 <span class="ai-status">AI分析完了</span>
             </div>
-            <h1 class="race-title">2025年8月26日 川崎競馬 - 後半レース予想</h1>
+            <h1 class="race-title">2025年8月26日 川崎競馬 - 後半3レース予想</h1>
             <div class="ai-metrics">
                 <div class="metric">
                     <div class="metric-value">{standardRaces.length}</div>
                     <div class="metric-label">分析レース数</div>
                 </div>
                 <div class="metric">
-                    <div class="metric-value">2</div>
+                    <div class="metric-value">3</div>
                     <div class="metric-label">高信頼度レース</div>
                 </div>
                 <div class="metric">
