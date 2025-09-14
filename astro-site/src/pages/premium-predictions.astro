@@ -426,13 +426,13 @@ console.log('race12R:', race12R);
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.balance.bets && raceStrategies.balance.bets.map(bet => {
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
                                                     let points = '3点';
-                                                    if (typeof betStr === 'string' && betStr.includes('⇔')) {
-                                                        const targets = betStr.split('⇔')[1].split(',').length;
+                                                    if (betStr && typeof betStr === 'string' && betStr.includes('⇔')) {
+                                                        const targets = betStr.split('⇔')[1]?.split(',').length || 1;
                                                         points = `${targets * 2}点`;
-                                                    } else if (typeof betStr === 'string' && betStr.includes('→')) {
-                                                        const targets = betStr.split('→')[1].split(',').length;
+                                                    } else if (betStr && typeof betStr === 'string' && betStr.includes('→')) {
+                                                        const targets = betStr.split('→')[1]?.split(',').length || 1;
                                                         points = `${targets}点`;
                                                     }
                                                     return (
@@ -465,13 +465,13 @@ console.log('race12R:', race12R);
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.aggressive.bets && raceStrategies.aggressive.bets.map(bet => {
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
                                                     let points = '2点';
-                                                    if (typeof betStr === 'string' && betStr.includes('⇔')) {
-                                                        const targets = betStr.split('⇔')[1].split(',').length;
+                                                    if (betStr && typeof betStr === 'string' && betStr.includes('⇔')) {
+                                                        const targets = betStr.split('⇔')[1]?.split(',').length || 1;
                                                         points = `${targets * 2}点`;
-                                                    } else if (typeof betStr === 'string' && betStr.includes('→')) {
-                                                        const targets = betStr.split('→')[1].split(',').length;
+                                                    } else if (betStr && typeof betStr === 'string' && betStr.includes('→')) {
+                                                        const targets = betStr.split('→')[1]?.split(',').length || 1;
                                                         points = `${targets}点`;
                                                     }
                                                     return (
