@@ -7,9 +7,11 @@
   NODE_VERSION = "20"
   NPM_VERSION = "10"
   # Force cache clear
-  NETLIFY_CACHE_VERSION = "v4"
+  NETLIFY_CACHE_VERSION = "v5"
   # Force new build
-  BUILD_TIMESTAMP = "2025-09-14-13:06"
+  BUILD_TIMESTAMP = "2025-09-14-13:24"
+  # Cache busting for bet display fix
+  BET_DISPLAY_VERSION = "v2"
 
 [[headers]]
   for = "/*"
