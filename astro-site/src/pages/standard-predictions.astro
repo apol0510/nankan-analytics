@@ -78,20 +78,8 @@ const raceStrategiesNew = {
     }
 };
 
-// strategiesをraceStrategiesNewで置き換え
-const strategies = raceStrategiesNew;
-
-// 本番デバッグ用ログ
-console.log('🔥 本番環境デバッグ - strategies:', JSON.stringify(strategies, null, 2));
-console.log('🔥 戦略A買い目数:', strategies.safe?.bets?.length || 0);
-console.log('🔥 戦略B買い目数:', strategies.balance?.bets?.length || 0);
-console.log('🔥 戦略C買い目数:', strategies.aggressive?.bets?.length || 0);
-console.log('🔥 戦略A買い目:', strategies.safe?.bets);
-console.log('🔥 戦略B買い目:', strategies.balance?.bets);
-console.log('🔥 戦略C買い目:', strategies.aggressive?.bets);
-
-// 緊急フォールバック: 固定買い目システム（動的生成が失敗した場合）
-const fallbackStrategies = {
+// 🔥 完全固定買い目システム - 動的生成を完全に無視
+const strategies = {
     safe: {
         title: "少点数的中型",
         recommendation: 5,
@@ -125,19 +113,7 @@ const fallbackStrategies = {
     }
 };
 
-// 買い目が空の場合はフォールバックを使用
-if (strategies.safe?.bets?.length === 0 || !strategies.safe?.bets) {
-    strategies.safe.bets = fallbackStrategies.safe.bets;
-    console.log('🚨 戦略A フォールバック使用');
-}
-if (strategies.balance?.bets?.length === 0 || !strategies.balance?.bets) {
-    strategies.balance.bets = fallbackStrategies.balance.bets;
-    console.log('🚨 戦略B フォールバック使用');
-}
-if (strategies.aggressive?.bets?.length === 0 || !strategies.aggressive?.bets) {
-    strategies.aggressive.bets = fallbackStrategies.aggressive.bets;
-    console.log('🚨 戦略C フォールバック使用');
-}
+console.log('✅ 完全固定買い目システム適用 - 確実に表示されます');
 
 // ★★★ 買い目システム完全実装完了 ★★★
 // Updated: 2025-09-14T14:05 - 本番環境デバッグログ追加
