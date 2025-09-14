@@ -5,16 +5,12 @@ import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
 
-// 共有ロジックを使用してデータを処理
-const { mainRace, race12R: originalRace12R, sortedRaces } = processRaceData(allRacesData);
+// 共有ロジックを使用してデータを処理（元のデータを直接使用）
+const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
 
-// 統一処理関数でデータを正規化（すべてのページで同じ処理）
-const processedMainRace = processUnifiedRaceData(mainRace);
-const processedRace12R = processUnifiedRaceData(originalRace12R);
-
-// 処理済みデータから必要な情報を抽出
-const { raceInfo } = processedMainRace;
-const race12R = processedRace12R;
+// 元のデータを直接使用（根本解決）
+const { raceInfo, strategies, horses, analysis, preview, allHorses, totalHorses } = mainRace;
+const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHorses, allHorses: race12RAllHorses } = race12R;
 
 
 ---

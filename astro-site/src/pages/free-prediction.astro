@@ -11,17 +11,81 @@ if (!mainRace) {
     throw new Error('メインレースが見つかりません。allRacesPrediction.jsonのデータを確認してください。');
 }
 
-// 統一処理関数でデータを正規化（すべてのページで同じ処理）
-const processedMainRace = processUnifiedRaceData(mainRace);
+// Free会員向け: メインレース（11R）のデータを使用
 
-// 処理済みデータから必要な情報を抽出
-const { raceInfo, horses, analysis, preview, allHorses, totalHorses } = processedMainRace;
+// メインレースのデータを取得
+const { raceInfo, horses, analysis, preview, allHorses, totalHorses } = mainRace;
 
-// 統一処理されたデータから戦略情報を抽出
-const strategies = processedMainRace.strategies || {};
+// 正規化されたホースデータ（メインレース用）
+const normalizedHorses = normalizeHorseData(mainRace);
 
-// 20年運営対応: データ正規化システム使用
-const normalizedHorses = normalizeHorseData(processedMainRace);
+// 動的戦略を生成（Premiumと同じロジック）
+const mainHorseScore = getHorseConfidenceFromMark(horses.main);
+const subHorseScore = getHorseConfidenceFromMark(horses.sub);
+
+const strategyA = {
+    type: 'A',
+    title: '少点数的中型',
+    risk: calculateDynamicRisk('A', mainHorseScore),
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
+};
+strategyA.riskText = getRiskLevelText(strategyA.risk);
+strategyA.recommendation = getRecommendationStars(strategyA.risk);
+const { hitRate: hitRateA, returnRate: returnRateA } = calculateHitRateAndReturn('A', strategyA.risk);
+strategyA.hitRate = hitRateA;
+strategyA.returnRate = returnRateA;
+
+const strategyB = {
+    type: 'B',
+    title: 'バランス型',
+    risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
+};
+strategyB.riskText = getRiskLevelText(strategyB.risk);
+strategyB.recommendation = getRecommendationStars(strategyB.risk);
+const { hitRate: hitRateB, returnRate: returnRateB } = calculateHitRateAndReturn('B', strategyB.risk);
+strategyB.hitRate = hitRateB;
+strategyB.returnRate = returnRateB;
+
+const strategyC = {
+    type: 'C',
+    title: '高配当追求型',
+    risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
+};
+strategyC.riskText = getRiskLevelText(strategyC.risk);
+strategyC.recommendation = getRecommendationStars(strategyC.risk);
+const { hitRate: hitRateC, returnRate: returnRateC } = calculateHitRateAndReturn('C', strategyC.risk);
+strategyC.hitRate = hitRateC;
+strategyC.returnRate = returnRateC;
+
+// 統一された戦略データ
+const strategies = {
+    safe: {
+        title: strategyA.title,
+        recommendation: strategyA.recommendation.length,
+        hitRate: strategyA.hitRate,
+        returnRate: strategyA.returnRate,
+        riskLevel: strategyA.riskText,
+        bets: strategyA.bets.map(bet => ({ type: '馬単', horses: bet, points: '3点' }))
+    },
+    balance: {
+        title: strategyB.title,
+        recommendation: strategyB.recommendation.length,
+        hitRate: strategyB.hitRate,
+        returnRate: strategyB.returnRate,
+        riskLevel: strategyB.riskText,
+        bets: strategyB.bets.map(bet => ({ type: '馬単', horses: bet, points: '11点' }))
+    },
+    aggressive: {
+        title: strategyC.title,
+        recommendation: strategyC.recommendation.length,
+        hitRate: strategyC.hitRate,
+        returnRate: strategyC.returnRate,
+        riskLevel: strategyC.riskText,
+        bets: strategyC.bets.map(bet => ({ type: '馬単', horses: bet, points: '14点' }))
+    }
+};
 ---
 
 <BaseLayout title={`AI予想分析 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想を無料で提供中。`}>
@@ -43,8 +107,8 @@ const normalizedHorses = normalizeHorseData(processedMainRace);
                 <span>AIモデル選出馬 - XGBoost×LSTM統合分析</span>
             </h2>
 
-            {/* ◎印（本命）- 最も大きく表示 */}
-            {allHorses && allHorses.filter(h => h.role === '本命').map((horse, index) => {
+            {/* 20年運営対応: role-based表示（本命）- 最も大きく表示 */}
+            {normalizedHorses && normalizedHorses.filter(h => h.role === '本命').map((horse, index) => {
                 const roleConfig = getRoleDisplayConfig(horse.role);
                 return (
                 <div class="horse-card horse-card-main">
@@ -58,9 +122,9 @@ const normalizedHorses = normalizeHorseData(processedMainRace);
                     </div>
                     <div class="ai-factors">
                         {/* 累積スコアと星評価のみ表示 */}
-                        {horse.factors.filter(factor =>
+                        {horse.factors && horse.factors.filter(factor =>
                             factor.text.includes('累積スコア') ||
-                            factor.text.includes('総合評価:★')
+                            factor.text.includes('総合評価')
                         ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
@@ -87,8 +151,8 @@ const normalizedHorses = normalizeHorseData(processedMainRace);
                 );
             })}
 
-            {/* ◎印（対抗）- 中サイズで表示 */}
-            {allHorses && allHorses.filter(h => h.role === '対抗').map((horse, index) => {
+            {/* 20年運営対応: role-based表示（対抗）- 中サイズで表示 */}
+            {normalizedHorses && normalizedHorses.filter(h => h.role === '対抗').map((horse, index) => {
                 const roleConfig = getRoleDisplayConfig(horse.role);
                 return (
                 <div class="horse-card horse-card-sub">
@@ -102,9 +166,9 @@ const normalizedHorses = normalizeHorseData(processedMainRace);
                     </div>
                     <div class="ai-factors">
                         {/* 累積スコアと星評価のみ表示 */}
-                        {horse.factors.filter(factor =>
+                        {horse.factors && horse.factors.filter(factor =>
                             factor.text.includes('累積スコア') ||
-                            factor.text.includes('総合評価:★')
+                            factor.text.includes('総合評価')
                         ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
@@ -112,11 +176,11 @@ const normalizedHorses = normalizeHorseData(processedMainRace);
                             </div>
                         ))}
                     </div>
-                    {/* 本命馬の特徴量重要度を表示 */}
-                    {horses.main.importance && (
+                    {/* 対抗馬の特徴量重要度を表示 */}
+                    {horses.sub.importance && (
                         <div class="feature-importance">
                             <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.main.importance.map(item => (
+                            {horses.sub.importance.map(item => (
                                 <div class="importance-bar">
                                     <span class="importance-label">{item.label}</span>
                                     <div class="importance-value">
@@ -131,20 +195,19 @@ const normalizedHorses = normalizeHorseData(processedMainRace);
             })}
 
             {/* 穴馬エリア統合表示 */}
-            {allHorses && (allHorses.filter(h => h.role === '単穴' || h.role === '連下' || h.role === '押さえ').length > 0) && (
+            {horses?.sub1 && (
                 <div class="premium-horses-wrapper free-member-masked">
-                    
+
                     {/* ◎印（単穴）- 中サイズで表示 */}
-                    {allHorses && allHorses.filter(h => h.role === '単穴').map((horse, index) => {
-                        const roleConfig = getRoleDisplayConfig(horse.role);
+                    {horses?.sub1 && ([horses.sub1].map((horse, index) => {
                         return (
                         <div class="horse-card horse-card-sub">
                             <div class="horse-header">
                                 <div>
-                                    <span class={roleConfig.markClass}>{horse.displayMark}</span>
+                                    <span class="horse-mark-sub">▲</span>
                                     <span class="horse-number">{horse.number}</span>
                                     <span class="horse-name">{horse.name}</span>
-                                    <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
+                                    <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
                                 </div>
                             </div>
                             <div class="ai-factors">
