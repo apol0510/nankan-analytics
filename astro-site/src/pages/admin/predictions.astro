@@ -557,7 +557,27 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
         // ===== グローバル変数 =====
         let allRacesData = null;
         let currentEditingRace = null;
-        
+
+        // ===== 共有ロジック関数 (クライアントサイド用) =====
+        function convertToStarRating(text, horseType, score) {
+            // スコアが数値でない場合はテキストをそのまま返す
+            if (typeof score !== 'number' && typeof score !== 'string') {
+                return text;
+            }
+
+            const numScore = typeof score === 'string' ? parseInt(score) : score;
+
+            // スコアが有効な数値でない場合はデフォルトテキスト
+            if (isNaN(numScore)) {
+                return text;
+            }
+
+            // 89以上は4つ星、88以下は3つ星
+            const stars = numScore >= 89 ? '★★★★' : '★★★';
+
+            return `総合評価:${stars}`;
+        }
+
         // レース設定（race-config.jsと同じ定義）
         const RACE_TIERS = {
             1: 'premium', 2: 'premium', 3: 'premium',
