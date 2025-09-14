@@ -1559,7 +1559,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                     factors: [
  
                         {icon: "★", text: type === '押さえ' ? "大穴適性: 高変動" : convertToStarRating("総合評価:★★★", type, horse.score)},
-                        ...(horse.score ? [{icon: "🎯", text: `累積スコア: ${horse.score}pt`}] : [])
+                        ...(horse.score ? [{icon: "★", text: `累積スコア: ${horse.score}pt`}] : [])
                     ]
                 };
             });

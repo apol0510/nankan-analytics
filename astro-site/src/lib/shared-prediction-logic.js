@@ -1,9 +1,10 @@
-// 共有予想ロジック - premium-predictions.astroの更新がstandard/freeに自動反映される
+// 共有予想ロジック - 古いデータ参照問題対応＆統一システム
+import { dataManager } from './integrated-data-manager.js';
 
 // 印に基づく統一信頼度計算関数（多重印対応・累積加算式）
 export function calculateMarkBasedConfidence(horse) {
     const baseConfidence = 62;
-    
+
     // multiMarkがある場合はそれを優先使用
     const targetMark = horse.multiMark || horse.mark;
     
@@ -20,7 +21,7 @@ export function calculateMarkBasedConfidence(horse) {
                 default: return sum;
             }
         }, 0);
-        
+
         return baseConfidence + totalValue;
     }
     
@@ -267,7 +268,52 @@ export function calculateHitRateAndReturn(strategyType, riskPercentage) {
 }
 
 // 共通のデータ処理ロジック
+// 統合データ管理システムによる検証済みデータ取得
+export async function getValidatedRaceData() {
+    try {
+        // 統合データマネージャーから最新データを取得
+        const validatedData = await dataManager.getPredictionData();
+
+        // データ健全性を確認
+        const healthReport = dataManager.validateDataHealth(validatedData);
+        console.log(`🔍 Data Health: ${healthReport.percentage}% (${healthReport.score}/${healthReport.maxScore})`);
+
+        // 健全性が低い場合は強制更新を試行
+        if (healthReport.percentage < 80) {
+            console.warn('⚠️ Data health below threshold, attempting refresh...');
+            const refreshedData = await dataManager.forceDataUpdate();
+            console.log(`🔄 Refreshed data version: ${refreshedData.raceDate}`);
+            return refreshedData;
+        }
+
+        console.log(`✅ Using validated data version: ${validatedData.raceDate}`);
+        return validatedData;
+    } catch (error) {
+        console.error('❌ Error getting validated data:', error);
+        // フォールバックとして基本データを返す
+        return dataManager.versionManager.generateFallbackData();
+    }
+}
+
+// 共有のデータ処理ロジック（バージョンチェック付き）
 export function processRaceData(allRacesData) {
+    // データの健全性チェック
+    if (!allRacesData || !allRacesData.races) {
+        console.error('❌ Invalid race data structure');
+        return { mainRace: null, race12R: null, sortedRaces: [] };
+    }
+
+    // データの日付チェック
+    if (allRacesData.raceDate) {
+        const dataDate = new Date(allRacesData.raceDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (dataDate < today) {
+            console.warn(`⚠️ Data is outdated: ${allRacesData.raceDate}`);
+        }
+    }
+
     // メインレース（11R）のデータを取得
     const mainRace = allRacesData.races.find(race => race.isMainRace === true);
     const race12R = allRacesData.races.find(r => r.raceNumber === '12R');
@@ -278,7 +324,9 @@ export function processRaceData(allRacesData) {
     return {
         mainRace,
         race12R,
-        sortedRaces
+        sortedRaces,
+        dataVersion: allRacesData.raceDate,
+        lastUpdated: allRacesData.lastUpdated || new Date().toISOString()
     };
 }
 
@@ -343,7 +391,7 @@ export function processUnifiedRaceData(raceData) {
             main: {
                 ...horses.main,
                 score: mainScore,
-                factors: horses.main.factors || [
+                factors: [
                     {icon: "★", text: mainStars},
                     {icon: "★", text: `累積スコア: ${mainScore}pt`}
                 ],
@@ -352,7 +400,7 @@ export function processUnifiedRaceData(raceData) {
             sub: {
                 ...horses.sub,
                 score: subScore,
-                factors: horses.sub.factors || [
+                factors: [
                     {icon: "★", text: subStars},
                     {icon: "★", text: `累積スコア: ${subScore}pt`}
                 ],

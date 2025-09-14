@@ -783,7 +783,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         
         document.addEventListener('DOMContentLoaded', () => {
             // updateNavigation();
-            
+
+            // データフレッシュネス管理システム初期化
+            initializeDataFreshnessSystem();
+
             // 統合認証システム：ナビゲーションの表示状態を更新
             const updateAuthNavigation = () => {
                 // 新しい決済システム（user-plan）と古いシステム（isLoggedIn）の両方をチェック
@@ -972,7 +975,197 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             window.addEventListener('planUpdated', updateAuthNavigation);
             window.addEventListener('userLoggedOut', updateAuthNavigation);
         });
-        
+
+        // データフレッシュネス管理システム
+        async function initializeDataFreshnessSystem() {
+            console.log('🔍 Initializing data freshness system...');
+
+            try {
+                // キャッシュバスター機能をインポート（動的import）
+                const { initCacheBuster } = await import('/src/lib/cache-buster.js');
+                const cacheBusterInstance = initCacheBuster();
+
+                // ページロード時のデータ健全性チェック
+                await performDataHealthCheck(cacheBusterInstance);
+
+                // 自動更新スケジューラーを開始（30分間隔）
+                startAutoRefreshScheduler(cacheBusterInstance);
+
+                console.log('✅ Data freshness system initialized successfully');
+            } catch (error) {
+                console.error('❌ Failed to initialize data freshness system:', error);
+                // フォールバック: 基本的なキャッシュクリアのみ実行
+                performBasicCacheCleanup();
+            }
+        }
+
+        async function performDataHealthCheck(cacheBuster) {
+            try {
+                // データが古い場合の警告とクリーンアップ
+                const isPredictionsStale = cacheBuster.isDataStale('predictions', 6);
+
+                if (isPredictionsStale) {
+                    console.warn('⚠️ Prediction data is stale (>6 hours), performing cleanup...');
+
+                    // ステイルデータの警告を表示
+                    showDataRefreshNotification();
+
+                    // キャッシュを強制的にクリア
+                    cacheBuster.forceCacheRefresh();
+
+                    // 最終更新時刻を更新
+                    cacheBuster.setLastDataUpdate('predictions');
+                }
+
+                console.log('🔍 Data health check completed');
+            } catch (error) {
+                console.error('❌ Data health check failed:', error);
+            }
+        }
+
+        function startAutoRefreshScheduler(cacheBuster) {
+            // 30分間隔での自動チェック
+            setInterval(async () => {
+                try {
+                    if (cacheBuster.isDataStale('predictions', 1)) { // 1時間で自動更新
+                        console.log('⏰ Auto-refreshing stale data...');
+
+                        // キャッシュを強制クリア
+                        cacheBuster.forceCacheRefresh();
+
+                        // 予想ページにいる場合はリロードを促す
+                        if (window.location.pathname.includes('prediction')) {
+                            showAutoRefreshNotification();
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Auto refresh failed:', error);
+                }
+            }, 30 * 60 * 1000); // 30分
+        }
+
+        function showDataRefreshNotification() {
+            // データ更新通知を表示（非侵入的）
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+                z-index: 10000;
+                font-size: 0.9rem;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>🔄</span>
+                    <span>最新データを準備中...</span>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // アニメーション表示
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            // 3秒後に自動消去
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function showAutoRefreshNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(15, 23, 42, 0.95);
+                color: white;
+                padding: 16px 20px;
+                border-radius: 10px;
+                border: 1px solid #3b82f6;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+                font-size: 0.9rem;
+                opacity: 0;
+                transform: translateY(100%);
+                transition: all 0.3s ease;
+                max-width: 320px;
+                backdrop-filter: blur(10px);
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                        <span>🔄</span>
+                        <span>データを更新しました</span>
+                    </div>
+                    <button onclick="window.location.reload()" style="
+                        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                        color: white;
+                        border: none;
+                        padding: 8px 16px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.8rem;
+                        transition: all 0.2s ease;
+                    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        ページを更新して最新データを表示
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            }, 100);
+
+            // 10秒後に自動消去
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 10000);
+        }
+
+        function performBasicCacheCleanup() {
+            // フォールバック: 基本的なキャッシュクリーンアップ
+            try {
+                // LocalStorageから古いキャッシュエントリを削除
+                const keys = Object.keys(localStorage);
+                keys.forEach(key => {
+                    if (key.startsWith('nankan_') && key.includes('cache')) {
+                        const timestamp = localStorage.getItem(key + '_timestamp');
+                        if (timestamp) {
+                            const age = Date.now() - parseInt(timestamp);
+                            if (age > 6 * 60 * 60 * 1000) { // 6時間
+                                localStorage.removeItem(key);
+                                localStorage.removeItem(key + '_timestamp');
+                            }
+                        }
+                    }
+                });
+
+                console.log('🧹 Basic cache cleanup completed');
+            } catch (error) {
+                console.error('❌ Basic cache cleanup failed:', error);
+            }
+        }
+
         // グローバルログアウト関数
         window.logout = function() {
             // 全てのログイン情報をクリア
