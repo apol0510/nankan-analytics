@@ -261,7 +261,8 @@ console.log('race12R:', race12R);
                                             </div>
                                         )}
                                     </div>
-                                ))}
+                                    );
+                                })}
 
                                 {/* 20年運営対応: role-based表示（対抗）- 中サイズで表示 */}
                                 {raceHorses && raceHorses.filter(h => h.role === '対抗').map((horse, index) => {
@@ -300,7 +301,8 @@ console.log('race12R:', race12R);
                                             </div>
                                         )}
                                     </div>
-                                )})
+                                    );
+                                })}
 
                                 {/* 20年運営対応: role-based表示（単穴）- 中サイズで表示 */}
                                 {raceHorses && raceHorses.filter(h => h.role === '単穴').map((horse, index) => {
@@ -324,7 +326,8 @@ console.log('race12R:', race12R);
                                             ))}
                                         </div>
                                     </div>
-                                )})
+                                    );
+                                })}
 
                                 {/* 20年運営対応: role-based表示（連下）- まとめて表示 */}
                                 {raceHorses && raceHorses.filter(h => h.role === '連下').length > 0 && (
@@ -399,7 +402,8 @@ console.log('race12R:', race12R);
                                                         <span class="bet-horses">{betStr}</span>
                                                         <span class="bet-points">3点</span>
                                                     </div>
-                                                );})}
+                                                );
+                                            })}
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.safe.riskLevel}（本命{raceMainHorseScore}pt基準）
