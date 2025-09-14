@@ -148,6 +148,15 @@ export function getRecommendationStars(riskPercentage) {
     return "★☆☆☆☆";
 }
 
+// 推奨度の数値計算（★の個数を返す）
+export function getRecommendationCount(riskPercentage) {
+    if (riskPercentage <= 25) return 5;
+    if (riskPercentage <= 35) return 4;
+    if (riskPercentage <= 50) return 3;
+    if (riskPercentage <= 65) return 2;
+    return 1;
+}
+
 // 標準化買い目生成システム（ユーザー希望に完全対応）
 export function generateStandardizedBets(horses, strategyType) {
     const { main, sub, sub1, sub2, allHorses } = horses;
@@ -688,7 +697,7 @@ export function getPredictionDataWithStrategies(horses) {
         bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'A')
     };
     strategyA.riskText = getRiskLevelText(strategyA.risk);
-    strategyA.recommendation = getRecommendationStars(strategyA.risk).length;
+    strategyA.recommendation = getRecommendationCount(strategyA.risk);
     const { hitRate: hitRateA, returnRate: returnRateA } = calculateHitRateAndReturn('A', strategyA.risk);
     strategyA.hitRate = hitRateA;
     strategyA.returnRate = returnRateA;
@@ -701,7 +710,7 @@ export function getPredictionDataWithStrategies(horses) {
         bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'B')
     };
     strategyB.riskText = getRiskLevelText(strategyB.risk);
-    strategyB.recommendation = getRecommendationStars(strategyB.risk).length;
+    strategyB.recommendation = getRecommendationCount(strategyB.risk);
     const { hitRate: hitRateB, returnRate: returnRateB } = calculateHitRateAndReturn('B', strategyB.risk);
     strategyB.hitRate = hitRateB;
     strategyB.returnRate = returnRateB;
@@ -714,7 +723,7 @@ export function getPredictionDataWithStrategies(horses) {
         bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'C')
     };
     strategyC.riskText = getRiskLevelText(strategyC.risk);
-    strategyC.recommendation = getRecommendationStars(strategyC.risk).length;
+    strategyC.recommendation = getRecommendationCount(strategyC.risk);
     const { hitRate: hitRateC, returnRate: returnRateC } = calculateHitRateAndReturn('C', strategyC.risk);
     strategyC.hitRate = hitRateC;
     strategyC.returnRate = returnRateC;
