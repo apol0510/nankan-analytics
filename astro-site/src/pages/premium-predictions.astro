@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
+import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理（元のデータを直接使用）
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -106,33 +106,9 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             raceStrategyC.hitRate = raceHitRateC;
             raceStrategyC.returnRate = raceReturnRateC;
 
-            // 新しい戦略データを全レースに適用
-            const raceStrategies = {
-                safe: {
-                    title: raceStrategyA.title,
-                    recommendation: raceStrategyA.recommendation.length,
-                    hitRate: raceStrategyA.hitRate,
-                    returnRate: raceStrategyA.returnRate,
-                    riskLevel: raceStrategyA.riskText,
-                    bets: raceStrategyA.bets
-                },
-                balance: {
-                    title: raceStrategyB.title,
-                    recommendation: raceStrategyB.recommendation.length,
-                    hitRate: raceStrategyB.hitRate,
-                    returnRate: raceStrategyB.returnRate,
-                    riskLevel: raceStrategyB.riskText,
-                    bets: raceStrategyB.bets
-                },
-                aggressive: {
-                    title: raceStrategyC.title,
-                    recommendation: raceStrategyC.recommendation.length,
-                    hitRate: raceStrategyC.hitRate,
-                    returnRate: raceStrategyC.returnRate,
-                    riskLevel: raceStrategyC.riskText,
-                    bets: raceStrategyC.bets
-                }
-            };
+            // 新しい戦略データを全レースに適用（統一システム使用）
+            const processedData = getPredictionDataWithStrategies(race.horses);
+            const raceStrategies = processedData.strategies;
             
             return (
                 <div class={`race-${raceNum}r-accordion`}>
@@ -380,7 +356,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                     <!-- 戦略2: バランス型 -->
                                     {raceStrategies.balance && (
                                         <div class="bet-strategy">
-                                            <div class="strategy-title">⚖️ {raceStrategies.balance.title}（推奨度 {'★'.repeat(raceStrategies.balance.recommendation)}{'☆'.repeat(5-raceStrategies.balance.recommendation)}）</div>
+                                            <div class="strategy-title">{raceStrategies.balance.title}（推奨度 {raceStrategies.balance.recommendation}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{raceStrategies.balance.hitRate}% / 期待回収率{raceStrategies.balance.returnRate}%
                                             </div>
@@ -419,7 +395,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                     <!-- 戦略3: 高配当狙い -->
                                     {raceStrategies.aggressive && (
                                         <div class="bet-strategy">
-                                            <div class="strategy-title">🚀 {raceStrategies.aggressive.title}（推奨度 {'★'.repeat(raceStrategies.aggressive.recommendation)}{'☆'.repeat(5-raceStrategies.aggressive.recommendation)}）</div>
+                                            <div class="strategy-title">{raceStrategies.aggressive.title}（推奨度 {raceStrategies.aggressive.recommendation}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{raceStrategies.aggressive.hitRate}% / 期待回収率{raceStrategies.aggressive.returnRate}%
                                             </div>
