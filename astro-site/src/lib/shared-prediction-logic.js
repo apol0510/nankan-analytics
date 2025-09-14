@@ -127,6 +127,7 @@ export function generateStandardizedBets(horses, strategyType) {
     const { main, sub, sub1, sub2 } = horses;
     const allHorses = horses.allHorses || [];
 
+
     // 役割別に馬を分類
     const renkuHorses = allHorses.filter(h => h.type === '連下');
     const osaeHorses = allHorses.filter(h => h.type === '押さえ');
@@ -135,15 +136,15 @@ export function generateStandardizedBets(horses, strategyType) {
 
     switch (strategyType) {
         case 'A': // 少点数的中型
-            // 馬単 本命→{対抗, 単穴1, 単穴2} = 3点
+            // 馬単 本命→{単穴1, 単穴2, 対抗} = 3点 (希望順序: 9→1,6,11)
             if (main && sub && sub1 && sub2) {
-                const targets = [sub.number, sub1.number, sub2.number].join(',');
+                const targets = [sub1.number, sub2.number, sub.number].join(',');
                 bets = [`${main.number} → ${targets}`];
             }
             break;
 
         case 'B': // バランス型
-            // 馬単 本命⇔{連下4頭} + 対抗→{本命, 単穴1, 単穴2}
+            // 馬単 本命⇔{連下4頭} + 対抗→{本命, 単穴1, 単穴2} (希望: 9⇔2,3,5,12 + 11→1,6,9)
             if (main && sub && sub1 && sub2) {
                 // 本命⇔連下4頭（8点）
                 const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
@@ -151,14 +152,14 @@ export function generateStandardizedBets(horses, strategyType) {
                     bets.push(`${main.number} ⇔ ${renkuNumbers.join(',')}`);
                 }
 
-                // 対抗→{本命, 単穴1, 単穴2}（3点）
-                const targets = [main.number, sub1.number, sub2.number].join(',');
+                // 対抗→{単穴1, 単穴2, 本命}（3点）
+                const targets = [sub1.number, sub2.number, main.number].join(',');
                 bets.push(`${sub.number} → ${targets}`);
             }
             break;
 
         case 'C': // 高配当追求型
-            // 馬単 本命→{押さえ2頭} + 対抗⇔{連下4頭, 押さえ2頭}
+            // 馬単 本命→{押さえ2頭} + 対抗⇔{連下4頭, 押さえ2頭} (希望: 9→7,8 + 11⇔2,3,5,7,8,12)
             if (main && sub) {
                 // 本命→押さえ2頭（2点）
                 const osaeNumbers = osaeHorses.slice(0, 2).map(h => h.number);
@@ -177,6 +178,25 @@ export function generateStandardizedBets(horses, strategyType) {
     }
 
     return bets;
+}
+
+// 買い目の点数を計算する関数
+export function calculateBetPoints(betString) {
+    if (!betString) return 1;
+
+    // ⇔記法の場合は双方向なので2倍
+    if (betString.includes('⇔')) {
+        const targets = betString.split('⇔')[1].split(',').length;
+        return targets * 2; // 双方向なので2倍
+    }
+
+    // →記法の場合は単方向
+    if (betString.includes('→')) {
+        const targets = betString.split('→')[1].split(',').length;
+        return targets;
+    }
+
+    return 1;
 }
 
 // 的中率・期待回収率計算（動的リスクベース）

@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
+import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, calculateBetPoints } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -18,7 +18,7 @@ const strategyA = {
     type: 'A',
     title: '少点数的中型',
     risk: calculateDynamicRisk('A', mainHorseScore),
-    bets: generateStandardizedBets(horses, 'A')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
 };
 strategyA.riskText = getRiskLevelText(strategyA.risk);
 strategyA.recommendation = getRecommendationStars(strategyA.risk);
@@ -27,10 +27,10 @@ strategyA.hitRate = hitRateA;
 strategyA.returnRate = returnRateA;
 
 const strategyB = {
-    type: 'B', 
+    type: 'B',
     title: 'バランス型',
     risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets(horses, 'B')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
 };
 strategyB.riskText = getRiskLevelText(strategyB.risk);
 strategyB.recommendation = getRecommendationStars(strategyB.risk);
@@ -40,9 +40,9 @@ strategyB.returnRate = returnRateB;
 
 const strategyC = {
     type: 'C',
-    title: '高配当追求型', 
+    title: '高配当追求型',
     risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets(horses, 'C')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
 };
 strategyC.riskText = getRiskLevelText(strategyC.risk);
 strategyC.recommendation = getRecommendationStars(strategyC.risk);
@@ -81,10 +81,8 @@ const raceStrategiesNew = {
 // strategiesをraceStrategiesNewで置き換え
 const strategies = raceStrategiesNew;
 
-// ★★★ CRITICAL UPDATE MARKER - BET FORMAT FIXED ★★★
-// Updated: 2025-09-14T13:30 - FINAL FIX APPLIED
-console.log('race12R:', race12R);
-console.log('strategies debug:', strategies);
+// ★★★ 買い目システム完全実装完了 ★★★
+// Updated: 2025-09-14T13:50 - 希望通りの買い目・点数表示実装
 ---
 
 <BaseLayout title={`スタンダード予想 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬後半3レース（10R-12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
@@ -309,7 +307,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -331,7 +329,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -353,7 +351,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -584,7 +582,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -607,7 +605,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -639,7 +637,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -973,7 +971,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -996,7 +994,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
@@ -1019,7 +1017,7 @@ console.log('strategies debug:', strategies);
                         <div class="bet-item">
                             <span class="bet-type">{bet.type}</span>
                             <span class="bet-horses">{bet.numbers}</span>
-                            <span class="bet-points">1点</span>
+                            <span class="bet-points">{calculateBetPoints(bet.numbers)}点</span>
                         </div>
                     ))}
                 </div>
