@@ -212,34 +212,33 @@ export function calculateBetPoints(betString) {
     return 1;
 }
 
-// 的中率・期待回収率計算（動的リスクベース）
+// 的中率・期待回収率計算（現実的な競馬予想数値）
 export function calculateHitRateAndReturn(strategyType, riskPercentage) {
-    let baseHitRate, baseReturn;
-    
+    let hitRate, returnRate;
+
+    // 現実的な競馬予想の範囲内で数値を設定
     switch (strategyType) {
-        case 'A':
-            baseHitRate = 75;
-            baseReturn = 140;
+        case 'A': // 少点数的中型
+            hitRate = Math.max(45, Math.min(65, 58 + (riskPercentage <= 30 ? 7 : riskPercentage <= 50 ? 0 : -8)));
+            returnRate = Math.max(110, Math.min(150, 128 + (riskPercentage <= 30 ? 15 : riskPercentage <= 50 ? 0 : -10)));
             break;
-        case 'B':
-            baseHitRate = 65;
-            baseReturn = 180;
+        case 'B': // バランス型
+            hitRate = Math.max(35, Math.min(55, 42 + (riskPercentage <= 30 ? 8 : riskPercentage <= 50 ? 2 : -5)));
+            returnRate = Math.max(130, Math.min(185, 155 + (riskPercentage <= 30 ? 20 : riskPercentage <= 50 ? 5 : -10)));
             break;
-        case 'C':
-            baseHitRate = 35;
-            baseReturn = 270;
+        case 'C': // 高配当追求型
+            hitRate = Math.max(20, Math.min(35, 28 + (riskPercentage <= 30 ? 6 : riskPercentage <= 50 ? 2 : -3)));
+            returnRate = Math.max(200, Math.min(320, 250 + (riskPercentage <= 30 ? 40 : riskPercentage <= 50 ? 15 : -20)));
             break;
         default:
-            baseHitRate = 60;
-            baseReturn = 150;
+            hitRate = 42;
+            returnRate = 155;
     }
-    
-    // リスクに応じて調整
-    const riskFactor = (100 - riskPercentage) / 100;
-    const hitRate = Math.round(baseHitRate * riskFactor * 100) / 100;
-    const returnRate = Math.round(baseReturn * (2 - riskFactor) * 100) / 100;
-    
-    return { hitRate, returnRate };
+
+    return {
+        hitRate: Math.round(hitRate * 10) / 10,  // 小数点第1位まで
+        returnRate: Math.round(returnRate)       // 整数
+    };
 }
 
 // 共通のデータ処理ロジック
