@@ -200,25 +200,20 @@ export function generateStandardizedBets(horses, strategyType) {
 
     switch (strategyType) {
         case 'A': // 少点数的中型 - 希望: 9→1,6,11 (3点)
-            // 各買い目を個別に配列で生成
+            // 単穴1、単穴2、対抗の順で構成
             const targetsA = [];
             if (tananaHorses[0]) targetsA.push(tananaHorses[0].number); // 単穴1番目
             if (tananaHorses[1]) targetsA.push(tananaHorses[1].number); // 単穴2番目
             targetsA.push(subNumber); // 対抗
 
-            // 各馬番への買い目を個別生成（3点）
-            bets = targetsA.map(target => `${mainNumber} → ${target}`);
+            bets = [`${mainNumber} → ${targetsA.join(',')}`];
             break;
 
         case 'B': // バランス型 - 希望: 9⇔2,3,5,12 (8点) + 11→1,6,9 (3点)
-            // 本命⇔連下4頭（双方向で8点）
+            // 本命⇔連下4頭（8点）
             const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
             if (renkuNumbers.length >= 4) {
-                // 双方向買い目を個別生成
-                renkuNumbers.forEach(target => {
-                    bets.push(`${mainNumber} → ${target}`);
-                    bets.push(`${target} → ${mainNumber}`);
-                });
+                bets.push(`${mainNumber} ⇔ ${renkuNumbers.join(',')}`);
             }
 
             // 対抗→{単穴1, 単穴2, 本命}（3点）
@@ -227,26 +222,22 @@ export function generateStandardizedBets(horses, strategyType) {
             if (tananaHorses[1]) targetsB.push(tananaHorses[1].number); // 単穴2番目
             targetsB.push(mainNumber); // 本命
 
-            // 各馬番への買い目を個別生成
-            targetsB.forEach(target => {
-                bets.push(`${subNumber} → ${target}`);
-            });
+            bets.push(`${subNumber} → ${targetsB.join(',')}`);
             break;
 
-        case 'C': // 高配当追求型 - 希望: 9→7,8 (2点) + 11⇔2,3,5,7,8,12 (12点)
+        case 'C': // 高配当追求型 - 希望: 9→7,8 (2点) + 11⇔2,3,5,7,8,12 (10点)
             // 本命→押さえ2頭（2点）
             const osaeNumbers = osaeHorses.slice(0, 2).map(h => h.number);
-            osaeNumbers.forEach(target => {
-                bets.push(`${mainNumber} → ${target}`);
-            });
+            if (osaeNumbers.length >= 2) {
+                bets.push(`${mainNumber} → ${osaeNumbers.join(',')}`);
+            }
 
-            // 対抗⇔{連下4頭, 押さえ2頭}（双方向で12点）
+            // 対抗⇔{連下4頭, 押さえ2頭}（10点）
             const renkuForC = renkuHorses.slice(0, 4).map(h => h.number);
             const allTargetsC = [...renkuForC, ...osaeNumbers];
-            allTargetsC.forEach(target => {
-                bets.push(`${subNumber} → ${target}`);
-                bets.push(`${target} → ${subNumber}`);
-            });
+            if (allTargetsC.length >= 6) {
+                bets.push(`${subNumber} ⇔ ${allTargetsC.join(',')}`);
+            }
             break;
     }
 
@@ -259,11 +250,12 @@ export function generateStandardizedBets(horses, strategyType) {
     // 再発防止: 買い目点数バリデーション
     const expectedPoints = {
         'A': 3,   // 少点数的中型
-        'B': 11,  // バランス型
-        'C': 14   // 高配当追求型
+        'B': 11,  // バランス型 (8+3)
+        'C': 14   // 高配当追求型 (2+12) - 実際の生成に合わせて修正
     };
 
-    const actualPoints = bets.length;
+    // 実際の点数を計算（⇔と→を考慮）
+    const actualPoints = bets.reduce((total, bet) => total + calculateBetPoints(bet), 0);
     const expected = expectedPoints[strategyType] || 3;
 
     if (actualPoints !== expected) {

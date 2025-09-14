@@ -298,16 +298,40 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
+                                                    // 点数計算: ⇔は双方向、2倍、→は単方向
+                                                    let points = 1;
+                                                    if (betStr && typeof betStr === 'string') {
+                                                        if (betStr.includes('⇔')) {
+                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
+                                                            points = targets * 2;
+                                                        } else if (betStr.includes('→')) {
+                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
+                                                            points = targets;
+                                                        }
+                                                    }
                                                     return (
                                                     <div class="bet-item">
                                                         <span class="bet-type">馬単</span>
                                                         <span class="bet-horses">{betStr}</span>
-                                                        <span class="bet-points">1点</span>
+                                                        <span class="bet-points">{points}点</span>
                                                     </div>
                                                 );
                                             })}
                                             <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
-                                                合計: {raceStrategies.strategies[0].bets?.length || 0}点
+                                                合計: {raceStrategies.strategies[0].bets?.reduce((total, bet) => {
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
+                                                    let points = 1;
+                                                    if (betStr && typeof betStr === 'string') {
+                                                        if (betStr.includes('⇔')) {
+                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
+                                                            points = targets * 2;
+                                                        } else if (betStr.includes('→')) {
+                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
+                                                            points = targets;
+                                                        }
+                                                    }
+                                                    return total + points;
+                                                }, 0) || 0}点
                                             </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
@@ -332,16 +356,40 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
+                                                    // 点数計算: ⇔は双方向、2倍、→は単方向
+                                                    let points = 1;
+                                                    if (betStr && typeof betStr === 'string') {
+                                                        if (betStr.includes('⇔')) {
+                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
+                                                            points = targets * 2;
+                                                        } else if (betStr.includes('→')) {
+                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
+                                                            points = targets;
+                                                        }
+                                                    }
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
                                                             <span class="bet-horses">{betStr}</span>
-                                                            <span class="bet-points">1点</span>
+                                                            <span class="bet-points">{points}点</span>
                                                         </div>
                                                     );
                                                 })}
                                                 <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
-                                                    合計: {raceStrategies.strategies[1].bets?.length || 0}点
+                                                    合計: {raceStrategies.strategies[1].bets?.reduce((total, bet) => {
+                                                        const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
+                                                        let points = 1;
+                                                        if (betStr && typeof betStr === 'string') {
+                                                            if (betStr.includes('⇔')) {
+                                                                const targets = betStr.split('⇔')[1]?.split(',').length || 1;
+                                                                points = targets * 2;
+                                                            } else if (betStr.includes('→')) {
+                                                                const targets = betStr.split('→')[1]?.split(',').length || 1;
+                                                                points = targets;
+                                                            }
+                                                        }
+                                                        return total + points;
+                                                    }, 0) || 0}点
                                                 </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
@@ -366,16 +414,40 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
+                                                    // 点数計算: ⇔は双方向、2倍、→は単方向
+                                                    let points = 1;
+                                                    if (betStr && typeof betStr === 'string') {
+                                                        if (betStr.includes('⇔')) {
+                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
+                                                            points = targets * 2;
+                                                        } else if (betStr.includes('→')) {
+                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
+                                                            points = targets;
+                                                        }
+                                                    }
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
                                                             <span class="bet-horses">{betStr}</span>
-                                                            <span class="bet-points">1点</span>
+                                                            <span class="bet-points">{points}点</span>
                                                         </div>
                                                     );
                                                 })}
                                                 <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
-                                                    合計: {raceStrategies.strategies[2].bets?.length || 0}点
+                                                    合計: {raceStrategies.strategies[2].bets?.reduce((total, bet) => {
+                                                        const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
+                                                        let points = 1;
+                                                        if (betStr && typeof betStr === 'string') {
+                                                            if (betStr.includes('⇔')) {
+                                                                const targets = betStr.split('⇔')[1]?.split(',').length || 1;
+                                                                points = targets * 2;
+                                                            } else if (betStr.includes('→')) {
+                                                                const targets = betStr.split('→')[1]?.split(',').length || 1;
+                                                                points = targets;
+                                                            }
+                                                        }
+                                                        return total + points;
+                                                    }, 0) || 0}点
                                                 </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
