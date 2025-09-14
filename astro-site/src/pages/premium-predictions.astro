@@ -339,13 +339,19 @@ console.log('race12R:', race12R);
                                             <div class="bet-list">
                                                 {raceStrategies.balance.bets && raceStrategies.balance.bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet);
+                                                    let points = '3点';
+                                                    if (betStr.includes('⇔')) {
+                                                        const targets = betStr.split('⇔')[1].split(',').length;
+                                                        points = `${targets * 2}点`;
+                                                    } else if (betStr.includes('→')) {
+                                                        const targets = betStr.split('→')[1].split(',').length;
+                                                        points = `${targets}点`;
+                                                    }
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
                                                             <span class="bet-horses">{betStr}</span>
-                                                            <span class="bet-points">
-                                                                {betStr.includes('⇔') ? '8点' : '3点'}
-                                                            </span>
+                                                            <span class="bet-points">{points}</span>
                                                         </div>
                                                     );
                                                 })}
@@ -372,16 +378,19 @@ console.log('race12R:', race12R);
                                             <div class="bet-list">
                                                 {raceStrategies.aggressive.bets && raceStrategies.aggressive.bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet);
+                                                    let points = '2点';
+                                                    if (betStr.includes('⇔')) {
+                                                        const targets = betStr.split('⇔')[1].split(',').length;
+                                                        points = `${targets * 2}点`;
+                                                    } else if (betStr.includes('→')) {
+                                                        const targets = betStr.split('→')[1].split(',').length;
+                                                        points = `${targets}点`;
+                                                    }
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
                                                             <span class="bet-horses">{betStr}</span>
-                                                            <span class="bet-points">
-                                                                {betStr.includes('⇔') ?
-                                                                    (betStr.includes('→') ? '12点' : '10点') :
-                                                                    '2点'
-                                                                }
-                                                            </span>
+                                                            <span class="bet-points">{points}</span>
                                                         </div>
                                                     );
                                                 })}
