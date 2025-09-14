@@ -312,7 +312,7 @@ console.log('race12R:', race12R);
                                                 {raceStrategies.safe.bets && raceStrategies.safe.bets.map(bet => (
                                                     <div class="bet-item">
                                                         <span class="bet-type">馬単</span>
-                                                        <span class="bet-horses">{bet}</span>
+                                                        <span class="bet-horses">{typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet)}</span>
                                                         <span class="bet-points">3点</span>
                                                     </div>
                                                 ))}
@@ -337,15 +337,18 @@ console.log('race12R:', race12R);
                                                 AIモデル予測: 的中率{raceStrategies.balance.hitRate}% / 期待回収率{raceStrategies.balance.returnRate}%
                                             </div>
                                             <div class="bet-list">
-                                                {raceStrategies.balance.bets && raceStrategies.balance.bets.map(bet => (
-                                                    <div class="bet-item">
-                                                        <span class="bet-type">馬単</span>
-                                                        <span class="bet-horses">{bet}</span>
-                                                        <span class="bet-points">
-                                                            {bet.includes('⇔') ? '8点' : '3点'}
-                                                        </span>
-                                                    </div>
-                                                ))}
+                                                {raceStrategies.balance.bets && raceStrategies.balance.bets.map(bet => {
+                                                    const betStr = typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet);
+                                                    return (
+                                                        <div class="bet-item">
+                                                            <span class="bet-type">馬単</span>
+                                                            <span class="bet-horses">{betStr}</span>
+                                                            <span class="bet-points">
+                                                                {betStr.includes('⇔') ? '8点' : '3点'}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.balance.riskLevel}（本命{mainHorseScore}pt+対抗{subHorseScore}pt平均基準）
@@ -367,18 +370,21 @@ console.log('race12R:', race12R);
                                                 AIモデル予測: 的中率{raceStrategies.aggressive.hitRate}% / 期待回収率{raceStrategies.aggressive.returnRate}%
                                             </div>
                                             <div class="bet-list">
-                                                {raceStrategies.aggressive.bets && raceStrategies.aggressive.bets.map(bet => (
-                                                    <div class="bet-item">
-                                                        <span class="bet-type">馬単</span>
-                                                        <span class="bet-horses">{bet}</span>
-                                                        <span class="bet-points">
-                                                            {bet.includes('⇔') ?
-                                                                (bet.includes('→') ? '12点' : '10点') :
-                                                                '2点'
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                ))}
+                                                {raceStrategies.aggressive.bets && raceStrategies.aggressive.bets.map(bet => {
+                                                    const betStr = typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet);
+                                                    return (
+                                                        <div class="bet-item">
+                                                            <span class="bet-type">馬単</span>
+                                                            <span class="bet-horses">{betStr}</span>
+                                                            <span class="bet-points">
+                                                                {betStr.includes('⇔') ?
+                                                                    (betStr.includes('→') ? '12点' : '10点') :
+                                                                    '2点'
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.aggressive.riskLevel}（本命{mainHorseScore}pt+対抗{subHorseScore}pt平均基準）

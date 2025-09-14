@@ -22,7 +22,7 @@ const strategyA = {
     type: 'A',
     title: '少点数的中型',
     risk: calculateDynamicRisk('A', mainHorseScore),
-    bets: generateStandardizedBets(horses, 'A')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
 };
 strategyA.riskText = getRiskLevelText(strategyA.risk);
 strategyA.recommendation = getRecommendationStars(strategyA.risk);
@@ -31,10 +31,10 @@ strategyA.hitRate = hitRateA;
 strategyA.returnRate = returnRateA;
 
 const strategyB = {
-    type: 'B', 
+    type: 'B',
     title: 'バランス型',
     risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets(horses, 'B')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
 };
 strategyB.riskText = getRiskLevelText(strategyB.risk);
 strategyB.recommendation = getRecommendationStars(strategyB.risk);
@@ -44,9 +44,9 @@ strategyB.returnRate = returnRateB;
 
 const strategyC = {
     type: 'C',
-    title: '高配当追求型', 
+    title: '高配当追求型',
     risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets(horses, 'C')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
 };
 strategyC.riskText = getRiskLevelText(strategyC.risk);
 strategyC.recommendation = getRecommendationStars(strategyC.risk);
