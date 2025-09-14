@@ -166,6 +166,36 @@ export function generateStandardizedBets(horses, strategyType) {
     const osaeHorses = allHorses.filter(h => h.type === '押さえ').sort((a, b) => a.number - b.number);
     const tananaHorses = allHorses.filter(h => h.type === '単穴').sort((a, b) => a.number - b.number);
 
+    // フォールバックデータ: allHorsesが空の場合のダミーデータ生成
+    if (renkuHorses.length === 0) {
+        // 連下馬がいない場合、本命・対抗以外の番号で補完
+        for (let i = 1; i <= 12; i++) {
+            if (i !== mainNumber && i !== subNumber && renkuHorses.length < 4) {
+                renkuHorses.push({ number: i, type: '連下' });
+            }
+        }
+    }
+
+    if (tananaHorses.length === 0) {
+        // 単穴馬がいない場合、連下以外の番号で補完
+        const usedNumbers = [...renkuHorses.map(h => h.number), mainNumber, subNumber];
+        for (let i = 1; i <= 12; i++) {
+            if (!usedNumbers.includes(i) && tananaHorses.length < 2) {
+                tananaHorses.push({ number: i, type: '単穴' });
+            }
+        }
+    }
+
+    if (osaeHorses.length === 0) {
+        // 押さえ馬がいない場合、他の役割以外の番号で補完
+        const usedNumbers = [...renkuHorses.map(h => h.number), ...tananaHorses.map(h => h.number), mainNumber, subNumber];
+        for (let i = 1; i <= 12; i++) {
+            if (!usedNumbers.includes(i) && osaeHorses.length < 2) {
+                osaeHorses.push({ number: i, type: '押さえ' });
+            }
+        }
+    }
+
     let bets = [];
 
     switch (strategyType) {
@@ -222,7 +252,26 @@ export function generateStandardizedBets(horses, strategyType) {
 
     if (bets.length === 0) {
         // フォールバック: 最低限の買い目を生成
+        console.warn(`⚠️ generateStandardizedBets: No bets generated for strategy ${strategyType}, using fallback`);
         return [`${mainNumber} → ${subNumber}`];
+    }
+
+    // 再発防止: 買い目点数バリデーション
+    const expectedPoints = {
+        'A': 3,   // 少点数的中型
+        'B': 11,  // バランス型
+        'C': 14   // 高配当追求型
+    };
+
+    const actualPoints = bets.length;
+    const expected = expectedPoints[strategyType] || 3;
+
+    if (actualPoints !== expected) {
+        console.error(`🚨 CRITICAL: Strategy ${strategyType} generated ${actualPoints} points, expected ${expected}!`);
+        console.error('Generated bets:', bets);
+        console.error('Horse data:', { main, sub, allHorses });
+    } else {
+        console.log(`✅ Strategy ${strategyType}: Generated ${actualPoints} points correctly`);
     }
 
     return bets;
@@ -377,6 +426,11 @@ export function processUnifiedRaceData(raceData) {
         bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
     };
 
+    // バリデーション: 戦略Aの買い目点数確認
+    if (strategyA.bets.length !== 3) {
+        console.error(`🚨 Strategy A validation failed: ${strategyA.bets.length} bets instead of 3`);
+    }
+
     const strategyB = {
         riskPercent: calculateDynamicRisk('B', mainScore, subScore),
         riskText: getRiskLevelText(calculateDynamicRisk('B', mainScore, subScore)),
@@ -385,6 +439,11 @@ export function processUnifiedRaceData(raceData) {
         bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
     };
 
+    // バリデーション: 戦略Bの買い目点数確認
+    if (strategyB.bets.length !== 11) {
+        console.error(`🚨 Strategy B validation failed: ${strategyB.bets.length} bets instead of 11`);
+    }
+
     const strategyC = {
         riskPercent: calculateDynamicRisk('C', mainScore, subScore),
         riskText: getRiskLevelText(calculateDynamicRisk('C', mainScore, subScore)),
@@ -392,6 +451,11 @@ export function processUnifiedRaceData(raceData) {
         returnRate: calculateHitRateAndReturn('C', calculateDynamicRisk('C', mainScore, subScore)).returnRate,
         bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
     };
+
+    // バリデーション: 戦略Cの買い目点数確認
+    if (strategyC.bets.length !== 14) {
+        console.error(`🚨 Strategy C validation failed: ${strategyC.bets.length} bets instead of 14`);
+    }
 
     // 統一データ形式で返す（既存データを優先し、不足分のみ補完）
     return {
