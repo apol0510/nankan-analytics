@@ -2,6 +2,8 @@
 
 AI・機械学習で南関競馬を攻略する技術ブログサイトです。
 
+最終更新: 2025-09-14
+
 ## サイト概要
 
 - **URL**: https://nankan-analytics.keiba.link
