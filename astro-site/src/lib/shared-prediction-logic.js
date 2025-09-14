@@ -578,3 +578,117 @@ export function validateDataIntegrity(raceData) {
 
     return errors;
 }
+
+// 統一システムで戦略データを生成
+export function getPredictionDataWithStrategies(horses) {
+    if (!horses) {
+        return {
+            strategies: [
+                {
+                    title: '🔔 少点数的中型',
+                    recommendation: 2,
+                    hitRate: 60,
+                    returnRate: 120,
+                    riskLevel: '低リスク',
+                    bets: ['馬単 本命→対抗 3点']
+                },
+                {
+                    title: '⚖️ バランス型',
+                    recommendation: 3,
+                    hitRate: 45,
+                    returnRate: 150,
+                    riskLevel: '中リスク',
+                    bets: ['馬単 本命⇔対抗 11点']
+                },
+                {
+                    title: '🚀 高配当追求型',
+                    recommendation: 2,
+                    hitRate: 30,
+                    returnRate: 200,
+                    riskLevel: '高リスク',
+                    bets: ['馬単 高配当狙い 14点']
+                }
+            ]
+        };
+    }
+
+    const mainHorseScore = getHorseConfidenceFromMark(horses.main);
+    const subHorseScore = getHorseConfidenceFromMark(horses.sub);
+
+    // 戦略A: 少点数的中型
+    const strategyA = {
+        type: 'A',
+        title: '🔔 少点数的中型',
+        risk: calculateDynamicRisk('A', mainHorseScore),
+        bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'A')
+    };
+    strategyA.riskText = getRiskLevelText(strategyA.risk);
+    strategyA.recommendation = getRecommendationStars(strategyA.risk).length;
+    const { hitRate: hitRateA, returnRate: returnRateA } = calculateHitRateAndReturn('A', strategyA.risk);
+    strategyA.hitRate = hitRateA;
+    strategyA.returnRate = returnRateA;
+
+    // 戦略B: バランス型
+    const strategyB = {
+        type: 'B',
+        title: '⚖️ バランス型',
+        risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
+        bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'B')
+    };
+    strategyB.riskText = getRiskLevelText(strategyB.risk);
+    strategyB.recommendation = getRecommendationStars(strategyB.risk).length;
+    const { hitRate: hitRateB, returnRate: returnRateB } = calculateHitRateAndReturn('B', strategyB.risk);
+    strategyB.hitRate = hitRateB;
+    strategyB.returnRate = returnRateB;
+
+    // 戦略C: 高配当追求型
+    const strategyC = {
+        type: 'C',
+        title: '🚀 高配当追求型',
+        risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
+        bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'C')
+    };
+    strategyC.riskText = getRiskLevelText(strategyC.risk);
+    strategyC.recommendation = getRecommendationStars(strategyC.risk).length;
+    const { hitRate: hitRateC, returnRate: returnRateC } = calculateHitRateAndReturn('C', strategyC.risk);
+    strategyC.hitRate = hitRateC;
+    strategyC.returnRate = returnRateC;
+
+    // 統一された戦略データ形式に変換
+    const strategies = [
+        {
+            title: strategyA.title,
+            recommendation: strategyA.recommendation,
+            hitRate: strategyA.hitRate,
+            returnRate: strategyA.returnRate,
+            riskLevel: strategyA.riskText,
+            bets: strategyA.bets.map(bet => ({ type: '馬単', horses: bet, points: '3点' }))
+        },
+        {
+            title: strategyB.title,
+            recommendation: strategyB.recommendation,
+            hitRate: strategyB.hitRate,
+            returnRate: strategyB.returnRate,
+            riskLevel: strategyB.riskText,
+            bets: strategyB.bets.map(bet => ({ type: '馬単', horses: bet, points: '11点' }))
+        },
+        {
+            title: strategyC.title,
+            recommendation: strategyC.recommendation,
+            hitRate: strategyC.hitRate,
+            returnRate: strategyC.returnRate,
+            riskLevel: strategyC.riskText,
+            bets: strategyC.bets.map(bet => ({ type: '馬単', horses: bet, points: '14点' }))
+        }
+    ];
+
+    return {
+        strategies: strategies,
+        combinationTip: {
+            title: '的中率向上テクニック',
+            icon: '💡',
+            message: 'オッズを確認し、🔔 少点数的中型と⚖️ バランス型を組み合わせることで的中率が大幅に向上します。',
+            description: 'レース展開や馬場状態に応じて2つの戦略の買い目を併用することで、リスク分散と収益機会の最大化を実現できます。'
+        }
+    };
+}

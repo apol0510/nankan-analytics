@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
+import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -76,73 +76,9 @@ const standardRaces = sortedRaces.filter(race =>
                 console.warn(`Race ${raceData.raceNumber} integrity issues:`, integrity);
             }
 
-            // 各レースで動的に戦略を生成
-            const raceMainHorseScore = raceData.horses?.main ? getHorseConfidenceFromMark(raceData.horses.main) : 62;
-            const raceSubHorseScore = raceData.horses?.sub ? getHorseConfidenceFromMark(raceData.horses.sub) : 62;
-
-            const raceStrategyA = {
-                type: 'A',
-                title: '少点数的中型',
-                risk: calculateDynamicRisk('A', raceMainHorseScore),
-                bets: generateStandardizedBets({ ...raceData.horses, allHorses: raceData.allHorses }, 'A')
-            };
-            raceStrategyA.riskText = getRiskLevelText(raceStrategyA.risk);
-            raceStrategyA.recommendation = getRecommendationStars(raceStrategyA.risk);
-            const { hitRate: raceHitRateA, returnRate: raceReturnRateA } = calculateHitRateAndReturn('A', raceStrategyA.risk);
-            raceStrategyA.hitRate = raceHitRateA;
-            raceStrategyA.returnRate = raceReturnRateA;
-
-            const raceStrategyB = {
-                type: 'B',
-                title: 'バランス型',
-                risk: calculateDynamicRisk('B', raceMainHorseScore, raceSubHorseScore),
-                bets: generateStandardizedBets({ ...raceData.horses, allHorses: raceData.allHorses }, 'B')
-            };
-            raceStrategyB.riskText = getRiskLevelText(raceStrategyB.risk);
-            raceStrategyB.recommendation = getRecommendationStars(raceStrategyB.risk);
-            const { hitRate: raceHitRateB, returnRate: raceReturnRateB } = calculateHitRateAndReturn('B', raceStrategyB.risk);
-            raceStrategyB.hitRate = raceHitRateB;
-            raceStrategyB.returnRate = raceReturnRateB;
-
-            const raceStrategyC = {
-                type: 'C',
-                title: '高配当追求型',
-                risk: calculateDynamicRisk('C', raceMainHorseScore, raceSubHorseScore),
-                bets: generateStandardizedBets({ ...raceData.horses, allHorses: raceData.allHorses }, 'C')
-            };
-            raceStrategyC.riskText = getRiskLevelText(raceStrategyC.risk);
-            raceStrategyC.recommendation = getRecommendationStars(raceStrategyC.risk);
-            const { hitRate: raceHitRateC, returnRate: raceReturnRateC } = calculateHitRateAndReturn('C', raceStrategyC.risk);
-            raceStrategyC.hitRate = raceHitRateC;
-            raceStrategyC.returnRate = raceReturnRateC;
-
-            // 新しい戦略データを全レースに適用
-            const raceStrategies = {
-                safe: {
-                    title: raceStrategyA.title,
-                    recommendation: raceStrategyA.recommendation.length,
-                    hitRate: raceStrategyA.hitRate,
-                    returnRate: raceStrategyA.returnRate,
-                    riskLevel: raceStrategyA.riskText,
-                    bets: raceStrategyA.bets
-                },
-                balance: {
-                    title: raceStrategyB.title,
-                    recommendation: raceStrategyB.recommendation.length,
-                    hitRate: raceStrategyB.hitRate,
-                    returnRate: raceStrategyB.returnRate,
-                    riskLevel: raceStrategyB.riskText,
-                    bets: raceStrategyB.bets
-                },
-                aggressive: {
-                    title: raceStrategyC.title,
-                    recommendation: raceStrategyC.recommendation.length,
-                    hitRate: raceStrategyC.hitRate,
-                    returnRate: raceStrategyC.returnRate,
-                    riskLevel: raceStrategyC.riskText,
-                    bets: raceStrategyC.bets
-                }
-            };
+            // 統一システムで戦略を生成
+            const processedData = getPredictionDataWithStrategies(raceData.horses);
+            const raceStrategies = processedData.strategies;
 
             return (
                 <div class={`race-${raceNum}r-accordion`}>

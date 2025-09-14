@@ -2,7 +2,7 @@
 export const prerender = true; // 静的サイト生成用に戻す
 import BaseLayout from '../layouts/BaseLayout.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
+import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R: originalRace12R, sortedRaces } = processRaceData(allRacesData);
@@ -19,72 +19,12 @@ const { raceInfo, horses, analysis, preview, allHorses, totalHorses } = mainRace
 // 正規化されたホースデータ（メインレース用）
 const normalizedHorses = normalizeHorseData(mainRace);
 
-// 動的戦略を生成（Premiumと同じロジック）
-const mainHorseScore = getHorseConfidenceFromMark(horses.main);
-const subHorseScore = getHorseConfidenceFromMark(horses.sub);
-
-const strategyA = {
-    type: 'A',
-    title: '少点数的中型',
-    risk: calculateDynamicRisk('A', mainHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
-};
-strategyA.riskText = getRiskLevelText(strategyA.risk);
-strategyA.recommendation = getRecommendationStars(strategyA.risk);
-const { hitRate: hitRateA, returnRate: returnRateA } = calculateHitRateAndReturn('A', strategyA.risk);
-strategyA.hitRate = hitRateA;
-strategyA.returnRate = returnRateA;
-
-const strategyB = {
-    type: 'B',
-    title: 'バランス型',
-    risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
-};
-strategyB.riskText = getRiskLevelText(strategyB.risk);
-strategyB.recommendation = getRecommendationStars(strategyB.risk);
-const { hitRate: hitRateB, returnRate: returnRateB } = calculateHitRateAndReturn('B', strategyB.risk);
-strategyB.hitRate = hitRateB;
-strategyB.returnRate = returnRateB;
-
-const strategyC = {
-    type: 'C',
-    title: '高配当追求型',
-    risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
-};
-strategyC.riskText = getRiskLevelText(strategyC.risk);
-strategyC.recommendation = getRecommendationStars(strategyC.risk);
-const { hitRate: hitRateC, returnRate: returnRateC } = calculateHitRateAndReturn('C', strategyC.risk);
-strategyC.hitRate = hitRateC;
-strategyC.returnRate = returnRateC;
-
-// 統一された戦略データ
+// 統一システムで戦略データを生成
+const processedData = getPredictionDataWithStrategies(mainRace.horses);
 const strategies = {
-    safe: {
-        title: strategyA.title,
-        recommendation: strategyA.recommendation.length,
-        hitRate: strategyA.hitRate,
-        returnRate: strategyA.returnRate,
-        riskLevel: strategyA.riskText,
-        bets: strategyA.bets.map(bet => ({ type: '馬単', horses: bet, points: '3点' }))
-    },
-    balance: {
-        title: strategyB.title,
-        recommendation: strategyB.recommendation.length,
-        hitRate: strategyB.hitRate,
-        returnRate: strategyB.returnRate,
-        riskLevel: strategyB.riskText,
-        bets: strategyB.bets.map(bet => ({ type: '馬単', horses: bet, points: '11点' }))
-    },
-    aggressive: {
-        title: strategyC.title,
-        recommendation: strategyC.recommendation.length,
-        hitRate: strategyC.hitRate,
-        returnRate: strategyC.returnRate,
-        riskLevel: strategyC.riskText,
-        bets: strategyC.bets.map(bet => ({ type: '馬単', horses: bet, points: '14点' }))
-    }
+    safe: processedData.strategies[0],
+    balance: processedData.strategies[1],
+    aggressive: processedData.strategies[2]
 };
 ---
 
@@ -328,7 +268,7 @@ const strategies = {
 
             <!-- 戦略1: 的中率重視型 -->
             <div class="bet-strategy premium-masked">
-                <div class="strategy-title">🎯 {strategies.safe.title}（推奨度 {'★'.repeat(strategies.safe.recommendation)}{'☆'.repeat(5-strategies.safe.recommendation)}）</div>
+                <div class="strategy-title">🔔 少点数的中型（推奨度 {'★'.repeat(strategies.safe.recommendation)}{'☆'.repeat(5-strategies.safe.recommendation)}）</div>
                 <div style="color: #94a3b8; margin-bottom: 15px;">
                     AIモデル予測: 的中率{strategies.safe.hitRate}% / 期待回収率{strategies.safe.returnRate}%
                 </div>
@@ -359,7 +299,7 @@ const strategies = {
 
             <!-- 戦略2: バランス型 -->
             <div class="bet-strategy premium-masked">
-                <div class="strategy-title">⚖️ {strategies.balance.title}（推奨度 {'★'.repeat(strategies.balance.recommendation)}{'☆'.repeat(5-strategies.balance.recommendation)}）</div>
+                <div class="strategy-title">⚖️ バランス型（推奨度 {'★'.repeat(strategies.balance.recommendation)}{'☆'.repeat(5-strategies.balance.recommendation)}）</div>
                 <div style="color: #94a3b8; margin-bottom: 15px;">
                     AIモデル予測: 的中率{strategies.balance.hitRate}% / 期待回収率{strategies.balance.returnRate}%
                 </div>
@@ -390,7 +330,7 @@ const strategies = {
 
             <!-- 戦略3: 高配当狙い -->
             <div class="bet-strategy premium-masked">
-                <div class="strategy-title">🚀 {strategies.aggressive.title}（推奨度 {'★'.repeat(strategies.aggressive.recommendation)}{'☆'.repeat(5-strategies.aggressive.recommendation)}）</div>
+                <div class="strategy-title">🚀 高配当追求型（推奨度 {'★'.repeat(strategies.aggressive.recommendation)}{'☆'.repeat(5-strategies.aggressive.recommendation)}）</div>
                 <div style="color: #94a3b8; margin-bottom: 15px;">
                     AIモデル予測: 的中率{strategies.aggressive.hitRate}% / 期待回収率{strategies.aggressive.returnRate}%
                 </div>
