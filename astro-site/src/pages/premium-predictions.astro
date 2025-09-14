@@ -18,7 +18,7 @@ const strategyA = {
     type: 'A',
     title: '少点数的中型',
     risk: calculateDynamicRisk('A', mainHorseScore),
-    bets: generateStandardizedBets(horses, 'A')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
 };
 strategyA.riskText = getRiskLevelText(strategyA.risk);
 strategyA.recommendation = getRecommendationStars(strategyA.risk);
@@ -27,10 +27,10 @@ strategyA.hitRate = hitRateA;
 strategyA.returnRate = returnRateA;
 
 const strategyB = {
-    type: 'B', 
+    type: 'B',
     title: 'バランス型',
     risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets(horses, 'B')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
 };
 strategyB.riskText = getRiskLevelText(strategyB.risk);
 strategyB.recommendation = getRecommendationStars(strategyB.risk);
@@ -40,9 +40,9 @@ strategyB.returnRate = returnRateB;
 
 const strategyC = {
     type: 'C',
-    title: '高配当追求型', 
+    title: '高配当追求型',
     risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets(horses, 'C')
+    bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
 };
 strategyC.riskText = getRiskLevelText(strategyC.risk);
 strategyC.recommendation = getRecommendationStars(strategyC.risk);
@@ -311,9 +311,9 @@ console.log('race12R:', race12R);
                                             <div class="bet-list">
                                                 {raceStrategies.safe.bets && raceStrategies.safe.bets.map(bet => (
                                                     <div class="bet-item">
-                                                        <span class="bet-type">{bet.type}</span>
-                                                        <span class="bet-horses">{bet.numbers}</span>
-                                                        <span class="bet-points">{raceStrategies.safe.bets.length}点</span>
+                                                        <span class="bet-type">馬単</span>
+                                                        <span class="bet-horses">{bet}</span>
+                                                        <span class="bet-points">3点</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -339,9 +339,11 @@ console.log('race12R:', race12R);
                                             <div class="bet-list">
                                                 {raceStrategies.balance.bets && raceStrategies.balance.bets.map(bet => (
                                                     <div class="bet-item">
-                                                        <span class="bet-type">{bet.type}</span>
-                                                        <span class="bet-horses">{bet.numbers}</span>
-                                                        <span class="bet-points">{raceStrategies.balance.bets.length}点</span>
+                                                        <span class="bet-type">馬単</span>
+                                                        <span class="bet-horses">{bet}</span>
+                                                        <span class="bet-points">
+                                                            {bet.includes('⇔') ? '8点' : '3点'}
+                                                        </span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -367,9 +369,14 @@ console.log('race12R:', race12R);
                                             <div class="bet-list">
                                                 {raceStrategies.aggressive.bets && raceStrategies.aggressive.bets.map(bet => (
                                                     <div class="bet-item">
-                                                        <span class="bet-type">{bet.type}</span>
-                                                        <span class="bet-horses">{bet.numbers}</span>
-                                                        <span class="bet-points">{raceStrategies.aggressive.bets.length}点</span>
+                                                        <span class="bet-type">馬単</span>
+                                                        <span class="bet-horses">{bet}</span>
+                                                        <span class="bet-points">
+                                                            {bet.includes('⇔') ?
+                                                                (bet.includes('→') ? '12点' : '10点') :
+                                                                '2点'
+                                                            }
+                                                        </span>
                                                     </div>
                                                 ))}
                                             </div>

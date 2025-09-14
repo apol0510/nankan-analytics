@@ -124,9 +124,12 @@ export function getRecommendationStars(riskPercentage) {
 
 // 標準化買い目生成システム
 export function generateStandardizedBets(horses, strategyType) {
-    const { main, sub, sub1, sub2 } = horses;
-    const allHorses = horses.allHorses || [];
+    const { main, sub, sub1, sub2, allHorses } = horses;
 
+    if (!allHorses || !Array.isArray(allHorses)) {
+        console.error('allHorses data not found or invalid');
+        return [`データエラー: 馬の情報が不足しています`];
+    }
 
     // 役割別に馬を分類
     const renkuHorses = allHorses.filter(h => h.type === '連下');
@@ -140,12 +143,19 @@ export function generateStandardizedBets(horses, strategyType) {
             if (main && sub && sub1 && sub2) {
                 const targets = [sub1.number, sub2.number, sub.number].join(',');
                 bets = [`${main.number} → ${targets}`];
+            } else if (main) {
+                // フォールバック: 主要馬のみで構成
+                const targets = allHorses.filter(h => h.type === '単穴').slice(0, 2).map(h => h.number);
+                if (sub) targets.push(sub.number);
+                if (targets.length > 0) {
+                    bets = [`${main.number} → ${targets.join(',')}`];
+                }
             }
             break;
 
         case 'B': // バランス型
             // 馬単 本命⇔{連下4頭} + 対抗→{本命, 単穴1, 単穴2} (希望: 9⇔2,3,5,12 + 11→1,6,9)
-            if (main && sub && sub1 && sub2) {
+            if (main) {
                 // 本命⇔連下4頭（8点）
                 const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
                 if (renkuNumbers.length > 0) {
@@ -153,14 +163,21 @@ export function generateStandardizedBets(horses, strategyType) {
                 }
 
                 // 対抗→{単穴1, 単穴2, 本命}（3点）
-                const targets = [sub1.number, sub2.number, main.number].join(',');
-                bets.push(`${sub.number} → ${targets}`);
+                if (sub) {
+                    const targets = [];
+                    if (sub1) targets.push(sub1.number);
+                    if (sub2) targets.push(sub2.number);
+                    targets.push(main.number);
+                    if (targets.length > 0) {
+                        bets.push(`${sub.number} → ${targets.join(',')}`);
+                    }
+                }
             }
             break;
 
         case 'C': // 高配当追求型
             // 馬単 本命→{押さえ2頭} + 対抗⇔{連下4頭, 押さえ2頭} (希望: 9→7,8 + 11⇔2,3,5,7,8,12)
-            if (main && sub) {
+            if (main) {
                 // 本命→押さえ2頭（2点）
                 const osaeNumbers = osaeHorses.slice(0, 2).map(h => h.number);
                 if (osaeNumbers.length > 0) {
@@ -168,13 +185,19 @@ export function generateStandardizedBets(horses, strategyType) {
                 }
 
                 // 対抗⇔{連下4頭, 押さえ2頭}（12点）
-                const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
-                const allTargets = [...renkuNumbers, ...osaeNumbers];
-                if (allTargets.length > 0) {
-                    bets.push(`${sub.number} ⇔ ${allTargets.join(',')}`);
+                if (sub) {
+                    const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
+                    const allTargets = [...renkuNumbers, ...osaeNumbers];
+                    if (allTargets.length > 0) {
+                        bets.push(`${sub.number} ⇔ ${allTargets.join(',')}`);
+                    }
                 }
             }
             break;
+    }
+
+    if (bets.length === 0) {
+        return [`データ不足: 買い目を生成できません`];
     }
 
     return bets;
