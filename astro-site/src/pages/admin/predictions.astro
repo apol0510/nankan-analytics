@@ -830,6 +830,11 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
 
         function logAllRaces(message) {
             const log = document.getElementById('all-races-log');
+            if (!log) {
+                console.warn('all-races-log element not found');
+                return;
+            }
+
             const timestamp = new Date().toLocaleTimeString();
             log.innerHTML += `<div>[${timestamp}] ${message}</div>`;
             log.scrollTop = log.scrollHeight;
@@ -1036,6 +1041,11 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
 
         function updateRaceStatus() {
             const statusContainer = document.getElementById('all-races-status');
+            if (!statusContainer) {
+                console.warn('all-races-status element not found');
+                return;
+            }
+
             if (!allRacesData?.races) {
                 statusContainer.innerHTML = '<div style="color: #ef4444;">データが読み込まれていません</div>';
                 return;
@@ -1159,13 +1169,21 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
             }
 
             const progressDiv = document.getElementById('conversion-progress');
+            if (!progressDiv) {
+                console.warn('conversion-progress element not found');
+                showAlert('進捗表示エリアが見つかりません', 'error');
+                return;
+            }
+
             progressDiv.style.display = 'block';
             progressDiv.innerHTML = '';
 
             function logProgress(message) {
                 const timestamp = new Date().toLocaleTimeString();
-                progressDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
-                progressDiv.scrollTop = progressDiv.scrollHeight;
+                if (progressDiv) {
+                    progressDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                    progressDiv.scrollTop = progressDiv.scrollHeight;
+                }
             }
 
             try {
@@ -2342,21 +2360,31 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
         };
 
         window.clearConversion = function() {
-            document.getElementById('external_prediction').value = '';
-            document.getElementById('conversion-progress').style.display = 'none';
-            document.getElementById('json-output-section').style.display = 'none';
+            const externalInput = document.getElementById('external_prediction');
+            const progressDiv = document.getElementById('conversion-progress');
+            const outputSection = document.getElementById('json-output-section');
+
+            if (externalInput) externalInput.value = '';
+            if (progressDiv) progressDiv.style.display = 'none';
+            if (outputSection) outputSection.style.display = 'none';
+
             showAlert('フォームをクリアしました', 'success');
         };
 
         function showConversionProgress(message) {
             const progressDiv = document.getElementById('conversion-progress');
+            if (!progressDiv) {
+                console.warn('conversion-progress element not found in showConversionProgress');
+                return;
+            }
+
             const timestamp = new Date().toLocaleTimeString();
-            
+
             if (progressDiv.style.display === 'none') {
                 progressDiv.style.display = 'block';
                 progressDiv.innerHTML = '';
             }
-            
+
             progressDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
             progressDiv.scrollTop = progressDiv.scrollHeight;
         }
