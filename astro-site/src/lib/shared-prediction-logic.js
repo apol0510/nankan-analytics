@@ -34,8 +34,24 @@ export function calculateMarkBasedConfidence(horse) {
     }
 }
 
-// 馬の印に基づく信頼度を計算する関数（多重印対応）
+// 馬の実際の累積スコアを取得する関数（factorsから取得優先）
 export function getHorseConfidenceFromMark(horse) {
+    if (!horse) return 62;
+
+    // factors内の累積スコアを最優先で取得
+    if (horse.factors && Array.isArray(horse.factors)) {
+        const scoreText = horse.factors.find(factor =>
+            factor.text && factor.text.includes('累積スコア')
+        );
+        if (scoreText) {
+            const match = scoreText.text.match(/(\d+)pt/);
+            if (match) {
+                return parseInt(match[1]);
+            }
+        }
+    }
+
+    // フォールバック: 印による計算
     return calculateMarkBasedConfidence(horse);
 }
 
