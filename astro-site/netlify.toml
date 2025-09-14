@@ -7,7 +7,9 @@
   NODE_VERSION = "20"
   NPM_VERSION = "10"
   # Force cache clear
-  NETLIFY_CACHE_VERSION = "v3"
+  NETLIFY_CACHE_VERSION = "v4"
+  # Force new build
+  BUILD_TIMESTAMP = "2025-09-14-13:06"
 
 [[headers]]
   for = "/*"
