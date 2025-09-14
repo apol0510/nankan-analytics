@@ -296,10 +296,13 @@ const standardRaces = sortedRaces.filter(race =>
                                                     <div class="bet-item">
                                                         <span class="bet-type">馬単</span>
                                                         <span class="bet-horses">{betStr}</span>
-                                                        <span class="bet-points">3点</span>
+                                                        <span class="bet-points">1点</span>
                                                     </div>
                                                 );
                                             })}
+                                            <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
+                                                合計: {raceStrategies.strategies[0].bets?.length || 0}点
+                                            </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.strategies[0].riskLevel}（本命{raceMainHorseScore}pt基準）
@@ -323,22 +326,17 @@ const standardRaces = sortedRaces.filter(race =>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
-                                                    let points = '3点';
-                                                    if (betStr && typeof betStr === 'string' && betStr.includes('⇔')) {
-                                                        const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                        points = `${targets * 2}点`;
-                                                    } else if (betStr && typeof betStr === 'string' && betStr.includes('→')) {
-                                                        const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                        points = `${targets}点`;
-                                                    }
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
                                                             <span class="bet-horses">{betStr}</span>
-                                                            <span class="bet-points">{points}</span>
+                                                            <span class="bet-points">1点</span>
                                                         </div>
                                                     );
                                                 })}
+                                                <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
+                                                    合計: {raceStrategies.strategies[1].bets?.length || 0}点
+                                                </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.strategies[1].riskLevel}（本命{raceMainHorseScore}pt+対抗{raceSubHorseScore}pt平均基準）
@@ -362,22 +360,17 @@ const standardRaces = sortedRaces.filter(race =>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
-                                                    let points = '2点';
-                                                    if (betStr && typeof betStr === 'string' && betStr.includes('⇔')) {
-                                                        const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                        points = `${targets * 2}点`;
-                                                    } else if (betStr && typeof betStr === 'string' && betStr.includes('→')) {
-                                                        const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                        points = `${targets}点`;
-                                                    }
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
                                                             <span class="bet-horses">{betStr}</span>
-                                                            <span class="bet-points">{points}</span>
+                                                            <span class="bet-points">1点</span>
                                                         </div>
                                                     );
                                                 })}
+                                                <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
+                                                    合計: {raceStrategies.strategies[2].bets?.length || 0}点
+                                                </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.strategies[2].riskLevel}（本命{raceMainHorseScore}pt+対抗{raceSubHorseScore}pt平均基準）
