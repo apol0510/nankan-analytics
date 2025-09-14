@@ -2,7 +2,7 @@
 export const prerender = true; // 静的サイト生成用に戻す
 import BaseLayout from '../layouts/BaseLayout.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
+import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -11,7 +11,10 @@ if (!mainRace) {
     throw new Error('メインレースが見つかりません。allRacesPrediction.jsonのデータを確認してください。');
 }
 
-const { raceInfo, horses, analysis, preview, allHorses, totalHorses } = mainRace;
+// 20年運営対応: データ正規化システム使用
+const normalizedHorses = normalizeHorseData(mainRace);
+const { raceInfo, horses, analysis, preview, totalHorses } = mainRace;
+const allHorses = normalizedHorses; // 正規化されたデータを使用
 
 // 動的リスクシステム適用
 const mainHorseScore = horses.main ? getHorseConfidenceFromMark(horses.main) : 62;
@@ -120,14 +123,16 @@ const strategies = {
             </h2>
 
             {/* ◎印（本命）- 最も大きく表示 */}
-            {allHorses && allHorses.filter(h => h.mark === '◎').map((horse, index) => (
+            {allHorses && allHorses.filter(h => h.role === '本命').map((horse, index) => {
+                const roleConfig = getRoleDisplayConfig(horse.role);
+                return (
                 <div class="horse-card horse-card-main">
                     <div class="horse-header">
                         <div>
-                            <span class="horse-mark-main">◎</span>
+                            <span class={roleConfig.markClass}>{horse.displayMark}</span>
                             <span class="horse-number">{horse.number}</span>
                             <span class="horse-name">{horse.name}</span>
-                            <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
+                            <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
                         </div>
                     </div>
                     <div class="ai-factors">
@@ -154,17 +159,20 @@ const strategies = {
                         </div>
                     )}
                 </div>
-            ))}
+                );
+            })}
 
             {/* ◎印（対抗）- 中サイズで表示 */}
-            {allHorses && allHorses.filter(h => h.mark === '○' || h.mark === '◯').map((horse, index) => (
+            {allHorses && allHorses.filter(h => h.role === '対抗').map((horse, index) => {
+                const roleConfig = getRoleDisplayConfig(horse.role);
+                return (
                 <div class="horse-card horse-card-sub">
                     <div class="horse-header">
                         <div>
-                            <span class="horse-mark-sub">○</span>
+                            <span class={roleConfig.markClass}>{horse.displayMark}</span>
                             <span class="horse-number">{horse.number}</span>
                             <span class="horse-name">{horse.name}</span>
-                            <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
+                            <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
                         </div>
                     </div>
                     <div class="ai-factors">
@@ -191,21 +199,24 @@ const strategies = {
                         </div>
                     )}
                 </div>
-            ))}
+                );
+            })}
 
             {/* 穴馬エリア統合表示 */}
-            {allHorses && (allHorses.filter(h => h.mark === '▲' || h.mark === '△' || h.mark === '×').length > 0) && (
+            {allHorses && (allHorses.filter(h => h.role === '単穴' || h.role === '連下' || h.role === '押さえ').length > 0) && (
                 <div class="premium-horses-wrapper free-member-masked">
                     
                     {/* ◎印（単穴）- 中サイズで表示 */}
-                    {allHorses && allHorses.filter(h => h.mark === '▲').map((horse, index) => (
+                    {allHorses && allHorses.filter(h => h.role === '単穴').map((horse, index) => {
+                        const roleConfig = getRoleDisplayConfig(horse.role);
+                        return (
                         <div class="horse-card horse-card-sub">
                             <div class="horse-header">
                                 <div>
-                                    <span class="horse-mark-sub">▲</span>
+                                    <span class={roleConfig.markClass}>{horse.displayMark}</span>
                                     <span class="horse-number">{horse.number}</span>
                                     <span class="horse-name">{horse.name}</span>
-                                    <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
+                                    <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
                                 </div>
                             </div>
                             <div class="ai-factors">
@@ -217,19 +228,20 @@ const strategies = {
                                 ))}
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
 
                     {/* △印（連下）- まとめて表示 */}
-                    {allHorses && allHorses.filter(h => h.mark === '△').length > 0 && (
+                    {allHorses && allHorses.filter(h => h.role === '連下').length > 0 && (
                         <div class="horse-card horse-card-minor">
                             <div class="horse-header">
                                 <div>
-                                    <span class="horse-mark-minor">△</span>
+                                    <span class="horse-mark-minor">{allHorses.find(h => h.role === '連下')?.displayMark || '△'}</span>
                                     <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
                                 </div>
                             </div>
                             <div class="horse-grid">
-                                {allHorses.filter(h => h.mark === '△').map(horse => (
+                                {allHorses.filter(h => h.role === '連下').map(horse => (
                                     <div class="horse-grid-item">
                                         <span class="horse-number-small">{horse.number}</span>
                                         <span class="horse-name-small">{horse.name}</span>
@@ -241,16 +253,16 @@ const strategies = {
                     )}
 
                     {/* ×印（押さえ）- まとめて表示 */}
-                    {allHorses && allHorses.filter(h => h.mark === '×').length > 0 && (
+                    {allHorses && allHorses.filter(h => h.role === '押さえ').length > 0 && (
                         <div class="horse-card horse-card-minor">
                             <div class="horse-header">
                                 <div>
-                                    <span class="horse-mark-minor">×</span>
+                                    <span class="horse-mark-minor">{allHorses.find(h => h.role === '押さえ')?.displayMark || '×'}</span>
                                     <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
                                 </div>
                             </div>
                             <div class="horse-grid">
-                                {allHorses.filter(h => h.mark === '×').map(horse => (
+                                {allHorses.filter(h => h.role === '押さえ').map(horse => (
                                     <div class="horse-grid-item">
                                         <span class="horse-number-small">{horse.number}</span>
                                         <span class="horse-name-small">{horse.name}</span>
