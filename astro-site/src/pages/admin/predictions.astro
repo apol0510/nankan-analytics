@@ -418,19 +418,19 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                 <h4 style="color: #3b82f6; margin-bottom: 15px;">○ 対抗馬の特徴量重要度</h4>
                 <div class="slider-container">
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量1:</label>
-                    <input type="text" id="subFeature1Label" value="先行力" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
+                    <input type="text" id="subFeature1Label" value="安定性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="subFeature1" class="slider" min="0" max="1" step="0.01" value="0.96" onchange="updateImportanceBars()">
                     <span id="subFeature1Value" style="min-width: 40px; font-size: 0.9rem;">96%</span>
                 </div>
                 <div class="slider-container">
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量2:</label>
-                    <input type="text" id="subFeature2Label" value="スピード指数" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
+                    <input type="text" id="subFeature2Label" value="能力上位性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="subFeature2" class="slider" min="0" max="1" step="0.01" value="0.85" onchange="updateImportanceBars()">
                     <span id="subFeature2Value" style="min-width: 40px; font-size: 0.9rem;">85%</span>
                 </div>
                 <div class="slider-container">
                     <label style="min-width: 80px; font-size: 0.9rem;">特徴量3:</label>
-                    <input type="text" id="subFeature3Label" value="枠順優位" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
+                    <input type="text" id="subFeature3Label" value="展開利" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
                     <input type="range" id="subFeature3" class="slider" min="0" max="1" step="0.01" value="0.79" onchange="updateImportanceBars()">
                     <span id="subFeature3Value" style="min-width: 40px; font-size: 0.9rem;">79%</span>
                 </div>
@@ -1388,9 +1388,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         ...(selectedSub.score ? [{icon: "★", text: `累積スコア: ${selectedSub.score}pt`}] : [])
                     ],
                     importance: [
-                        {label: "先行力", value: ((selectedSub.score || 85) + 8 + Math.random() * 6 - 3) / 100},
-                        {label: "スピード指数", value: ((selectedSub.score || 85) - 6 + Math.random() * 6 - 3) / 100},
-                        {label: "枠順優位", value: ((selectedSub.score || 85) - 2 + Math.random() * 6 - 3) / 100}
+                        {label: "安定性", value: ((selectedSub.score || 85) + 8 + Math.random() * 6 - 3) / 100},
+                        {label: "能力上位性", value: ((selectedSub.score || 85) - 6 + Math.random() * 6 - 3) / 100},
+                        {label: "展開利", value: ((selectedSub.score || 85) - 2 + Math.random() * 6 - 3) / 100}
                     ]
                 };
             }
@@ -1750,9 +1750,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         {icon: "★", text: `累積スコア: ${subHorse.score || 85}pt`}
                     ],
                     importance: [
-                        {label: "先行力", value: ((subHorse.score || 85) + 8) / 100},
-                        {label: "スピード指数", value: ((subHorse.score || 85) - 6) / 100},
-                        {label: "枠順優位", value: ((subHorse.score || 85) - 2) / 100}
+                        {label: "安定性", value: ((subHorse.score || 85) + 8) / 100},
+                        {label: "能力上位性", value: ((subHorse.score || 85) - 6) / 100},
+                        {label: "展開利", value: ((subHorse.score || 85) - 2) / 100}
                     ]
                 };
             }
