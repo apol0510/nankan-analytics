@@ -1365,6 +1365,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                     name: selectedMain.name,
                     type: "本命",
                     factors: [
+                        {icon: "★", text: convertToStarRating("総合評価:★★★", "本命", selectedMain.score || 85)},
                         ...(selectedMain.score ? [{icon: "🎯", text: `累積スコア: ${selectedMain.score}pt`}] : [])
                     ],
                     importance: [
@@ -1383,6 +1384,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                     name: selectedSub.name,
                     type: "対抗",
                     factors: [
+                        {icon: "★", text: convertToStarRating("総合評価:★★★", "対抗", selectedSub.score || 85)},
                         ...(selectedSub.score ? [{icon: "🎯", text: `累積スコア: ${selectedSub.score}pt`}] : [])
                     ],
                     importance: [
@@ -1727,6 +1729,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                     name: mainHorse.name,
                     type: "本命",
                     factors: [
+                        {icon: "★", text: convertToStarRating("総合評価:★★★", "本命", mainHorse.score || 85)},
                         {icon: "🎯", text: `累積スコア: ${mainHorse.score || 85}pt`}
                     ],
                     importance: [
@@ -1743,7 +1746,8 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                     name: subHorse.name,
                     type: "対抗",
                     factors: [
-                        {icon: "🎯", text: `累積スコア: ${subHorse.score || 80}pt`}
+                        {icon: "★", text: convertToStarRating("総合評価:★★★", "対抗", subHorse.score || 85)},
+                        {icon: "🎯", text: `累積スコア: ${subHorse.score || 85}pt`}
                     ],
                     importance: [
                         {label: "先行力", value: ((subHorse.score || 85) + 8) / 100},
