@@ -126,59 +126,56 @@ export function getRecommendationStars(riskPercentage) {
 export function generateStandardizedBets(horses, strategyType) {
     const { main, sub, sub1, sub2 } = horses;
     const allHorses = horses.allHorses || [];
-    
+
     // 役割別に馬を分類
     const renkuHorses = allHorses.filter(h => h.type === '連下');
     const osaeHorses = allHorses.filter(h => h.type === '押さえ');
-    
+
     let bets = [];
-    
+
     switch (strategyType) {
         case 'A': // 少点数的中型
             // 馬単 本命→{対抗, 単穴1, 単穴2} = 3点
             if (main && sub && sub1 && sub2) {
-                bets = [
-                    `${main.number} → ${sub.number}`,
-                    `${main.number} → ${sub1.number}`,
-                    `${main.number} → ${sub2.number}`
-                ];
+                const targets = [sub.number, sub1.number, sub2.number].join(',');
+                bets = [`${main.number} → ${targets}`];
             }
             break;
-            
+
         case 'B': // バランス型
             // 馬単 本命⇔{連下4頭} + 対抗→{本命, 単穴1, 単穴2}
             if (main && sub && sub1 && sub2) {
                 // 本命⇔連下4頭（8点）
                 const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
-                renkuNumbers.forEach(num => {
-                    bets.push(`${main.number} ⇔ ${num}`);
-                });
-                
+                if (renkuNumbers.length > 0) {
+                    bets.push(`${main.number} ⇔ ${renkuNumbers.join(',')}`);
+                }
+
                 // 対抗→{本命, 単穴1, 単穴2}（3点）
-                bets.push(`${sub.number} → ${main.number}`);
-                bets.push(`${sub.number} → ${sub1.number}`);
-                bets.push(`${sub.number} → ${sub2.number}`);
+                const targets = [main.number, sub1.number, sub2.number].join(',');
+                bets.push(`${sub.number} → ${targets}`);
             }
             break;
-            
+
         case 'C': // 高配当追求型
             // 馬単 本命→{押さえ2頭} + 対抗⇔{連下4頭, 押さえ2頭}
             if (main && sub) {
                 // 本命→押さえ2頭（2点）
                 const osaeNumbers = osaeHorses.slice(0, 2).map(h => h.number);
-                osaeNumbers.forEach(num => {
-                    bets.push(`${main.number} → ${num}`);
-                });
-                
+                if (osaeNumbers.length > 0) {
+                    bets.push(`${main.number} → ${osaeNumbers.join(',')}`);
+                }
+
                 // 対抗⇔{連下4頭, 押さえ2頭}（12点）
                 const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
-                [...renkuNumbers, ...osaeNumbers].forEach(num => {
-                    bets.push(`${sub.number} ⇔ ${num}`);
-                });
+                const allTargets = [...renkuNumbers, ...osaeNumbers];
+                if (allTargets.length > 0) {
+                    bets.push(`${sub.number} ⇔ ${allTargets.join(',')}`);
+                }
             }
             break;
     }
-    
+
     return bets;
 }
 
