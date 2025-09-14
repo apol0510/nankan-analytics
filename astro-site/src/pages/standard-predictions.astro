@@ -227,7 +227,20 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 特徴量重要度表示削除 - シンプル化のため */}
+                    {/* 本命馬の特徴量重要度を表示 */}
+                    {horses.main.importance && (
+                        <div class="feature-importance">
+                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                            {horses.main.importance.map(item => (
+                                <div class="importance-bar">
+                                    <span class="importance-label">{item.label}</span>
+                                    <div class="importance-value">
+                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 );
             })}
@@ -257,7 +270,20 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 特徴量重要度表示削除 - シンプル化のため */}
+                    {/* 本命馬の特徴量重要度を表示 */}
+                    {horses.main.importance && (
+                        <div class="feature-importance">
+                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                            {horses.main.importance.map(item => (
+                                <div class="importance-bar">
+                                    <span class="importance-label">{item.label}</span>
+                                    <div class="importance-value">
+                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 );
             })}
@@ -467,7 +493,20 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 特徴量重要度表示削除 - シンプル化のため */}
+                    {/* 本命馬の特徴量重要度を表示 */}
+                    {horses.main.importance && (
+                        <div class="feature-importance">
+                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                            {horses.main.importance.map(item => (
+                                <div class="importance-bar">
+                                    <span class="importance-label">{item.label}</span>
+                                    <div class="importance-value">
+                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 );
             })}
@@ -498,7 +537,20 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 特徴量重要度表示削除 - シンプル化のため */}
+                    {/* 本命馬の特徴量重要度を表示 */}
+                    {horses.main.importance && (
+                        <div class="feature-importance">
+                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                            {horses.main.importance.map(item => (
+                                <div class="importance-bar">
+                                    <span class="importance-label">{item.label}</span>
+                                    <div class="importance-value">
+                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 );
             })}
@@ -892,7 +944,20 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 特徴量重要度表示削除 - シンプル化のため */}
+                    {/* 本命馬の特徴量重要度を表示 */}
+                    {horses.main.importance && (
+                        <div class="feature-importance">
+                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                            {horses.main.importance.map(item => (
+                                <div class="importance-bar">
+                                    <span class="importance-label">{item.label}</span>
+                                    <div class="importance-value">
+                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 );
             })}
@@ -923,7 +988,20 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 特徴量重要度表示削除 - シンプル化のため */}
+                    {/* 本命馬の特徴量重要度を表示 */}
+                    {horses.main.importance && (
+                        <div class="feature-importance">
+                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                            {horses.main.importance.map(item => (
+                                <div class="importance-bar">
+                                    <span class="importance-label">{item.label}</span>
+                                    <div class="importance-value">
+                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 );
             })}
@@ -1497,7 +1575,7 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
         color: #10b981;
     }
     .feature-importance {
-        display: none; /* シンプル化のため特徴量重要度を非表示 */
+        margin-top: 20px;
     }
     .importance-bar {
         display: flex;
