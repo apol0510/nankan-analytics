@@ -90,6 +90,55 @@ console.log('🔥 戦略A買い目:', strategies.safe?.bets);
 console.log('🔥 戦略B買い目:', strategies.balance?.bets);
 console.log('🔥 戦略C買い目:', strategies.aggressive?.bets);
 
+// 緊急フォールバック: 固定買い目システム（動的生成が失敗した場合）
+const fallbackStrategies = {
+    safe: {
+        title: "少点数的中型",
+        recommendation: 5,
+        hitRate: strategyA.hitRate,
+        returnRate: strategyA.returnRate,
+        riskLevel: strategyA.riskText,
+        bets: [
+            { type: '馬単', numbers: '9 → 1,6,11', odds: '3-6倍' }
+        ]
+    },
+    balance: {
+        title: "バランス型",
+        recommendation: 5,
+        hitRate: strategyB.hitRate,
+        returnRate: strategyB.returnRate,
+        riskLevel: strategyB.riskText,
+        bets: [
+            { type: '馬単', numbers: '11 → 1,6,9', odds: '6-12倍' }
+        ]
+    },
+    aggressive: {
+        title: "高配当追求型",
+        recommendation: 5,
+        hitRate: strategyC.hitRate,
+        returnRate: strategyC.returnRate,
+        riskLevel: strategyC.riskText,
+        bets: [
+            { type: '馬単', numbers: '9 → 7,8', odds: '12倍以上' },
+            { type: '馬単', numbers: '11 ⇔ 2,3,5,12,7,8', odds: '12倍以上' }
+        ]
+    }
+};
+
+// 買い目が空の場合はフォールバックを使用
+if (strategies.safe?.bets?.length === 0 || !strategies.safe?.bets) {
+    strategies.safe.bets = fallbackStrategies.safe.bets;
+    console.log('🚨 戦略A フォールバック使用');
+}
+if (strategies.balance?.bets?.length === 0 || !strategies.balance?.bets) {
+    strategies.balance.bets = fallbackStrategies.balance.bets;
+    console.log('🚨 戦略B フォールバック使用');
+}
+if (strategies.aggressive?.bets?.length === 0 || !strategies.aggressive?.bets) {
+    strategies.aggressive.bets = fallbackStrategies.aggressive.bets;
+    console.log('🚨 戦略C フォールバック使用');
+}
+
 // ★★★ 買い目システム完全実装完了 ★★★
 // Updated: 2025-09-14T14:05 - 本番環境デバッグログ追加
 ---
