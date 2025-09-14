@@ -215,7 +215,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -223,20 +227,7 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 本命馬のみ特徴量重要度を表示 */}
-                    {horses.main.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.main.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* 特徴量重要度表示削除 - シンプル化のため */}
                 </div>
                 );
             })}
@@ -254,7 +245,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -262,20 +257,7 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 対抗馬の特徴量重要度を表示 */}
-                    {horses.sub && horses.sub.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.sub.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* 特徴量重要度表示削除 - シンプル化のため */}
                 </div>
                 );
             })}
@@ -293,7 +275,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -469,7 +455,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -477,20 +467,7 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 本命馬のみ特徴量重要度を表示 */}
-                    {horses.main.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.main.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* 特徴量重要度表示削除 - シンプル化のため */}
                 </div>
                 );
             })}
@@ -509,7 +486,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -517,20 +498,7 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 対抗馬の特徴量重要度を表示 */}
-                    {horses.sub && horses.sub.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.sub.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* 特徴量重要度表示削除 - シンプル化のため */}
                 </div>
                 );
             })}
@@ -549,7 +517,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -908,7 +880,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -916,20 +892,7 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 本命馬のみ特徴量重要度を表示 */}
-                    {horses.main.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.main.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* 特徴量重要度表示削除 - シンプル化のため */}
                 </div>
                 );
             })}
@@ -948,7 +911,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>
@@ -956,20 +923,7 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         ))}
                     </div>
                     
-                    {/* 対抗馬の特徴量重要度を表示 */}
-                    {horses.sub && horses.sub.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.sub.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* 特徴量重要度表示削除 - シンプル化のため */}
                 </div>
                 );
             })}
@@ -988,7 +942,11 @@ console.log('✅ 完全固定買い目システム適用 - 確実に表示され
                         </div>
                     </div>
                     <div class="ai-factors">
-                        {horse.factors.map(factor => (
+                        {/* 累積スコアと星評価のみ表示 */}
+                        {horse.factors.filter(factor =>
+                            factor.text.includes('累積スコア') ||
+                            factor.text.includes('総合評価')
+                        ).map(factor => (
                             <div class="factor">
                                 <span class="factor-icon">{factor.icon}</span>
                                 <span>{factor.text}</span>

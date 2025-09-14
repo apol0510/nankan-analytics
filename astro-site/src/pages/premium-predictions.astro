@@ -238,7 +238,11 @@ console.log('race12R:', race12R);
                                             </div>
                                         </div>
                                         <div class="ai-factors">
-                                            {horse.factors && horse.factors.filter(factor => !factor.text.includes('信頼度')).map(factor => (
+                                            {/* 累積スコアと星評価のみ表示 */}
+                                            {horse.factors && horse.factors.filter(factor =>
+                                                factor.text.includes('累積スコア') ||
+                                                factor.text.includes('総合評価')
+                                            ).map(factor => (
                                                 <div class="factor">
                                                     <span class="factor-icon">{factor.icon}</span>
                                                     <span>{factor.text}</span>
@@ -278,7 +282,11 @@ console.log('race12R:', race12R);
                                             </div>
                                         </div>
                                         <div class="ai-factors">
-                                            {horse.factors && horse.factors.filter(factor => !factor.text.includes('信頼度')).map(factor => (
+                                            {/* 累積スコアと星評価のみ表示 */}
+                                            {horse.factors && horse.factors.filter(factor =>
+                                                factor.text.includes('累積スコア') ||
+                                                factor.text.includes('総合評価')
+                                            ).map(factor => (
                                                 <div class="factor">
                                                     <span class="factor-icon">{factor.icon}</span>
                                                     <span>{factor.text}</span>
@@ -318,7 +326,11 @@ console.log('race12R:', race12R);
                                             </div>
                                         </div>
                                         <div class="ai-factors">
-                                            {horse.factors && horse.factors.filter(factor => !factor.text.includes('信頼度')).map(factor => (
+                                            {/* 累積スコアと星評価のみ表示 */}
+                                            {horse.factors && horse.factors.filter(factor =>
+                                                factor.text.includes('累積スコア') ||
+                                                factor.text.includes('総合評価')
+                                            ).map(factor => (
                                                 <div class="factor">
                                                     <span class="factor-icon">{factor.icon}</span>
                                                     <span>{factor.text}</span>
