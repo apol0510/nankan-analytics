@@ -1368,9 +1368,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         ...(selectedMain.score ? [{icon: "🎯", text: `累積スコア: ${selectedMain.score}pt`}] : [])
                     ],
                     importance: [
-                        {label: "安定性", value: (selectedMain.score || 85) / 100},
-                        {label: "能力上位性", value: (selectedMain.score || 85) / 100},
-                        {label: "展開利", value: (selectedMain.score || 85) / 100}
+                        {label: "安定性", value: ((selectedMain.score || 85) + 3) / 100},
+                        {label: "能力上位性", value: ((selectedMain.score || 85) + 3) / 100},
+                        {label: "展開利", value: ((selectedMain.score || 85) - 6) / 100}
                     ]
                 };
             }
@@ -1386,9 +1386,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         ...(selectedSub.score ? [{icon: "🎯", text: `累積スコア: ${selectedSub.score}pt`}] : [])
                     ],
                     importance: [
-                        {label: "先行力", value: (selectedSub.score || 85) / 100},
-                        {label: "スピード指数", value: (selectedSub.score || 85) / 100},
-                        {label: "枠順優位", value: (selectedSub.score || 85) / 100}
+                        {label: "先行力", value: ((selectedSub.score || 85) + 8) / 100},
+                        {label: "スピード指数", value: ((selectedSub.score || 85) - 6) / 100},
+                        {label: "枠順優位", value: ((selectedSub.score || 85) - 2) / 100}
                     ]
                 };
             }
@@ -1403,8 +1403,8 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         {icon: "🎯", text: `累積スコア: ${darkHorses[0].score || 75}pt`}
                     ],
                     importance: [
-                        {label: "安定性", value: (darkHorses[0].score || 75) / 100},
-                        {label: "爆発力", value: (darkHorses[0].score || 75) / 100},
+                        {label: "安定性", value: ((darkHorses[0].score || 75) - 5) / 100},
+                        {label: "爆発力", value: ((darkHorses[0].score || 75) + 5) / 100},
                         {label: "展開利", value: (darkHorses[0].score || 75) / 100}
                     ]
                 };
@@ -1730,9 +1730,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         {icon: "🎯", text: `累積スコア: ${mainHorse.score || 85}pt`}
                     ],
                     importance: [
-                        {label: "安定性", value: (mainHorse.score || 85) / 100},
-                        {label: "能力上位性", value: (mainHorse.score || 85) / 100},
-                        {label: "展開利", value: (mainHorse.score || 85) / 100}
+                        {label: "安定性", value: ((mainHorse.score || 85) + 3) / 100},
+                        {label: "能力上位性", value: ((mainHorse.score || 85) + 3) / 100},
+                        {label: "展開利", value: ((mainHorse.score || 85) - 6) / 100}
                     ]
                 };
             }
@@ -1746,9 +1746,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         {icon: "🎯", text: `累積スコア: ${subHorse.score || 80}pt`}
                     ],
                     importance: [
-                        {label: "先行力", value: (subHorse.score || 85) / 100},
-                        {label: "スピード指数", value: (subHorse.score || 85) / 100},
-                        {label: "枠順優位", value: (subHorse.score || 85) / 100}
+                        {label: "先行力", value: ((subHorse.score || 85) + 8) / 100},
+                        {label: "スピード指数", value: ((subHorse.score || 85) - 6) / 100},
+                        {label: "枠順優位", value: ((subHorse.score || 85) - 2) / 100}
                     ]
                 };
             }
@@ -1762,8 +1762,8 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                         {icon: "🎯", text: `累積スコア: ${darkHorse.score || 75}pt`}
                     ],
                     importance: [
-                        {label: "安定性", value: (darkHorse.score || 75) / 100},
-                        {label: "爆発力", value: (darkHorse.score || 75) / 100},
+                        {label: "安定性", value: ((darkHorse.score || 75) - 5) / 100},
+                        {label: "爆発力", value: ((darkHorse.score || 75) + 5) / 100},
                         {label: "展開利", value: (darkHorse.score || 75) / 100}
                     ]
                 };
