@@ -194,24 +194,27 @@ const strategies = {
                 );
             })}
 
-            {/* 穴馬エリア統合表示 */}
-            {horses?.sub1 && (
+            {/* 20年運営対応: role-based表示（単穴）- 中サイズで表示 */}
+            {normalizedHorses && normalizedHorses.filter(h => h.role === '単穴').length > 0 && (
                 <div class="premium-horses-wrapper free-member-masked">
-
-                    {/* ◎印（単穴）- 中サイズで表示 */}
-                    {horses?.sub1 && ([horses.sub1].map((horse, index) => {
+                    {normalizedHorses.filter(h => h.role === '単穴').map((horse, index) => {
+                        const roleConfig = getRoleDisplayConfig(horse.role);
                         return (
                         <div class="horse-card horse-card-sub">
                             <div class="horse-header">
                                 <div>
-                                    <span class="horse-mark-sub">▲</span>
+                                    <span class={roleConfig.markClass}>{horse.displayMark}</span>
                                     <span class="horse-number">{horse.number}</span>
                                     <span class="horse-name">{horse.name}</span>
-                                    <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
+                                    <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
                                 </div>
                             </div>
                             <div class="ai-factors">
-                                {horse.factors.map(factor => (
+                                {/* 累積スコアと星評価のみ表示 */}
+                                {horse.factors && horse.factors.filter(factor =>
+                                    factor.text.includes('累積スコア') ||
+                                    factor.text.includes('総合評価')
+                                ).map(factor => (
                                     <div class="factor">
                                         <span class="factor-icon">{factor.icon}</span>
                                         <span>{factor.text}</span>
@@ -223,47 +226,53 @@ const strategies = {
                     })}
 
                     {/* △印（連下）- まとめて表示 */}
-                    {allHorses && allHorses.filter(h => h.role === '連下').length > 0 && (
+                    {normalizedHorses && normalizedHorses.filter(h => h.role === '連下').length > 0 && (
                         <div class="horse-card horse-card-minor">
                             <div class="horse-header">
                                 <div>
-                                    <span class="horse-mark-minor">{allHorses.find(h => h.role === '連下')?.displayMark || '△'}</span>
+                                    <span class="horse-mark-minor">{normalizedHorses.find(h => h.role === '連下')?.displayMark || '△'}</span>
                                     <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
                                 </div>
                             </div>
                             <div class="horse-grid">
-                                {allHorses.filter(h => h.role === '連下').map(horse => (
-                                    <div class="horse-grid-item">
-                                        <span class="horse-number-small">{horse.number}</span>
-                                        <span class="horse-name-small">{horse.name}</span>
-                                        <span class="confidence-small">({horse.confidence}%)</span>
-                                    </div>
-                                ))}
+                                {normalizedHorses.filter(h => h.role === '連下').map(horse => {
+                                    const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                                    const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                                    return (
+                                        <div class="horse-grid-item">
+                                            <span class="horse-number-small">{horse.number}</span>
+                                            <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
 
                     {/* ×印（押さえ）- まとめて表示 */}
-                    {allHorses && allHorses.filter(h => h.role === '押さえ').length > 0 && (
+                    {normalizedHorses && normalizedHorses.filter(h => h.role === '押さえ').length > 0 && (
                         <div class="horse-card horse-card-minor">
                             <div class="horse-header">
                                 <div>
-                                    <span class="horse-mark-minor">{allHorses.find(h => h.role === '押さえ')?.displayMark || '×'}</span>
+                                    <span class="horse-mark-minor">{normalizedHorses.find(h => h.role === '押さえ')?.displayMark || '×'}</span>
                                     <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
                                 </div>
                             </div>
                             <div class="horse-grid">
-                                {allHorses.filter(h => h.role === '押さえ').map(horse => (
-                                    <div class="horse-grid-item">
-                                        <span class="horse-number-small">{horse.number}</span>
-                                        <span class="horse-name-small">{horse.name}</span>
-                                        <span class="confidence-small">({horse.confidence}%)</span>
-                                    </div>
-                                ))}
+                                {normalizedHorses.filter(h => h.role === '押さえ').map(horse => {
+                                    const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                                    const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                                    return (
+                                        <div class="horse-grid-item">
+                                            <span class="horse-number-small">{horse.number}</span>
+                                            <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
-                    
+
                     <div class="free-member-overlay">
                         <div class="free-member-content">
                             <div class="free-member-icon">🔒</div>
