@@ -311,22 +311,6 @@ const standardRaces = sortedRaces.filter(race =>
                                                     </div>
                                                 );
                                             })}
-                                            <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
-                                                合計: {raceStrategies.strategies[0].bets?.reduce((total, bet) => {
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
-                                                    let points = 1;
-                                                    if (betStr && typeof betStr === 'string') {
-                                                        if (betStr.includes('⇔')) {
-                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                            points = targets * 2;
-                                                        } else if (betStr.includes('→')) {
-                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                            points = targets;
-                                                        }
-                                                    }
-                                                    return total + points;
-                                                }, 0) || 0}点
-                                            </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.strategies[0].riskLevel}（本命{raceMainHorseScore}pt基準）
@@ -368,22 +352,6 @@ const standardRaces = sortedRaces.filter(race =>
                                                         </div>
                                                     );
                                                 })}
-                                                <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
-                                                    合計: {raceStrategies.strategies[1].bets?.reduce((total, bet) => {
-                                                        const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
-                                                        let points = 1;
-                                                        if (betStr && typeof betStr === 'string') {
-                                                            if (betStr.includes('⇔')) {
-                                                                const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                                points = targets * 2;
-                                                            } else if (betStr.includes('→')) {
-                                                                const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                                points = targets;
-                                                            }
-                                                        }
-                                                        return total + points;
-                                                    }, 0) || 0}点
-                                                </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.strategies[1].riskLevel}（本命{raceMainHorseScore}pt+対抗{raceSubHorseScore}pt平均基準）
@@ -425,22 +393,6 @@ const standardRaces = sortedRaces.filter(race =>
                                                         </div>
                                                     );
                                                 })}
-                                                <div style="color: #10b981; font-weight: bold; margin-top: 10px; text-align: right;">
-                                                    合計: {raceStrategies.strategies[2].bets?.reduce((total, bet) => {
-                                                        const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
-                                                        let points = 1;
-                                                        if (betStr && typeof betStr === 'string') {
-                                                            if (betStr.includes('⇔')) {
-                                                                const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                                points = targets * 2;
-                                                            } else if (betStr.includes('→')) {
-                                                                const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                                points = targets;
-                                                            }
-                                                        }
-                                                        return total + points;
-                                                    }, 0) || 0}点
-                                                </div>
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.strategies[2].riskLevel}（本命{raceMainHorseScore}pt+対抗{raceSubHorseScore}pt平均基準）
