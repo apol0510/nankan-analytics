@@ -48,6 +48,19 @@ export function getHorseConfidenceFromMark(horse) {
         return calculateMarkBasedConfidence(horse);
     }
 
+    // factors内の既存スコアがある場合はそれを使用（fallback）
+    if (horse.factors && Array.isArray(horse.factors)) {
+        const scoreText = horse.factors.find(factor =>
+            factor.text && factor.text.includes('累積スコア')
+        );
+        if (scoreText) {
+            const match = scoreText.text.match(/(\d+)pt/);
+            if (match) {
+                return parseInt(match[1]);
+            }
+        }
+    }
+
     return 62; // デフォルト
 }
 
@@ -323,27 +336,27 @@ export function processUnifiedRaceData(raceData) {
         bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
     };
 
-    // 統一データ形式で返す
+    // 統一データ形式で返す（既存データを優先し、不足分のみ補完）
     return {
         ...raceData,
         horses: {
             main: {
                 ...horses.main,
                 score: mainScore,
-                factors: [
+                factors: horses.main.factors || [
                     {icon: "★", text: mainStars},
                     {icon: "★", text: `累積スコア: ${mainScore}pt`}
                 ],
-                importance: mainImportance
+                importance: horses.main.importance || mainImportance
             },
             sub: {
                 ...horses.sub,
                 score: subScore,
-                factors: [
+                factors: horses.sub.factors || [
                     {icon: "★", text: subStars},
                     {icon: "★", text: `累積スコア: ${subScore}pt`}
                 ],
-                importance: subImportance
+                importance: horses.sub.importance || subImportance
             },
             sub1: horses.sub1,
             sub2: horses.sub2

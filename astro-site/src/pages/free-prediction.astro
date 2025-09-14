@@ -2,88 +2,26 @@
 export const prerender = true; // 静的サイト生成用に戻す
 import BaseLayout from '../layouts/BaseLayout.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity } from '../lib/shared-prediction-logic.js';
+import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
-const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
+const { mainRace, race12R: originalRace12R, sortedRaces } = processRaceData(allRacesData);
 
 if (!mainRace) {
     throw new Error('メインレースが見つかりません。allRacesPrediction.jsonのデータを確認してください。');
 }
 
+// 統一処理関数でデータを正規化（すべてのページで同じ処理）
+const processedMainRace = processUnifiedRaceData(mainRace);
+
+// 処理済みデータから必要な情報を抽出
+const { raceInfo, horses, analysis, preview, allHorses, totalHorses } = processedMainRace;
+
+// 統一処理されたデータから戦略情報を抽出
+const strategies = processedMainRace.strategies || {};
+
 // 20年運営対応: データ正規化システム使用
-const normalizedHorses = normalizeHorseData(mainRace);
-const { raceInfo, horses, analysis, preview, totalHorses } = mainRace;
-const allHorses = normalizedHorses; // 正規化されたデータを使用
-
-// 動的リスクシステム適用
-const mainHorseScore = horses.main ? getHorseConfidenceFromMark(horses.main) : 62;
-const subHorseScore = horses.sub ? getHorseConfidenceFromMark(horses.sub) : 62;
-
-// 戦略別動的計算
-const strategyA = {
-    type: 'A',
-    title: '少点数的中型',
-    risk: calculateDynamicRisk('A', mainHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
-};
-strategyA.riskText = getRiskLevelText(strategyA.risk);
-strategyA.recommendation = getRecommendationStars(strategyA.risk);
-const { hitRate: hitRateA, returnRate: returnRateA } = calculateHitRateAndReturn('A', strategyA.risk);
-strategyA.hitRate = hitRateA;
-strategyA.returnRate = returnRateA;
-
-const strategyB = {
-    type: 'B',
-    title: 'バランス型',
-    risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
-};
-strategyB.riskText = getRiskLevelText(strategyB.risk);
-strategyB.recommendation = getRecommendationStars(strategyB.risk);
-const { hitRate: hitRateB, returnRate: returnRateB } = calculateHitRateAndReturn('B', strategyB.risk);
-strategyB.hitRate = hitRateB;
-strategyB.returnRate = returnRateB;
-
-const strategyC = {
-    type: 'C',
-    title: '高配当追求型',
-    risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
-    bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
-};
-strategyC.riskText = getRiskLevelText(strategyC.risk);
-strategyC.recommendation = getRecommendationStars(strategyC.risk);
-const { hitRate: hitRateC, returnRate: returnRateC } = calculateHitRateAndReturn('C', strategyC.risk);
-strategyC.hitRate = hitRateC;
-strategyC.returnRate = returnRateC;
-
-// 新しい戦略データを作成（既存のstrategies変数と互換性維持）
-const strategies = {
-    safe: {
-        title: strategyA.title,
-        recommendation: strategyA.recommendation.length,
-        hitRate: strategyA.hitRate,
-        returnRate: strategyA.returnRate,
-        riskLevel: strategyA.riskText,
-        bets: strategyA.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '3-6倍' }))
-    },
-    balance: {
-        title: strategyB.title,
-        recommendation: strategyB.recommendation.length,
-        hitRate: strategyB.hitRate,
-        returnRate: strategyB.returnRate,
-        riskLevel: strategyB.riskText,
-        bets: strategyB.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '6-12倍' }))
-    },
-    aggressive: {
-        title: strategyC.title,
-        recommendation: strategyC.recommendation.length,
-        hitRate: strategyC.hitRate,
-        returnRate: strategyC.returnRate,
-        riskLevel: strategyC.riskText,
-        bets: strategyC.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '12倍以上' }))
-    }
-};
+const normalizedHorses = normalizeHorseData(processedMainRace);
 ---
 
 <BaseLayout title={`AI予想分析 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想を無料で提供中。`}>
