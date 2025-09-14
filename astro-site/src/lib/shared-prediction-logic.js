@@ -144,7 +144,7 @@ export function getRecommendationStars(riskPercentage) {
     if (riskPercentage <= 25) return "★★★★★";
     if (riskPercentage <= 35) return "★★★★☆";
     if (riskPercentage <= 50) return "★★★☆☆";
-    if (riskPercentage <= 65) return "★★☆☆☆";
+    if (riskPercentage <= 70) return "★★☆☆☆";  // 高配当追求型を★★にするため閾値を70%に拡張
     return "★☆☆☆☆";
 }
 
@@ -153,7 +153,7 @@ export function getRecommendationCount(riskPercentage) {
     if (riskPercentage <= 25) return 5;
     if (riskPercentage <= 35) return 4;
     if (riskPercentage <= 50) return 3;
-    if (riskPercentage <= 65) return 2;
+    if (riskPercentage <= 70) return 2;  // 高配当追求型を★★にするため閾値を70%に拡張
     return 1;
 }
 
