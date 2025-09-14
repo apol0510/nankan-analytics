@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn } from '../lib/shared-prediction-logic.js';
+import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -121,7 +121,16 @@ console.log('race12R:', race12R);
         {sortedRaces.map((raceData) => {
             const raceNum = raceData.raceNumber.replace('R', '');
             const isMainRace = raceData.isMainRace;
-            const raceHorses = raceData.allHorses || [];
+
+            // 20年運営対応: データ正規化システム使用
+            const normalizedHorses = normalizeHorseData(raceData);
+            const raceHorses = normalizedHorses; // 正規化されたデータを使用
+
+            // データ整合性チェック（開発環境でのみログ出力）
+            const integrity = validateDataIntegrity(raceData);
+            if (integrity.length > 0) {
+                console.warn(`Race ${raceData.raceNumber} integrity issues:`, integrity);
+            }
 
             // 各レースで動的に戦略を生成
             const raceMainHorseScore = raceData.horses?.main ? getHorseConfidenceFromMark(raceData.horses.main) : 62;
@@ -215,15 +224,17 @@ console.log('race12R:', race12R);
                                     <span>AIモデル選出馬 - XGBoost×LSTM統合分析</span>
                                 </h2>
 
-                                {/* ◎印（本命）- 最も大きく表示 */}
-                                {raceHorses && raceHorses.filter(h => h.mark === '◎').map((horse, index) => (
+                                {/* 20年運営対応: role-based表示（本命）- 最も大きく表示 */}
+                                {raceHorses && raceHorses.filter(h => h.role === '本命').map((horse, index) => {
+                                    const roleConfig = getRoleDisplayConfig(horse.role);
+                                    return (
                                     <div class="horse-card horse-card-main">
                                         <div class="horse-header">
                                             <div>
-                                                <span class="horse-mark-main">◎</span>
+                                                <span class={roleConfig.markClass}>{horse.displayMark}</span>
                                                 <span class="horse-number">{horse.number}</span>
                                                 <span class="horse-name">{horse.name}</span>
-                                                <span class="horse-type" style="margin-left: 10px; color: #10b981; font-weight: 600;">本命</span>
+                                                <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
                                             </div>
                                         </div>
                                         <div class="ai-factors">
@@ -252,15 +263,17 @@ console.log('race12R:', race12R);
                                     </div>
                                 ))}
 
-                                {/* ○印（対抗）- 中サイズで表示 */}
-                                {raceHorses && raceHorses.filter(h => h.mark === '○' || h.mark === '◯').map((horse, index) => (
+                                {/* 20年運営対応: role-based表示（対抗）- 中サイズで表示 */}
+                                {raceHorses && raceHorses.filter(h => h.role === '対抗').map((horse, index) => {
+                                    const roleConfig = getRoleDisplayConfig(horse.role);
+                                    return (
                                     <div class="horse-card horse-card-sub">
                                         <div class="horse-header">
                                             <div>
-                                                <span class="horse-mark-sub">○</span>
+                                                <span class={roleConfig.markClass}>{horse.displayMark}</span>
                                                 <span class="horse-number">{horse.number}</span>
                                                 <span class="horse-name">{horse.name}</span>
-                                                <span class="horse-type" style="margin-left: 10px; color: #3b82f6; font-weight: 600;">対抗</span>
+                                                <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
                                             </div>
                                         </div>
                                         <div class="ai-factors">
@@ -287,17 +300,19 @@ console.log('race12R:', race12R);
                                             </div>
                                         )}
                                     </div>
-                                ))}
+                                )})
 
-                                {/* ▲印（単穴）- 中サイズで表示 */}
-                                {raceHorses && raceHorses.filter(h => h.mark === '▲').map((horse, index) => (
+                                {/* 20年運営対応: role-based表示（単穴）- 中サイズで表示 */}
+                                {raceHorses && raceHorses.filter(h => h.role === '単穴').map((horse, index) => {
+                                    const roleConfig = getRoleDisplayConfig(horse.role);
+                                    return (
                                     <div class="horse-card horse-card-sub">
                                         <div class="horse-header">
                                             <div>
-                                                <span class="horse-mark-sub">▲</span>
+                                                <span class={roleConfig.markClass}>{horse.displayMark}</span>
                                                 <span class="horse-number">{horse.number}</span>
                                                 <span class="horse-name">{horse.name}</span>
-                                                <span class="horse-type" style="margin-left: 10px; color: #8b5cf6; font-weight: 600;">単穴</span>
+                                                <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
                                             </div>
                                         </div>
                                         <div class="ai-factors">
@@ -309,19 +324,19 @@ console.log('race12R:', race12R);
                                             ))}
                                         </div>
                                     </div>
-                                ))}
+                                )})
 
-                                {/* △印（連下）- まとめて表示 */}
-                                {raceHorses && raceHorses.filter(h => h.mark === '△').length > 0 && (
+                                {/* 20年運営対応: role-based表示（連下）- まとめて表示 */}
+                                {raceHorses && raceHorses.filter(h => h.role === '連下').length > 0 && (
                                     <div class="horse-card horse-card-minor">
                                         <div class="horse-header">
                                             <div>
-                                                <span class="horse-mark-minor">△</span>
+                                                <span class="horse-mark-minor">{raceHorses.find(h => h.role === '連下')?.displayMark || '△'}</span>
                                                 <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
                                             </div>
                                         </div>
                                         <div class="horse-grid">
-                                            {raceHorses.filter(h => h.mark === '△').map(horse => {
+                                            {raceHorses.filter(h => h.role === '連下').map(horse => {
                                                 const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
                                                 const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
                                                 return (
@@ -335,17 +350,17 @@ console.log('race12R:', race12R);
                                     </div>
                                 )}
 
-                                {/* ×印（押さえ）- まとめて表示 */}
-                                {raceHorses && raceHorses.filter(h => h.mark === '×').length > 0 && (
+                                {/* 20年運営対応: role-based表示（押さえ）- まとめて表示 */}
+                                {raceHorses && raceHorses.filter(h => h.role === '押さえ').length > 0 && (
                                     <div class="horse-card horse-card-minor">
                                         <div class="horse-header">
                                             <div>
-                                                <span class="horse-mark-minor">×</span>
+                                                <span class="horse-mark-minor">{raceHorses.find(h => h.role === '押さえ')?.displayMark || '×'}</span>
                                                 <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
                                             </div>
                                         </div>
                                         <div class="horse-grid">
-                                            {raceHorses.filter(h => h.mark === '×').map(horse => {
+                                            {raceHorses.filter(h => h.role === '押さえ').map(horse => {
                                                 const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
                                                 const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
                                                 return (
@@ -376,13 +391,15 @@ console.log('race12R:', race12R);
                                                 AIモデル予測: 的中率{raceStrategies.safe.hitRate}% / 期待回収率{raceStrategies.safe.returnRate}%
                                             </div>
                                             <div class="bet-list">
-                                                {raceStrategies.safe.bets && raceStrategies.safe.bets.map(bet => (
+                                                {raceStrategies.safe.bets && raceStrategies.safe.bets.map(bet => {
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
+                                                    return (
                                                     <div class="bet-item">
                                                         <span class="bet-type">馬単</span>
-                                                        <span class="bet-horses">{typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet)}</span>
+                                                        <span class="bet-horses">{betStr}</span>
                                                         <span class="bet-points">3点</span>
                                                     </div>
-                                                ))}
+                                                );})}
                                             </div>
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 リスク: {raceStrategies.safe.riskLevel}（本命{raceMainHorseScore}pt基準）
@@ -405,12 +422,12 @@ console.log('race12R:', race12R);
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.balance.bets && raceStrategies.balance.bets.map(bet => {
-                                                    const betStr = typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet);
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
                                                     let points = '3点';
-                                                    if (betStr.includes('⇔')) {
+                                                    if (typeof betStr === 'string' && betStr.includes('⇔')) {
                                                         const targets = betStr.split('⇔')[1].split(',').length;
                                                         points = `${targets * 2}点`;
-                                                    } else if (betStr.includes('→')) {
+                                                    } else if (typeof betStr === 'string' && betStr.includes('→')) {
                                                         const targets = betStr.split('→')[1].split(',').length;
                                                         points = `${targets}点`;
                                                     }
@@ -444,12 +461,12 @@ console.log('race12R:', race12R);
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.aggressive.bets && raceStrategies.aggressive.bets.map(bet => {
-                                                    const betStr = typeof bet === 'string' ? bet : bet.horses || bet.numbers || JSON.stringify(bet);
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
                                                     let points = '2点';
-                                                    if (betStr.includes('⇔')) {
+                                                    if (typeof betStr === 'string' && betStr.includes('⇔')) {
                                                         const targets = betStr.split('⇔')[1].split(',').length;
                                                         points = `${targets * 2}点`;
-                                                    } else if (betStr.includes('→')) {
+                                                    } else if (typeof betStr === 'string' && betStr.includes('→')) {
                                                         const targets = betStr.split('→')[1].split(',').length;
                                                         points = `${targets}点`;
                                                     }

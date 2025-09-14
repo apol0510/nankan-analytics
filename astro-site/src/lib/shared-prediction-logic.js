@@ -287,3 +287,132 @@ export function processRaceData(allRacesData) {
         sortedRaces
     };
 }
+
+// ===============================
+// 20年運営対応: データ正規化システム
+// ===============================
+
+// 役割表示設定（デザイン100%保持）
+const ROLE_DISPLAY_CONFIG = {
+    "本命": {
+        markClass: "horse-mark-main",
+        typeClass: "horse-type",
+        style: "margin-left: 10px; color: #10b981; font-weight: 600;",
+        priority: 1,
+        defaultMark: "◎"
+    },
+    "対抗": {
+        markClass: "horse-mark-sub",
+        typeClass: "horse-type",
+        style: "margin-left: 10px; color: #3b82f6; font-weight: 600;",
+        priority: 2,
+        defaultMark: "○"
+    },
+    "単穴": {
+        markClass: "horse-mark-sub",
+        typeClass: "horse-type",
+        style: "margin-left: 10px; color: #8b5cf6; font-weight: 600;",
+        priority: 3,
+        defaultMark: "▲"
+    },
+    "連下": {
+        markClass: "horse-mark-other",
+        typeClass: "horse-type",
+        style: "margin-left: 10px; color: #f59e0b; font-weight: 600;",
+        priority: 4,
+        defaultMark: "△"
+    },
+    "押さえ": {
+        markClass: "horse-mark-other",
+        typeClass: "horse-type",
+        style: "margin-left: 10px; color: #6b7280; font-weight: 600;",
+        priority: 5,
+        defaultMark: "×"
+    }
+};
+
+// データ正規化関数（Single Source of Truth実現）
+export function normalizeHorseData(raceData) {
+    const { horses, allHorses } = raceData;
+    const normalizedHorses = [];
+
+    // Phase 1: main/subを最優先で追加（役割確定）
+    if (horses.main) {
+        const mainHorse = {
+            ...horses.main,
+            role: "本命",
+            displayMark: horses.main.mark || ROLE_DISPLAY_CONFIG["本命"].defaultMark,
+            priority: ROLE_DISPLAY_CONFIG["本命"].priority
+        };
+        normalizedHorses.push(mainHorse);
+    }
+
+    if (horses.sub) {
+        const subHorse = {
+            ...horses.sub,
+            role: "対抗",
+            displayMark: horses.sub.mark || ROLE_DISPLAY_CONFIG["対抗"].defaultMark,
+            priority: ROLE_DISPLAY_CONFIG["対抗"].priority
+        };
+        normalizedHorses.push(subHorse);
+    }
+
+    // Phase 2: 他の馬を追加（main/subと重複回避）
+    if (allHorses && Array.isArray(allHorses)) {
+        allHorses.forEach(horse => {
+            // main/subと重複しないものを追加
+            if (horse.number !== horses.main?.number &&
+                horse.number !== horses.sub?.number) {
+
+                const role = horse.type || "連下"; // 既存typeをroleとして使用
+                const config = ROLE_DISPLAY_CONFIG[role] || ROLE_DISPLAY_CONFIG["連下"];
+
+                const normalizedHorse = {
+                    ...horse,
+                    role: role,
+                    displayMark: horse.mark || config.defaultMark,
+                    priority: config.priority
+                };
+                normalizedHorses.push(normalizedHorse);
+            }
+        });
+    }
+
+    // 優先度順でソート（本命→対抗→単穴→連下→押さえ）
+    normalizedHorses.sort((a, b) => a.priority - b.priority);
+
+    return normalizedHorses;
+}
+
+// 役割表示設定取得
+export function getRoleDisplayConfig(role) {
+    return ROLE_DISPLAY_CONFIG[role] || ROLE_DISPLAY_CONFIG["連下"];
+}
+
+// データ整合性チェック
+export function validateDataIntegrity(raceData) {
+    const errors = [];
+
+    // 基本構造チェック
+    if (!raceData.horses) errors.push("horses object missing");
+    if (!raceData.horses.main) errors.push("main horse missing");
+    if (!raceData.horses.sub) errors.push("sub horse missing");
+    if (!raceData.allHorses || !Array.isArray(raceData.allHorses)) {
+        errors.push("allHorses array missing or invalid");
+    }
+
+    // 重複チェック
+    if (raceData.allHorses) {
+        const numbers = raceData.allHorses.map(h => h.number);
+        const duplicates = numbers.filter((n, i) => numbers.indexOf(n) !== i);
+        if (duplicates.length > 0) errors.push(`duplicate numbers: ${duplicates.join(',')}`);
+    }
+
+    // main/sub整合性チェック
+    if (raceData.horses.main && raceData.allHorses) {
+        const mainInAll = raceData.allHorses.find(h => h.number === raceData.horses.main.number);
+        if (!mainInAll) errors.push("main horse not found in allHorses");
+    }
+
+    return errors;
+}

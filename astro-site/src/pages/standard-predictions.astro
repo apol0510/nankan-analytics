@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, calculateBetPoints } from '../lib/shared-prediction-logic.js';
+import { calculateMarkBasedConfidence, getHorseConfidenceFromMark, getRaceConfidence, convertToStarRating, processRaceData, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, calculateBetPoints, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
