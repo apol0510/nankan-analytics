@@ -410,9 +410,15 @@ export function processUnifiedRaceData(raceData) {
             sub2: horses.sub2
         },
         strategies: {
+            combinationTip: {
+                title: '的中率向上テクニック',
+                icon: '💡',
+                message: 'オッズを確認し、🔔 少点数的中型と⚖️ バランス型を組み合わせることで的中率が大幅に向上します。',
+                description: 'レース展開や馬場状態に応じて2つの戦略の買い目を併用することで、リスク分散と収益機会の最大化を実現できます。'
+            },
             safe: {
-                title: '戦略A: 高的中率型',
-                recommendation: getRecommendationStars(strategyA.riskPercent),
+                title: '🔔 少点数的中型',
+                recommendation: '★★',  // 固定値
                 hitRate: strategyA.hitRate,
                 returnRate: strategyA.returnRate,
                 riskLevel: strategyA.riskText,
@@ -421,8 +427,8 @@ export function processUnifiedRaceData(raceData) {
                 payoutType: '堅実決着想定'
             },
             balance: {
-                title: '戦略B: バランス型',
-                recommendation: getRecommendationStars(strategyB.riskPercent),
+                title: '⚖️ バランス型',
+                recommendation: '★★★',  // 固定値
                 hitRate: strategyB.hitRate,
                 returnRate: strategyB.returnRate,
                 riskLevel: strategyB.riskText,
@@ -431,8 +437,8 @@ export function processUnifiedRaceData(raceData) {
                 payoutType: '中穴配当想定'
             },
             aggressive: {
-                title: '戦略C: 高配当追求型',
-                recommendation: getRecommendationStars(strategyC.riskPercent),
+                title: '🚀 高配当追求型',
+                recommendation: '★★',  // 固定値
                 hitRate: strategyC.hitRate,
                 returnRate: strategyC.returnRate,
                 riskLevel: strategyC.riskText,
