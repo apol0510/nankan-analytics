@@ -71,6 +71,10 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             // 新しい戦略データを全レースに適用（統一システム使用）
             const processedData = getPredictionDataWithStrategies(raceData.horses);
             const raceStrategies = processedData;
+
+            // リスク表示用のスコア変数を定義
+            const raceMainHorseScore = getHorseConfidenceFromMark(raceData.horses.main);
+            const raceSubHorseScore = getHorseConfidenceFromMark(raceData.horses.sub);
             
             return (
                 <div class={`race-${raceNum}r-accordion`}>

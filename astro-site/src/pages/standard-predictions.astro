@@ -80,6 +80,10 @@ const standardRaces = sortedRaces.filter(race =>
             const processedData = getPredictionDataWithStrategies(raceData.horses);
             const raceStrategies = processedData;
 
+            // リスク表示用のスコア変数を定義
+            const raceMainHorseScore = getHorseConfidenceFromMark(raceData.horses.main);
+            const raceSubHorseScore = getHorseConfidenceFromMark(raceData.horses.sub);
+
             return (
                 <div class={`race-${raceNum}r-accordion`}>
                     <div class="race-accordion-header" onclick={`toggleRace${raceNum}R()`}>
