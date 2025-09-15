@@ -14,9 +14,9 @@ const { strategyType, progressConfidence, baseScore, reduction, strategyTitle } 
 // 戦略別透明感グラデーションカラー設定（ログアウトボタン・ポイントバッジと統一）
 const getStrategyColor = (type: string) => {
     const colors = {
-        'A': 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.25) 50%, rgba(4, 120, 87, 0.2) 100%)', // 緑系透明グラデーション（少点数的中型）
-        'B': 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.25) 50%, rgba(29, 78, 216, 0.2) 100%)', // 青系透明グラデーション（バランス型）
-        'C': 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.25) 50%, rgba(180, 83, 9, 0.2) 100%)'  // オレンジ系透明グラデーション（高配当追求型）
+        'A': 'linear-gradient(135deg, rgba(250, 204, 21, 0.15) 0%, rgba(245, 158, 11, 0.25) 50%, rgba(217, 119, 6, 0.2) 100%)', // 黄色系透明グラデーション（少点数的中型）
+        'B': 'linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(249, 115, 22, 0.25) 50%, rgba(234, 88, 12, 0.2) 100%)', // オレンジ系透明グラデーション（バランス型）
+        'C': 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.25) 50%, rgba(185, 28, 28, 0.2) 100%)'  // 赤系透明グラデーション（高配当追求型）
     };
     return colors[type] || 'linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(75, 85, 99, 0.2) 100%)';
 };
@@ -24,9 +24,9 @@ const getStrategyColor = (type: string) => {
 // 戦略別透明感シャドウカラー設定
 const getStrategyShadow = (type: string) => {
     const shadows = {
-        'A': '0 4px 15px rgba(16, 185, 129, 0.12), 0 2px 8px rgba(16, 185, 129, 0.08)', // 緑系透明グロー
-        'B': '0 4px 15px rgba(59, 130, 246, 0.12), 0 2px 8px rgba(59, 130, 246, 0.08)', // 青系透明グロー
-        'C': '0 4px 15px rgba(245, 158, 11, 0.12), 0 2px 8px rgba(245, 158, 11, 0.08)'  // オレンジ系透明グロー
+        'A': '0 4px 15px rgba(250, 204, 21, 0.12), 0 2px 8px rgba(250, 204, 21, 0.08)', // 黄色系透明グロー
+        'B': '0 4px 15px rgba(251, 146, 60, 0.12), 0 2px 8px rgba(251, 146, 60, 0.08)', // オレンジ系透明グロー
+        'C': '0 4px 15px rgba(239, 68, 68, 0.12), 0 2px 8px rgba(239, 68, 68, 0.08)'  // 赤系透明グロー
     };
     return shadows[type] || '0 4px 15px rgba(107, 114, 128, 0.08)';
 };
