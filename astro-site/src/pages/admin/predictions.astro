@@ -2380,9 +2380,43 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
             let globalTrack = null;
 
             for (const line of lines) {
+                // 日付の検出（例: "2025年9月17日"）
+                const dateMatch = line.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+                if (dateMatch) {
+                    const [, year, month, day] = dateMatch;
+                    globalDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                    continue;
+                }
+
+                // 大井シンプル形式の検出（例: "大井01R"）
+                const ooiSimpleMatch = line.match(/^(大井|川崎|船橋|浦和)(\d{2})R$/);
+                if (ooiSimpleMatch) {
+                    // 前のレースを保存
+                    if (currentRace && currentRace.horses.length > 0) {
+                        result.races.push(currentRace);
+                    }
+
+                    const [, track, raceNum] = ooiSimpleMatch;
+                    globalTrack = track + '競馬';
+
+                    currentRace = {
+                        raceNumber: parseInt(raceNum),
+                        raceName: `${raceNum}R`,
+                        raceDate: globalDate || new Date().toISOString().split('T')[0],
+                        trackName: globalTrack,
+                        raceDistance: '0',  // デフォルト値
+                        horseCount: 0,  // 後で馬数をカウント
+                        startTime: '00:00',  // デフォルト値
+                        horses: [],
+                    };
+
+                    showConversionProgress(`📝 ${track}${raceNum}R を解析中...`);
+                    continue;
+                }
+
                 // レース情報行の検出（例: "8/24川崎2R 1,200m（10頭）発走時刻15:20 サラ系3歳"）
                 const raceInfoMatch = line.match(/(\d+\/\d+)([^\d]*?)(\d+)R\s*([^\s]+)\s*[（(](\d+)頭[）)]\s*発走時刻(\d+:\d+)\s*(.+)/);
-                
+
                 if (raceInfoMatch) {
                     // 前のレースを保存
                     if (currentRace && currentRace.horses.length > 0) {
@@ -2411,12 +2445,36 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                 }
 
                 // 馬情報の検出
-                // 新形式: "8番 ◎ ○ ▲ ▲ キチョウ" 
-                // 旧形式: "◎8キチョウ" も継続対応
+                // 大井形式: "4　△▲△　ベッティーナ" または "1　　エンバーク"
+                const ooiFormatMatch = line.match(/^(\d+)\s+([◎○▲△×\s]*)\s+(\S+.*)$/);
+                // 新形式: "8番 ◎ ○ ▲ ▲ キチョウ"
                 const newFormatMatch = line.match(/^(\d+)番\s+([◎○▲△×\s]+)\s+(.+)/);
+                // 旧形式: "◎8キチョウ" も継続対応
                 const oldFormatMatch = line.match(/^([◎○▲△×])(\d+)(.+)/);
-                
-                if (newFormatMatch && currentRace) {
+
+                if (ooiFormatMatch && currentRace && !newFormatMatch) {
+                    const [, number, marksStr, name] = ooiFormatMatch;
+                    const marks = marksStr.trim().split('').filter(mark => /[◎○▲△×]/.test(mark));
+
+                    // 累積スコア計算（ベース62pt + 印の値）
+                    const markValues = {'◎': 7, '○': 6, '▲': 5, '△': 4, '×': 0};
+                    const totalScore = 62 + marks.reduce((sum, mark) => sum + (markValues[mark] || 0), 0);
+
+                    currentRace.horses.push({
+                        mark: marks[0] || '',  // 最初の印を表示用マークとして使用（印なしの場合は空文字）
+                        marks: marks.length > 0 ? marks : [],  // 全印を保存
+                        number: parseInt(number),
+                        name: name.trim(),
+                        score: marks.length > 0 ? totalScore : 62  // 印なしの場合はベーススコアのみ
+                    });
+
+                    // 馬数をカウント
+                    if (currentRace.horseCount === 0) {
+                        currentRace.horseCount = parseInt(number);  // 最初の馬番号で初期化
+                    } else {
+                        currentRace.horseCount = Math.max(currentRace.horseCount, parseInt(number));
+                    }
+                } else if (newFormatMatch && currentRace) {
                     const [, number, marksStr, name] = newFormatMatch;
                     const marks = marksStr.trim().split(/\s+/).filter(mark => /[◎○▲△×]/.test(mark));
                     
