@@ -176,35 +176,27 @@ export function generateStandardizedBets(horses, strategyType) {
     const osaeHorses = allHorses.filter(h => h.type === '押さえ').sort((a, b) => a.number - b.number);
     const tananaHorses = allHorses.filter(h => h.type === '単穴').sort((a, b) => a.number - b.number);
 
-    // フォールバックデータ: allHorsesが空の場合のダミーデータ生成
-    if (renkuHorses.length === 0) {
-        // 連下馬がいない場合、本命・対抗以外の番号で補完
-        for (let i = 1; i <= 12; i++) {
-            if (i !== mainNumber && i !== subNumber && renkuHorses.length < 4) {
-                renkuHorses.push({ number: i, type: '連下' });
-            }
-        }
-    }
+    // 💡 復活防止対策: フォールバック削除、有効な馬のみ使用
+    console.log(`🐎 Horse analysis for strategy ${strategyType}:`);
+    console.log(`   Main: ${mainNumber}番, Sub: ${subNumber}番`);
+    console.log(`   連下: ${renkuHorses.map(h => h.number).join(',')}番 (${renkuHorses.length}頭)`);
+    console.log(`   単穴: ${tananaHorses.map(h => h.number).join(',')}番 (${tananaHorses.length}頭)`);
+    console.log(`   押さえ: ${osaeHorses.map(h => h.number).join(',')}番 (${osaeHorses.length}頭)`);
 
-    if (tananaHorses.length === 0) {
-        // 単穴馬がいない場合、連下以外の番号で補完
-        const usedNumbers = [...renkuHorses.map(h => h.number), mainNumber, subNumber];
-        for (let i = 1; i <= 12; i++) {
-            if (!usedNumbers.includes(i) && tananaHorses.length < 2) {
-                tananaHorses.push({ number: i, type: '単穴' });
-            }
-        }
-    }
+    // 有効馬チェック: スコア62pt超えの馬のみ使用（印なし馬を除外）
+    const validRenkuHorses = renkuHorses.filter(h => h.score && h.score > 62);
+    const validTananaHorses = tananaHorses.filter(h => h.score && h.score > 62);
+    const validOsaeHorses = osaeHorses.filter(h => h.score && h.score > 62);
 
-    if (osaeHorses.length === 0) {
-        // 押さえ馬がいない場合、他の役割以外の番号で補完
-        const usedNumbers = [...renkuHorses.map(h => h.number), ...tananaHorses.map(h => h.number), mainNumber, subNumber];
-        for (let i = 1; i <= 12; i++) {
-            if (!usedNumbers.includes(i) && osaeHorses.length < 2) {
-                osaeHorses.push({ number: i, type: '押さえ' });
-            }
-        }
-    }
+    console.log(`✅ Valid horses (score > 62pt):`);
+    console.log(`   連下: ${validRenkuHorses.map(h => `${h.number}(${h.score}pt)`).join(',')} (${validRenkuHorses.length}頭)`);
+    console.log(`   単穴: ${validTananaHorses.map(h => `${h.number}(${h.score}pt)`).join(',')} (${validTananaHorses.length}頭)`);
+    console.log(`   押さえ: ${validOsaeHorses.map(h => `${h.number}(${h.score}pt)`).join(',')} (${validOsaeHorses.length}頭)`);
+
+    // 有効馬の再代入（フォールバック禁止）
+    const finalRenkuHorses = validRenkuHorses;
+    const finalTananaHorses = validTananaHorses;
+    const finalOsaeHorses = validOsaeHorses;
 
     let bets = [];
 
@@ -213,40 +205,43 @@ export function generateStandardizedBets(horses, strategyType) {
             // 対抗、単穴1、単穴2の順で構成
             const targetsA = [];
             targetsA.push(subNumber); // 対抗
-            if (tananaHorses[0]) targetsA.push(tananaHorses[0].number); // 単穴1番目
-            if (tananaHorses[1]) targetsA.push(tananaHorses[1].number); // 単穴2番目
+            if (finalTananaHorses[0]) targetsA.push(finalTananaHorses[0].number); // 単穴1番目
+            if (finalTananaHorses[1]) targetsA.push(finalTananaHorses[1].number); // 単穴2番目
 
             bets = [`${mainNumber} → ${targetsA.join(',')}`];
+            console.log(`🎯 Strategy A betting: ${mainNumber} → ${targetsA.join(',')}`);
             break;
 
         case 'B': // バランス型 - 本命⇔連下4頭 + 対抗→{単穴1,単穴2,本命}
             // 本命⇔連下4頭（8点）
-            const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
+            const renkuNumbers = finalRenkuHorses.slice(0, 4).map(h => h.number);
             if (renkuNumbers.length >= 4) {
                 bets.push(`${mainNumber} ⇔ ${renkuNumbers.join(',')}`);
             }
 
             // 対抗→{単穴1, 単穴2, 本命}（3点）
             const targetsB = [];
-            if (tananaHorses[1]) targetsB.push(tananaHorses[1].number); // 単穴2番目
-            if (tananaHorses[0]) targetsB.push(tananaHorses[0].number); // 単穴1番目
+            if (finalTananaHorses[1]) targetsB.push(finalTananaHorses[1].number); // 単穴2番目
+            if (finalTananaHorses[0]) targetsB.push(finalTananaHorses[0].number); // 単穴1番目
             targetsB.push(mainNumber); // 本命
 
             bets.push(`${subNumber} → ${targetsB.join(',')}`);
+            console.log(`⚖️ Strategy B betting: ${mainNumber} ⇔ ${renkuNumbers.join(',')} + ${subNumber} → ${targetsB.join(',')}`);
             break;
 
         case 'C': // 高配当追求型 - 本命→連下3頭 + 対抗⇔連下4頭
             // 本命→連下3頭（2点）
-            const renkuForCMain = renkuHorses.slice(0, 3).map(h => h.number);
+            const renkuForCMain = finalRenkuHorses.slice(0, 3).map(h => h.number);
             if (renkuForCMain.length >= 2) {
                 bets.push(`${mainNumber} → ${renkuForCMain.join(',')}`);
             }
 
             // 対抗⇔連下4頭（12点）
-            const renkuForC = renkuHorses.slice(0, 4).map(h => h.number);
+            const renkuForC = finalRenkuHorses.slice(0, 4).map(h => h.number);
             if (renkuForC.length >= 4) {
                 bets.push(`${subNumber} ⇔ ${renkuForC.join(',')}`);
             }
+            console.log(`🚀 Strategy C betting: ${mainNumber} → ${renkuForCMain.join(',')} + ${subNumber} ⇔ ${renkuForC.join(',')}`);
             break;
     }
 
