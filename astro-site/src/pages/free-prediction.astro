@@ -283,7 +283,7 @@ const strategies = {
                 </div>
                 <div class="risk-indicator">
                     <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                    <div class="risk-bar active risk-low" style="width: 30%;"></div>
+                    <div class="risk-bar active expectation-high" style="width: 90%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
@@ -314,7 +314,7 @@ const strategies = {
                 </div>
                 <div class="risk-indicator">
                     <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                    <div class="risk-bar active risk-medium" style="width: 60%;"></div>
+                    <div class="risk-bar active expectation-medium" style="width: 60%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
@@ -345,7 +345,7 @@ const strategies = {
                 </div>
                 <div class="risk-indicator">
                     <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                    <div class="risk-bar active risk-high" style="width: 100%;"></div>
+                    <div class="risk-bar active expectation-low" style="width: 30%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
@@ -736,14 +736,14 @@ const strategies = {
         background: rgba(255, 255, 255, 0.1);
         border-radius: 4px;
     }
-    .risk-bar.active.risk-low {
-        background: #10b981; /* 緑色 - 低リスク */
+    .risk-bar.active.expectation-high {
+        background: #10b981; /* 緑色 - 期待度最高 */
     }
-    .risk-bar.active.risk-medium {
-        background: #f59e0b; /* オレンジ色 - 中リスク */
+    .risk-bar.active.expectation-medium {
+        background: #3b82f6; /* 青色 - 期待度高 */
     }
-    .risk-bar.active.risk-high {
-        background: #ef4444; /* 赤色 - 高リスク */
+    .risk-bar.active.expectation-low {
+        background: #94a3b8; /* グレー - 期待度標準 */
     }
     
     /* 旧スタイル（フォールバック） */

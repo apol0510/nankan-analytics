@@ -323,7 +323,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             </div>
                                             <div class="risk-indicator">
                                                 <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active risk-low" style="width: 30%;"></div>
+                                                <div class="risk-bar active expectation-high" style="width: 90%;"></div>
                                                 <div class="risk-bar"></div>
                                                 <div class="risk-bar"></div>
                                             </div>
@@ -365,7 +365,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             </div>
                                             <div class="risk-indicator">
                                                 <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active risk-medium" style="width: 60%;"></div>
+                                                <div class="risk-bar active expectation-medium" style="width: 60%;"></div>
                                                 <div class="risk-bar"></div>
                                                 <div class="risk-bar"></div>
                                             </div>
@@ -407,7 +407,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             </div>
                                             <div class="risk-indicator">
                                                 <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active risk-high" style="width: 100%;"></div>
+                                                <div class="risk-bar active expectation-low" style="width: 30%;"></div>
                                                 <div class="risk-bar"></div>
                                                 <div class="risk-bar"></div>
                                             </div>
@@ -916,16 +916,16 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         border-radius: 3px;
     }
 
-    .risk-bar.active.risk-low {
-        background: linear-gradient(90deg, #10b981, #059669);
+    .risk-bar.active.expectation-high {
+        background: linear-gradient(90deg, #10b981, #059669);  /* 緑: 最高の期待度 */
     }
 
-    .risk-bar.active.risk-medium {
-        background: linear-gradient(90deg, #f59e0b, #d97706);
+    .risk-bar.active.expectation-medium {
+        background: linear-gradient(90deg, #3b82f6, #2563eb);  /* 青: 中程度の期待度 */
     }
 
-    .risk-bar.active.risk-high {
-        background: linear-gradient(90deg, #ef4444, #dc2626);
+    .risk-bar.active.expectation-low {
+        background: linear-gradient(90deg, #94a3b8, #64748b);  /* グレー: 標準の期待度 */
     }
 
     .expected-return {
