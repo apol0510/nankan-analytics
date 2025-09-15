@@ -209,17 +209,17 @@ export function generateStandardizedBets(horses, strategyType) {
     let bets = [];
 
     switch (strategyType) {
-        case 'A': // 少点数的中型 - 希望: 9→1,6,11 (3点)
-            // 単穴1、単穴2、対抗の順で構成
+        case 'A': // 少点数的中型 - 本命→{対抗,単穴1,単穴2} (3点)
+            // 対抗、単穴1、単穴2の順で構成
             const targetsA = [];
+            targetsA.push(subNumber); // 対抗
             if (tananaHorses[0]) targetsA.push(tananaHorses[0].number); // 単穴1番目
             if (tananaHorses[1]) targetsA.push(tananaHorses[1].number); // 単穴2番目
-            targetsA.push(subNumber); // 対抗
 
             bets = [`${mainNumber} → ${targetsA.join(',')}`];
             break;
 
-        case 'B': // バランス型 - 希望: 9⇔2,3,5,12 (8点) + 11→1,6,9 (3点)
+        case 'B': // バランス型 - 本命⇔連下4頭 + 対抗→{単穴1,単穴2,本命}
             // 本命⇔連下4頭（8点）
             const renkuNumbers = renkuHorses.slice(0, 4).map(h => h.number);
             if (renkuNumbers.length >= 4) {
@@ -228,25 +228,24 @@ export function generateStandardizedBets(horses, strategyType) {
 
             // 対抗→{単穴1, 単穴2, 本命}（3点）
             const targetsB = [];
-            if (tananaHorses[0]) targetsB.push(tananaHorses[0].number); // 単穴1番目
             if (tananaHorses[1]) targetsB.push(tananaHorses[1].number); // 単穴2番目
+            if (tananaHorses[0]) targetsB.push(tananaHorses[0].number); // 単穴1番目
             targetsB.push(mainNumber); // 本命
 
             bets.push(`${subNumber} → ${targetsB.join(',')}`);
             break;
 
-        case 'C': // 高配当追求型 - 希望: 9→7,8 (2点) + 11⇔2,3,5,7,8,12 (10点)
-            // 本命→押さえ2頭（2点）
-            const osaeNumbers = osaeHorses.slice(0, 2).map(h => h.number);
-            if (osaeNumbers.length >= 2) {
-                bets.push(`${mainNumber} → ${osaeNumbers.join(',')}`);
+        case 'C': // 高配当追求型 - 本命→連下3頭 + 対抗⇔連下4頭
+            // 本命→連下3頭（2点）
+            const renkuForCMain = renkuHorses.slice(0, 3).map(h => h.number);
+            if (renkuForCMain.length >= 2) {
+                bets.push(`${mainNumber} → ${renkuForCMain.join(',')}`);
             }
 
-            // 対抗⇔{連下4頭, 押さえ2頭}（10点）
+            // 対抗⇔連下4頭（12点）
             const renkuForC = renkuHorses.slice(0, 4).map(h => h.number);
-            const allTargetsC = [...renkuForC, ...osaeNumbers];
-            if (allTargetsC.length >= 6) {
-                bets.push(`${subNumber} ⇔ ${allTargetsC.join(',')}`);
+            if (renkuForC.length >= 4) {
+                bets.push(`${subNumber} ⇔ ${renkuForC.join(',')}`);
             }
             break;
     }
