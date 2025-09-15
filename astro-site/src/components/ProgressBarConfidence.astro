@@ -11,14 +11,14 @@ export interface Props {
 
 const { strategyType, progressConfidence, baseScore, reduction, strategyTitle } = Astro.props;
 
-// 戦略別カラー設定（明るく透明感のあるデザイン）
+// 戦略別カラー設定（ログアウトボタン・ポイントバッジと同じ透明感デザイン）
 const getStrategyColor = (type: string) => {
     const colors = {
-        'A': 'linear-gradient(90deg, rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0.6))', // 明るい緑グラデーション（少点数的中型）
-        'B': 'linear-gradient(90deg, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.6))', // 明るい青グラデーション（バランス型）
-        'C': 'linear-gradient(90deg, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.6))'  // 明るいオレンジグラデーション（高配当追求型）
+        'A': 'rgba(16, 185, 129, 0.1)', // 緑系（少点数的中型）- ログアウトボタンと同じ透明度
+        'B': 'rgba(59, 130, 246, 0.1)', // 青系（バランス型）- ログアウトボタンと同じ透明度
+        'C': 'rgba(245, 158, 11, 0.1)'  // オレンジ系（高配当追求型）- ログアウトボタンと同じ透明度
     };
-    return colors[type] || 'linear-gradient(90deg, rgba(107, 114, 128, 0.6), rgba(107, 114, 128, 0.4))';
+    return colors[type] || 'rgba(107, 114, 128, 0.1)';
 };
 
 const strategyColor = getStrategyColor(strategyType);
@@ -44,11 +44,10 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 .progress-bar-wrapper {
     position: relative;
     height: 20px;
-    background: rgba(100, 116, 139, 0.05);
-    border: 1px solid rgba(100, 116, 139, 0.15);
-    border-radius: 10px;
+    background: rgba(100, 116, 139, 0.1);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .progress-bar {
@@ -56,25 +55,21 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     align-items: center;
     justify-content: center;
     height: 100%;
-    border-radius: 9px;
+    border-radius: 5px;
     position: relative;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
 }
 
 .progress-bar:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .progress-text {
     font-size: 11px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 1);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     letter-spacing: 0.5px;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
 }
 
 
