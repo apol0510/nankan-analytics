@@ -12,6 +12,14 @@ export interface Props {
 
 const { strategyType, progressConfidence, baseScore, reduction, strategyTitle } = Astro.props;
 
+// デバッグ出力
+console.log(`🎯 ProgressBarConfidence ${strategyType}:`, {
+    progressConfidence,
+    baseScore,
+    reduction,
+    strategyTitle
+});
+
 // 戦略別カラー設定
 const getStrategyColor = (type: string, confidence: number) => {
     const baseColors = {
@@ -41,7 +49,7 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
         <div
             class="progress-bar"
             style={`
-                width: ${barWidth}%;
+                --target-width: ${barWidth}%;
                 background-color: ${strategyColor};
                 animation-delay: ${strategyType === 'A' ? '0.2s' : strategyType === 'B' ? '0.4s' : '0.6s'};
             `}
@@ -123,7 +131,7 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 
     /* アニメーション設定 */
     width: 0% !important;
-    animation: progressFill 1.5s ease-out forwards;
+    animation: progressFill 2s ease-out forwards;
     transition: all 0.3s ease;
 }
 
@@ -239,21 +247,29 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 // プログレスバーアニメーション制御
 document.addEventListener('DOMContentLoaded', () => {
     const progressBars = document.querySelectorAll('.progress-bar');
+    console.log('🎯 Found progress bars:', progressBars.length);
 
     progressBars.forEach((bar, index) => {
-        const targetWidth = bar.style.width;
-        bar.style.setProperty('--target-width', targetWidth);
+        const targetWidth = bar.style.getPropertyValue('--target-width');
+        console.log(`🎯 Progress bar ${index} target width:`, targetWidth);
 
-        // Intersection Observer for scroll-triggered animation
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                }
-            });
-        }, { threshold: 0.3 });
-
-        observer.observe(bar);
+        // 即座にアニメーション開始
+        setTimeout(() => {
+            bar.style.animationPlayState = 'running';
+            console.log(`🎯 Starting animation for bar ${index}`);
+        }, 500 + (index * 200)); // 順次アニメーション
     });
+
+    // フォールバック: Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+                console.log(`🎯 Intersection animation started for bar ${index}`);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    progressBars.forEach(bar => observer.observe(bar));
 });
 </script>
