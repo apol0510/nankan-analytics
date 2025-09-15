@@ -41,9 +41,20 @@ const getStrategyTextColor = (type: string) => {
     return textColors[type] || 'rgba(255, 255, 255, 0.95)';
 };
 
+// 戦略別ボーダーカラー設定（クッキリした縁）
+const getStrategyBorderColor = (type: string) => {
+    const borderColors = {
+        'A': 'rgba(250, 204, 21, 0.6)', // 黄色ボーダー
+        'B': 'rgba(251, 146, 60, 0.6)', // オレンジボーダー
+        'C': 'rgba(239, 68, 68, 0.6)'   // 赤ボーダー
+    };
+    return borderColors[type] || 'rgba(148, 163, 184, 0.15)';
+};
+
 const strategyColor = getStrategyColor(strategyType);
 const strategyShadow = getStrategyShadow(strategyType);
 const strategyTextColor = getStrategyTextColor(strategyType);
+const strategyBorderColor = getStrategyBorderColor(strategyType);
 const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 ---
 
@@ -51,9 +62,9 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     <div class="progress-bar-wrapper">
         <div
             class="progress-bar"
-            style={`width: ${barWidth}%; background: ${strategyColor}; box-shadow: ${strategyShadow};`}
+            style={`width: ${barWidth}%; background: ${strategyColor}; box-shadow: ${strategyShadow}; border: 1px solid ${strategyBorderColor};`}
         >
-            <span class="progress-text" style={`color: ${strategyTextColor};`}>信頼値 {progressConfidence}%</span>
+            <span class="progress-text" style={`color: ${strategyTextColor};`}>AIモデル予測: 的中率 {progressConfidence}%</span>
         </div>
     </div>
 </div>
@@ -85,31 +96,12 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     height: 100%;
     border-radius: 7px;
     position: relative;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.3s ease;
     transform-origin: left center;
-    animation: progressFill 1.2s ease-out;
 }
 
 .progress-bar:hover {
-    transform: scale(1.02);
     filter: brightness(1.1);
-}
-
-.progress-bar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.0) 0%,
-        rgba(255, 255, 255, 0.06) 50%,
-        rgba(255, 255, 255, 0.0) 100%
-    );
-    border-radius: 7px;
-    animation: shimmer 3s infinite;
 }
 
 .progress-text {
@@ -122,27 +114,6 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     text-transform: uppercase;
 }
 
-@keyframes progressFill {
-    0% {
-        width: 0% !important;
-        opacity: 0.7;
-    }
-    50% {
-        opacity: 0.9;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes shimmer {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
-}
 
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
