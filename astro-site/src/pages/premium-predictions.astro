@@ -327,7 +327,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <ProgressBarConfidence
                                                 strategyType="A"
                                                 progressConfidence={progressBarA.progressConfidence}
-                                                returnRate={calculateScoreBasedStats('A', raceMainHorseScore).returnRate}
                                                 baseScore={progressBarA.baseScore}
                                                 reduction={progressBarA.reduction}
                                                 strategyTitle="🎯 少点数的中型"
@@ -382,7 +381,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <ProgressBarConfidence
                                                 strategyType="B"
                                                 progressConfidence={progressBarB.progressConfidence}
-                                                returnRate={calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}
                                                 baseScore={progressBarB.baseScore}
                                                 reduction={progressBarB.reduction}
                                                 strategyTitle="⚖️ バランス型"
@@ -437,7 +435,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <ProgressBarConfidence
                                                 strategyType="C"
                                                 progressConfidence={progressBarC.progressConfidence}
-                                                returnRate={calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}
                                                 baseScore={progressBarC.baseScore}
                                                 reduction={progressBarC.reduction}
                                                 strategyTitle="🚀 高配当追求型"
