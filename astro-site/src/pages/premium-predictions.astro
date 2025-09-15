@@ -2,6 +2,7 @@
 export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
+import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
 
@@ -71,6 +72,10 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             // 新しい戦略データを全レースに適用（統一システム使用）
             const processedData = getPredictionDataWithStrategies(raceData.horses);
             const raceStrategies = processedData;
+
+            // プログレスバー用の統一データ処理
+            const unifiedRaceData = processUnifiedRaceData(raceData);
+            const strategyData = unifiedRaceData?.strategies;
 
             // リスク表示用のスコア変数を定義
             const raceMainHorseScore = getHorseConfidenceFromMark(raceData.horses.main);
@@ -295,6 +300,17 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('A', raceMainHorseScore).hitRate}% / 期待回収率{calculateScoreBasedStats('A', raceMainHorseScore).returnRate}%
                                             </div>
+
+                                            <!-- プログレスバー信頼値 -->
+                                            {strategyData?.safe?.progressBar && (
+                                                <ProgressBarConfidence
+                                                    strategyType="A"
+                                                    progressConfidence={strategyData.safe.progressBar.progressConfidence}
+                                                    baseScore={strategyData.safe.progressBar.baseScore}
+                                                    reduction={strategyData.safe.progressBar.reduction}
+                                                    strategyTitle="🎯 少点数的中型"
+                                                />
+                                            )}
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
@@ -341,6 +357,17 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
+
+                                            <!-- プログレスバー信頼値 -->
+                                            {strategyData?.balance?.progressBar && (
+                                                <ProgressBarConfidence
+                                                    strategyType="B"
+                                                    progressConfidence={strategyData.balance.progressBar.progressConfidence}
+                                                    baseScore={strategyData.balance.progressBar.baseScore}
+                                                    reduction={strategyData.balance.progressBar.reduction}
+                                                    strategyTitle="⚖️ バランス型"
+                                                />
+                                            )}
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
@@ -387,6 +414,17 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
+
+                                            <!-- プログレスバー信頼値 -->
+                                            {strategyData?.aggressive?.progressBar && (
+                                                <ProgressBarConfidence
+                                                    strategyType="C"
+                                                    progressConfidence={strategyData.aggressive.progressBar.progressConfidence}
+                                                    baseScore={strategyData.aggressive.progressBar.baseScore}
+                                                    reduction={strategyData.aggressive.progressBar.reduction}
+                                                    strategyTitle="🚀 高配当追求型"
+                                                />
+                                            )}
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');

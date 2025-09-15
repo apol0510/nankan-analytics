@@ -457,7 +457,8 @@ export function processUnifiedRaceData(raceData) {
         riskText: getRiskLevelText(calculateDynamicRisk('A', mainScore)),
         hitRate: calculateHitRateAndReturn('A', calculateDynamicRisk('A', mainScore)).hitRate,
         returnRate: calculateHitRateAndReturn('A', calculateDynamicRisk('A', mainScore)).returnRate,
-        bets: generateStandardizedBets({ ...horses, allHorses }, 'A')
+        bets: generateStandardizedBets({ ...horses, allHorses }, 'A'),
+        progressBar: calculateProgressBarConfidence('A', mainScore)
     };
 
     // バリデーション: 戦略Aの買い目点数確認
@@ -470,7 +471,8 @@ export function processUnifiedRaceData(raceData) {
         riskText: getRiskLevelText(calculateDynamicRisk('B', mainScore, subScore)),
         hitRate: calculateHitRateAndReturn('B', calculateDynamicRisk('B', mainScore, subScore)).hitRate,
         returnRate: calculateHitRateAndReturn('B', calculateDynamicRisk('B', mainScore, subScore)).returnRate,
-        bets: generateStandardizedBets({ ...horses, allHorses }, 'B')
+        bets: generateStandardizedBets({ ...horses, allHorses }, 'B'),
+        progressBar: calculateProgressBarConfidence('B', mainScore, subScore)
     };
 
     // バリデーション: 戦略Bの買い目点数確認
@@ -483,7 +485,8 @@ export function processUnifiedRaceData(raceData) {
         riskText: getRiskLevelText(calculateDynamicRisk('C', mainScore, subScore)),
         hitRate: calculateHitRateAndReturn('C', calculateDynamicRisk('C', mainScore, subScore)).hitRate,
         returnRate: calculateHitRateAndReturn('C', calculateDynamicRisk('C', mainScore, subScore)).returnRate,
-        bets: generateStandardizedBets({ ...horses, allHorses }, 'C')
+        bets: generateStandardizedBets({ ...horses, allHorses }, 'C'),
+        progressBar: calculateProgressBarConfidence('C', mainScore, subScore)
     };
 
     // バリデーション: 戦略Cの買い目点数確認
@@ -531,7 +534,8 @@ export function processUnifiedRaceData(raceData) {
                 riskLevel: strategyA.riskText,
                 bets: strategyA.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '3-6倍' })),
                 expectedPayout: '3-6倍',
-                payoutType: '堅実決着想定'
+                payoutType: '堅実決着想定',
+                progressBar: strategyA.progressBar
             },
             balance: {
                 title: '⚖️ バランス型',
@@ -541,7 +545,8 @@ export function processUnifiedRaceData(raceData) {
                 riskLevel: strategyB.riskText,
                 bets: strategyB.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '6-12倍' })),
                 expectedPayout: '6-12倍',
-                payoutType: '中穴配当想定'
+                payoutType: '中穴配当想定',
+                progressBar: strategyB.progressBar
             },
             aggressive: {
                 title: '🚀 高配当追求型',
@@ -551,7 +556,8 @@ export function processUnifiedRaceData(raceData) {
                 riskLevel: strategyC.riskText,
                 bets: strategyC.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '12倍以上' })),
                 expectedPayout: '12倍以上',
-                payoutType: '大穴視野'
+                payoutType: '大穴視野',
+                progressBar: strategyC.progressBar
             }
         }
     };
@@ -684,6 +690,41 @@ export function validateDataIntegrity(raceData) {
     }
 
     return errors;
+}
+
+// 戦略別プログレスバー信頼値計算システム（新規）
+export function calculateProgressBarConfidence(strategyType, mainHorseScore, subHorseScore = null) {
+    let baseScore;
+    let reduction;
+
+    // 戦略別の基本スコアと固定減算値
+    switch (strategyType) {
+        case 'A': // 少点数的中型
+            baseScore = mainHorseScore; // 軸馬のみ
+            reduction = 25; // 固定で-25
+            break;
+        case 'B': // バランス型
+            baseScore = subHorseScore ? (mainHorseScore + subHorseScore) / 2 : mainHorseScore;
+            reduction = 25; // 固定で-25
+            break;
+        case 'C': // 高配当追求型
+            baseScore = subHorseScore ? (mainHorseScore + subHorseScore) / 2 : mainHorseScore;
+            reduction = 45; // 固定で-45
+            break;
+        default:
+            baseScore = mainHorseScore;
+            reduction = 25;
+    }
+
+    // プログレスバー信頼値 = 基本スコア - 固定減算値
+    const progressConfidence = Math.max(baseScore - reduction, 10); // 最低10%保証
+
+    return {
+        baseScore: Math.round(baseScore),
+        reduction: reduction,
+        progressConfidence: Math.round(progressConfidence),
+        strategyType: strategyType
+    };
 }
 
 // 統一システムで戦略データを生成
