@@ -302,14 +302,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('A', raceMainHorseScore).hitRate}% / 期待回収率{calculateScoreBasedStats('A', raceMainHorseScore).returnRate}%
                                             </div>
 
-                                            <!-- プログレスバー信頼値 -->
-                                            <ProgressBarConfidence
-                                                strategyType="A"
-                                                progressConfidence={progressBarA.progressConfidence}
-                                                baseScore={progressBarA.baseScore}
-                                                reduction={progressBarA.reduction}
-                                                strategyTitle="🎯 少点数的中型"
-                                            />
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
@@ -333,6 +325,16 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                 );
                                             })}
                                             </div>
+
+                                            <!-- プログレスバー信頼値 -->
+                                            <ProgressBarConfidence
+                                                strategyType="A"
+                                                progressConfidence={progressBarA.progressConfidence}
+                                                baseScore={progressBarA.baseScore}
+                                                reduction={progressBarA.reduction}
+                                                strategyTitle="🎯 少点数的中型"
+                                            />
+
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 特徴: 少点数で的中率を重視
                                             </div>
@@ -357,14 +359,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
 
-                                            <!-- プログレスバー信頼値 -->
-                                            <ProgressBarConfidence
-                                                strategyType="B"
-                                                progressConfidence={progressBarB.progressConfidence}
-                                                baseScore={progressBarB.baseScore}
-                                                reduction={progressBarB.reduction}
-                                                strategyTitle="⚖️ バランス型"
-                                            />
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
@@ -388,6 +382,16 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                     );
                                                 })}
                                             </div>
+
+                                            <!-- プログレスバー信頼値 -->
+                                            <ProgressBarConfidence
+                                                strategyType="B"
+                                                progressConfidence={progressBarB.progressConfidence}
+                                                baseScore={progressBarB.baseScore}
+                                                reduction={progressBarB.reduction}
+                                                strategyTitle="⚖️ バランス型"
+                                            />
+
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 特徴: 的中率と配当のバランス
                                             </div>
@@ -412,14 +416,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
 
-                                            <!-- プログレスバー信頼値 -->
-                                            <ProgressBarConfidence
-                                                strategyType="C"
-                                                progressConfidence={progressBarC.progressConfidence}
-                                                baseScore={progressBarC.baseScore}
-                                                reduction={progressBarC.reduction}
-                                                strategyTitle="🚀 高配当追求型"
-                                            />
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
@@ -443,6 +439,16 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                     );
                                                 })}
                                             </div>
+
+                                            <!-- プログレスバー信頼値 -->
+                                            <ProgressBarConfidence
+                                                strategyType="C"
+                                                progressConfidence={progressBarC.progressConfidence}
+                                                baseScore={progressBarC.baseScore}
+                                                reduction={progressBarC.reduction}
+                                                strategyTitle="🚀 高配当追求型"
+                                            />
+
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 特徴: 高配当を追求
                                             </div>

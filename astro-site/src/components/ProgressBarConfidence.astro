@@ -31,7 +31,7 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
             class="progress-bar"
             style={`width: ${barWidth}%; background: linear-gradient(90deg, ${strategyColor}aa, ${strategyColor}dd);`}
         >
-            <span class="progress-text">{progressConfidence}%</span>
+            <span class="progress-text">信頼値 {progressConfidence}%</span>
         </div>
     </div>
 </div>
@@ -43,11 +43,12 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 
 .progress-bar-wrapper {
     position: relative;
-    height: 16px;
-    background: rgba(71, 85, 105, 0.2);
+    height: 20px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(71, 85, 105, 0.3);
     border-radius: 8px;
     overflow: hidden;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
 }
 
 .progress-bar {
@@ -55,20 +56,22 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     align-items: center;
     justify-content: center;
     height: 100%;
-    border-radius: 8px;
+    border-radius: 7px;
     position: relative;
     backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.1);
-    transition: all 0.2s ease;
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
 }
 
 .progress-bar:hover {
-    transform: scaleY(1.1);
+    transform: translateY(-1px);
     box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.25),
         inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .progress-text {
