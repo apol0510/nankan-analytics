@@ -11,17 +11,28 @@ export interface Props {
 
 const { strategyType, progressConfidence, baseScore, reduction, strategyTitle } = Astro.props;
 
-// 戦略別カラー設定（ログアウトボタン・ポイントバッジと同じ透明感デザイン）
+// 戦略別現代風グラデーションカラー設定
 const getStrategyColor = (type: string) => {
     const colors = {
-        'A': 'rgba(16, 185, 129, 0.1)', // 緑系（少点数的中型）- ログアウトボタンと同じ透明度
-        'B': 'rgba(59, 130, 246, 0.1)', // 青系（バランス型）- ログアウトボタンと同じ透明度
-        'C': 'rgba(245, 158, 11, 0.1)'  // オレンジ系（高配当追求型）- ログアウトボタンと同じ透明度
+        'A': 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)', // 緑系現代グラデーション（少点数的中型）
+        'B': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)', // 青系現代グラデーション（バランス型）
+        'C': 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%)'  // オレンジ系現代グラデーション（高配当追求型）
     };
-    return colors[type] || 'rgba(107, 114, 128, 0.1)';
+    return colors[type] || 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+};
+
+// 戦略別シャドウカラー設定
+const getStrategyShadow = (type: string) => {
+    const shadows = {
+        'A': '0 4px 15px rgba(16, 185, 129, 0.3), 0 2px 8px rgba(16, 185, 129, 0.2)', // 緑系グロー
+        'B': '0 4px 15px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(59, 130, 246, 0.2)', // 青系グロー
+        'C': '0 4px 15px rgba(245, 158, 11, 0.3), 0 2px 8px rgba(245, 158, 11, 0.2)'  // オレンジ系グロー
+    };
+    return shadows[type] || '0 4px 15px rgba(107, 114, 128, 0.2)';
 };
 
 const strategyColor = getStrategyColor(strategyType);
+const strategyShadow = getStrategyShadow(strategyType);
 const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 ---
 
@@ -29,7 +40,7 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     <div class="progress-bar-wrapper">
         <div
             class="progress-bar"
-            style={`width: ${barWidth}%; background: ${strategyColor};`}
+            style={`width: ${barWidth}%; background: ${strategyColor}; box-shadow: ${strategyShadow};`}
         >
             <span class="progress-text">信頼値 {progressConfidence}%</span>
         </div>
@@ -38,16 +49,22 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 
 <style>
 .progress-confidence-container {
-    margin: 10px 0;
+    margin: 12px 0;
+    padding: 2px;
 }
 
 .progress-bar-wrapper {
     position: relative;
-    height: 20px;
-    background: rgba(100, 116, 139, 0.1);
-    border: 1px solid rgba(100, 116, 139, 0.3);
-    border-radius: 6px;
+    height: 28px;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 14px;
     overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .progress-bar {
@@ -55,32 +72,89 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     align-items: center;
     justify-content: center;
     height: 100%;
-    border-radius: 5px;
+    border-radius: 12px;
     position: relative;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center;
+    animation: progressFill 1.2s ease-out;
 }
 
 .progress-bar:hover {
-    transform: translateY(-1px);
+    transform: translateY(-1px) scale(1.02);
+    filter: brightness(1.1);
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.0) 100%
+    );
+    border-radius: 12px;
+    animation: shimmer 2s infinite;
 }
 
 .progress-text {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
     color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.3px;
+    z-index: 1;
+    position: relative;
+    text-transform: uppercase;
 }
 
+@keyframes progressFill {
+    0% {
+        width: 0% !important;
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
 
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     .progress-bar-wrapper {
-        height: 14px;
+        height: 22px;
+        border-radius: 11px;
+    }
+
+    .progress-bar {
+        border-radius: 10px;
     }
 
     .progress-text {
         font-size: 10px;
+    }
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+    .progress-bar-wrapper {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
+        border-color: rgba(148, 163, 184, 0.3);
     }
 }
 </style>
