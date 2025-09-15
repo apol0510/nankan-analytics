@@ -331,12 +331,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                     <span class="feature-badge gray">低</span>
                                                 </div>
                                             </div>
-                                            <div class="score-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">馬場スコア: {raceMainHorseScore}pt</span>
-                                                <div class="score-bar-container">
-                                                    <div class="score-bar active" style="width: {Math.max(0, Math.min(100, (raceMainHorseScore - 69) / (90 - 69) * 100))}%;"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     )}
 
@@ -383,12 +377,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                     <span class="feature-badge blue">中</span>
                                                 </div>
                                             </div>
-                                            <div class="score-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">馬場スコア: {Math.round((raceMainHorseScore + raceSubHorseScore) / 2)}pt</span>
-                                                <div class="score-bar-container">
-                                                    <div class="score-bar active" style="width: {Math.max(0, Math.min(100, ((raceMainHorseScore + raceSubHorseScore) / 2 - 69) / (90 - 69) * 100))}%;"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     )}
 
@@ -433,12 +421,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                 <div class="feature-item">
                                                     <span class="feature-label">💰 配当期待</span>
                                                     <span class="feature-badge green">高</span>
-                                                </div>
-                                            </div>
-                                            <div class="score-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">馬場スコア: {Math.round((raceMainHorseScore + raceSubHorseScore) / 2)}pt</span>
-                                                <div class="score-bar-container">
-                                                    <div class="score-bar active" style="width: {Math.max(0, Math.min(100, ((raceMainHorseScore + raceSubHorseScore) / 2 - 69) / (90 - 69) * 100))}%;"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -986,24 +968,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         color: #94a3b8;
     }
 
-    .score-indicator {
-        margin-top: 8px;
-    }
-
-    .score-bar-container {
-        background: rgba(148, 163, 184, 0.2);
-        height: 6px;
-        border-radius: 3px;
-        margin-top: 4px;
-        overflow: hidden;
-    }
-
-    .score-bar.active {
-        background: linear-gradient(90deg, #10b981, #059669);
-        height: 100%;
-        border-radius: 3px;
-        transition: width 0.3s ease;
-    }
 
     .expected-return {
         text-align: center;
