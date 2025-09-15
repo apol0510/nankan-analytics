@@ -1070,7 +1070,7 @@ const standardRaces = sortedRaces.filter(race =>
 </style>
 
 <script is:inline>
-    // アコーディオン共通化: すべてのtoggle関数を動的生成
+    // アコーディオン共通化: 一つ開けたら他を自動で閉じる
     function createToggleFunction(raceNumber) {
         return function() {
             const content = document.getElementById(`race-${raceNumber}r`);
@@ -1078,12 +1078,28 @@ const standardRaces = sortedRaces.filter(race =>
 
             if (!content || !icon) return;
 
+            // 他のアコーディオンをすべて閉じる
+            for (let i = 1; i <= 12; i++) {
+                if (i !== raceNumber) {
+                    const otherContent = document.getElementById(`race-${i}r`);
+                    const otherIcon = document.getElementById(`toggle-${i}r`);
+                    if (otherContent && otherIcon) {
+                        otherContent.style.maxHeight = '0px';
+                        otherContent.style.opacity = '0';
+                        otherIcon.textContent = '▼';
+                        otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+
+            // 現在のアコーディオンの状態をチェックして開く
             if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
                 content.style.maxHeight = content.scrollHeight + 'px';
                 content.style.opacity = '1';
                 icon.textContent = '◎';
                 icon.style.transform = 'rotate(180deg)';
             } else {
+                // 既に開いている場合は閉じる
                 content.style.maxHeight = '0px';
                 content.style.opacity = '0';
                 icon.textContent = '▼';
