@@ -229,33 +229,33 @@ const strategies = {
         <div class="recommendation-section">
             <h2 class="section-title">
                 <span>📊</span>
-                <span>AI推奨投資戦略 - リスク別最適化買い目</span>
+                <span>AI推奨投資戦略 - 期待度別最適化買い目</span>
             </h2>
             
             <!-- リスクバー説明セクション（コンパクト版） -->
             <div class="risk-guide-compact">
                 <div class="accordion-header-compact" onclick="toggleAccordion('riskGuide')">
-                    <span class="risk-title-compact">📈 リスクバーの見方</span>
+                    <span class="risk-title-compact">📈 期待度バーの見方</span>
                     <span class="accordion-icon-compact" id="riskGuideIcon">▼</span>
                 </div>
                 <div class="accordion-content-compact" id="riskGuide">
                     <div class="risk-examples-compact">
                         <div class="risk-item-compact">
-                            <span class="risk-level">低リスク</span>
+                            <span class="risk-level">期待度:最高</span>
                             <div class="risk-bar-mini">
                                 <div class="risk-fill-mini" style="width: 33%;"></div>
                             </div>
                             <span class="risk-text">安定志向</span>
                         </div>
                         <div class="risk-item-compact">
-                            <span class="risk-level">中リスク</span>
+                            <span class="risk-level">期待度:高</span>
                             <div class="risk-bar-mini">
                                 <div class="risk-fill-mini" style="width: 67%;"></div>
                             </div>
                             <span class="risk-text">バランス型</span>
                         </div>
                         <div class="risk-item-compact">
-                            <span class="risk-level">高リスク</span>
+                            <span class="risk-level">期待度:標準</span>
                             <div class="risk-bar-mini">
                                 <div class="risk-fill-mini" style="width: 100%;"></div>
                             </div>
@@ -282,7 +282,7 @@ const strategies = {
                     ))}
                 </div>
                 <div class="risk-indicator">
-                    <span style="color: #64748b; font-size: 0.85rem;">リスク:</span>
+                    <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
                     <div class="risk-bar active risk-low" style="width: 30%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
@@ -313,7 +313,7 @@ const strategies = {
                     ))}
                 </div>
                 <div class="risk-indicator">
-                    <span style="color: #64748b; font-size: 0.85rem;">リスク:</span>
+                    <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
                     <div class="risk-bar active risk-medium" style="width: 60%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
@@ -344,7 +344,7 @@ const strategies = {
                     ))}
                 </div>
                 <div class="risk-indicator">
-                    <span style="color: #64748b; font-size: 0.85rem;">リスク:</span>
+                    <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
                     <div class="risk-bar active risk-high" style="width: 100%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
