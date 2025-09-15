@@ -21,14 +21,24 @@ const getStrategyColor = (type: string) => {
     return colors[type] || 'linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(75, 85, 99, 0.2) 100%)';
 };
 
-// 戦略別透明感シャドウカラー設定
+// ラッパー用100%縁取り設定
+const getWrapperBorder = (type: string) => {
+    const borders = {
+        'A': 'inset 0 0 0 0.5px rgba(250, 204, 21, 0.7)', // 黄色系細縁取り
+        'B': 'inset 0 0 0 0.5px rgba(251, 146, 60, 0.7)', // オレンジ系細縁取り
+        'C': 'inset 0 0 0 0.5px rgba(239, 68, 68, 0.7)'  // 赤系細縁取り
+    };
+    return borders[type] || 'inset 0 0 0 0.5px rgba(107, 114, 128, 0.3)';
+};
+
+// 戦略別シャドウカラー設定（グローのみ）
 const getStrategyShadow = (type: string) => {
     const shadows = {
-        'A': '0 4px 15px rgba(250, 204, 21, 0.12), 0 2px 8px rgba(250, 204, 21, 0.08)', // 黄色系透明グロー
-        'B': '0 4px 15px rgba(251, 146, 60, 0.12), 0 2px 8px rgba(251, 146, 60, 0.08)', // オレンジ系透明グロー
-        'C': '0 4px 15px rgba(239, 68, 68, 0.12), 0 2px 8px rgba(239, 68, 68, 0.08)'  // 赤系透明グロー
+        'A': '0 2px 8px rgba(250, 204, 21, 0.15)', // 黄色系グロー
+        'B': '0 2px 8px rgba(251, 146, 60, 0.15)', // オレンジ系グロー
+        'C': '0 2px 8px rgba(239, 68, 68, 0.15)'  // 赤系グロー
     };
-    return shadows[type] || '0 4px 15px rgba(107, 114, 128, 0.08)';
+    return shadows[type] || '0 2px 8px rgba(107, 114, 128, 0.08)';
 };
 
 // 戦略別テキストカラー設定（明るめの色で視認性確保）
@@ -41,28 +51,19 @@ const getStrategyTextColor = (type: string) => {
     return textColors[type] || 'rgba(255, 255, 255, 0.95)';
 };
 
-// 戦略別ボーダーカラー設定（クッキリした縁）
-const getStrategyBorderColor = (type: string) => {
-    const borderColors = {
-        'A': 'rgba(250, 204, 21, 0.6)', // 黄色ボーダー
-        'B': 'rgba(251, 146, 60, 0.6)', // オレンジボーダー
-        'C': 'rgba(239, 68, 68, 0.6)'   // 赤ボーダー
-    };
-    return borderColors[type] || 'rgba(148, 163, 184, 0.15)';
-};
 
 const strategyColor = getStrategyColor(strategyType);
 const strategyShadow = getStrategyShadow(strategyType);
 const strategyTextColor = getStrategyTextColor(strategyType);
-const strategyBorderColor = getStrategyBorderColor(strategyType);
-const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
+const wrapperBorder = getWrapperBorder(strategyType);
+const barWidth = Math.max(progressConfidence, 5); // 実際の値まで（最小5%表示）
 ---
 
 <div class="progress-confidence-container">
-    <div class="progress-bar-wrapper">
+    <div class="progress-bar-wrapper" style={`box-shadow: ${wrapperBorder};`}>
         <div
             class="progress-bar"
-            style={`width: ${barWidth}%; background: ${strategyColor}; box-shadow: ${strategyShadow}; border: 1px solid ${strategyBorderColor};`}
+            style={`width: ${barWidth}%; background: ${strategyColor}; box-shadow: ${strategyShadow};`}
         >
             <span class="progress-text" style={`color: ${strategyTextColor};`}>AIモデル予測: 的中率 {progressConfidence}%</span>
         </div>
@@ -79,7 +80,6 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     position: relative;
     height: 16px;
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 100%);
-    border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 8px;
     overflow: hidden;
     backdrop-filter: blur(8px);
@@ -106,12 +106,11 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 
 .progress-text {
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 400;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 15px currentColor;
     letter-spacing: 0.2px;
     z-index: 1;
     position: relative;
-    text-transform: uppercase;
 }
 
 
