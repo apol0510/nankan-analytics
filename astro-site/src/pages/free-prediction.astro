@@ -26,6 +26,10 @@ const strategies = {
     balance: processedData.strategies[1],
     aggressive: processedData.strategies[2]
 };
+
+// スコア表示用のスコア変数を定義
+const mainHorseScore = getHorseConfidenceFromMark(mainRace.horses.main);
+const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
 ---
 
 <BaseLayout title={`AI予想分析 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想を無料で提供中。`}>
