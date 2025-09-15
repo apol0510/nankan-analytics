@@ -31,8 +31,19 @@ const getStrategyShadow = (type: string) => {
     return shadows[type] || '0 4px 15px rgba(107, 114, 128, 0.08)';
 };
 
+// 戦略別テキストカラー設定（明るめの色で視認性確保）
+const getStrategyTextColor = (type: string) => {
+    const textColors = {
+        'A': 'rgb(250, 204, 21)', // 黄色
+        'B': 'rgb(251, 146, 60)', // オレンジ
+        'C': 'rgb(239, 68, 68)'   // 赤
+    };
+    return textColors[type] || 'rgba(255, 255, 255, 0.95)';
+};
+
 const strategyColor = getStrategyColor(strategyType);
 const strategyShadow = getStrategyShadow(strategyType);
+const strategyTextColor = getStrategyTextColor(strategyType);
 const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 ---
 
@@ -42,7 +53,7 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
             class="progress-bar"
             style={`width: ${barWidth}%; background: ${strategyColor}; box-shadow: ${strategyShadow};`}
         >
-            <span class="progress-text">信頼値 {progressConfidence}%</span>
+            <span class="progress-text" style={`color: ${strategyTextColor};`}>信頼値 {progressConfidence}%</span>
         </div>
     </div>
 </div>
@@ -103,9 +114,8 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 
 .progress-text {
     font-size: 12px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 20px currentColor;
     letter-spacing: 0.3px;
     z-index: 1;
     position: relative;
