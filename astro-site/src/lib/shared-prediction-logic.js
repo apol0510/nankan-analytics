@@ -523,7 +523,7 @@ export function processUnifiedRaceData(raceData) {
             combinationTip: {
                 title: '的中率向上テクニック',
                 icon: '💡',
-                message: 'オッズを確認し、🔔 少点数的中型と⚖️ バランス型を組み合わせることで的中率が大幅に向上します。',
+                message: 'オッズを確認し、🔔 少点数的中型と⚖️ バランス型モデルを組み合わせることで的中率が大幅に向上します。',
                 description: 'レース展開や馬場状態に応じて2つの戦略の買い目を併用することで、リスク分散と収益機会の最大化を実現できます。'
             },
             safe: {
@@ -538,7 +538,7 @@ export function processUnifiedRaceData(raceData) {
                 progressBar: strategyA.progressBar
             },
             balance: {
-                title: '⚖️ バランス型',
+                title: '⚖️ バランス型モデル',
                 recommendation: '★★★',  // 固定値
                 hitRate: strategyB.hitRate,
                 returnRate: strategyB.returnRate,
@@ -549,7 +549,7 @@ export function processUnifiedRaceData(raceData) {
                 progressBar: strategyB.progressBar
             },
             aggressive: {
-                title: '🚀 高配当追求型',
+                title: '🚀 高配当追求型モデル',
                 recommendation: '★★',  // 固定値
                 hitRate: strategyC.hitRate,
                 returnRate: strategyC.returnRate,
@@ -741,7 +741,7 @@ export function getPredictionDataWithStrategies(horses) {
                     bets: ['馬単 本命→対抗 3点']
                 },
                 {
-                    title: '⚖️ バランス型',
+                    title: '⚖️ バランス型モデル',
                     recommendation: 3,
                     hitRate: 45,
                     returnRate: 150,
@@ -749,7 +749,7 @@ export function getPredictionDataWithStrategies(horses) {
                     bets: ['馬単 本命⇔対抗 11点']
                 },
                 {
-                    title: '🚀 高配当追求型',
+                    title: '🚀 高配当追求型モデル',
                     recommendation: 2,
                     hitRate: 30,
                     returnRate: 200,
@@ -779,7 +779,7 @@ export function getPredictionDataWithStrategies(horses) {
     // 戦略B: バランス型
     const strategyB = {
         type: 'B',
-        title: '⚖️ バランス型',
+        title: '⚖️ バランス型モデル',
         risk: calculateDynamicRisk('B', mainHorseScore, subHorseScore),
         bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'B')
     };
@@ -792,7 +792,7 @@ export function getPredictionDataWithStrategies(horses) {
     // 戦略C: 高配当追求型
     const strategyC = {
         type: 'C',
-        title: '🚀 高配当追求型',
+        title: '🚀 高配当追求型モデル',
         risk: calculateDynamicRisk('C', mainHorseScore, subHorseScore),
         bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'C')
     };
@@ -835,7 +835,7 @@ export function getPredictionDataWithStrategies(horses) {
         combinationTip: {
             title: '的中率向上テクニック',
             icon: '💡',
-            message: 'オッズを確認し、🔔 少点数的中型と⚖️ バランス型を組み合わせることで的中率が大幅に向上します。',
+            message: 'オッズを確認し、🔔 少点数的中型と⚖️ バランス型モデルを組み合わせることで的中率が大幅に向上します。',
             description: 'レース展開や馬場状態に応じて2つの戦略の買い目を併用することで、リスク分散と収益機会の最大化を実現できます。'
         }
     };
