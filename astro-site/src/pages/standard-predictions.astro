@@ -279,7 +279,7 @@ const standardRaces = sortedRaces.filter(race =>
                                 <div class="recommendation-section">
                                     <h2 class="section-title">
                                         <span>📊</span>
-                                        <span>AI推奨投資戦略 - 期待度別最適化買い目</span>
+                                        <span>AI推奨投資戦略 - 最適化買い目</span>
                                     </h2>
 
                                     <!-- 戦略1: 的中率重視型 -->
@@ -324,12 +324,6 @@ const standardRaces = sortedRaces.filter(race =>
                                                     <span class="feature-label">💰 配当期待</span>
                                                     <span class="feature-badge gray">低</span>
                                                 </div>
-                                            </div>
-                                            <div class="risk-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active expectation-high" style="width: 60%;"></div>
-                                                <div class="risk-bar"></div>
-                                                <div class="risk-bar"></div>
                                             </div>
                                         </div>
                                     )}
@@ -376,12 +370,6 @@ const standardRaces = sortedRaces.filter(race =>
                                                     <span class="feature-badge blue">中</span>
                                                 </div>
                                             </div>
-                                            <div class="risk-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active expectation-medium" style="width: 75%;"></div>
-                                                <div class="risk-bar"></div>
-                                                <div class="risk-bar"></div>
-                                            </div>
                                         </div>
                                     )}
 
@@ -426,12 +414,6 @@ const standardRaces = sortedRaces.filter(race =>
                                                     <span class="feature-label">💰 配当期待</span>
                                                     <span class="feature-badge green">高</span>
                                                 </div>
-                                            </div>
-                                            <div class="risk-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active expectation-low" style="width: 90%;"></div>
-                                                <div class="risk-bar"></div>
-                                                <div class="risk-bar"></div>
                                             </div>
                                         </div>
                                     )}
@@ -957,31 +939,6 @@ const standardRaces = sortedRaces.filter(race =>
         border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    .risk-indicator {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
-
-    .risk-bar {
-        height: 6px;
-        width: 30px;
-        background: rgba(100, 116, 139, 0.3);
-        border-radius: 3px;
-    }
-
-    .risk-bar.active.expectation-high {
-        background: linear-gradient(90deg, #10b981, #059669);  /* 緑: 最高の期待度 */
-    }
-
-    .risk-bar.active.expectation-medium {
-        background: linear-gradient(90deg, #3b82f6, #2563eb);  /* 青: 中程度の期待度 */
-    }
-
-    .risk-bar.active.expectation-low {
-        background: linear-gradient(90deg, #94a3b8, #64748b);  /* グレー: 標準の期待度 */
-    }
 
     /* レスポンシブ対応 */
     @media (max-width: 768px) {
