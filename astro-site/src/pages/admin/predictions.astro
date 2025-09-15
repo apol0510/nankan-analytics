@@ -1334,8 +1334,15 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
         function generateHorsesDataForRace(raceData) {
             const horses = {};
             
-            // スコアベースでの自動役割割り当て
-            const sortedHorses = [...raceData.horses].sort((a, b) => {
+            // 印が付いている馬のみを対象とし、スコア順で並べる
+            const markedHorses = raceData.horses.filter(horse => {
+                // 印が付いている馬のみ（スコア62ptより大きい馬 = 印がある馬）
+                return (horse.score && horse.score > 62) ||
+                       (horse.mark && horse.mark !== '' && /[◎○▲△×]/.test(horse.mark)) ||
+                       (horse.marks && horse.marks.length > 0);
+            });
+
+            const sortedHorses = [...markedHorses].sort((a, b) => {
                 const scoreA = a.score || 62;
                 const scoreB = b.score || 62;
                 if (scoreB === scoreA) {
