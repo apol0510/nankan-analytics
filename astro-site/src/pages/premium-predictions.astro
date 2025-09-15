@@ -82,15 +82,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             const progressBarB = calculateProgressBarConfidence('B', raceMainHorseScore, raceSubHorseScore);
             const progressBarC = calculateProgressBarConfidence('C', raceMainHorseScore, raceSubHorseScore);
 
-            // デバッグ出力
-            console.log(`🎯 Race ${raceData.raceNumber} - Progress Bars:`, {
-                mainScore: raceMainHorseScore,
-                subScore: raceSubHorseScore,
-                progressBarA,
-                progressBarB,
-                progressBarC
-            });
-            
             return (
                 <div class={`race-${raceNum}r-accordion`}>
                     <div class="race-accordion-header" onclick={`toggleRace${raceNum}R()`}>
