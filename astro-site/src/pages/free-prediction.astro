@@ -274,9 +274,6 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
             <!-- 戦略1: 的中率重視型 -->
             <div class="bet-strategy premium-masked">
                 <div class="strategy-title">🎯 少点数的中型</div>
-                <div style="color: #94a3b8; margin-bottom: 15px;">
-                    AIモデル予測: 的中率{calculateScoreBasedStats('A', mainHorseScore).hitRate}% / 期待回収率{calculateScoreBasedStats('A', mainHorseScore).returnRate}%
-                </div>
                 <div class="bet-list">
                     {strategies.safe.bets.map(bet => (
                         <div class="bet-item">
@@ -315,9 +312,6 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
             <!-- 戦略2: バランス型 -->
             <div class="bet-strategy premium-masked">
                 <div class="strategy-title">⚖️ バランス型</div>
-                <div style="color: #94a3b8; margin-bottom: 15px;">
-                    AIモデル予測: 的中率{calculateScoreBasedStats('B', (mainHorseScore + subHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('B', (mainHorseScore + subHorseScore) / 2).returnRate}%
-                </div>
                 <div class="bet-list">
                     {strategies.balance.bets.map(bet => (
                         <div class="bet-item">
@@ -356,9 +350,6 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
             <!-- 戦略3: 高配当狙い -->
             <div class="bet-strategy premium-masked">
                 <div class="strategy-title">🚀 高配当追求型</div>
-                <div style="color: #94a3b8; margin-bottom: 15px;">
-                    AIモデル予測: 的中率{calculateScoreBasedStats('C', (mainHorseScore + subHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('C', (mainHorseScore + subHorseScore) / 2).returnRate}%
-                </div>
                 <div class="bet-list">
                     {strategies.aggressive.bets.map(bet => (
                         <div class="bet-item">

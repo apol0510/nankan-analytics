@@ -7,9 +7,10 @@ export interface Props {
     baseScore: number;
     reduction: number;
     strategyTitle: string;
+    returnRate: number;
 }
 
-const { strategyType, progressConfidence, baseScore, reduction, strategyTitle } = Astro.props;
+const { strategyType, progressConfidence, baseScore, reduction, strategyTitle, returnRate } = Astro.props;
 
 // 戦略別透明感グラデーションカラー設定（ログアウトボタン・ポイントバッジと統一）
 const getStrategyColor = (type: string) => {
@@ -65,7 +66,7 @@ const barWidth = Math.max(progressConfidence, 5); // 実際の値まで（最小
             class="progress-bar"
             style={`width: ${barWidth}%; background: ${strategyColor}; box-shadow: ${strategyShadow};`}
         >
-            <span class="progress-text" style={`color: ${strategyTextColor};`}>AIモデル予測: 的中率 {progressConfidence}%</span>
+            <span class="progress-text" style={`color: ${strategyTextColor};`}>AIモデル予測: 的中率{progressConfidence}% / 期待回収率{returnRate}%</span>
         </div>
     </div>
 </div>
