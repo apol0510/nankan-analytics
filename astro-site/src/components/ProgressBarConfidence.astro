@@ -11,14 +11,14 @@ export interface Props {
 
 const { strategyType, progressConfidence, baseScore, reduction, strategyTitle } = Astro.props;
 
-// 戦略別カラー設定
+// 戦略別カラー設定（既存パターン準拠）
 const getStrategyColor = (type: string) => {
     const colors = {
-        'A': '#10b981', // 緑系（少点数的中型）
-        'B': '#3b82f6', // 青系（バランス型）
-        'C': '#f59e0b'  // オレンジ系（高配当追求型）
+        'A': 'rgba(16, 185, 129, 0.1)', // 緑系（少点数的中型）- ポイントバッジと同じ
+        'B': 'rgba(59, 130, 246, 0.1)', // 青系（バランス型）
+        'C': 'rgba(245, 158, 11, 0.1)'  // オレンジ系（高配当追求型）
     };
-    return colors[type] || '#6b7280';
+    return colors[type] || 'rgba(107, 114, 128, 0.1)';
 };
 
 const strategyColor = getStrategyColor(strategyType);
@@ -29,7 +29,7 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     <div class="progress-bar-wrapper">
         <div
             class="progress-bar"
-            style={`width: ${barWidth}%; background: linear-gradient(90deg, ${strategyColor}aa, ${strategyColor}dd);`}
+            style={`width: ${barWidth}%; background: ${strategyColor};`}
         >
             <span class="progress-text">信頼値 {progressConfidence}%</span>
         </div>
@@ -44,14 +44,10 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
 .progress-bar-wrapper {
     position: relative;
     height: 20px;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(100, 116, 139, 0.1);
+    border: 1px solid rgba(100, 116, 139, 0.3);
     border-radius: 8px;
     overflow: hidden;
-    backdrop-filter: blur(12px);
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.2),
-        inset 0 1px 2px rgba(255, 255, 255, 0.1);
 }
 
 .progress-bar {
@@ -61,21 +57,11 @@ const barWidth = Math.max(progressConfidence, 5); // 最小5%表示
     height: 100%;
     border-radius: 7px;
     position: relative;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        inset 0 1px 3px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
 }
 
 .progress-bar:hover {
     transform: translateY(-1px);
-    box-shadow:
-        0 6px 16px rgba(0, 0, 0, 0.2),
-        inset 0 1px 4px rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(16px);
 }
 
 .progress-text {
