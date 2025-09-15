@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
+import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理（元のデータを直接使用）
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -73,13 +73,14 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             const processedData = getPredictionDataWithStrategies(raceData.horses);
             const raceStrategies = processedData;
 
-            // プログレスバー用の統一データ処理
-            const unifiedRaceData = processUnifiedRaceData(raceData);
-            const strategyData = unifiedRaceData?.strategies;
-
             // リスク表示用のスコア変数を定義
             const raceMainHorseScore = getHorseConfidenceFromMark(raceData.horses.main);
             const raceSubHorseScore = getHorseConfidenceFromMark(raceData.horses.sub);
+
+            // プログレスバー用データを直接計算
+            const progressBarA = calculateProgressBarConfidence('A', raceMainHorseScore);
+            const progressBarB = calculateProgressBarConfidence('B', raceMainHorseScore, raceSubHorseScore);
+            const progressBarC = calculateProgressBarConfidence('C', raceMainHorseScore, raceSubHorseScore);
             
             return (
                 <div class={`race-${raceNum}r-accordion`}>
@@ -302,15 +303,13 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             </div>
 
                                             <!-- プログレスバー信頼値 -->
-                                            {strategyData?.safe?.progressBar && (
-                                                <ProgressBarConfidence
-                                                    strategyType="A"
-                                                    progressConfidence={strategyData.safe.progressBar.progressConfidence}
-                                                    baseScore={strategyData.safe.progressBar.baseScore}
-                                                    reduction={strategyData.safe.progressBar.reduction}
-                                                    strategyTitle="🎯 少点数的中型"
-                                                />
-                                            )}
+                                            <ProgressBarConfidence
+                                                strategyType="A"
+                                                progressConfidence={progressBarA.progressConfidence}
+                                                baseScore={progressBarA.baseScore}
+                                                reduction={progressBarA.reduction}
+                                                strategyTitle="🎯 少点数的中型"
+                                            />
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
@@ -359,15 +358,13 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             </div>
 
                                             <!-- プログレスバー信頼値 -->
-                                            {strategyData?.balance?.progressBar && (
-                                                <ProgressBarConfidence
-                                                    strategyType="B"
-                                                    progressConfidence={strategyData.balance.progressBar.progressConfidence}
-                                                    baseScore={strategyData.balance.progressBar.baseScore}
-                                                    reduction={strategyData.balance.progressBar.reduction}
-                                                    strategyTitle="⚖️ バランス型"
-                                                />
-                                            )}
+                                            <ProgressBarConfidence
+                                                strategyType="B"
+                                                progressConfidence={progressBarB.progressConfidence}
+                                                baseScore={progressBarB.baseScore}
+                                                reduction={progressBarB.reduction}
+                                                strategyTitle="⚖️ バランス型"
+                                            />
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
@@ -416,15 +413,13 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             </div>
 
                                             <!-- プログレスバー信頼値 -->
-                                            {strategyData?.aggressive?.progressBar && (
-                                                <ProgressBarConfidence
-                                                    strategyType="C"
-                                                    progressConfidence={strategyData.aggressive.progressBar.progressConfidence}
-                                                    baseScore={strategyData.aggressive.progressBar.baseScore}
-                                                    reduction={strategyData.aggressive.progressBar.reduction}
-                                                    strategyTitle="🚀 高配当追求型"
-                                                />
-                                            )}
+                                            <ProgressBarConfidence
+                                                strategyType="C"
+                                                progressConfidence={progressBarC.progressConfidence}
+                                                baseScore={progressBarC.baseScore}
+                                                reduction={progressBarC.reduction}
+                                                strategyTitle="🚀 高配当追求型"
+                                            />
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
