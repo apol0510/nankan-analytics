@@ -291,7 +291,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                     <!-- 戦略1: 的中率重視型 -->
                                     {raceStrategies.strategies && raceStrategies.strategies[0] && (
                                         <div class="bet-strategy">
-                                            <div class="strategy-title">🎯 少点数的中型（推奨度 {'★'.repeat(raceStrategies.strategies[0].recommendation)}）</div>
+                                            <div class="strategy-title">🎯 少点数的中型</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('A', raceMainHorseScore).hitRate}% / 期待回収率{calculateScoreBasedStats('A', raceMainHorseScore).returnRate}%
                                             </div>
@@ -324,11 +324,17 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div class="strategy-features">
                                                 <div class="feature-item">
                                                     <span class="feature-label">🎯 的中重視</span>
-                                                    <span class="feature-badge green">高</span>
+                                                    <span class="feature-badge blue">中</span>
                                                 </div>
                                                 <div class="feature-item">
                                                     <span class="feature-label">💰 配当期待</span>
-                                                    <span class="feature-badge blue">中</span>
+                                                    <span class="feature-badge gray">低</span>
+                                                </div>
+                                            </div>
+                                            <div class="score-indicator">
+                                                <span style="color: #64748b; font-size: 0.85rem;">馬場スコア: {raceMainHorseScore}pt</span>
+                                                <div class="score-bar-container">
+                                                    <div class="score-bar active" style="width: {Math.max(0, Math.min(100, (raceMainHorseScore - 69) / (90 - 69) * 100))}%;"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -337,7 +343,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                     <!-- 戦略2: バランス型 -->
                                     {raceStrategies.strategies[1] && (
                                         <div class="bet-strategy">
-                                            <div class="strategy-title">⚖️ バランス型（推奨度 {'★'.repeat(raceStrategies.strategies[1].recommendation)}）</div>
+                                            <div class="strategy-title">⚖️ バランス型</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
@@ -377,13 +383,19 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                     <span class="feature-badge blue">中</span>
                                                 </div>
                                             </div>
+                                            <div class="score-indicator">
+                                                <span style="color: #64748b; font-size: 0.85rem;">馬場スコア: {Math.round((raceMainHorseScore + raceSubHorseScore) / 2)}pt</span>
+                                                <div class="score-bar-container">
+                                                    <div class="score-bar active" style="width: {Math.max(0, Math.min(100, ((raceMainHorseScore + raceSubHorseScore) / 2 - 69) / (90 - 69) * 100))}%;"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
 
                                     <!-- 戦略3: 高配当狙い -->
                                     {raceStrategies.strategies[2] && (
                                         <div class="bet-strategy">
-                                            <div class="strategy-title">🚀 高配当追求型（推奨度 {'★'.repeat(raceStrategies.strategies[2].recommendation)}）</div>
+                                            <div class="strategy-title">🚀 高配当追求型</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
                                                 AIモデル予測: 的中率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
@@ -421,6 +433,12 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                                 <div class="feature-item">
                                                     <span class="feature-label">💰 配当期待</span>
                                                     <span class="feature-badge green">高</span>
+                                                </div>
+                                            </div>
+                                            <div class="score-indicator">
+                                                <span style="color: #64748b; font-size: 0.85rem;">馬場スコア: {Math.round((raceMainHorseScore + raceSubHorseScore) / 2)}pt</span>
+                                                <div class="score-bar-container">
+                                                    <div class="score-bar active" style="width: {Math.max(0, Math.min(100, ((raceMainHorseScore + raceSubHorseScore) / 2 - 69) / (90 - 69) * 100))}%;"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -966,6 +984,25 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
     .feature-badge.gray {
         background: rgba(148, 163, 184, 0.2);
         color: #94a3b8;
+    }
+
+    .score-indicator {
+        margin-top: 8px;
+    }
+
+    .score-bar-container {
+        background: rgba(148, 163, 184, 0.2);
+        height: 6px;
+        border-radius: 3px;
+        margin-top: 4px;
+        overflow: hidden;
+    }
+
+    .score-bar.active {
+        background: linear-gradient(90deg, #10b981, #059669);
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.3s ease;
     }
 
     .expected-return {
