@@ -527,7 +527,7 @@ export function processUnifiedRaceData(raceData) {
                 description: 'レース展開や馬場状態に応じて2つの戦略の買い目を併用することで、リスク分散と収益機会の最大化を実現できます。'
             },
             safe: {
-                title: '🎯 少点数的中型',
+                title: '🎯 少点数的中型モデル',
                 recommendation: '★★',  // 固定値
                 hitRate: strategyA.hitRate,
                 returnRate: strategyA.returnRate,
@@ -733,7 +733,7 @@ export function getPredictionDataWithStrategies(horses) {
         return {
             strategies: [
                 {
-                    title: '🎯 少点数的中型',
+                    title: '🎯 少点数的中型モデル',
                     recommendation: 2,
                     hitRate: 60,
                     returnRate: 120,
@@ -766,7 +766,7 @@ export function getPredictionDataWithStrategies(horses) {
     // 戦略A: 少点数的中型
     const strategyA = {
         type: 'A',
-        title: '🎯 少点数的中型',
+        title: '🎯 少点数的中型モデル',
         risk: calculateDynamicRisk('A', mainHorseScore),
         bets: generateStandardizedBets({ ...horses, allHorses: horses.allHorses || [] }, 'A')
     };

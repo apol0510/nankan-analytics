@@ -286,7 +286,7 @@ const standardRaces = sortedRaces.filter(race =>
                                     <!-- 戦略1: 的中率重視型 -->
                                     {raceStrategies.strategies[0] && (
                                         <div class="bet-strategy">
-                                            <div class="strategy-title">🎯 少点数的中型</div>
+                                            <div class="strategy-title">🎯 少点数的中型モデル</div>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
