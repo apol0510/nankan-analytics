@@ -131,12 +131,13 @@ export function calculateDynamicRisk(strategyType, mainHorseScore, subHorseScore
     }
 }
 
-// リスクレベル文字列変換
+// 期待度レベル文字列変換（ポジティブ表現）
 export function getRiskLevelText(riskPercentage) {
-    if (riskPercentage <= 30) return "低";
-    if (riskPercentage <= 50) return "中";
-    if (riskPercentage <= 70) return "やや高";
-    return "高";
+    // リスクの逆数をポジティブな期待度に変換
+    if (riskPercentage <= 30) return "最高";
+    if (riskPercentage <= 50) return "高";
+    if (riskPercentage <= 70) return "良";
+    return "標準";
 }
 
 // 推奨度計算（リスクの逆数ベース）
@@ -297,27 +298,30 @@ export function calculateBetPoints(betString) {
     return 1;
 }
 
-// 的中率・期待回収率計算（現実的な競馬予想数値）
+// 的中率・期待回収率計算（ポジティブな数値表現）
 export function calculateHitRateAndReturn(strategyType, riskPercentage) {
     let hitRate, returnRate;
 
-    // 現実的な競馬予想の範囲内で数値を設定
+    // 全体的に高めの数値でポジティブ表現
     switch (strategyType) {
         case 'A': // 少点数的中型
-            hitRate = Math.max(45, Math.min(65, 58 + (riskPercentage <= 30 ? 7 : riskPercentage <= 50 ? 0 : -8)));
-            returnRate = Math.max(110, Math.min(150, 128 + (riskPercentage <= 30 ? 15 : riskPercentage <= 50 ? 0 : -10)));
+            // 的中率を高めに設定（55-72%）
+            hitRate = Math.max(55, Math.min(72, 65 + (riskPercentage <= 30 ? 7 : riskPercentage <= 50 ? 0 : -8)));
+            returnRate = Math.max(115, Math.min(155, 135 + (riskPercentage <= 30 ? 15 : riskPercentage <= 50 ? 0 : -10)));
             break;
         case 'B': // バランス型
-            hitRate = Math.max(35, Math.min(55, 42 + (riskPercentage <= 30 ? 8 : riskPercentage <= 50 ? 2 : -5)));
-            returnRate = Math.max(130, Math.min(185, 155 + (riskPercentage <= 30 ? 20 : riskPercentage <= 50 ? 5 : -10)));
+            // バランス良く高めの数値（42-60%）
+            hitRate = Math.max(42, Math.min(60, 48 + (riskPercentage <= 30 ? 8 : riskPercentage <= 50 ? 2 : -5)));
+            returnRate = Math.max(140, Math.min(195, 165 + (riskPercentage <= 30 ? 20 : riskPercentage <= 50 ? 5 : -10)));
             break;
         case 'C': // 高配当追求型
-            hitRate = Math.max(20, Math.min(35, 28 + (riskPercentage <= 30 ? 6 : riskPercentage <= 50 ? 2 : -3)));
-            returnRate = Math.max(200, Math.min(320, 250 + (riskPercentage <= 30 ? 40 : riskPercentage <= 50 ? 15 : -20)));
+            // 高配当を強調（28-42%）
+            hitRate = Math.max(28, Math.min(42, 35 + (riskPercentage <= 30 ? 6 : riskPercentage <= 50 ? 2 : -3)));
+            returnRate = Math.max(220, Math.min(350, 280 + (riskPercentage <= 30 ? 40 : riskPercentage <= 50 ? 15 : -20)));
             break;
         default:
-            hitRate = 42;
-            returnRate = 155;
+            hitRate = 45;
+            returnRate = 160;
     }
 
     return {
