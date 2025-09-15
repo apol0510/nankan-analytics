@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
+import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -287,7 +287,7 @@ const standardRaces = sortedRaces.filter(race =>
                                         <div class="bet-strategy">
                                             <div class="strategy-title">🎯 少点数的中型（推奨度 {'★'.repeat(raceStrategies.strategies[0].recommendation)}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
-                                                AIモデル予測: 的中率{raceStrategies.strategies[0].hitRate}% / 期待回収率{raceStrategies.strategies[0].returnRate}%
+                                                AIモデル予測: 的中率{calculateScoreBasedStats('A', raceMainHorseScore).hitRate}% / 期待回収率{calculateScoreBasedStats('A', raceMainHorseScore).returnRate}%
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
@@ -329,7 +329,7 @@ const standardRaces = sortedRaces.filter(race =>
                                         <div class="bet-strategy">
                                             <div class="strategy-title">⚖️ バランス型（推奨度 {'★'.repeat(raceStrategies.strategies[1].recommendation)}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
-                                                AIモデル予測: 的中率{raceStrategies.strategies[1].hitRate}% / 期待回収率{raceStrategies.strategies[1].returnRate}%
+                                                AIモデル予測: 的中率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
@@ -370,7 +370,7 @@ const standardRaces = sortedRaces.filter(race =>
                                         <div class="bet-strategy">
                                             <div class="strategy-title">🚀 高配当追求型（推奨度 {'★'.repeat(raceStrategies.strategies[2].recommendation)}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
-                                                AIモデル予測: 的中率{raceStrategies.strategies[2].hitRate}% / 期待回収率{raceStrategies.strategies[2].returnRate}%
+                                                AIモデル予測: 的中率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {

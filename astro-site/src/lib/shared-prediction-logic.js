@@ -330,6 +330,35 @@ export function calculateHitRateAndReturn(strategyType, riskPercentage) {
     };
 }
 
+// 累積ポイントベースの動的数値計算（完全新規システム）
+export function calculateScoreBasedStats(strategyType, cumulativeScore) {
+    // 戦略別基本範囲設定
+    const baseRanges = {
+        'A': { hitRate: [55, 72], returnRate: [115, 155] },  // 少点数的中型
+        'B': { hitRate: [42, 60], returnRate: [140, 195] },  // バランス型
+        'C': { hitRate: [28, 42], returnRate: [220, 350] }   // 高配当追求型
+    };
+
+    // 累積ポイント69-90ptを0-100%の範囲にマッピング
+    const minScore = 69;  // 最低スコア
+    const maxScore = 90;  // 最高スコア
+    const scorePercent = Math.max(0, Math.min(100, (cumulativeScore - minScore) / (maxScore - minScore) * 100));
+
+    // 高得点ほど数値が上がる仕組み
+    const strategy = baseRanges[strategyType] || baseRanges['A'];
+
+    const hitRate = strategy.hitRate[0] +
+        (strategy.hitRate[1] - strategy.hitRate[0]) * (scorePercent / 100);
+
+    const returnRate = strategy.returnRate[0] +
+        (strategy.returnRate[1] - strategy.returnRate[0]) * (scorePercent / 100);
+
+    return {
+        hitRate: Math.round(hitRate * 10) / 10,    // 小数点第1位
+        returnRate: Math.round(returnRate)         // 整数
+    };
+}
+
 // 共通のデータ処理ロジック
 // 統合データ管理システムによる検証済みデータ取得
 export async function getValidatedRaceData() {

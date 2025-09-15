@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, calculateDynamicRisk, getRiskLevelText, getRecommendationStars, generateStandardizedBets, calculateHitRateAndReturn, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
+import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies } from '../lib/shared-prediction-logic.js';
 
 // 共有ロジックを使用してデータを処理（元のデータを直接使用）
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -293,7 +293,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                         <div class="bet-strategy">
                                             <div class="strategy-title">🎯 少点数的中型（推奨度 {'★'.repeat(raceStrategies.strategies[0].recommendation)}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
-                                                AIモデル予測: 的中率{raceStrategies.strategies[0].hitRate}% / 期待回収率{raceStrategies.strategies[0].returnRate}%
+                                                AIモデル予測: 的中率{calculateScoreBasedStats('A', raceMainHorseScore).hitRate}% / 期待回収率{calculateScoreBasedStats('A', raceMainHorseScore).returnRate}%
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
@@ -321,11 +321,15 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 特徴: 少点数で的中率を重視
                                             </div>
-                                            <div class="risk-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active expectation-high" style="width: 60%;"></div>
-                                                <div class="risk-bar"></div>
-                                                <div class="risk-bar"></div>
+                                            <div class="strategy-features">
+                                                <div class="feature-item">
+                                                    <span class="feature-label">🎯 的中重視</span>
+                                                    <span class="feature-badge green">高</span>
+                                                </div>
+                                                <div class="feature-item">
+                                                    <span class="feature-label">💰 配当期待</span>
+                                                    <span class="feature-badge blue">中</span>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -335,7 +339,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                         <div class="bet-strategy">
                                             <div class="strategy-title">⚖️ バランス型（推奨度 {'★'.repeat(raceStrategies.strategies[1].recommendation)}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
-                                                AIモデル予測: 的中率{raceStrategies.strategies[1].hitRate}% / 期待回収率{raceStrategies.strategies[1].returnRate}%
+                                                AIモデル予測: 的中率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('B', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
@@ -363,11 +367,15 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 特徴: 的中率と配当のバランス
                                             </div>
-                                            <div class="risk-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active expectation-medium" style="width: 75%;"></div>
-                                                <div class="risk-bar"></div>
-                                                <div class="risk-bar"></div>
+                                            <div class="strategy-features">
+                                                <div class="feature-item">
+                                                    <span class="feature-label">🎯 的中重視</span>
+                                                    <span class="feature-badge blue">中</span>
+                                                </div>
+                                                <div class="feature-item">
+                                                    <span class="feature-label">💰 配当期待</span>
+                                                    <span class="feature-badge blue">中</span>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -377,7 +385,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                         <div class="bet-strategy">
                                             <div class="strategy-title">🚀 高配当追求型（推奨度 {'★'.repeat(raceStrategies.strategies[2].recommendation)}）</div>
                                             <div style="color: #94a3b8; margin-bottom: 15px;">
-                                                AIモデル予測: 的中率{raceStrategies.strategies[2].hitRate}% / 期待回収率{raceStrategies.strategies[2].returnRate}%
+                                                AIモデル予測: 的中率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).hitRate}% / 期待回収率{calculateScoreBasedStats('C', (raceMainHorseScore + raceSubHorseScore) / 2).returnRate}%
                                             </div>
                                             <div class="bet-list">
                                                 {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {
@@ -405,11 +413,15 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">
                                                 特徴: 高配当を追求
                                             </div>
-                                            <div class="risk-indicator">
-                                                <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                                                <div class="risk-bar active expectation-low" style="width: 90%;"></div>
-                                                <div class="risk-bar"></div>
-                                                <div class="risk-bar"></div>
+                                            <div class="strategy-features">
+                                                <div class="feature-item">
+                                                    <span class="feature-label">🎯 的中重視</span>
+                                                    <span class="feature-badge gray">低</span>
+                                                </div>
+                                                <div class="feature-item">
+                                                    <span class="feature-label">💰 配当期待</span>
+                                                    <span class="feature-badge green">高</span>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -916,16 +928,44 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         border-radius: 3px;
     }
 
-    .risk-bar.active.expectation-high {
-        background: linear-gradient(90deg, #10b981, #059669);  /* 緑: 最高の期待度 */
+    .strategy-features {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+        flex-wrap: wrap;
     }
 
-    .risk-bar.active.expectation-medium {
-        background: linear-gradient(90deg, #3b82f6, #2563eb);  /* 青: 中程度の期待度 */
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
-    .risk-bar.active.expectation-low {
-        background: linear-gradient(90deg, #94a3b8, #64748b);  /* グレー: 標準の期待度 */
+    .feature-label {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    .feature-badge {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .feature-badge.green {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+
+    .feature-badge.blue {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+    }
+
+    .feature-badge.gray {
+        background: rgba(148, 163, 184, 0.2);
+        color: #94a3b8;
     }
 
     .expected-return {
