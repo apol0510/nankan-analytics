@@ -1,6 +1,3 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-
 export async function handler(event, context) {
     // CORS headers
     const headers = {
@@ -37,147 +34,73 @@ export async function handler(event, context) {
             };
         }
 
-        // JSONファイルのパス
-        const jsonFilePath = path.join(process.cwd(), 'src', 'data', 'allRacesPrediction.json');
-
-        // 現在のJSONデータを読み込み
-        const currentData = JSON.parse(await fs.readFile(jsonFilePath, 'utf8'));
+        // Airtableにデータ保存（将来実装予定）
+        console.log('🔄 予想データを受信しました');
 
         let updatedRacesCount = 0;
+        Object.keys(completeData).forEach(raceNum => {
+            const raceData = completeData[raceNum];
+            if (raceData) {
+                console.log(`🎯 ${raceNum}R データ確認:`);
 
-        // 各レースのデータを更新
-        currentData.races.forEach((race, index) => {
-            const raceNum = index + 1;
-            const newRaceData = completeData[raceNum];
-
-            if (newRaceData) {
-                console.log(`🔄 ${raceNum}R データ更新開始`);
-
-                // 馬情報の更新
-                if (newRaceData.horses) {
-                    // 本命馬の更新
-                    if (newRaceData.horses.main && race.horses.main) {
-                        race.horses.main.number = newRaceData.horses.main.number;
-                        race.horses.main.name = newRaceData.horses.main.name;
-                        race.horses.main.factors = newRaceData.horses.main.factors || race.horses.main.factors;
-                        race.horses.main.importance = newRaceData.horses.main.importance || race.horses.main.importance;
-                        console.log(`  ✅ 本命: ${newRaceData.horses.main.number}${newRaceData.horses.main.name}`);
+                // 馬情報ログ
+                if (raceData.horses) {
+                    if (raceData.horses.main) {
+                        console.log(`  ✅ 本命: ${raceData.horses.main.number}${raceData.horses.main.name}`);
                     }
-
-                    // 対抗馬の更新
-                    if (newRaceData.horses.sub && race.horses.sub) {
-                        race.horses.sub.number = newRaceData.horses.sub.number;
-                        race.horses.sub.name = newRaceData.horses.sub.name;
-                        race.horses.sub.factors = newRaceData.horses.sub.factors || race.horses.sub.factors;
-                        race.horses.sub.importance = newRaceData.horses.sub.importance || race.horses.sub.importance;
-                        console.log(`  ✅ 対抗: ${newRaceData.horses.sub.number}${newRaceData.horses.sub.name}`);
-                    }
-
-                    // 単穴馬の更新
-                    if (newRaceData.horses.sub1 && race.horses.sub1) {
-                        race.horses.sub1.number = newRaceData.horses.sub1.number;
-                        race.horses.sub1.name = newRaceData.horses.sub1.name;
-                        race.horses.sub1.factors = newRaceData.horses.sub1.factors || race.horses.sub1.factors;
-                        race.horses.sub1.importance = newRaceData.horses.sub1.importance || race.horses.sub1.importance;
-                        console.log(`  ✅ 単穴1: ${newRaceData.horses.sub1.number}${newRaceData.horses.sub1.name}`);
-                    }
-
-                    // 単穴2馬の更新
-                    if (newRaceData.horses.sub2 && race.horses.sub2) {
-                        race.horses.sub2.number = newRaceData.horses.sub2.number;
-                        race.horses.sub2.name = newRaceData.horses.sub2.name;
-                        race.horses.sub2.factors = newRaceData.horses.sub2.factors || race.horses.sub2.factors;
-                        race.horses.sub2.importance = newRaceData.horses.sub2.importance || race.horses.sub2.importance;
-                        console.log(`  ✅ 単穴2: ${newRaceData.horses.sub2.number}${newRaceData.horses.sub2.name}`);
+                    if (raceData.horses.sub) {
+                        console.log(`  ✅ 対抗: ${raceData.horses.sub.number}${raceData.horses.sub.name}`);
                     }
                 }
 
-                // allHorses配列の更新（候補馬情報の反映）
-                if (race.allHorses && newRaceData.candidates) {
-                    // 連下候補馬の更新
-                    if (newRaceData.candidates.renka) {
-                        race.allHorses.forEach(horse => {
-                            if (newRaceData.candidates.renka.includes(horse.number)) {
-                                horse.type = '連下';
-                                horse.mark = '△';
-                            }
-                        });
-                        console.log(`  ✅ 連下候補馬: ${newRaceData.candidates.renka.join(',')}`);
+                // 候補馬ログ
+                if (raceData.candidates) {
+                    if (raceData.candidates.renka?.length > 0) {
+                        console.log(`  ✅ 連下候補馬: ${raceData.candidates.renka.join(',')}`);
                     }
-
-                    // 押さえ候補馬の更新
-                    if (newRaceData.candidates.osae) {
-                        race.allHorses.forEach(horse => {
-                            if (newRaceData.candidates.osae.includes(horse.number)) {
-                                horse.type = '押さえ';
-                                horse.mark = '×';
-                            }
-                        });
-                        console.log(`  ✅ 押さえ候補馬: ${newRaceData.candidates.osae.join(',')}`);
+                    if (raceData.candidates.osae?.length > 0) {
+                        console.log(`  ✅ 押さえ候補馬: ${raceData.candidates.osae.join(',')}`);
                     }
                 }
 
-                // 戦略別買い目の更新
-                if (newRaceData.strategies) {
-                    // 戦略A（少点数的中型）の更新
-                    if (newRaceData.strategies.safe && race.strategies.safe) {
-                        race.strategies.safe.bets = newRaceData.strategies.safe.map(bet => ({
-                            type: "馬単",
-                            horses: bet.replace('馬単 ', ''),
-                            points: ""
-                        }));
-                        console.log(`  ✅ 戦略A: ${newRaceData.strategies.safe.join(', ')}`);
+                // 戦略ログ
+                if (raceData.strategies) {
+                    if (raceData.strategies.safe?.length > 0) {
+                        console.log(`  ✅ 戦略A: ${raceData.strategies.safe.length}点`);
                     }
-
-                    // 戦略B（バランス型）の更新
-                    if (newRaceData.strategies.balance && race.strategies.balance) {
-                        race.strategies.balance.bets = newRaceData.strategies.balance.map(bet => ({
-                            type: "馬単",
-                            horses: bet.replace('馬単 ', ''),
-                            points: ""
-                        }));
-                        console.log(`  ✅ 戦略B: ${newRaceData.strategies.balance.join(', ')}`);
+                    if (raceData.strategies.balance?.length > 0) {
+                        console.log(`  ✅ 戦略B: ${raceData.strategies.balance.length}点`);
                     }
-
-                    // 戦略C（高配当追求型）の更新
-                    if (newRaceData.strategies.aggressive && race.strategies.aggressive) {
-                        race.strategies.aggressive.bets = newRaceData.strategies.aggressive.map(bet => ({
-                            type: "馬単",
-                            horses: bet.replace('馬単 ', ''),
-                            points: ""
-                        }));
-                        console.log(`  ✅ 戦略C: ${newRaceData.strategies.aggressive.join(', ')}`);
+                    if (raceData.strategies.aggressive?.length > 0) {
+                        console.log(`  ✅ 戦略C: ${raceData.strategies.aggressive.length}点`);
                     }
                 }
 
                 updatedRacesCount++;
-                console.log(`🎯 ${raceNum}R データ更新完了`);
             }
         });
 
-        // JSONファイルに書き戻し
-        await fs.writeFile(jsonFilePath, JSON.stringify(currentData, null, 2), 'utf8');
-
-        console.log('🎯 Complete data successfully updated!');
+        console.log(`🎯 ${updatedRacesCount}レースのデータを確認しました`);
 
         return {
             statusCode: 200,
             headers,
             body: JSON.stringify({
                 success: true,
-                message: 'Complete data updated successfully',
-                updatedRaces: updatedRacesCount
+                message: 'Complete data received and processed successfully',
+                updatedRaces: updatedRacesCount,
+                note: 'データはログ出力されました。将来的にAirtableまたは他の永続化システムに保存予定です。'
             })
         };
 
     } catch (error) {
-        console.error('Error updating complete data:', error);
+        console.error('Error processing complete data:', error);
 
         return {
             statusCode: 500,
             headers,
             body: JSON.stringify({
-                error: 'Failed to update complete data',
+                error: 'Failed to process complete data',
                 details: error.message
             })
         };
