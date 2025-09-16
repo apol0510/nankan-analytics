@@ -464,7 +464,7 @@ export function processUnifiedRaceData(raceData) {
                     {icon: "★", text: mainStars},
                     {icon: "★", text: `累積スコア: ${mainScore}pt`}
                 ],
-                importance: horses.main.importance || mainImportance
+                importance: horses.main?.importance || mainImportance
             },
             sub: {
                 ...horses.sub,
@@ -473,7 +473,7 @@ export function processUnifiedRaceData(raceData) {
                     {icon: "★", text: subStars},
                     {icon: "★", text: `累積スコア: ${subScore}pt`}
                 ],
-                importance: horses.sub.importance || subImportance
+                importance: horses.sub?.importance || subImportance
             },
             sub1: horses.sub1,
             sub2: horses.sub2

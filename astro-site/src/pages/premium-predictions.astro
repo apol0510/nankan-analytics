@@ -20,7 +20,7 @@ const formattedDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
 
 // 元のデータを直接使用（根本解決）
 const { raceInfo, strategies, horses, analysis, preview, allHorses, totalHorses } = mainRace;
-const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHorses, allHorses: race12RAllHorses } = race12R;
+const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHorses, allHorses: race12RAllHorses } = race12R || {};
 
 
 ---
