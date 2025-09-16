@@ -104,24 +104,52 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 previewHtml += `
                     <div class="race-preview">
                         <h3>${race.title}</h3>
+                        <div class="race-details">
+                            ${race.raceName ? `<div><strong>レース名:</strong> ${race.raceName}</div>` : ''}
+                            ${race.startTime ? `<div><strong>発走時刻:</strong> ${race.startTime}</div>` : ''}
+                            ${race.distance ? `<div><strong>距離:</strong> ${race.distance}</div>` : ''}
+                            ${race.horseCount ? `<div><strong>頭数:</strong> ${race.horseCount}</div>` : ''}
+                        </div>
                         <div class="strategies">
                             <div class="strategy">
                                 <h4>🎯 少点数的中型</h4>
                                 <div class="bets">${race.strategyA.join('<br>')}</div>
+                                ${race.aiPredictions.strategyA ? `<div class="ai-prediction">AI予測: ${race.aiPredictions.strategyA}%</div>` : ''}
                             </div>
                             <div class="strategy">
                                 <h4>⚖️ バランス型</h4>
                                 <div class="bets">${race.strategyB.join('<br>')}</div>
+                                ${race.aiPredictions.strategyB ? `<div class="ai-prediction">AI予測: ${race.aiPredictions.strategyB}%</div>` : ''}
                             </div>
                             <div class="strategy">
                                 <h4>🚀 高配当追求型</h4>
                                 <div class="bets">${race.strategyC.join('<br>')}</div>
+                                ${race.aiPredictions.strategyC ? `<div class="ai-prediction">AI予測: ${race.aiPredictions.strategyC}%</div>` : ''}
                             </div>
                         </div>
                         <div class="horses">
                             <h4>馬情報</h4>
-                            ${race.horses.map(horse => `<span>${horse.mark}${horse.number}番 ${horse.name || ''} ${horse.score}pt</span>`).join('<br>')}
+                            ${race.horses.map(horse => {
+                                let horseInfo = `<span>${horse.mark}${horse.number}番 ${horse.name || ''} ${horse.score}pt`;
+                                if (horse.features.stability) {
+                                    horseInfo += `<br>&nbsp;&nbsp;特徴量: 安定性${horse.features.stability}% 能力上位性${horse.features.ability}% 展開利${horse.features.positioning}%`;
+                                }
+                                horseInfo += '</span>';
+                                return horseInfo;
+                            }).join('<br>')}
                         </div>
+                        ${race.renzuCandidates.length > 0 ? `
+                            <div class="candidates">
+                                <h4>連下候補馬</h4>
+                                <div>${race.renzuCandidates.join(', ')}</div>
+                            </div>
+                        ` : ''}
+                        ${race.osaeCandidates.length > 0 ? `
+                            <div class="candidates">
+                                <h4>押さえ候補馬</h4>
+                                <div>${race.osaeCandidates.join(', ')}</div>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             });
@@ -165,48 +193,143 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             URL.revokeObjectURL(url);
         });
 
-        // シンプルなパース処理
+        // マコちゃんの詳細形式対応パース処理（レース名・発走時刻・距離対応＋柔軟対応）
         function parsePredictionData(data) {
             const races = [];
-            const raceBlocks = data.split(/(?=\w+\d+R\s)/);
+            const raceBlocks = data.split(/(?=\w+\d+R\s)/).filter(block => block.trim());
 
             raceBlocks.forEach(block => {
                 if (!block.trim()) return;
 
                 const race = {
                     title: '',
+                    raceName: '',
+                    startTime: '',
+                    distance: '',
+                    raceType: '',
+                    horseCount: '',
                     strategyA: [],
                     strategyB: [],
                     strategyC: [],
-                    horses: []
+                    horses: [],
+                    aiPredictions: {
+                        strategyA: null,
+                        strategyB: null,
+                        strategyC: null
+                    },
+                    renzuCandidates: [],    // 連下候補馬
+                    osaeCandidates: []      // 押さえ候補馬
                 };
 
                 const lines = block.split('\n').map(line => line.trim()).filter(line => line);
+                let currentStrategy = null;
 
                 lines.forEach(line => {
-                    // レース情報
-                    if (line.match(/\w+\d+R\s+\d+m/)) {
+                    // レース基本情報の詳細解析（柔軟対応）
+                    if (line.match(/\w+\d+R/)) {
                         race.title = line;
+
+                        // 距離抽出
+                        const distanceMatch = line.match(/(\d+)m/);
+                        if (distanceMatch) race.distance = distanceMatch[1] + 'm';
+
+                        // 発走時刻抽出（柔軟パターン対応）
+                        const timeMatch = line.match(/発走時刻?(\d{1,2}):?(\d{2})/);
+                        if (timeMatch) {
+                            race.startTime = `${timeMatch[1]}:${timeMatch[2]}`;
+                        }
+
+                        // 頭数抽出
+                        const horseCountMatch = line.match(/（(\d+)頭）/);
+                        if (horseCountMatch) race.horseCount = horseCountMatch[1] + '頭';
+
+                        // レース名抽出（最後の部分）
+                        const raceNameMatch = line.match(/\d+頭）\s*(.+)$/);
+                        if (raceNameMatch) race.raceName = raceNameMatch[1].trim();
                     }
-                    // 戦略A
+
+                    // 戦略セクション判定（柔軟対応）
                     else if (line.includes('【戦略A') || line.includes('少点数的中型')) {
-                        // 次の行から戦略Aの買い目を収集
+                        currentStrategy = 'A';
                     }
-                    // 馬単の買い目
+                    else if (line.includes('【戦略B') || line.includes('バランス型')) {
+                        currentStrategy = 'B';
+                    }
+                    else if (line.includes('【戦略C') || line.includes('高配当追求型')) {
+                        currentStrategy = 'C';
+                    }
+
+                    // 馬単の買い目（戦略別で正確に振り分け）
                     else if (line.startsWith('馬単')) {
-                        // 最後に見つけた戦略に追加
-                        race.strategyA.push(line); // 簡略化：後で改善
+                        if (currentStrategy === 'A') race.strategyA.push(line);
+                        else if (currentStrategy === 'B') race.strategyB.push(line);
+                        else if (currentStrategy === 'C') race.strategyC.push(line);
                     }
-                    // 馬情報
-                    else if (line.match(/^[◎○▲△]?\d+番/)) {
-                        const match = line.match(/^([◎○▲△]?)(\d+)番\s*(\w*)\s*.*?(\d+)pt/);
-                        if (match) {
-                            race.horses.push({
-                                mark: match[1] || '',
-                                number: parseInt(match[2]),
-                                name: match[3] || '',
-                                score: parseInt(match[4])
-                            });
+
+                    // AI予測値の抽出（柔軟パターン対応）
+                    else if (line.includes('AIモデル予測') || line.includes('AI予測')) {
+                        const predictionMatch = line.match(/(\d+(?:\.\d+)?)%/);
+                        if (predictionMatch && currentStrategy) {
+                            const percentage = parseFloat(predictionMatch[1]);
+                            if (currentStrategy === 'A') race.aiPredictions.strategyA = percentage;
+                            else if (currentStrategy === 'B') race.aiPredictions.strategyB = percentage;
+                            else if (currentStrategy === 'C') race.aiPredictions.strategyC = percentage;
+                        }
+                    }
+
+                    // 連下候補馬
+                    else if (line.includes('連下候補馬')) {
+                        const candidatesMatch = line.match(/連下候補馬[：:]\s*(.+)/);
+                        if (candidatesMatch) {
+                            race.renzuCandidates = candidatesMatch[1].split(/[,，\s]+/).map(s => s.trim()).filter(s => s);
+                        }
+                    }
+
+                    // 押さえ候補馬
+                    else if (line.includes('抑え候補馬') || line.includes('押さえ候補馬')) {
+                        const candidatesMatch = line.match(/[抑押]さえ候補馬[：:]\s*(.+)/);
+                        if (candidatesMatch) {
+                            race.osaeCandidates = candidatesMatch[1].split(/[,，\s]+/).map(s => s.trim()).filter(s => s);
+                        }
+                    }
+
+                    // 馬情報（詳細形式対応・柔軟パターン対応）
+                    else if (line.match(/^[◎○▲△×]?\d+番/)) {
+                        // 基本的な馬情報の抽出（柔軟パターン）
+                        const basicMatch = line.match(/^([◎○▲△×]?)(\d+)番\s*(.+?)\s*累積スコア(\d+)pt/);
+                        if (basicMatch) {
+                            const horseData = {
+                                mark: basicMatch[1] || '',
+                                number: parseInt(basicMatch[2]),
+                                name: basicMatch[3].trim(),
+                                score: parseInt(basicMatch[4]),
+                                features: {}
+                            };
+
+                            // 特徴量重要度の抽出（柔軟パターン対応）
+                            const featureMatch = line.match(/安定性[\s:：]*(\d+(?:\.\d+)?)%.*?能力上位性[\s:：]*(\d+(?:\.\d+)?)%.*?展開利[\s:：]*(\d+(?:\.\d+)?)%/);
+                            if (featureMatch) {
+                                horseData.features = {
+                                    stability: parseFloat(featureMatch[1]),
+                                    ability: parseFloat(featureMatch[2]),
+                                    positioning: parseFloat(featureMatch[3])
+                                };
+                            }
+
+                            race.horses.push(horseData);
+                        }
+                        // 簡易形式にもフォールバック対応
+                        else {
+                            const simpleMatch = line.match(/^([◎○▲△×]?)(\d+)番\s*(\w*)\s*.*?(\d+)pt/);
+                            if (simpleMatch) {
+                                race.horses.push({
+                                    mark: simpleMatch[1] || '',
+                                    number: parseInt(simpleMatch[2]),
+                                    name: simpleMatch[3] || '',
+                                    score: parseInt(simpleMatch[4]),
+                                    features: {}
+                                });
+                            }
                         }
                     }
                 });
@@ -217,7 +340,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             return races;
         }
 
-        // JSON生成処理
+        // JSON生成処理（詳細データ対応）
         function generateJsonData(raceDate, track, races) {
             return {
                 raceDate: raceDate,
@@ -225,12 +348,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 totalRaces: races.length,
                 races: races.map((race, index) => ({
                     raceNumber: `${index + 1}R`,
-                    raceName: race.title,
+                    raceName: race.raceName || race.title,
                     tier: index < Math.floor(races.length * 0.75) ? "premium" : (index === races.length - 2 ? "free" : "standard"),
                     isMainRace: index === races.length - 2,
                     displayOrder: index + 1,
                     raceInfo: {
                         title: race.title,
+                        raceName: race.raceName,
+                        startTime: race.startTime,
+                        distance: race.distance,
+                        horseCount: race.horseCount,
                         date: raceDate,
                         track: track
                     },
@@ -238,20 +365,34 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         main: race.horses.find(h => h.mark === '◎') || race.horses[0],
                         sub: race.horses.find(h => h.mark === '○') || race.horses[1],
                         sub1: race.horses.find(h => h.mark === '▲') || race.horses[2],
-                        sub2: race.horses[3]
+                        sub2: race.horses[3],
+                        allHorses: race.horses.map(horse => ({
+                            ...horse,
+                            type: horse.mark === '◎' ? 'main' :
+                                  horse.mark === '○' ? 'sub' :
+                                  horse.mark === '▲' ? 'sub1' :
+                                  horse.mark === '△' ? 'sub2' : 'other'
+                        }))
+                    },
+                    candidates: {
+                        renzu: race.renzuCandidates,
+                        osae: race.osaeCandidates
                     },
                     strategies: {
                         safe: {
                             title: '🎯 少点数的中型モデル',
-                            bets: race.strategyA
+                            bets: race.strategyA,
+                            aiPrediction: race.aiPredictions.strategyA
                         },
                         balance: {
                             title: '⚖️ バランス型モデル',
-                            bets: race.strategyB
+                            bets: race.strategyB,
+                            aiPrediction: race.aiPredictions.strategyB
                         },
                         aggressive: {
                             title: '🚀 高配当追求型モデル',
-                            bets: race.strategyC
+                            bets: race.strategyC,
+                            aiPrediction: race.aiPredictions.strategyC
                         }
                     }
                 }))
@@ -390,6 +531,51 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             padding: 20px;
             margin-bottom: 20px;
             background: rgba(15, 23, 42, 0.3);
+        }
+
+        .race-details {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .race-details div {
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .ai-prediction {
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 4px;
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .candidates {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+        }
+
+        .candidates h4 {
+            margin: 0 0 8px 0;
+            color: #3b82f6;
+            font-size: 14px;
+        }
+
+        .candidates div {
+            font-size: 13px;
+            color: #cbd5e1;
         }
 
         .strategies {
