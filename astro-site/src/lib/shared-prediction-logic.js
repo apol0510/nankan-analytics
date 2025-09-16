@@ -207,15 +207,15 @@ export function generateStandardizedBets(horses, strategyType) {
     let bets = [];
 
     switch (strategyType) {
-        case 'A': // 少点数的中型モデル - 本命→{対抗,単穴1,単穴2} (マコちゃん仕様)
-            const targetsA = [subNumber, sub2Number, sub1Number].filter(n => n); // 5,6,9の順序
+        case 'A': // 少点数的中型モデル - 本命→{対抗,単穴2,単穴1} (マコちゃん仕様)
+            const targetsA = [subNumber, sub2Number, sub1Number].filter(n => n); // 対抗,単穴2,単穴1の順序
             bets = [`馬単 ${mainNumber} → ${targetsA.join(',')}`];
             console.log(`🎯 戦略A: ${mainNumber} → ${targetsA.join(',')} (${targetsA.length}点)`);
             break;
 
         case 'B': // バランス型モデル - マコちゃん仕様: 複数軸からの馬単組み合わせ
-            // {対抗,単穴1,単穴2} → 本命
-            const fromHorsesB = [subNumber, sub2Number, sub1Number].filter(n => n); // 5,6,9
+            // {対抗,単穴2,単穴1} → 本命
+            const fromHorsesB = [subNumber, sub2Number, sub1Number].filter(n => n); // 対抗,単穴2,単穴1
             bets.push(`馬単 ${fromHorsesB.join(',')} → ${mainNumber}`);
 
             // 本命⇔連下候補馬
@@ -223,8 +223,8 @@ export function generateStandardizedBets(horses, strategyType) {
                 bets.push(`馬単 ${mainNumber} ⇔ ${renkaCandidates.join(',')}`);
             }
 
-            // 対抗→単穴2頭 (5 → 6,9)
-            const subTargetsB = [sub2Number, sub1Number].filter(n => n); // 6,9
+            // 対抗→{単穴2,単穴1}
+            const subTargetsB = [sub2Number, sub1Number].filter(n => n); // 単穴2,単穴1
             if (subTargetsB.length > 0) {
                 bets.push(`馬単 ${subNumber} → ${subTargetsB.join(',')}`);
             }
