@@ -303,28 +303,40 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 // 連下候補馬パース
                 if (line.startsWith('△ 連下候補馬')) {
                     const numbers = [];
-                    const numberMatches = line.match(/([0-9]+)/g);
-                    if (numberMatches) {
-                        numberMatches.forEach(num => {
-                            numbers.push(parseInt(num));
-                        });
-                        raceData[currentRace].candidates.renka = numbers;
-                        console.log(`🎯 連下候補馬: ${numbers.join(',')}`);
+                    // 馬番のみを抽出（ptが付いた数値は除外）
+                    const parts = line.split(/\s+/);
+                    for (const part of parts) {
+                        // 1桁または2桁の数字のみを抽出（pt付きは除外）
+                        const match = part.match(/^([0-9]{1,2})$/);
+                        if (match && !part.includes('pt')) {
+                            const num = parseInt(match[1]);
+                            if (num >= 1 && num <= 18) { // 通常の馬番範囲
+                                numbers.push(num);
+                            }
+                        }
                     }
+                    raceData[currentRace].candidates.renka = numbers;
+                    console.log(`🎯 連下候補馬: ${numbers.join(',')}`);
                     continue;
                 }
 
                 // 抑え候補馬パース
                 if (line.startsWith('× 抑え候補馬')) {
                     const numbers = [];
-                    const numberMatches = line.match(/([0-9]+)/g);
-                    if (numberMatches) {
-                        numberMatches.forEach(num => {
-                            numbers.push(parseInt(num));
-                        });
-                        raceData[currentRace].candidates.osae = numbers;
-                        console.log(`🎯 抑え候補馬: ${numbers.join(',')}`);
+                    // 馬番のみを抽出（ptが付いた数値は除外）
+                    const parts = line.split(/\s+/);
+                    for (const part of parts) {
+                        // 1桁または2桁の数字のみを抽出（pt付きは除外）
+                        const match = part.match(/^([0-9]{1,2})$/);
+                        if (match && !part.includes('pt')) {
+                            const num = parseInt(match[1]);
+                            if (num >= 1 && num <= 18) { // 通常の馬番範囲
+                                numbers.push(num);
+                            }
+                        }
                     }
+                    raceData[currentRace].candidates.osae = numbers;
+                    console.log(`🎯 抑え候補馬: ${numbers.join(',')}`);
                     continue;
                 }
 
@@ -341,7 +353,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 }
 
                 // 戦略別買い目パース
-                if (currentSection === 'betting') {
+                if (currentSection === 'betting' || line.includes('少点数的中型モデル') || line.includes('バランス型モデル') || line.includes('高配当追求型モデル')) {
                     if (line.includes('少点数的中型モデル')) {
                         const bets = extractBetsFromLine(line, i, lines);
                         if (bets.length > 0) {
@@ -380,13 +392,29 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             // 次の戦略や次のレースまでの行を結合
             for (let j = startIndex + 1; j < lines.length; j++) {
                 const nextLine = lines[j];
+
+                // より厳密な終了条件チェック
                 if (nextLine.includes('少点数的中型') || nextLine.includes('バランス型') ||
-                    nextLine.includes('高配当追求型') || nextLine.match(/^[0-9]{1,2}R$/)) {
+                    nextLine.includes('高配当追求型') ||
+                    nextLine.match(/^[0-9０１２３４５６７８９]{1,2}\s*[rRレース]$/) ||
+                    nextLine.startsWith('◎') || nextLine.startsWith('○') ||
+                    nextLine.startsWith('▲') || nextLine.startsWith('△') ||
+                    nextLine.startsWith('×') || nextLine === '買い目') {
                     break;
                 }
+
+                // 空行や無関係な行はスキップ
+                if (nextLine.trim().length === 0 ||
+                    nextLine.includes('特徴量重要度') ||
+                    nextLine.includes('総合評価') ||
+                    nextLine.includes('累積スコア')) {
+                    continue;
+                }
+
                 fullText += ' ' + nextLine;
             }
 
+            console.log(`🔍 戦略抽出用テキスト: "${fullText}"`);
             return extractBets(fullText);
         }
 
@@ -400,23 +428,43 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     String.fromCharCode(char.charCodeAt(0) - 0xFF10 + 0x30))
                 .replace(/，/g, ',')
                 .replace(/[↔←]/g, '⇔')
+                .replace(/\s+/g, ' ')  // 複数の空白を1つに統一
                 .trim();
 
             console.log(`🔍 買い目抽出: "${normalized}"`);
 
-            // 馬単パターン抽出
-            const betPattern = /(馬単)\s+([0-9,]+)\s*([→⇔])\s*([0-9,]+)(?:\s+[0-9]+点)?/g;
+            // 馬単パターン抽出（重複回避版）
+            const betPattern = /(馬単)\s+([0-9,]+)\s*([→⇔])\s*([0-9,]+)/g;
             let match;
+            const processedBets = new Set(); // 重複防止
 
             while ((match = betPattern.exec(normalized)) !== null) {
-                const [fullMatch, type, from, arrow, to] = match;
+                const [, type, from, arrow, to] = match;
 
                 const cleanFrom = from.replace(/\s/g, '');
                 const cleanTo = to.replace(/\s/g, '');
 
-                const cleanBet = `馬単 ${cleanFrom} ${arrow} ${cleanTo}`;
-                bets.push(cleanBet);
-                console.log(`🎯 抽出した買い目: "${cleanBet}"`);
+                // 有効な馬番かチェック
+                const fromNums = cleanFrom.split(',');
+                const toNums = cleanTo.split(',');
+
+                let validBet = true;
+                for (const num of [...fromNums, ...toNums]) {
+                    const n = parseInt(num);
+                    if (isNaN(n) || n < 1 || n > 18) {
+                        validBet = false;
+                        break;
+                    }
+                }
+
+                if (validBet) {
+                    const cleanBet = `馬単 ${cleanFrom} ${arrow} ${cleanTo}`;
+                    if (!processedBets.has(cleanBet)) {
+                        bets.push(cleanBet);
+                        processedBets.add(cleanBet);
+                        console.log(`🎯 抽出した買い目: "${cleanBet}"`);
+                    }
+                }
             }
 
             return bets;
