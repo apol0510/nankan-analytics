@@ -20,12 +20,12 @@ const { raceInfo, horses, analysis, preview, allHorses, totalHorses } = mainRace
 // 正規化されたホースデータ（メインレース用）
 const normalizedHorses = normalizeHorseData(mainRace);
 
-// 統一システムで戦略データを生成
-const processedData = getPredictionDataWithStrategies(mainRace.horses);
+// 統一システムで戦略データを生成（動的買い目対応）
+const raceData = processUnifiedRaceData(mainRace);
 const strategies = {
-    safe: processedData.strategies[0],
-    balance: processedData.strategies[1],
-    aggressive: processedData.strategies[2]
+    safe: raceData.strategies.safe,
+    balance: raceData.strategies.balance,
+    aggressive: raceData.strategies.aggressive
 };
 
 // スコア表示用のスコア変数を定義

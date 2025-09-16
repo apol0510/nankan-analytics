@@ -309,7 +309,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div class="strategy-title">🎯 少点数的中型モデル</div>
 
                                             <div class="bet-list">
-                                                {raceStrategies.strategies[0].bets && raceStrategies.strategies[0].bets.map(bet => {
+                                                {raceData.strategies?.safe?.bets && raceData.strategies.safe.bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
                                                     // 点数計算: ⇔は双方向、2倍、→は単方向
                                                     let points = 1;
@@ -363,7 +363,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div class="strategy-title">⚖️ バランス型モデル</div>
 
                                             <div class="bet-list">
-                                                {raceStrategies.strategies[1].bets && raceStrategies.strategies[1].bets.map(bet => {
+                                                {raceData.strategies?.balance?.bets && raceData.strategies.balance.bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
                                                     // 点数計算: ⇔は双方向、2倍、→は単方向
                                                     let points = 1;
@@ -417,7 +417,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                             <div class="strategy-title">🚀 高配当追求型モデル</div>
 
                                             <div class="bet-list">
-                                                {raceStrategies.strategies[2].bets && raceStrategies.strategies[2].bets.map(bet => {
+                                                {raceData.strategies?.aggressive?.bets && raceData.strategies.aggressive.bets.map(bet => {
                                                     const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
                                                     // 点数計算: ⇔は双方向、2倍、→は単方向
                                                     let points = 1;
