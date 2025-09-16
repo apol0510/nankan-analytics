@@ -16,8 +16,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 <h3>💖 マコちゃん保証事項</h3>
                 <ul>
                     <li>✅ premium-predictions/ のデザイン <strong>100%保持</strong></li>
-                    <li>✅ 馬情報・スコア・特徴量 <strong>完全保持</strong></li>
-                    <li>✅ 買い目のみ <strong>確実更新</strong></li>
+                    <li>✅ 馬情報・スコア・特徴量 <strong>完全更新</strong></li>
+                    <li>✅ 買い目・候補馬 <strong>確実更新</strong></li>
+                    <li>✅ 全データ一括反映 <strong>完全対応</strong></li>
                     <li>✅ 半角全角・スペース <strong>柔軟対応</strong></li>
                 </ul>
             </div>
@@ -36,12 +37,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 例：
 1R
 ◎ 11 オールスターズ 本命 総合評価:★★★ 累積スコア: 88pt 特徴量重要度 安定性91% 能力上位性90% 展開利81%
-○ 5 シャークウォーニン 対抗 総合評価:★★★ 累積スコア: 87pt...
+○ 5 シャークウォーニン 対抗 総合評価:★★★ 累積スコア: 87pt 特徴量重要度 安定性85% 能力上位性82% 展開利79%
+▲ 9 フェアクラウド 単穴 累積スコア: 82pt 特徴量重要度 安定性77% 能力上位性87% 展開利82%
+▲ 6 パンオショコラ 単穴2 累積スコア: 76pt
+
+△ 連下候補馬: 4,7,10,13,14
+× 押さえ候補馬: 2,12
 
 買い目
 少点数的中型モデル 馬単 11 → 5,6,9　3点 AI予測58%
-バランス型モデル 馬単 5,6,9 → 11　3点 馬単 11 ⇔ 4,10,13,14　8点...
-高配当追求型モデル 馬単 11 → 2,7,12　3点 馬単 5 ⇔ 2,4,7,10,12,13,14　14点...
+バランス型モデル 馬単 5,6,9 → 11　3点 馬単 11 ⇔ 4,7,10,13,14　8点...
+高配当追求型モデル 馬単 11 → 2,12　3点 馬単 5 ⇔ 2,4,7,10,12,13,14　14点...
 
 2R
 ..."
@@ -111,7 +117,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             }
         });
 
-        // 完成データ解析関数（柔軟対応）
+        // 完成データ解析関数（全馬データ対応版）
         function parseCompleteData(data) {
             const lines = data.split('\n').map(line => line.trim()).filter(line => line);
             const raceData = {};
@@ -132,21 +138,106 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         .replace(/[^0-9]/g, '');
 
                     currentRace = parseInt(raceNum);
-                    raceData[currentRace] = { strategies: {} };
+                    raceData[currentRace] = {
+                        horses: {},
+                        candidates: { renka: [], osae: [] },
+                        strategies: {}
+                    };
                     currentSection = null;
                     console.log(`🎯 レース検出: ${currentRace}R`);
                     continue;
                 }
 
-                // 買い目セクション検出
-                if (line.includes('買い目') || line.includes('かいめ')) {
-                    currentSection = 'betting';
-                    continue;
-                }
-
-                // 戦略別買い目抽出（改良版）
                 if (currentRace) {
-                    // 少点数的中型（その行だけでなく続く行も含めて処理）
+                    // 馬情報パース（◎○▲△×印対応）
+                    const horseMatch = line.match(/^([◎○▲△×])\s*([0-9]+)\s+([^\s]+)\s+(本命|対抗|単穴|単穴2|連下|押さえ)(?:\s+総合評価:([★]+))?(?:\s+累積スコア:?\s*([0-9]+)pt)?(?:\s+特徴量重要度\s+安定性([0-9]+)%\s+能力上位性([0-9]+)%\s+展開利([0-9]+)%)?/);
+                    if (horseMatch) {
+                        const [, mark, number, name, type, stars, score, stability, ability, development] = horseMatch;
+
+                        const horseData = {
+                            number: parseInt(number),
+                            name: name,
+                            mark: mark,
+                            type: type,
+                            factors: [],
+                            importance: []
+                        };
+
+                        // 星評価追加
+                        if (stars) {
+                            horseData.factors.push({
+                                icon: "★",
+                                text: `総合評価:${stars}`
+                            });
+                        }
+
+                        // 累積スコア追加
+                        if (score) {
+                            horseData.factors.push({
+                                icon: "★",
+                                text: `累積スコア: ${score}pt`
+                            });
+                        }
+
+                        // 特徴量重要度追加
+                        if (stability && ability && development) {
+                            horseData.importance = [
+                                { label: "安定性", value: parseInt(stability) / 100 },
+                                { label: "能力上位性", value: parseInt(ability) / 100 },
+                                { label: "展開利", value: parseInt(development) / 100 }
+                            ];
+                        }
+
+                        // 馬タイプ別にセット
+                        if (type === '本命') {
+                            raceData[currentRace].horses.main = horseData;
+                        } else if (type === '対抗') {
+                            raceData[currentRace].horses.sub = horseData;
+                        } else if (type === '単穴') {
+                            raceData[currentRace].horses.sub1 = horseData;
+                        } else if (type === '単穴2') {
+                            raceData[currentRace].horses.sub2 = horseData;
+                        }
+
+                        console.log(`🐎 ${currentRace}R ${mark}${number}${name} (${type}) 解析完了`);
+                        continue;
+                    }
+
+                    // 連下候補馬パース
+                    const renkaMatch = line.match(/^[△]\s*連下候補馬[:：]?\s*([0-9,，、\s]+)/);
+                    if (renkaMatch) {
+                        const numbers = renkaMatch[1]
+                            .replace(/[，、]/g, ',')
+                            .split(',')
+                            .map(n => parseInt(n.trim()))
+                            .filter(n => !isNaN(n));
+
+                        raceData[currentRace].candidates.renka = numbers;
+                        console.log(`🎯 ${currentRace}R 連下候補馬: ${numbers.join(',')}`);
+                        continue;
+                    }
+
+                    // 押さえ候補馬パース
+                    const osaeMatch = line.match(/^[×]\s*押さえ候補馬[:：]?\s*([0-9,，、\s]+)/);
+                    if (osaeMatch) {
+                        const numbers = osaeMatch[1]
+                            .replace(/[，、]/g, ',')
+                            .split(',')
+                            .map(n => parseInt(n.trim()))
+                            .filter(n => !isNaN(n));
+
+                        raceData[currentRace].candidates.osae = numbers;
+                        console.log(`🎯 ${currentRace}R 押さえ候補馬: ${numbers.join(',')}`);
+                        continue;
+                    }
+
+                    // 買い目セクション検出
+                    if (line.includes('買い目') || line.includes('かいめ')) {
+                        currentSection = 'betting';
+                        continue;
+                    }
+
+                    // 戦略別買い目抽出（改良版）
                     if (line.includes('少点数的中型') || line.includes('少点数')) {
                         let fullStrategyText = line;
 
@@ -246,16 +337,51 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             return bets;
         }
 
-        // プレビュー表示
+        // プレビュー表示（全データ対応版）
         function displayPreview(data) {
             const previewContent = document.getElementById('preview-content');
             let html = '<div class="race-grid">';
 
             for (let raceNum = 1; raceNum <= 12; raceNum++) {
                 const raceInfo = data[raceNum];
+                if (!raceInfo) continue;
+
                 html += `
                     <div class="race-preview">
                         <h3>${raceNum}R</h3>
+
+                        <!-- 馬情報セクション -->
+                        <div class="horse-section">
+                            <h4>🐎 馬情報</h4>
+                            <div class="horse-list">`;
+
+                // 各馬の情報表示
+                if (raceInfo.horses) {
+                    Object.values(raceInfo.horses).forEach(horse => {
+                        if (horse) {
+                            html += `
+                                <div class="horse-item">
+                                    <span class="horse-mark">${horse.mark || '?'}</span>
+                                    <span class="horse-info">${horse.number}${horse.name} (${horse.type})</span>
+                                    ${horse.factors ? horse.factors.map(f => `<span class="factor">${f.text}</span>`).join(' ') : ''}
+                                </div>`;
+                        }
+                    });
+                }
+
+                // 候補馬情報
+                if (raceInfo.candidates?.renka?.length > 0) {
+                    html += `<div class="candidate-item">△ 連下候補馬: ${raceInfo.candidates.renka.join(',')}</div>`;
+                }
+                if (raceInfo.candidates?.osae?.length > 0) {
+                    html += `<div class="candidate-item">× 押さえ候補馬: ${raceInfo.candidates.osae.join(',')}</div>`;
+                }
+
+                html += `
+                            </div>
+                        </div>
+
+                        <!-- 戦略セクション -->
                         <div class="strategy-preview">
                             <div class="strategy-item">
                                 <h4>🎯 少点数的中型</h4>
@@ -278,16 +404,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             previewContent.innerHTML = html;
         }
 
-        // JSON更新実行
+        // JSON更新実行（全データ対応版）
         async function updateJsonData(data) {
             try {
-                const response = await fetch('/.netlify/functions/update-betting-data', {
+                const response = await fetch('/.netlify/functions/update-complete-data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        bettingData: data
+                        completeData: data
                     })
                 });
 
@@ -299,7 +425,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 console.log('✅ 更新成功:', result);
 
                 if (result.success) {
-                    console.log(`🎯 ${result.updatedRaces}レースの買い目を更新しました`);
+                    console.log(`🎯 ${result.updatedRaces}レースの全データを更新しました`);
                     return result;
                 } else {
                     throw new Error(result.error || '更新に失敗しました');
@@ -536,6 +662,62 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
         .success-section h2 {
             color: white;
+        }
+
+        /* 馬情報表示スタイル */
+        .horse-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1e293b;
+            border-radius: 8px;
+        }
+
+        .horse-section h4 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        .horse-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .horse-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #0f172a;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .horse-mark {
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-width: 20px;
+        }
+
+        .horse-info {
+            font-weight: 600;
+            color: #e2e8f0;
+            min-width: 120px;
+        }
+
+        .factor {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-right: 8px;
+        }
+
+        .candidate-item {
+            padding: 6px 8px;
+            background: #374151;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            margin-top: 8px;
         }
     </style>
 </BaseLayout>
