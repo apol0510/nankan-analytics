@@ -9,6 +9,15 @@ import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDis
 // 共有ロジックを使用してデータを処理（元のデータを直接使用）
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
 
+// 日付と会場を取得
+const raceDate = allRacesData.raceDate; // "2025-09-17"
+const track = allRacesData.track; // "大井競馬"
+const totalRaces = allRacesData.totalRaces || 12; // 全レース数
+
+// 日付を日本語形式に変換
+const [year, month, day] = raceDate.split('-');
+const formattedDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
+
 // 元のデータを直接使用（根本解決）
 const { raceInfo, strategies, horses, analysis, preview, allHorses, totalHorses } = mainRace;
 const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHorses, allHorses: race12RAllHorses } = race12R;
@@ -25,7 +34,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                 <span class="pulse"></span>
                 <span class="ai-status">AI分析完了</span>
             </div>
-            <h1 class="race-title">2025年8月22日 川崎競馬 - 全12レース総合予想</h1>
+            <h1 class="race-title">{formattedDate} {track} - 全{totalRaces}レース総合予想</h1>
             <div class="ai-metrics">
                 <div class="metric">
                     <div class="metric-value">12</div>
