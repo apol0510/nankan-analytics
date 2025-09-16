@@ -199,10 +199,17 @@ AIモデル予測: 的中率38%
             URL.revokeObjectURL(url);
         });
 
-        // マコちゃんの詳細形式対応パース処理（レース名・発走時刻・距離対応＋柔軟対応）
+        // マコちゃんの詳細形式対応パース処理（レース名・発走時刻・距離対応＋柔軟対応＋デバッグ強化）
         function parsePredictionData(data) {
             const races = [];
-            const raceBlocks = data.split(/(?=\w+\d+R\s)/).filter(block => block.trim());
+            // より柔軟なレース分割パターン（10R, 11R, 12Rも対応）
+            const raceBlocks = data.split(/(?=(?:川崎|大井|船橋|浦和)(?:\d{1,2}R|\d{1,2}レース))/i).filter(block => block.trim());
+
+            console.log(`🐎 検出されたレースブロック数: ${raceBlocks.length}`);
+            raceBlocks.forEach((block, index) => {
+                const firstLine = block.split('\n')[0].trim();
+                console.log(`📝 ブロック${index + 1}: "${firstLine}"`);
+            });
 
             raceBlocks.forEach(block => {
                 if (!block.trim()) return;
@@ -231,9 +238,10 @@ AIモデル予測: 的中率38%
                 let currentStrategy = null;
 
                 lines.forEach(line => {
-                    // レース基本情報の詳細解析（柔軟対応）
-                    if (line.match(/\w+\d+R/)) {
+                    // レース基本情報の詳細解析（柔軟対応・10R以上にも対応）
+                    if (line.match(/(?:川崎|大井|船橋|浦和)\d{1,2}R/i)) {
                         race.title = line;
+                        console.log(`🏇 レース検出: "${line}"`);
 
                         // 距離抽出
                         const distanceMatch = line.match(/(\d+)m/);
@@ -340,9 +348,15 @@ AIモデル予測: 的中率38%
                     }
                 });
 
-                if (race.title) races.push(race);
+                if (race.title) {
+                    races.push(race);
+                    console.log(`✅ レース追加: ${race.title} (${races.length}レース目)`);
+                } else {
+                    console.log(`❌ レースタイトル未検出、スキップ: "${block.substring(0, 100)}..."`);
+                }
             });
 
+            console.log(`🏁 最終結果: ${races.length}レースを検出しました`);
             return races;
         }
 
