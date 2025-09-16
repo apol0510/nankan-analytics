@@ -471,6 +471,13 @@ export function processUnifiedRaceData(raceData) {
         console.error(`🚨 Strategy C validation failed: ${strategyC.bets.length} bets instead of 14`);
     }
 
+    // デバッグログ: JSONデータ保護状況
+    if (raceData.strategies?.balance?.bets) {
+        console.log(`🛡️ Race ${raceData.raceNumber}: JSONの買い目データを保護中 - balance: ${raceData.strategies.balance.bets[0]?.horses}`);
+    } else {
+        console.log(`⚠️ Race ${raceData.raceNumber}: 動的生成買い目を使用 - balance: ${strategyB.bets[0]}`);
+    }
+
     // 統一データ形式で返す（既存データを優先し、不足分のみ補完）
     return {
         ...raceData,
@@ -509,7 +516,8 @@ export function processUnifiedRaceData(raceData) {
                 hitRate: strategyA.hitRate,
                 returnRate: strategyA.returnRate,
                 riskLevel: strategyA.riskText,
-                bets: strategyA.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '3-6倍' })),
+                // 🛡️ JSONデータ最優先保護: 既存の買い目データがある場合は保護
+                bets: raceData.strategies?.safe?.bets || strategyA.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '3-6倍' })),
                 expectedPayout: '3-6倍',
                 payoutType: '堅実決着想定',
                 progressBar: strategyA.progressBar
@@ -520,7 +528,8 @@ export function processUnifiedRaceData(raceData) {
                 hitRate: strategyB.hitRate,
                 returnRate: strategyB.returnRate,
                 riskLevel: strategyB.riskText,
-                bets: strategyB.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '6-12倍' })),
+                // 🛡️ JSONデータ最優先保護: 既存の買い目データがある場合は保護
+                bets: raceData.strategies?.balance?.bets || strategyB.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '6-12倍' })),
                 expectedPayout: '6-12倍',
                 payoutType: '中穴配当想定',
                 progressBar: strategyB.progressBar
@@ -531,7 +540,8 @@ export function processUnifiedRaceData(raceData) {
                 hitRate: strategyC.hitRate,
                 returnRate: strategyC.returnRate,
                 riskLevel: strategyC.riskText,
-                bets: strategyC.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '12倍以上' })),
+                // 🛡️ JSONデータ最優先保護: 既存の買い目データがある場合は保護
+                bets: raceData.strategies?.aggressive?.bets || strategyC.bets.map(bet => ({ type: '馬単', numbers: bet, odds: '12倍以上' })),
                 expectedPayout: '12倍以上',
                 payoutType: '大穴視野',
                 progressBar: strategyC.progressBar

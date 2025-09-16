@@ -85,9 +85,19 @@ const standardRaces = sortedRaces.filter(race =>
                 console.warn(`Race ${raceData.raceNumber} integrity issues:`, integrity);
             }
 
-            // 統一システムで戦略を生成
-            const processedData = getPredictionDataWithStrategies(raceData.horses);
-            const raceStrategies = processedData;
+            // 戦略データ取得（JSONデータ優先システム）
+            // JSONに戦略データが存在する場合はそれを使用、存在しない場合のみ動的生成
+            let raceStrategies;
+            if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balance && raceData.strategies.aggressive) {
+                // JSONデータが存在する場合は優先使用（復活防止対策）
+                console.log(`✅ Race ${raceData.raceNumber}: JSONデータを使用`);
+                raceStrategies = raceData.strategies;
+            } else {
+                // JSONデータが不完全な場合のみ動的生成
+                console.log(`⚠️ Race ${raceData.raceNumber}: 動的生成を使用`);
+                const processedData = getPredictionDataWithStrategies(raceData.horses);
+                raceStrategies = processedData.strategies;
+            }
 
             // リスク表示用のスコア変数を定義
             const raceMainHorseScore = getHorseConfidenceFromMark(raceData.horses.main);
