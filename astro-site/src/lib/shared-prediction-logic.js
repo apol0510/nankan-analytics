@@ -214,8 +214,8 @@ export function generateStandardizedBets(horses, strategyType) {
             break;
 
         case 'B': // バランス型モデル - マコちゃん仕様: 複数軸からの馬単組み合わせ
-            // {対抗,単穴2,単穴1} → 本命
-            const fromHorsesB = [subNumber, sub2Number, sub1Number].filter(n => n); // 対抗,単穴2,単穴1
+            // {単穴2,単穴1,対抗} → 本命（正しい順序）
+            const fromHorsesB = [sub2Number, sub1Number, subNumber].filter(n => n); // 単穴2,単穴1,対抗
             bets.push(`馬単 ${fromHorsesB.join(',')} → ${mainNumber}`);
 
             // 本命⇔連下候補馬
