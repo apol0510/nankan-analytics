@@ -64,6 +64,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <div class="action-buttons">
                 <button type="button" id="parse-btn" class="btn-primary">📋 解析・プレビュー</button>
                 <button type="button" id="update-json-btn" class="btn-success" style="display: none;">🚀 JSON更新実行</button>
+                <button type="button" id="download-json-btn" class="btn-download" style="display: none; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">💾 JSONダウンロード</button>
                 <a href="/premium-predictions" id="check-result-btn" class="btn-check" style="display: none;">👀 結果確認</a>
             </div>
         </div>
@@ -98,10 +99,40 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
                 document.getElementById('preview-section').style.display = 'block';
                 document.getElementById('update-json-btn').style.display = 'inline-block';
+                document.getElementById('download-json-btn').style.display = 'inline-block';
+                document.getElementById('check-result-btn').style.display = 'inline-block';
             } catch (error) {
                 alert('データの解析に失敗しました: ' + error.message);
                 console.error('Parse error:', error);
             }
+        });
+
+        // JSONダウンロード機能追加
+        document.getElementById('download-json-btn').addEventListener('click', function() {
+            if (!parsedData) {
+                alert('先に解析を実行してください');
+                return;
+            }
+
+            // 更新用JSONデータを生成
+            const updateInstructions = {
+                "instructions": "このデータをsrc/data/allRacesPrediction.jsonに手動で反映してください",
+                "updateData": parsedData,
+                "timestamp": new Date().toISOString()
+            };
+
+            // JSONファイルとしてダウンロード
+            const blob = new Blob([JSON.stringify(updateInstructions, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `betting-update-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('💾 更新データをダウンロードしました。\n\nこのJSONファイルの内容を src/data/allRacesPrediction.json に手動で反映してください。');
         });
 
         // JSON更新処理
