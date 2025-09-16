@@ -158,72 +158,74 @@ export function getRecommendationCount(riskPercentage) {
     return 1;
 }
 
-// 標準化買い目生成システム（マコちゃんの希望に完全対応）
+// 標準化買い目生成システム（マコちゃんの希望に完全対応・データ構造対応版）
 export function generateStandardizedBets(horses, strategyType) {
-    const { main, sub, allHorses } = horses;
-
-    if (!allHorses || !Array.isArray(allHorses)) {
-        console.error('allHorses data not found or invalid');
-        return [`データエラー: 馬の情報が不足しています`];
-    }
+    const { main, sub, sub1, sub2, allHorses } = horses;
 
     // 実際の馬番号を取得
     const mainNumber = main?.number || 9;  // 本命
     const subNumber = sub?.number || 11;   // 対抗
+    const sub1Number = sub1?.number;      // 単穴1
+    const sub2Number = sub2?.number;      // 単穴2
 
-    // 役割別に馬を分類し、番号順にソート
-    const renkuHorses = allHorses.filter(h => h.type === '連下').sort((a, b) => a.number - b.number);
-    const osaeHorses = allHorses.filter(h => h.type === '押さえ').sort((a, b) => a.number - b.number);
-    const tananaHorses = allHorses.filter(h => h.type === '単穴').sort((a, b) => a.number - b.number);
-
-    console.log(`🐎 Horse analysis for strategy ${strategyType}:`);
+    console.log(`🐎 Strategy ${strategyType} analysis:`);
     console.log(`   本命: ${mainNumber}番, 対抗: ${subNumber}番`);
-    console.log(`   連下: ${renkuHorses.map(h => h.number).join(',')}番 (${renkuHorses.length}頭)`);
-    console.log(`   単穴: ${tananaHorses.map(h => h.number).join(',')}番 (${tananaHorses.length}頭)`);
-    console.log(`   押さえ: ${osaeHorses.map(h => h.number).join(',')}番 (${osaeHorses.length}頭)`);
+    console.log(`   単穴1: ${sub1Number}番, 単穴2: ${sub2Number}番`);
+
+    // allHorsesから追加の馬を取得（連下・押さえ用）
+    let extraHorses = [];
+    if (allHorses && Array.isArray(allHorses)) {
+        extraHorses = allHorses.filter(h =>
+            h.number !== mainNumber &&
+            h.number !== subNumber &&
+            h.number !== sub1Number &&
+            h.number !== sub2Number
+        ).slice(0, 4); // 最大4頭まで
+    }
+
+    console.log(`   その他の馬: ${extraHorses.map(h => h.number).join(',')}番`);
 
     let bets = [];
 
     switch (strategyType) {
         case 'A': // 少点数的中型モデル - 本命→対抗と単穴２頭
             const targetsA = [subNumber]; // 対抗
-            // 単穴２頭を追加
-            if (tananaHorses[0]) targetsA.push(tananaHorses[0].number);
-            if (tananaHorses[1]) targetsA.push(tananaHorses[1].number);
+            if (sub1Number) targetsA.push(sub1Number);
+            if (sub2Number) targetsA.push(sub2Number);
 
             bets = [`馬単 ${mainNumber} → ${targetsA.join(',')}`];
             console.log(`🎯 少点数的中型: ${mainNumber} → ${targetsA.join(',')} (${targetsA.length}点)`);
             break;
 
         case 'B': // バランス型モデル - 本命⇔連下４頭 + 対抗→本命と単穴２頭
-            // 本命⇔連下４頭
-            const renku4 = renkuHorses.slice(0, 4).map(h => h.number);
-            if (renku4.length >= 4) {
+            // 本命⇔連下４頭（extraHorsesを使用）
+            const renku4 = extraHorses.slice(0, 4).map(h => h.number);
+            if (renku4.length >= 2) { // 最低2頭あれば実行
                 bets.push(`馬単 ${mainNumber} ⇔ ${renku4.join(',')}`);
             }
 
             // 対抗→本命と単穴２頭
             const targetsB = [mainNumber]; // 本命
-            if (tananaHorses[0]) targetsB.push(tananaHorses[0].number);
-            if (tananaHorses[1]) targetsB.push(tananaHorses[1].number);
+            if (sub1Number) targetsB.push(sub1Number);
+            if (sub2Number) targetsB.push(sub2Number);
 
             bets.push(`馬単 ${subNumber} → ${targetsB.join(',')}`);
-            console.log(`⚖️ バランス型: ${mainNumber} ⇔ ${renku4.join(',')} (8点) + ${subNumber} → ${targetsB.join(',')} (3点)`);
+            console.log(`⚖️ バランス型: ${mainNumber} ⇔ ${renku4.join(',')} + ${subNumber} → ${targetsB.join(',')}`);
             break;
 
         case 'C': // 高配当追求型モデル - 本命→抑え + 対抗⇔連下と抑え
-            // 本命→抑え
-            const osaeTargets = osaeHorses.slice(0, 2).map(h => h.number);
+            // 本命→抑え（extraHorsesの一部を使用）
+            const osaeTargets = extraHorses.slice(0, 2).map(h => h.number);
             if (osaeTargets.length > 0) {
                 bets.push(`馬単 ${mainNumber} → ${osaeTargets.join(',')}`);
             }
 
-            // 対抗⇔連下と抑え
-            const renkuAndOsae = [...renkuHorses.slice(0, 4), ...osaeHorses.slice(0, 2)].map(h => h.number);
-            if (renkuAndOsae.length >= 2) {
-                bets.push(`馬単 ${subNumber} ⇔ ${renkuAndOsae.join(',')}`);
+            // 対抗⇔連下と抑え（extraHorsesを使用）
+            const allTargets = extraHorses.map(h => h.number);
+            if (allTargets.length >= 2) {
+                bets.push(`馬単 ${subNumber} ⇔ ${allTargets.join(',')}`);
             }
-            console.log(`🚀 高配当追求型: ${mainNumber} → ${osaeTargets.join(',')} + ${subNumber} ⇔ ${renkuAndOsae.join(',')}`);
+            console.log(`🚀 高配当追求型: ${mainNumber} → ${osaeTargets.join(',')} + ${subNumber} ⇔ ${allTargets.join(',')}`);
             break;
     }
 
