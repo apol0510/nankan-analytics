@@ -28,6 +28,7 @@
         "main": {
           "number": 11,
           "name": "オールスターズ",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -42,21 +43,22 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9113866009972285
+              "value": 0.91
             },
             {
               "label": "能力上位性",
-              "value": 0.9124791653470958
+              "value": 0.9
             },
             {
               "label": "展開利",
-              "value": 0.8335015988698075
+              "value": 0.81
             }
           ]
         },
         "sub": {
           "number": 5,
           "name": "シャークウォーニン",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -71,36 +73,11 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9726277526122616
+              "value": 0.97
             },
             {
               "label": "能力上位性",
-              "value": 0.8128991419280213
-            },
-            {
-              "label": "展開利",
-              "value": 0.8559978759316974
-            }
-          ]
-        },
-        "sub1": {
-          "number": 9,
-          "name": "フェアクラウド",
-          "type": "単穴",
-          "factors": [
-            {
-              "icon": "★",
-              "text": "累積スコア: 82pt"
-            }
-          ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.77
-            },
-            {
-              "label": "爆発力",
-              "value": 0.87
+              "value": 0.79
             },
             {
               "label": "展開利",
@@ -108,30 +85,39 @@
             }
           ]
         },
+        "sub1": {
+          "number": 9,
+          "name": "フェアクラウド",
+          "mark": "▲",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
+            {
+              "icon": "★",
+              "text": "累積スコア: 82pt"
+            }
+          ],
+          "importance": []
+        },
         "sub2": {
           "number": 6,
           "name": "パンオショコラ",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 76pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.76
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.76
-            },
-            {
-              "label": "展開利",
-              "value": 0.76
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -144,18 +130,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "11 → 5,6,13",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "11 - 5,6,13",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "11-5 - 6,13,2",
-              "points": "6点"
+              "horses": "11 → 5,6,9",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -170,18 +146,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "11 → 5,6,13",
-              "points": "3点"
+              "horses": "5,6,9 → 11",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "11,5-6,13,2,4,7,9,10,12,14",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "11 ⇔ 4,10,13,14",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "11-5,6,13",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "5 → 6,9",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -195,19 +171,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "11→5,6→6,13,2,4,7,9,10,12,14",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "5→11→6,13,2,4,7,9,10,12,14",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "11 → 2,7,12",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "6→11,5",
-              "points": "2点"
+              "horses": "5 ⇔ 2,4,7,10,12,13,14",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -433,6 +404,7 @@
         "main": {
           "number": 8,
           "name": "フロリダフォンテン",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -447,21 +419,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.8703389012777939
+              "value": 0.92
             },
             {
               "label": "能力上位性",
-              "value": 0.8977062468855515
+              "value": 0.9
             },
             {
               "label": "展開利",
-              "value": 0.8075310391388304
+              "value": 0.73
             }
-          ]
+          ],
+          "stability": 92,
+          "ability": 90,
+          "development": 73
         },
         "sub": {
           "number": 4,
           "name": "ピックアンドロール",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -476,67 +452,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9236648940382374
+              "value": 0.89
             },
             {
               "label": "能力上位性",
-              "value": 0.7794561840436286
+              "value": 0.86
             },
             {
               "label": "展開利",
-              "value": 0.8213410942795579
+              "value": 0.71
             }
-          ]
+          ],
+          "stability": 89,
+          "ability": 86,
+          "development": 71
         },
         "sub1": {
           "number": 1,
-          "name": "レッドフローガ77",
+          "name": "レッドフローガ",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 81pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.76
-            },
-            {
-              "label": "爆発力",
-              "value": 0.86
-            },
-            {
-              "label": "展開利",
-              "value": 0.81
-            }
-          ]
+          "importance": []
         },
         "sub2": {
           "number": 7,
           "name": "ノリサムソン",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 78pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.78
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.78
-            },
-            {
-              "label": "展開利",
-              "value": 0.78
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -549,18 +512,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "9 → 8,4,7",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "9 - 8,4,7",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "9-8 - 4,7,1",
-              "points": "6点"
+              "horses": "8 → 1,4,7",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -575,18 +528,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "9 → 8,4,7",
-              "points": "3点"
+              "horses": "1,4,7 → 8",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "9,8-4,7,1,2,5,6",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "8 ⇔ 2,6,9",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "9-8,4,7",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "4 → 1,7",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -600,19 +553,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "9→8,4→4,7,1,2,5,6",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "8→9→4,7,1,2,5,6",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "8 → 5",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "4→9,8",
-              "points": "2点"
+              "horses": "4 ⇔ 2,5,6,9",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -790,6 +738,7 @@
         "main": {
           "number": 4,
           "name": "ナポレオンバディ",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -804,21 +753,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9096834284386283
+              "value": 0.91
             },
             {
               "label": "能力上位性",
-              "value": 0.9153932545600371
+              "value": 0.92
             },
             {
               "label": "展開利",
-              "value": 0.8308202211403948
+              "value": 0.81
             }
-          ]
+          ],
+          "stability": 91,
+          "ability": 92,
+          "development": 81
         },
         "sub": {
           "number": 1,
           "name": "マオノアデル",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -833,67 +786,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9253475256036846
+              "value": 0.9
             },
             {
               "label": "能力上位性",
-              "value": 0.7882256881453051
+              "value": 0.87
             },
             {
               "label": "展開利",
-              "value": 0.8091111038462977
+              "value": 0.75
             }
-          ]
+          ],
+          "stability": 90,
+          "ability": 87,
+          "development": 75
         },
         "sub1": {
           "number": 3,
           "name": "ファインブレード",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 83pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.78
-            },
-            {
-              "label": "爆発力",
-              "value": 0.88
-            },
-            {
-              "label": "展開利",
-              "value": 0.83
-            }
-          ]
+          "importance": []
         },
         "sub2": {
           "number": 8,
           "name": "ジュアルエリモ",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 81pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.81
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.81
-            },
-            {
-              "label": "展開利",
-              "value": 0.81
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -906,18 +846,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 2,1,3",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "4 - 2,1,3",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "4-2 - 1,3,5",
-              "points": "6点"
+              "horses": "4 → 1,3,8",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -932,18 +862,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 2,1,3",
-              "points": "3点"
+              "horses": "1,3,8 → 4",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "4,2-1,3,5,6,8",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "4 ⇔ 2,5",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "4-2,1,3",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "1 → 3,8",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -957,19 +887,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "4→2,1→1,3,5,6,8",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "2→4→1,3,5,6,8",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "4 → 6",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "1→4,2",
-              "points": "2点"
+              "horses": "1 ⇔ 2,5,6",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -1131,6 +1056,7 @@
         "main": {
           "number": 4,
           "name": "デリヴァランス",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -1145,21 +1071,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9197451364907177
+              "value": 0.92
             },
             {
               "label": "能力上位性",
-              "value": 0.8818671378260495
+              "value": 0.88
             },
             {
               "label": "展開利",
-              "value": 0.8021314866375303
+              "value": 0.79
             }
-          ]
+          ],
+          "stability": 92,
+          "ability": 88,
+          "development": 79
         },
         "sub": {
           "number": 5,
           "name": "クリノエーデル",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -1174,67 +1104,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.976444043166719
+              "value": 0.93
             },
             {
               "label": "能力上位性",
-              "value": 0.8016856006232379
-            },
-            {
-              "label": "展開利",
-              "value": 0.8574082889430048
-            }
-          ]
-        },
-        "sub1": {
-          "number": 6,
-          "name": "オレユウタヤン",
-          "type": "単穴",
-          "factors": [
-            {
-              "icon": "★",
-              "text": "累積スコア: 80pt"
-            }
-          ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.75
-            },
-            {
-              "label": "爆発力",
               "value": 0.85
             },
             {
               "label": "展開利",
-              "value": 0.8
+              "value": 0.77
             }
-          ]
+          ],
+          "stability": 93,
+          "ability": 85,
+          "development": 77
         },
-        "sub2": {
-          "number": 7,
-          "name": "オレンジマン",
-          "type": "単穴2",
+        "sub1": {
+          "number": 6,
+          "name": "オレユウタヤン",
+          "mark": "▲",
+          "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 80pt"
             }
           ],
-          "importance": [
+          "importance": []
+        },
+        "sub2": {
+          "number": 7,
+          "name": "オレンジマン",
+          "mark": "▲",
+          "type": "単穴2",
+          "factors": [
             {
-              "label": "爆発力",
-              "value": 0.8
+              "icon": "★",
+              "text": "総合評価:★★★"
             },
             {
-              "label": "穴馬適性",
-              "value": 0.8
-            },
-            {
-              "label": "展開利",
-              "value": 0.8
+              "icon": "★",
+              "text": "累積スコア: 80pt"
             }
-          ]
+          ],
+          "importance": []
         }
       },
       "strategies": {
@@ -1247,18 +1164,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "5 → 8,4,7",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "5 - 8,4,7",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "5-8 - 4,7,1",
-              "points": "6点"
+              "horses": "4 → 5,6,7",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -1273,18 +1180,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "5 → 8,4,7",
-              "points": "3点"
+              "horses": "5,6,7 → 4",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "5,8-4,7,1,6,9,10",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "4 ⇔ 1,8,9",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "5-8,4,7",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "5 → 6,7",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -1298,19 +1205,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "5→8,4→4,7,1,6,9,10",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "8→5→4,7,1,6,9,10",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "4 → 10",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "4→5,8",
-              "points": "2点"
+              "horses": "5 ⇔ 1,8,9,10",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -1488,6 +1390,7 @@
         "main": {
           "number": 11,
           "name": "サンバフレイバー",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -1502,21 +1405,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.8951460206952375
+              "value": 0.91
             },
             {
               "label": "能力上位性",
-              "value": 0.8952164738728519
+              "value": 0.92
             },
             {
               "label": "展開利",
-              "value": 0.8096195902711905
+              "value": 0.81
             }
-          ]
+          ],
+          "stability": 91,
+          "ability": 92,
+          "development": 81
         },
         "sub": {
           "number": 2,
           "name": "メイショウトワニ",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -1531,67 +1438,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9274166699997076
+              "value": 0.9
             },
             {
               "label": "能力上位性",
-              "value": 0.759605933420068
+              "value": 0.84
             },
             {
               "label": "展開利",
-              "value": 0.80805486337289
+              "value": 0.76
             }
-          ]
+          ],
+          "stability": 90,
+          "ability": 84,
+          "development": 76
         },
         "sub1": {
           "number": 13,
           "name": "アイソタイプ",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 82pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.77
-            },
-            {
-              "label": "爆発力",
-              "value": 0.87
-            },
-            {
-              "label": "展開利",
-              "value": 0.82
-            }
-          ]
+          "importance": []
         },
         "sub2": {
           "number": 1,
           "name": "ナックジャスパー",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 81pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.81
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.81
-            },
-            {
-              "label": "展開利",
-              "value": 0.81
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -1604,18 +1498,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "11 → 2,6,13",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "11 - 2,6,13",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "11-2 - 6,13,1",
-              "points": "6点"
+              "horses": "11 → 1,2,13",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -1630,18 +1514,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "11 → 2,6,13",
-              "points": "3点"
+              "horses": "1,2,13 → 11",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "11,2-6,13,1,3,7,9,14",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "11 ⇔ 6,14",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "11-2,6,13",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "2 → 1,13",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -1655,19 +1539,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "11→2,6→6,13,1,3,7,9,14",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "2→11→6,13,1,3,7,9,14",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "11 → 3,7,9",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "6→11,2",
-              "points": "2点"
+              "horses": "2 ⇔ 1,3,6,7,9,13,14",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -1861,11 +1740,12 @@
         "main": {
           "number": 7,
           "name": "ジーティーゴッド",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
               "icon": "★",
-              "text": "総合評価:★★★★"
+              "text": "総合評価:★★★"
             },
             {
               "icon": "★",
@@ -1875,21 +1755,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9217677907294904
+              "value": 0.92
             },
             {
               "label": "能力上位性",
-              "value": 0.9109512798310049
+              "value": 0.91
             },
             {
               "label": "展開利",
-              "value": 0.8234904009979622
+              "value": 0.84
             }
-          ]
+          ],
+          "stability": 92,
+          "ability": 91,
+          "development": 84
         },
         "sub": {
           "number": 1,
           "name": "ポムヴェルト",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -1904,67 +1788,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9742340765898919
+              "value": 0.9
             },
             {
               "label": "能力上位性",
-              "value": 0.8225759074931482
-            },
-            {
-              "label": "展開利",
-              "value": 0.8392919916777557
-            }
-          ]
-        },
-        "sub1": {
-          "number": 2,
-          "name": "ダンシングラスカル",
-          "type": "単穴",
-          "factors": [
-            {
-              "icon": "★",
-              "text": "累積スコア: 81pt"
-            }
-          ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.76
-            },
-            {
-              "label": "爆発力",
-              "value": 0.86
+              "value": 0.88
             },
             {
               "label": "展開利",
               "value": 0.81
             }
-          ]
+          ],
+          "stability": 90,
+          "ability": 88,
+          "development": 81
+        },
+        "sub1": {
+          "number": 2,
+          "name": "ダンシングラスカル",
+          "mark": "▲",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
+            {
+              "icon": "★",
+              "text": "累積スコア: 81pt"
+            }
+          ],
+          "importance": []
         },
         "sub2": {
           "number": 10,
           "name": "カノアレディー",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 79pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.79
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.79
-            },
-            {
-              "label": "展開利",
-              "value": 0.79
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -1977,18 +1848,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "7 → 1,6,10",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "7 - 1,6,10",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "7-1 - 6,10,2",
-              "points": "6点"
+              "horses": "7 → 1,2,10",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -2003,18 +1864,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "7 → 1,6,10",
-              "points": "3点"
+              "horses": "1,2,10 → 7",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "7,1-6,10,2,5,8",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "7 ⇔ 6,8",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "7-1,6,10",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "1 → 2,10",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -2028,19 +1889,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "7→1,6→6,10,2,5,8",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "1→7→6,10,2,5,8",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "7 → 5",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "6→7,1",
-              "points": "2点"
+              "horses": "1 ⇔ 2,5,6,8,10",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -2202,11 +2058,12 @@
         "main": {
           "number": 1,
           "name": "スリーキングス",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
               "icon": "★",
-              "text": "総合評価:★★★★"
+              "text": "総合評価:★★★"
             },
             {
               "icon": "★",
@@ -2216,21 +2073,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.911628081799727
+              "value": 0.93
             },
             {
               "label": "能力上位性",
-              "value": 0.9237710037755227
+              "value": 0.92
             },
             {
               "label": "展開利",
-              "value": 0.8422084949466624
+              "value": 0.82
             }
-          ]
+          ],
+          "stability": 93,
+          "ability": 92,
+          "development": 82
         },
         "sub": {
           "number": 5,
           "name": "イモノソーダワリデ",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -2245,67 +2106,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.901238122588707
+              "value": 0.9
             },
             {
               "label": "能力上位性",
-              "value": 0.7866767437884782
+              "value": 0.86
             },
             {
               "label": "展開利",
-              "value": 0.8261369645584622
+              "value": 0.79
             }
-          ]
+          ],
+          "stability": 90,
+          "ability": 86,
+          "development": 79
         },
         "sub1": {
           "number": 4,
           "name": "リュミエール",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 84pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.79
-            },
-            {
-              "label": "爆発力",
-              "value": 0.89
-            },
-            {
-              "label": "展開利",
-              "value": 0.84
-            }
-          ]
+          "importance": []
         },
         "sub2": {
           "number": 2,
           "name": "リックマーベル",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 82pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.82
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.82
-            },
-            {
-              "label": "展開利",
-              "value": 0.82
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -2318,18 +2166,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "1 → 5,2,4",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "1 - 5,2,4",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "1-5 - 2,4",
-              "points": "6点"
+              "horses": "1 → 2,4,5",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -2344,18 +2182,13 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "1 → 5,2,4",
-              "points": "3点"
+              "horses": "2,4,5 → 1",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "1,5-2,4",
-              "points": "10点"
-            },
-            {
-              "type": "ワイド",
-              "horses": "1-5,2,4",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "5 → 2,4",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -2369,19 +2202,9 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "1→5,2→2,4",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "5→1→2,4",
-              "points": "8点"
-            },
-            {
               "type": "馬単",
-              "horses": "2→1,5",
-              "points": "2点"
+              "horses": "5 ⇔ 2,4",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -2495,6 +2318,7 @@
         "main": {
           "number": 4,
           "name": "ロンギングタイム",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -2509,21 +2333,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9230200917010343
+              "value": 0.92
             },
             {
               "label": "能力上位性",
-              "value": 0.9260064896016487
+              "value": 0.87
             },
             {
               "label": "展開利",
-              "value": 0.8399806032511737
+              "value": 0.79
             }
-          ]
+          ],
+          "stability": 92,
+          "ability": 87,
+          "development": 79
         },
         "sub": {
           "number": 9,
           "name": "コパノマデリン",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -2538,67 +2366,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9756284499008538
+              "value": 0.95
             },
             {
               "label": "能力上位性",
-              "value": 0.8175051905870302
+              "value": 0.86
             },
             {
               "label": "展開利",
-              "value": 0.8626047877259659
+              "value": 0.8
             }
-          ]
+          ],
+          "stability": 95,
+          "ability": 86,
+          "development": 80
         },
         "sub1": {
           "number": 7,
           "name": "スズノハマヤ",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 81pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.76
-            },
-            {
-              "label": "爆発力",
-              "value": 0.86
-            },
-            {
-              "label": "展開利",
-              "value": 0.81
-            }
-          ]
+          "importance": []
         },
         "sub2": {
           "number": 11,
           "name": "ボクノオクリモノ",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 78pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.78
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.78
-            },
-            {
-              "label": "展開利",
-              "value": 0.78
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -2611,18 +2426,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 6,9,8",
-              "points": "4点"
-            },
-            {
-              "type": "馬連",
-              "horses": "4 - 6,9,8",
-              "points": "4点"
-            },
-            {
-              "type": "3連複",
-              "horses": "4-6 - 8,10,1",
-              "points": "6点"
+              "horses": "4 → 7,9,11",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -2637,18 +2442,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 6,9,8,10",
-              "points": "4点"
+              "horses": "7,9,11 → 4",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "4,6-8,10,1,3,5,7,11",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "4 ⇔ 1,3,5,8",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "4-6,9,8,10",
-              "points": "4点"
+              "type": "馬単",
+              "horses": "9 → 7,11",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -2662,19 +2467,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "4→6,9→8,10,1,3,5,7,11",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "6→4→8,10,1,3,5,7,11",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "4 → 10",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "8→4,6",
-              "points": "2点"
+              "horses": "9 ⇔ 1,3,5,7,8,10,11",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -2882,8 +2682,9 @@
       },
       "horses": {
         "main": {
-          "number": 11,
-          "name": "ダイタエリュシオン",
+          "number": 4,
+          "name": "ホワイトマジック",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -2892,27 +2693,31 @@
             },
             {
               "icon": "★",
-              "text": "累積スコア: 83pt"
+              "text": "累積スコア: 82pt"
             }
           ],
           "importance": [
             {
               "label": "安定性",
-              "value": 0.8773910500446945
+              "value": 0.9
             },
             {
               "label": "能力上位性",
-              "value": 0.8794674753317031
+              "value": 0.85
             },
             {
               "label": "展開利",
-              "value": 0.7686187967818813
+              "value": 0.71
             }
-          ]
+          ],
+          "stability": 90,
+          "ability": 85,
+          "development": 71
         },
         "sub": {
-          "number": 4,
-          "name": "ホワイトマジック",
+          "number": 11,
+          "name": "ダイタエリュシオン",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -2927,67 +2732,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.8703329055763938
+              "value": 0.91
             },
             {
               "label": "能力上位性",
-              "value": 0.7810959932215824
+              "value": 0.84
             },
             {
               "label": "展開利",
-              "value": 0.7932233860425544
+              "value": 0.7
             }
-          ]
+          ],
+          "stability": 91,
+          "ability": 84,
+          "development": 70
         },
         "sub1": {
           "number": 3,
           "name": "ナックオリオン",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 81pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.76
-            },
-            {
-              "label": "爆発力",
-              "value": 0.86
-            },
-            {
-              "label": "展開利",
-              "value": 0.81
-            }
-          ]
+          "importance": []
         },
         "sub2": {
-          "number": 8,
-          "name": "ハクサンリバーブ",
+          "number": 1,
+          "name": "ジャスミンツー",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
             {
               "icon": "★",
-              "text": "累積スコア: 79pt"
+              "text": "総合評価:★★★"
+            },
+            {
+              "icon": "★",
+              "text": "累積スコア: 77pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.79
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.79
-            },
-            {
-              "label": "展開利",
-              "value": 0.79
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -3000,18 +2792,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 5,8,9",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "4 - 5,8,9",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "4-5 - 8,9,11",
-              "points": "6点"
+              "horses": "4 → 1,3,11",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -3026,18 +2808,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 5,8,9,11",
-              "points": "4点"
+              "horses": "1,3,11 → 4",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "4,5-8,9,11,1,3,10,12,13",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "4 ⇔ 5,8,10,13",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "4-5,8,9,11",
-              "points": "4点"
+              "type": "馬単",
+              "horses": "11 → 1,3",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -3051,19 +2833,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "4→5,8→8,9,11,1,3,10,12,13",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "5→4→8,9,11,1,3,10,12,13",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "4 → 9,12",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "8→4,5",
-              "points": "2点"
+              "horses": "11 ⇔ 1,3,5,8,9,10,12,13",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -3271,8 +3048,9 @@
       },
       "horses": {
         "main": {
-          "number": 6,
-          "name": "レジェンドウェイ",
+          "number": 9,
+          "name": "ケイアイマハナ",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -3287,21 +3065,25 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9193307616184566
+              "value": 0.93
             },
             {
               "label": "能力上位性",
-              "value": 0.8821568361543293
+              "value": 0.88
             },
             {
               "label": "展開利",
-              "value": 0.8108765458857816
+              "value": 0.8
             }
-          ]
+          ],
+          "stability": 93,
+          "ability": 88,
+          "development": 80
         },
         "sub": {
-          "number": 9,
-          "name": "ケイアイマハナ",
+          "number": 6,
+          "name": "レジェンドウェイ",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -3316,67 +3098,54 @@
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9358930926612722
+              "value": 0.92
             },
             {
               "label": "能力上位性",
-              "value": 0.8245807864711646
+              "value": 0.86
             },
             {
               "label": "展開利",
-              "value": 0.8239827102608674
+              "value": 0.78
             }
-          ]
+          ],
+          "stability": 92,
+          "ability": 86,
+          "development": 78
         },
         "sub1": {
           "number": 2,
           "name": "バーストオブカラー",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 80pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.75
-            },
-            {
-              "label": "爆発力",
-              "value": 0.85
-            },
-            {
-              "label": "展開利",
-              "value": 0.8
-            }
-          ]
+          "importance": []
         },
         "sub2": {
           "number": 4,
           "name": "オーデンミカ",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
             {
               "icon": "★",
               "text": "累積スコア: 78pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.78
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.78
-            },
-            {
-              "label": "展開利",
-              "value": 0.78
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -3389,18 +3158,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 6,1,12",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "4 - 6,1,12",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "4-6 - 1,12,2",
-              "points": "6点"
+              "horses": "9 → 2,4,6",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -3415,18 +3174,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "4 → 6,1,12",
-              "points": "3点"
+              "horses": "2,4,6 → 9",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "4,6-1,12,2,3,5,7,8,10",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "9 ⇔ 1,7,12,3",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "4-6,1,12",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "6 → 2,4",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -3440,19 +3199,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "4→6,1→1,12,2,3,5,7,8,10",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "6→4→1,12,2,3,5,7,8,10",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "9 → 5,8,10",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "1→4,6",
-              "points": "2点"
+              "horses": "6 ⇔ 1,2,3,4,5,7,8,10,12",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -3678,35 +3432,40 @@
         "main": {
           "number": 12,
           "name": "グロリアムンディ",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
               "icon": "★",
-              "text": "総合評価:★★★★"
+              "text": "総合評価:★★★"
             },
             {
               "icon": "★",
-              "text": "累積スコア: 89pt"
+              "text": "累積スコア: 88pt"
             }
           ],
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9384233071930685
+              "value": 0.94
             },
             {
               "label": "能力上位性",
-              "value": 0.9092649729859208
+              "value": 0.91
             },
             {
               "label": "展開利",
-              "value": 0.8429238954765645
+              "value": 0.79
             }
-          ]
+          ],
+          "stability": 94,
+          "ability": 91,
+          "development": 79
         },
         "sub": {
-          "number": 7,
-          "name": "グリューヴルム",
+          "number": 10,
+          "name": "マルカンラニ",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -3715,73 +3474,60 @@
             },
             {
               "icon": "★",
-              "text": "累積スコア: 83pt"
+              "text": "累積スコア: 78pt"
             }
           ],
           "importance": [
             {
               "label": "安定性",
-              "value": 0.9139903836710088
+              "value": 0.87
             },
             {
               "label": "能力上位性",
-              "value": 0.764344478196522
+              "value": 0.82
             },
             {
               "label": "展開利",
-              "value": 0.8372266705463427
+              "value": 0.7
             }
-          ]
+          ],
+          "stability": 87,
+          "ability": 82,
+          "development": 70
         },
         "sub1": {
-          "number": 10,
-          "name": "マルカンラニ",
+          "number": 7,
+          "name": "グリューヴルム",
+          "mark": "▲",
           "type": "単穴",
           "factors": [
             {
               "icon": "★",
-              "text": "累積スコア: 83pt"
+              "text": "総合評価:★★★"
+            },
+            {
+              "icon": "★",
+              "text": "累積スコア: 77pt"
             }
           ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.78
-            },
-            {
-              "label": "爆発力",
-              "value": 0.88
-            },
-            {
-              "label": "展開利",
-              "value": 0.83
-            }
-          ]
+          "importance": []
         },
         "sub2": {
           "number": 4,
           "name": "エクセスリターン",
+          "mark": "▲",
           "type": "単穴2",
           "factors": [
             {
               "icon": "★",
-              "text": "累積スコア: 81pt"
+              "text": "総合評価:★★★"
+            },
+            {
+              "icon": "★",
+              "text": "累積スコア: 76pt"
             }
           ],
-          "importance": [
-            {
-              "label": "爆発力",
-              "value": 0.81
-            },
-            {
-              "label": "穴馬適性",
-              "value": 0.81
-            },
-            {
-              "label": "展開利",
-              "value": 0.81
-            }
-          ]
+          "importance": []
         }
       },
       "strategies": {
@@ -3794,18 +3540,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "10 → 12,4,7",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "10 - 12,4,7",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "10-12 - 4,7,2",
-              "points": "6点"
+              "horses": "12 → 4,7,10",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -3820,18 +3556,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "10 → 12,4,7",
-              "points": "3点"
+              "horses": "4,7,10 → 12",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "10,12-4,7,2,6,9,13,14",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "12 ⇔ 6,9,13,14",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "10-12,4,7",
-              "points": "3点"
+              "type": "馬単",
+              "horses": "10 → 4,7",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -3845,19 +3581,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "10→12,4→4,7,2,6,9,13,14",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "12→10→4,7,2,6,9,13,14",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "12 → 2",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "4→10,12",
-              "points": "2点"
+              "horses": "10 ⇔ 2,4,6,7,9,13,14",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
@@ -4049,8 +3780,9 @@
       },
       "horses": {
         "main": {
-          "number": 12,
-          "name": "サウンドキングダム",
+          "number": 13,
+          "name": "ビリーヴホース",
+          "mark": "◎",
           "type": "本命",
           "factors": [
             {
@@ -4059,27 +3791,31 @@
             },
             {
               "icon": "★",
-              "text": "累積スコア: 84pt"
+              "text": "累積スコア: 79pt"
             }
           ],
           "importance": [
             {
               "label": "安定性",
-              "value": 0.8692782498389664
+              "value": 0.89
             },
             {
               "label": "能力上位性",
-              "value": 0.8877529415619076
+              "value": 0.83
             },
             {
               "label": "展開利",
-              "value": 0.7792555733581772
+              "value": 0.74
             }
-          ]
+          ],
+          "stability": 89,
+          "ability": 83,
+          "development": 74
         },
         "sub": {
-          "number": 3,
-          "name": "アトラスライズ",
+          "number": 12,
+          "name": "サウンドキングダム",
+          "mark": "○",
           "type": "対抗",
           "factors": [
             {
@@ -4088,73 +3824,60 @@
             },
             {
               "icon": "★",
-              "text": "累積スコア: 82pt"
-            }
-          ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.9207512962906779
-            },
-            {
-              "label": "能力上位性",
-              "value": 0.7764642769000814
-            },
-            {
-              "label": "展開利",
-              "value": 0.7960643965279991
-            }
-          ]
-        },
-        "sub1": {
-          "number": 11,
-          "name": "フォーモサルビー",
-          "type": "単穴",
-          "factors": [
-            {
-              "icon": "★",
-              "text": "累積スコア: 80pt"
-            }
-          ],
-          "importance": [
-            {
-              "label": "安定性",
-              "value": 0.75
-            },
-            {
-              "label": "爆発力",
-              "value": 0.85
-            },
-            {
-              "label": "展開利",
-              "value": 0.8
-            }
-          ]
-        },
-        "sub2": {
-          "number": 13,
-          "name": "ビリーヴホース",
-          "type": "単穴2",
-          "factors": [
-            {
-              "icon": "★",
               "text": "累積スコア: 79pt"
             }
           ],
           "importance": [
             {
-              "label": "爆発力",
-              "value": 0.79
+              "label": "安定性",
+              "value": 0.88
             },
             {
-              "label": "穴馬適性",
-              "value": 0.79
+              "label": "能力上位性",
+              "value": 0.84
             },
             {
               "label": "展開利",
-              "value": 0.79
+              "value": 0.73
             }
-          ]
+          ],
+          "stability": 88,
+          "ability": 84,
+          "development": 73
+        },
+        "sub1": {
+          "number": 11,
+          "name": "フォーモサルビー",
+          "mark": "▲",
+          "type": "単穴",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
+            {
+              "icon": "★",
+              "text": "累積スコア: 78pt"
+            }
+          ],
+          "importance": []
+        },
+        "sub2": {
+          "number": 3,
+          "name": "アトラスライズ",
+          "mark": "▲",
+          "type": "単穴2",
+          "factors": [
+            {
+              "icon": "★",
+              "text": "総合評価:★★★"
+            },
+            {
+              "icon": "★",
+              "text": "累積スコア: 77pt"
+            }
+          ],
+          "importance": []
         }
       },
       "strategies": {
@@ -4167,18 +3890,8 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "13 → 3,1,7",
-              "points": "3点"
-            },
-            {
-              "type": "馬連",
-              "horses": "13 - 3,1,7",
-              "points": "3点"
-            },
-            {
-              "type": "3連複",
-              "horses": "13-3 - 1,7,11",
-              "points": "6点"
+              "horses": "13 → 3,11,12",
+              "points": ""
             }
           ],
           "expectedPayout": "3-6倍",
@@ -4193,18 +3906,18 @@
           "bets": [
             {
               "type": "馬単",
-              "horses": "13 → 3,1,7,11,12",
-              "points": "5点"
+              "horses": "3,11,12 → 13",
+              "points": ""
             },
             {
-              "type": "3連複",
-              "horses": "13,3-1,7,11,12,2,5,6,8,9",
-              "points": "10点"
+              "type": "馬単",
+              "horses": "13 ⇔ 1,2,8,9",
+              "points": ""
             },
             {
-              "type": "ワイド",
-              "horses": "13-3,1,7,11,12",
-              "points": "5点"
+              "type": "馬単",
+              "horses": "12 → 3,11",
+              "points": ""
             }
           ],
           "expectedPayout": "6-12倍",
@@ -4218,19 +3931,14 @@
           "riskLevel": "high",
           "bets": [
             {
-              "type": "3連単",
-              "horses": "13→3,1→1,7,11,12,2,5,6,8,9",
-              "points": "12点"
-            },
-            {
-              "type": "3連単",
-              "horses": "3→13→1,7,11,12,2,5,6,8,9",
-              "points": "8点"
+              "type": "馬単",
+              "horses": "13 → 5,6,7",
+              "points": ""
             },
             {
               "type": "馬単",
-              "horses": "1→13,3",
-              "points": "2点"
+              "horses": "12 ⇔ 1,2,3,5,6,7,8,9,11",
+              "points": ""
             }
           ],
           "expectedPayout": "12倍以上",
