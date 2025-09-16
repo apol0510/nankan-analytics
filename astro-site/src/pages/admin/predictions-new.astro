@@ -1,0 +1,441 @@
+---
+export const prerender = false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="新予想システム - 完成形データ入力" description="マコちゃんの完成形データ入力システム">
+    <div class="container">
+        <div class="header-section">
+            <div class="ai-badge">
+                <span class="pulse"></span>
+                <span class="ai-status">新システム開発中</span>
+            </div>
+            <h1>🚀 新予想システム - 完成形データ入力</h1>
+            <p>マコちゃんが完成形データを直接入力 → クロが単純反映するシステム</p>
+        </div>
+
+        <div class="form-section">
+            <form id="prediction-form">
+                <div class="race-info-section">
+                    <h2>📅 レース基本情報</h2>
+                    <div class="form-group">
+                        <label>開催日</label>
+                        <input type="date" id="race-date" name="race-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>競馬場</label>
+                        <select id="track" name="track" required>
+                            <option value="大井競馬">大井競馬</option>
+                            <option value="川崎競馬">川崎競馬</option>
+                            <option value="船橋競馬">船橋競馬</option>
+                            <option value="浦和競馬">浦和競馬</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="prediction-input-section">
+                    <h2>🎯 完成形予想データ入力</h2>
+                    <div class="input-format-guide">
+                        <h3>📝 入力形式（例）</h3>
+                        <pre class="format-example">
+川崎1R 1400m（11頭）発走時刻14:45 2歳新馬
+
+【戦略A：少点数的中型】
+馬単 9 → 11,5,6 (3点)
+
+【戦略B：バランス型】
+馬単 9 ⇔ 1,2,3,4 (8点)
+馬単 11 → 9,5,6 (3点)
+
+【戦略C：高配当追求型】
+馬単 9 → 7,8 (2点)
+馬単 11 ⇔ 1,2,3,4,7,8 (12点)
+
+◎9番 本命 累積スコア85pt
+○11番 対抗 累積スコア81pt
+▲5番 単穴 累積スコア78pt
+▲6番 単穴 累積スコア75pt</pre>
+                    </div>
+
+                    <div class="form-group">
+                        <label>全レース予想データ（完成形）</label>
+                        <textarea id="prediction-data" name="prediction-data" rows="30" placeholder="上記の形式でレースデータを貼り付けてください..."></textarea>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" id="preview-btn" class="btn-primary">📋 プレビュー</button>
+                    <button type="button" id="generate-json-btn" class="btn-success">🚀 JSON生成</button>
+                    <button type="button" id="download-json-btn" class="btn-download" style="display: none;">📥 JSONダウンロード</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="preview-section" class="preview-section" style="display: none;">
+            <h2>👀 プレビュー</h2>
+            <div id="preview-content"></div>
+        </div>
+
+        <div id="json-output-section" class="json-section" style="display: none;">
+            <h2>📄 生成されたJSON</h2>
+            <pre id="json-output"></pre>
+        </div>
+    </div>
+
+    <script>
+        let generatedJsonData = null;
+
+        // プレビュー機能
+        document.getElementById('preview-btn').addEventListener('click', function() {
+            const predictionData = document.getElementById('prediction-data').value;
+            const previewSection = document.getElementById('preview-section');
+            const previewContent = document.getElementById('preview-content');
+
+            if (!predictionData.trim()) {
+                alert('予想データを入力してください');
+                return;
+            }
+
+            // シンプルなプレビュー表示
+            const races = parsePredictionData(predictionData);
+            let previewHtml = '';
+
+            races.forEach((race, index) => {
+                previewHtml += `
+                    <div class="race-preview">
+                        <h3>${race.title}</h3>
+                        <div class="strategies">
+                            <div class="strategy">
+                                <h4>🎯 少点数的中型</h4>
+                                <div class="bets">${race.strategyA.join('<br>')}</div>
+                            </div>
+                            <div class="strategy">
+                                <h4>⚖️ バランス型</h4>
+                                <div class="bets">${race.strategyB.join('<br>')}</div>
+                            </div>
+                            <div class="strategy">
+                                <h4>🚀 高配当追求型</h4>
+                                <div class="bets">${race.strategyC.join('<br>')}</div>
+                            </div>
+                        </div>
+                        <div class="horses">
+                            <h4>馬情報</h4>
+                            ${race.horses.map(horse => `<span>${horse.mark}${horse.number}番 ${horse.name || ''} ${horse.score}pt</span>`).join('<br>')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            previewContent.innerHTML = previewHtml;
+            previewSection.style.display = 'block';
+        });
+
+        // JSON生成機能
+        document.getElementById('generate-json-btn').addEventListener('click', function() {
+            const raceDate = document.getElementById('race-date').value;
+            const track = document.getElementById('track').value;
+            const predictionData = document.getElementById('prediction-data').value;
+
+            if (!raceDate || !track || !predictionData.trim()) {
+                alert('すべての必須項目を入力してください');
+                return;
+            }
+
+            const races = parsePredictionData(predictionData);
+            const jsonData = generateJsonData(raceDate, track, races);
+
+            generatedJsonData = jsonData;
+            document.getElementById('json-output').textContent = JSON.stringify(jsonData, null, 2);
+            document.getElementById('json-output-section').style.display = 'block';
+            document.getElementById('download-json-btn').style.display = 'inline-block';
+        });
+
+        // JSONダウンロード機能
+        document.getElementById('download-json-btn').addEventListener('click', function() {
+            if (!generatedJsonData) return;
+
+            const blob = new Blob([JSON.stringify(generatedJsonData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `allRacesPrediction-${generatedJsonData.raceDate}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // シンプルなパース処理
+        function parsePredictionData(data) {
+            const races = [];
+            const raceBlocks = data.split(/(?=\w+\d+R\s)/);
+
+            raceBlocks.forEach(block => {
+                if (!block.trim()) return;
+
+                const race = {
+                    title: '',
+                    strategyA: [],
+                    strategyB: [],
+                    strategyC: [],
+                    horses: []
+                };
+
+                const lines = block.split('\n').map(line => line.trim()).filter(line => line);
+
+                lines.forEach(line => {
+                    // レース情報
+                    if (line.match(/\w+\d+R\s+\d+m/)) {
+                        race.title = line;
+                    }
+                    // 戦略A
+                    else if (line.includes('【戦略A') || line.includes('少点数的中型')) {
+                        // 次の行から戦略Aの買い目を収集
+                    }
+                    // 馬単の買い目
+                    else if (line.startsWith('馬単')) {
+                        // 最後に見つけた戦略に追加
+                        race.strategyA.push(line); // 簡略化：後で改善
+                    }
+                    // 馬情報
+                    else if (line.match(/^[◎○▲△]?\d+番/)) {
+                        const match = line.match(/^([◎○▲△]?)(\d+)番\s*(\w*)\s*.*?(\d+)pt/);
+                        if (match) {
+                            race.horses.push({
+                                mark: match[1] || '',
+                                number: parseInt(match[2]),
+                                name: match[3] || '',
+                                score: parseInt(match[4])
+                            });
+                        }
+                    }
+                });
+
+                if (race.title) races.push(race);
+            });
+
+            return races;
+        }
+
+        // JSON生成処理
+        function generateJsonData(raceDate, track, races) {
+            return {
+                raceDate: raceDate,
+                track: track,
+                totalRaces: races.length,
+                races: races.map((race, index) => ({
+                    raceNumber: `${index + 1}R`,
+                    raceName: race.title,
+                    tier: index < Math.floor(races.length * 0.75) ? "premium" : (index === races.length - 2 ? "free" : "standard"),
+                    isMainRace: index === races.length - 2,
+                    displayOrder: index + 1,
+                    raceInfo: {
+                        title: race.title,
+                        date: raceDate,
+                        track: track
+                    },
+                    horses: {
+                        main: race.horses.find(h => h.mark === '◎') || race.horses[0],
+                        sub: race.horses.find(h => h.mark === '○') || race.horses[1],
+                        sub1: race.horses.find(h => h.mark === '▲') || race.horses[2],
+                        sub2: race.horses[3]
+                    },
+                    strategies: {
+                        safe: {
+                            title: '🎯 少点数的中型モデル',
+                            bets: race.strategyA
+                        },
+                        balance: {
+                            title: '⚖️ バランス型モデル',
+                            bets: race.strategyB
+                        },
+                        aggressive: {
+                            title: '🚀 高配当追求型モデル',
+                            bets: race.strategyC
+                        }
+                    }
+                }))
+            };
+        }
+    </script>
+
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin-bottom: 20px;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .form-section {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #94a3b8;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        .format-example {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 12px;
+            color: #94a3b8;
+            overflow-x: auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn-primary, .btn-success, .btn-download {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-download {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .btn-primary:hover, .btn-success:hover, .btn-download:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .preview-section, .json-section {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .race-preview {
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .strategies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .strategy {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .strategy h4 {
+            margin: 0 0 10px 0;
+            color: #10b981;
+        }
+
+        .bets {
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .horses {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .horses span {
+            display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 5px;
+        }
+
+        #json-output {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 11px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</BaseLayout>
