@@ -171,39 +171,38 @@ export function generateStandardizedBets(horses, strategyType) {
     console.log(`🐎 Strategy ${strategyType} - 修正版:`);
     console.log(`   本命: ${mainNumber}番, 対抗: ${subNumber}番, 単穴1: ${sub1Number}番, 単穴2: ${sub2Number}番`);
 
-    // allHorsesから連下・押さえ候補を取得
+    // allHorsesから連下・押さえ候補を正確に抽出
     let renkaCandidates = [];
     let osaeCandidates = [];
 
     if (allHorses && Array.isArray(allHorses)) {
-        const usedNumbers = [mainNumber, subNumber, sub1Number, sub2Number].filter(n => n);
-        const remainingHorses = allHorses.filter(h => !usedNumbers.includes(h.number));
+        // 連下候補: type === "連下" の馬を抽出
+        renkaCandidates = allHorses
+            .filter(h => h.type === '連下')
+            .map(h => h.number)
+            .filter(n => n);
 
-        // 連下候補: △印の馬を優先
-        renkaCandidates = remainingHorses.filter(h => h.mark === '△' || h.role === '連下').slice(0, 4);
+        // 押さえ候補: type === "押さえ" の馬を抽出
+        osaeCandidates = allHorses
+            .filter(h => h.type === '押さえ')
+            .map(h => h.number)
+            .filter(n => n);
 
-        // 押さえ候補: ×印や残りの馬
-        osaeCandidates = remainingHorses.filter(h => !renkaCandidates.includes(h)).slice(0, 2);
-
-        // 足りない場合はallHorsesから補完
-        if (renkaCandidates.length < 4) {
-            const additionalRenka = remainingHorses.filter(h => !renkaCandidates.includes(h)).slice(0, 4 - renkaCandidates.length);
-            renkaCandidates = [...renkaCandidates, ...additionalRenka];
-        }
+        console.log(`🔍 JSON解析結果: 連下=${renkaCandidates.join(',')}番, 押さえ=${osaeCandidates.join(',')}番`);
     }
 
-    // マコちゃん仕様の固定番号設定
+    // フォールバック: JSONデータがない場合のみ固定番号使用
     if (renkaCandidates.length === 0) {
-        // 連下候補: 4,10,13,14 (マコちゃんデータから)
+        console.warn(`⚠️ 連下候補が見つからないため固定値を使用`);
         renkaCandidates = [4, 10, 13, 14].filter(n => ![mainNumber, subNumber, sub1Number, sub2Number].includes(n));
     }
     if (osaeCandidates.length === 0) {
-        // 押さえ候補: 2,7,12 (マコちゃんデータから)
+        console.warn(`⚠️ 押さえ候補が見つからないため固定値を使用`);
         osaeCandidates = [2, 7, 12].filter(n => ![mainNumber, subNumber, sub1Number, sub2Number].includes(n));
     }
 
-    console.log(`   連下候補: ${renkaCandidates.map(h => h.number || h).join(',')}番`);
-    console.log(`   押さえ候補: ${osaeCandidates.map(h => h.number || h).join(',')}番`);
+    console.log(`   連下候補: ${renkaCandidates.join(',')}番`);
+    console.log(`   押さえ候補: ${osaeCandidates.join(',')}番`);
 
     let bets = [];
 
@@ -219,10 +218,9 @@ export function generateStandardizedBets(horses, strategyType) {
             const fromHorsesB = [subNumber, sub2Number, sub1Number].filter(n => n); // 5,6,9
             bets.push(`馬単 ${fromHorsesB.join(',')} → ${mainNumber}`);
 
-            // 本命⇔連下4頭 (4,10,13,14)
-            const renkaNumbersB = renkaCandidates.map(h => h.number || h).slice(0, 4);
-            if (renkaNumbersB.length > 0) {
-                bets.push(`馬単 ${mainNumber} ⇔ ${renkaNumbersB.join(',')}`);
+            // 本命⇔連下候補馬
+            if (renkaCandidates.length > 0) {
+                bets.push(`馬単 ${mainNumber} ⇔ ${renkaCandidates.join(',')}`);
             }
 
             // 対抗→単穴2頭 (5 → 6,9)
@@ -230,22 +228,21 @@ export function generateStandardizedBets(horses, strategyType) {
             if (subTargetsB.length > 0) {
                 bets.push(`馬単 ${subNumber} → ${subTargetsB.join(',')}`);
             }
-            console.log(`⚖️ 戦略B: ${fromHorsesB.join(',')} → ${mainNumber} + ${mainNumber} ⇔ ${renkaNumbersB.join(',')} + ${subNumber} → ${subTargetsB.join(',')}`);
+            console.log(`⚖️ 戦略B: ${fromHorsesB.join(',')} → ${mainNumber} + ${mainNumber} ⇔ ${renkaCandidates.join(',')} + ${subNumber} → ${subTargetsB.join(',')}`);
             break;
 
         case 'C': // 高配当追求型モデル - マコちゃん仕様: 本命→押さえ + 対抗⇔大きな範囲
-            // 本命→押さえ3頭 (2,7,12)
-            const osaeNumbersC = osaeCandidates.map(h => h.number || h).slice(0, 3);
-            if (osaeNumbersC.length > 0) {
-                bets.push(`馬単 ${mainNumber} → ${osaeNumbersC.join(',')}`);
+            // 本命→押さえ候補馬
+            if (osaeCandidates.length > 0) {
+                bets.push(`馬単 ${mainNumber} → ${osaeCandidates.join(',')}`);
             }
 
-            // 対抗⇔{押さえ3頭,連下4頭} = 7頭組み合わせ (2,4,7,10,12,13,14)
-            const allCNumbers = [...osaeNumbersC, ...renkaCandidates.map(h => h.number || h)];
+            // 対抗⇔{押さえ候補馬+連下候補馬}
+            const allCNumbers = [...osaeCandidates, ...renkaCandidates];
             if (allCNumbers.length > 0) {
                 bets.push(`馬単 ${subNumber} ⇔ ${allCNumbers.join(',')}`);
             }
-            console.log(`🚀 戦略C: ${mainNumber} → ${osaeNumbersC.join(',')} + ${subNumber} ⇔ ${allCNumbers.join(',')}`);
+            console.log(`🚀 戦略C: ${mainNumber} → ${osaeCandidates.join(',')} + ${subNumber} ⇔ ${allCNumbers.join(',')}`);
             break;
     }
 
