@@ -149,10 +149,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 }
 
                 if (currentRace) {
-                    // 馬情報パース（◎○▲△×印対応）
-                    const horseMatch = line.match(/^([◎○▲△×])\s*([0-9]+)\s+([^\s]+)\s+(本命|対抗|単穴|単穴2|連下|押さえ)(?:\s+総合評価:([★]+))?(?:\s+累積スコア:?\s*([0-9]+)pt)?(?:\s+特徴量重要度\s+安定性([0-9]+)%\s+能力上位性([0-9]+)%\s+展開利([0-9]+)%)?/);
+                    // 馬情報パース（◎○▲△×印対応） - シンプルなパターンマッチング
+                    const horsePattern = /^([◎○▲△×])\s*([0-9]+)\s+([^\s]+)\s+(本命|対抗|単穴|単穴2|連下|押さえ)/;
+                    const horseMatch = line.match(horsePattern);
+
                     if (horseMatch) {
-                        const [, mark, number, name, type, stars, score, stability, ability, development] = horseMatch;
+                        const [, mark, number, name, type] = horseMatch;
+                        console.log(`🔍 馬情報パース: "${line}"`);
+                        console.log(`   マッチ結果: ${mark}${number}${name} (${type})`);
 
                         const horseData = {
                             number: parseInt(number),
@@ -163,29 +167,38 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             importance: []
                         };
 
-                        // 星評価追加
-                        if (stars) {
+                        // 星評価を抽出
+                        const starMatch = line.match(/総合評価:(★+)/);
+                        if (starMatch) {
                             horseData.factors.push({
                                 icon: "★",
-                                text: `総合評価:${stars}`
+                                text: `総合評価:${starMatch[1]}`
                             });
+                            console.log(`   星評価: ${starMatch[1]}`);
                         }
 
-                        // 累積スコア追加
-                        if (score) {
+                        // 累積スコア抽出
+                        const scoreMatch = line.match(/累積スコア:?\s*([0-9]+)pt/);
+                        if (scoreMatch) {
                             horseData.factors.push({
                                 icon: "★",
-                                text: `累積スコア: ${score}pt`
+                                text: `累積スコア: ${scoreMatch[1]}pt`
                             });
+                            console.log(`   スコア: ${scoreMatch[1]}pt`);
                         }
 
-                        // 特徴量重要度追加
-                        if (stability && ability && development) {
+                        // 特徴量重要度抽出（個別にマッチング）
+                        const stabilityMatch = line.match(/安定性([0-9]+)%/);
+                        const abilityMatch = line.match(/能力上位性([0-9]+)%/);
+                        const developmentMatch = line.match(/展開利([0-9]+)%/);
+
+                        if (stabilityMatch && abilityMatch && developmentMatch) {
                             horseData.importance = [
-                                { label: "安定性", value: parseInt(stability) / 100 },
-                                { label: "能力上位性", value: parseInt(ability) / 100 },
-                                { label: "展開利", value: parseInt(development) / 100 }
+                                { label: "安定性", value: parseInt(stabilityMatch[1]) / 100 },
+                                { label: "能力上位性", value: parseInt(abilityMatch[1]) / 100 },
+                                { label: "展開利", value: parseInt(developmentMatch[1]) / 100 }
                             ];
+                            console.log(`   特徴量: 安定性${stabilityMatch[1]}% 能力上位性${abilityMatch[1]}% 展開利${developmentMatch[1]}%`);
                         }
 
                         // 馬タイプ別にセット
@@ -199,7 +212,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             raceData[currentRace].horses.sub2 = horseData;
                         }
 
-                        console.log(`🐎 ${currentRace}R ${mark}${number}${name} (${type}) 解析完了`);
+                        console.log(`🐎 ${currentRace}R ${mark}${number}${name} (${type}) 解析完了!`);
                         continue;
                     }
 
@@ -342,9 +355,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             const previewContent = document.getElementById('preview-content');
             let html = '<div class="race-grid">';
 
+            console.log('🔍 プレビュー表示開始:', data);
+
             for (let raceNum = 1; raceNum <= 12; raceNum++) {
                 const raceInfo = data[raceNum];
                 if (!raceInfo) continue;
+
+                console.log(`📋 ${raceNum}R プレビュー作成:`, raceInfo);
 
                 html += `
                     <div class="race-preview">
@@ -356,9 +373,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             <div class="horse-list">`;
 
                 // 各馬の情報表示
-                if (raceInfo.horses) {
+                if (raceInfo.horses && Object.keys(raceInfo.horses).length > 0) {
+                    console.log(`   馬情報あり: ${Object.keys(raceInfo.horses).length}頭`);
                     Object.values(raceInfo.horses).forEach(horse => {
                         if (horse) {
+                            console.log(`     - ${horse.mark}${horse.number}${horse.name} (${horse.type})`);
                             html += `
                                 <div class="horse-item">
                                     <span class="horse-mark">${horse.mark || '?'}</span>
@@ -367,14 +386,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                                 </div>`;
                         }
                     });
+                } else {
+                    console.log(`   馬情報なし (${raceNum}R)`);
+                    html += `<div class="horse-item">馬情報が解析されませんでした</div>`;
                 }
 
                 // 候補馬情報
                 if (raceInfo.candidates?.renka?.length > 0) {
                     html += `<div class="candidate-item">△ 連下候補馬: ${raceInfo.candidates.renka.join(',')}</div>`;
+                    console.log(`   連下候補馬: ${raceInfo.candidates.renka.join(',')}`);
                 }
                 if (raceInfo.candidates?.osae?.length > 0) {
                     html += `<div class="candidate-item">× 押さえ候補馬: ${raceInfo.candidates.osae.join(',')}</div>`;
+                    console.log(`   押さえ候補馬: ${raceInfo.candidates.osae.join(',')}`);
                 }
 
                 html += `
