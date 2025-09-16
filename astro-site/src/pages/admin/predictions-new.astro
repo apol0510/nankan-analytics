@@ -430,7 +430,29 @@ AIモデル予測: 的中率38%
                 race.strategyC = [`馬単高配当組み合わせ (14点)`];
             }
 
-            console.log(`✅ レース完成: ${race.title} (馬${race.horses.length}頭)`);
+            // 連下候補馬・押さえ候補馬をパース
+            const fullText = raceLines.join(' ');
+            console.log(`🔍 候補馬検索対象テキスト: ${fullText}`);
+
+            // 連下候補馬を抽出（「連下候補馬: 1,2,3,4番」形式）
+            const renzuMatch = fullText.match(/連下候補馬[:\s]*([0-9,]+)番?/);
+            if (renzuMatch) {
+                race.renzuCandidates = renzuMatch[1].split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+                console.log(`🎯 連下候補馬抽出成功: [${race.renzuCandidates.join(',')}]`);
+            } else {
+                console.warn(`⚠️ 連下候補馬が見つかりません`);
+            }
+
+            // 押さえ候補馬を抽出（「押さえ候補馬: 7,8番」形式）
+            const osaeMatch = fullText.match(/押さえ候補馬[:\s]*([0-9,]+)番?/);
+            if (osaeMatch) {
+                race.osaeCandidates = osaeMatch[1].split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+                console.log(`🎯 押さえ候補馬抽出成功: [${race.osaeCandidates.join(',')}]`);
+            } else {
+                console.warn(`⚠️ 押さえ候補馬が見つかりません`);
+            }
+
+            console.log(`✅ レース完成: ${race.title} (馬${race.horses.length}頭, 連下${race.renzuCandidates.length}頭, 押さえ${race.osaeCandidates.length}頭)`);
             return race;
         }
 
@@ -460,13 +482,36 @@ AIモデル予測: 的中率38%
                         sub: race.horses.find(h => h.mark === '○') || race.horses[1],
                         sub1: race.horses.find(h => h.mark === '▲') || race.horses[2],
                         sub2: race.horses[3],
-                        allHorses: race.horses.map(horse => ({
-                            ...horse,
-                            type: horse.mark === '◎' ? 'main' :
-                                  horse.mark === '○' ? 'sub' :
-                                  horse.mark === '▲' ? 'sub1' :
-                                  horse.mark === '△' ? 'sub2' : 'other'
-                        }))
+                        allHorses: [
+                            // 主要馬
+                            ...race.horses.map(horse => ({
+                                ...horse,
+                                type: horse.mark === '◎' ? '本命' :
+                                      horse.mark === '○' ? '対抗' :
+                                      horse.mark === '▲' ? '単穴' :
+                                      horse.mark === '△' ? '連下' : 'other'
+                            })),
+                            // 連下候補馬を追加
+                            ...race.renzuCandidates.filter(num => !race.horses.some(h => h.number === num))
+                                .map(num => ({
+                                    mark: '△',
+                                    number: num,
+                                    name: `連下候補${num}`,
+                                    score: 0,
+                                    features: {},
+                                    type: '連下'
+                                })),
+                            // 押さえ候補馬を追加
+                            ...race.osaeCandidates.filter(num => !race.horses.some(h => h.number === num) && !race.renzuCandidates.includes(num))
+                                .map(num => ({
+                                    mark: '×',
+                                    number: num,
+                                    name: `押さえ候補${num}`,
+                                    score: 0,
+                                    features: {},
+                                    type: '押さえ'
+                                }))
+                        ]
                     },
                     candidates: {
                         renzu: race.renzuCandidates,
