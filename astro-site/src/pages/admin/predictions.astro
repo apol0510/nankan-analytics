@@ -1753,8 +1753,8 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
             };
             title.textContent = `編集中: ${raceNumber} (${tierMap[raceNumber] || 'unknown'})`;
             
-            // 既存データがある場合は読み込み
-            if (allRacesData && allRacesData.races) {
+            // 既存データがある場合は読み込み - 防御的プログラミング
+            if (allRacesData && Array.isArray(allRacesData.races)) {
                 const existingRace = allRacesData.races.find(r => r.raceNumber === raceNumber);
                 if (existingRace) {
                     loadRaceDataToForm(existingRace);
@@ -1869,7 +1869,10 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                     };
                 }
                 
-                // 既存レースを更新または新規追加
+                // 既存レースを更新または新規追加 - 防御的プログラミング
+                if (!Array.isArray(allRacesData.races)) {
+                    allRacesData.races = [];
+                }
                 const existingIndex = allRacesData.races.findIndex(r => r.raceNumber === currentEditingRace);
                 if (existingIndex >= 0) {
                     allRacesData.races[existingIndex] = raceData;
@@ -2020,7 +2023,9 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
                 return;
             }
 
-            const race = allRacesData.races.find(r => r.raceNumber === raceNumber + 'R');
+            const race = (allRacesData && Array.isArray(allRacesData.races))
+                ? allRacesData.races.find(r => r.raceNumber === raceNumber + 'R')
+                : null;
             if (!race) {
                 showAlert(`${raceNumber}Rのデータが見つかりません`, 'error');
                 return;

@@ -386,12 +386,18 @@ export function processRaceData(allRacesData) {
         }
     }
 
-    // メインレース（11R）のデータを取得
-    const mainRace = allRacesData.races.find(race => race.isMainRace === true);
-    const race12R = allRacesData.races.find(r => r.raceNumber === '12R');
+    // メインレース（11R）のデータを取得 - 防御的プログラミング
+    const mainRace = (allRacesData && Array.isArray(allRacesData.races))
+        ? allRacesData.races.find(race => race.isMainRace === true)
+        : null;
+    const race12R = (allRacesData && Array.isArray(allRacesData.races))
+        ? allRacesData.races.find(r => r.raceNumber === '12R')
+        : null;
 
-    // 全レースデータを表示順でソート
-    const sortedRaces = allRacesData.races.sort((a, b) => a.displayOrder - b.displayOrder);
+    // 全レースデータを表示順でソート - 防御的プログラミング
+    const sortedRaces = (allRacesData && Array.isArray(allRacesData.races))
+        ? allRacesData.races.sort((a, b) => a.displayOrder - b.displayOrder)
+        : [];
 
     return {
         mainRace,
