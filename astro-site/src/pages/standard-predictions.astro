@@ -124,9 +124,8 @@ const standardRaces = sortedRaces.filter(race =>
                     <div class="race-accordion-header" onclick={`toggleRace${raceNum}R()`}>
                         <div class="race-basic-info">
                             <span class="race-number">{raceData.raceNumber}</span>
-                            <span class="race-name">{raceData.raceInfo?.distance || '1400m'} {raceData.raceInfo?.horseCount ? `(${raceData.raceInfo.horseCount}頭)` : ''}</span>
+                            <span class="race-name">{raceData.raceName || '競走名'}</span>
                             <span class="race-tier-badge">{`第${raceNum}レース`}</span>
-                            <span class="race-start-time">発走{raceData.raceInfo?.startTime || '14:45'}</span>
                             {isMainRace && <span class="main-race-badge">メインレース</span>}
                         </div>
                         <div class="race-preview">
@@ -136,6 +135,11 @@ const standardRaces = sortedRaces.filter(race =>
 
                     <div class="race-accordion-content" id={`race-${raceNum}r`} style="max-height: 0; opacity: 0;">
                         <div class={`race-content-${raceNum}r`}>
+
+                            <!-- レース詳細情報 -->
+                            <div class="race-details-info">
+                                <h3 class="race-detail-title">{raceData.raceNumber} {raceData.raceName || '競走名'} {raceData.raceInfo?.distance || '1400m'} ({raceData.raceInfo?.horseCount || 11}頭) 発走時刻{raceData.raceInfo?.startTime || '14:45'}</h3>
+                            </div>
 
                             <!-- AI選出馬分析 -->
                             <div class="analysis-section">
@@ -1060,6 +1064,23 @@ const standardRaces = sortedRaces.filter(race =>
     .feature-badge.gray {
         background: rgba(148, 163, 184, 0.2);
         color: #94a3b8;
+    }
+
+    /* レース詳細情報スタイル */
+    .race-details-info {
+        padding: 20px 30px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 10px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(100, 116, 139, 0.2);
+    }
+
+    .race-detail-title {
+        color: #e2e8f0;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.4;
     }
 </style>
 
