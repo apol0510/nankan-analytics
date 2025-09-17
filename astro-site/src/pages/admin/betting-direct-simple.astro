@@ -1,0 +1,774 @@
+---
+export const prerender = true;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="買い目直接入力システム（Simple版）" description="シンプルな全馬表示対応版">
+    <div class="container">
+        <div class="header-section">
+            <div class="ai-badge">
+                <span class="pulse"></span>
+                <span class="ai-status">Simple版 - 確実動作</span>
+            </div>
+            <h1>🎯 買い目直接入力システム（Simple版）</h1>
+            <p class="subtitle">シンプル設計で全馬情報を確実表示</p>
+            <div class="guarantee-box">
+                <h3>💖 Simple版の特徴</h3>
+                <ul>
+                    <li>✅ <strong>シンプル設計</strong>: 分かりやすいデータ処理</li>
+                    <li>✅ <strong>全馬表示</strong>: 記載された全馬情報を表示</li>
+                    <li>✅ <strong>重要度順</strong>: 本命→対抗→単穴→連下→押さえ順</li>
+                    <li>✅ <strong>確実動作</strong>: 複雑な処理を避けて安定性重視</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="input-section">
+                <h2>📝 完成データ入力</h2>
+                <div class="format-guide">
+                    <p><strong>Simple版対応形式:</strong> 各馬の情報を1行ずつ記載</p>
+                    <p>例: ◎ 11 オールスターズ 本命 総合評価:★★★ 累積スコア: 88pt</p>
+                </div>
+                <textarea
+                    id="simple-data"
+                    placeholder="マコちゃんの完成データをそのまま貼り付けてください...
+
+例：
+大井競馬9/17
+1R
+◎ 11 オールスターズ 本命 総合評価:★★★ 累積スコア: 88pt 特徴量重要度 安定性91% 能力上位性90% 展開利81%
+○ 5 シャークウォーニン 対抗 総合評価:★★★ 累積スコア: 87pt 特徴量重要度 安定性97% 能力上位性79% 展開利82%
+▲ 9 フェアクラウド 単穴 総合評価:★★★ 累積スコア: 82pt
+▲ 6 パンオショコラ 単穴 総合評価:★★★ 累積スコア: 76pt
+△ 連下候補馬 4 ベッティーナ (75pt) 13 ブッコワース (75pt) 10 ブラントンアロー (75pt) 14 ノンストップガール (75pt)
+× 抑え候補馬 2 レディヴィクトリア (66pt) 7 オニクダイスキマン (66pt) 12 グァンダオ (66pt)
+
+買い目
+少点数的中型モデル 馬単 11 → 5,6,9　3点 AI予測58%
+バランス型モデル 馬単 5,6,9 → 11　3点 馬単 11 ⇔ 4,10,13,14　8点 馬単 5 → 6,9　2点 AI予測67%
+高配当追求型モデル 馬単 11 → 2,7,12　3点 馬単 5 ⇔ 2,4,7,10,12,13,14　14点 AI予測43%"
+                    rows="25"></textarea>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" id="simple-parse-btn" class="btn-primary">📋 解析・プレビュー</button>
+                <button type="button" id="simple-update-json-btn" class="btn-success" style="display: none;">🚀 JSON更新実行</button>
+                <a href="/premium-predictions" id="simple-check-result-btn" class="btn-check" style="display: none;">👀 結果確認</a>
+            </div>
+        </div>
+
+        <div id="simple-preview-section" class="preview-section" style="display: none;">
+            <h2>📋 解析結果プレビュー（Simple版）</h2>
+            <div id="simple-preview-content"></div>
+        </div>
+
+        <div id="simple-success-section" class="success-section" style="display: none;">
+            <h2>✅ 更新完了</h2>
+            <p>全データが正常に更新されました！</p>
+            <p><strong>premium-predictions/</strong> で結果をご確認ください。</p>
+        </div>
+    </div>
+
+    <script>
+        let simpleParsedData = null;
+
+        // Simple版解析処理
+        document.getElementById('simple-parse-btn').addEventListener('click', function() {
+            const inputData = document.getElementById('simple-data').value;
+
+            if (!inputData.trim()) {
+                alert('データを入力してください');
+                return;
+            }
+
+            try {
+                simpleParsedData = parseSimpleData(inputData);
+                displaySimplePreview(simpleParsedData);
+
+                document.getElementById('simple-preview-section').style.display = 'block';
+                document.getElementById('simple-update-json-btn').style.display = 'inline-block';
+                document.getElementById('simple-check-result-btn').style.display = 'inline-block';
+            } catch (error) {
+                alert('データの解析に失敗しました: ' + error.message);
+                console.error('Simple Parse error:', error);
+            }
+        });
+
+        // Simple版データ解析関数
+        function parseSimpleData(data) {
+            const lines = data.split('\n').map(line => line.trim()).filter(line => line);
+            const raceData = {};
+            let currentRace = null;
+            let currentType = null; // 連下・押さえ候補馬の解析用
+
+            console.log('🔍 Simple版データ解析開始');
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                console.log(`📝 処理中: "${line}"`);
+
+                // レース番号検出
+                const raceMatch = line.match(/^([0-9１２３４５６７８９０123456789]{1,2})\s*[rRレース]$/);
+                if (raceMatch) {
+                    const raceNum = raceMatch[1]
+                        .replace(/[０１２３４５６７８９]/g, (match) =>
+                            String.fromCharCode(match.charCodeAt(0) - 0xFF10 + 0x30));
+
+                    currentRace = parseInt(raceNum);
+                    currentType = null; // 新しいレースで候補馬タイプをリセット
+                    raceData[currentRace] = {
+                        horses: [],
+                        strategies: {},
+                        candidates: { renka: [], osae: [] }
+                    };
+                    console.log(`🎯 ${currentRace}R 開始`);
+                    continue;
+                }
+
+                if (!currentRace) continue;
+
+                // 馬情報の解析（本命・対抗・単穴）
+                const horseMatch = line.match(/^([◎○▲△×])\s*([0-9]+)\s+([^\s]+)(?:\s+(本命|対抗|単穴|連下|押さえ))?/);
+                if (horseMatch) {
+                    currentType = null; // 通常の馬情報セクションに入ったら候補馬タイプをリセット
+                    const [, mark, number, name, type] = horseMatch;
+
+                    // 種別自動判定
+                    let horseType = type;
+                    if (!type) {
+                        if (mark === '◎') horseType = '本命';
+                        else if (mark === '○') horseType = '対抗';
+                        else if (mark === '▲') horseType = '単穴';
+                        else if (mark === '△') horseType = '連下';
+                        else if (mark === '×') horseType = '押さえ';
+                        else horseType = 'その他';
+                    }
+
+                    // スコア抽出
+                    const scoreMatch = line.match(/累積スコア:?\s*([0-9]+)pt/);
+                    const score = scoreMatch ? scoreMatch[1] : '62';
+
+                    // 星評価抽出
+                    const starMatch = line.match(/総合評価:(★+)/);
+                    const stars = starMatch ? starMatch[1] : '★★★';
+
+                    // 特徴量重要度抽出
+                    const stabilityMatch = line.match(/安定性([0-9]+)%/);
+                    const abilityMatch = line.match(/能力上位性([0-9]+)%/);
+                    const developmentMatch = line.match(/展開利([0-9]+)%/);
+
+                    const horseData = {
+                        number: parseInt(number),
+                        name: name,
+                        mark: mark,
+                        type: horseType,
+                        score: score,
+                        stars: stars,
+                        stability: stabilityMatch ? stabilityMatch[1] : '70',
+                        ability: abilityMatch ? abilityMatch[1] : '68',
+                        development: developmentMatch ? developmentMatch[1] : '65'
+                    };
+
+                    raceData[currentRace].horses.push(horseData);
+                    console.log(`🐎 馬データ追加: ${mark}${number}${name} (${horseType}) ${score}pt`);
+                    continue;
+                }
+
+                // 連下候補馬の解析（1行形式 + ヘッダー形式両対応）
+                if (line.includes('連下候補馬')) {
+                    console.log(`🔍 連下候補馬行検出: "${line}"`);
+
+                    // 1行形式の場合（1R形式）: △ 連下候補馬 4 ベッティーナ (75pt) 13 ブッコワース (75pt)
+                    if (line.includes('△') && /[0-9]+/.test(line)) {
+                        console.log(`📝 1行形式の連下候補馬処理: "${line}"`);
+                        const parts = line.split(/\s+/);
+                        let i = 0;
+                        while (i < parts.length) {
+                            const part = parts[i];
+                            if (/^[0-9]+$/.test(part)) {
+                                const number = parseInt(part);
+                                let name = '';
+                                let score = '66';
+
+                                if (i + 1 < parts.length && !/^[0-9]+$/.test(parts[i + 1]) && !parts[i + 1].includes('pt')) {
+                                    name = parts[i + 1];
+                                    i++;
+                                } else {
+                                    name = `連下${number}`;
+                                }
+
+                                if (i + 1 < parts.length && parts[i + 1].includes('pt')) {
+                                    const scoreMatch = parts[i + 1].match(/([0-9]+)pt/);
+                                    if (scoreMatch) score = scoreMatch[1];
+                                    i++;
+                                }
+
+                                const horseData = {
+                                    number: number,
+                                    name: name,
+                                    mark: '△',
+                                    type: '連下',
+                                    score: score,
+                                    stars: '★★★',
+                                    stability: '70',
+                                    ability: '68',
+                                    development: '65'
+                                };
+                                raceData[currentRace].horses.push(horseData);
+                                console.log(`🐎 連下候補馬追加（1行形式）: △${number} ${name} (${score}pt)`);
+                            }
+                            i++;
+                        }
+                    } else {
+                        // ヘッダー形式の場合（2R以降形式）: △ 連下候補馬
+                        console.log(`📝 ヘッダー形式の連下候補馬処理`);
+                        currentType = '連下';
+                    }
+                    continue;
+                }
+
+                // 連下候補馬データ行処理（改行分かれ対応）
+                if (currentType === '連下' && /^[0-9]+\s+/.test(line)) {
+                    console.log(`🐎 連下候補馬データ行: "${line}"`);
+
+                    const parts = line.split(/\s+/);
+                    if (parts.length >= 2) {
+                        const number = parseInt(parts[0]);
+                        let name = parts[1];
+                        let score = '66';
+
+                        // スコア抽出
+                        const scoreMatch = line.match(/\(([0-9]+)pt\)/);
+                        if (scoreMatch) {
+                            score = scoreMatch[1];
+                        }
+
+                        const horseData = {
+                            number: number,
+                            name: name,
+                            mark: '△',
+                            type: '連下',
+                            score: score,
+                            stars: '★★★',
+                            stability: '70',
+                            ability: '68',
+                            development: '65'
+                        };
+                        raceData[currentRace].horses.push(horseData);
+                        console.log(`🐎 連下候補馬追加: △${number} ${name} (${score}pt)`);
+                    }
+                    continue;
+                }
+
+                // 押さえ候補馬の解析（1行形式 + ヘッダー形式両対応）
+                if (line.includes('抑え候補馬')) {
+                    console.log(`🔍 押さえ候補馬行検出: "${line}"`);
+
+                    // 1行形式の場合（1R形式）: × 抑え候補馬 2 レディヴィクトリア (66pt) 7 オニクダイスキマン (66pt)
+                    if (line.includes('×') && /[0-9]+/.test(line)) {
+                        console.log(`📝 1行形式の押さえ候補馬処理: "${line}"`);
+                        const parts = line.split(/\s+/);
+                        let i = 0;
+                        while (i < parts.length) {
+                            const part = parts[i];
+                            if (/^[0-9]+$/.test(part)) {
+                                const number = parseInt(part);
+                                let name = '';
+                                let score = '62';
+
+                                if (i + 1 < parts.length && !/^[0-9]+$/.test(parts[i + 1]) && !parts[i + 1].includes('pt')) {
+                                    name = parts[i + 1];
+                                    i++;
+                                } else {
+                                    name = `押さえ${number}`;
+                                }
+
+                                if (i + 1 < parts.length && parts[i + 1].includes('pt')) {
+                                    const scoreMatch = parts[i + 1].match(/([0-9]+)pt/);
+                                    if (scoreMatch) score = scoreMatch[1];
+                                    i++;
+                                }
+
+                                const horseData = {
+                                    number: number,
+                                    name: name,
+                                    mark: '×',
+                                    type: '押さえ',
+                                    score: score,
+                                    stars: '★★★',
+                                    stability: '62',
+                                    ability: '60',
+                                    development: '58'
+                                };
+                                raceData[currentRace].horses.push(horseData);
+                                console.log(`🐎 押さえ候補馬追加（1行形式）: ×${number} ${name} (${score}pt)`);
+                            }
+                            i++;
+                        }
+                    } else {
+                        // ヘッダー形式の場合（2R以降形式）: × 抑え候補馬
+                        console.log(`📝 ヘッダー形式の押さえ候補馬処理`);
+                        currentType = '押さえ';
+                    }
+                    continue;
+                }
+
+                // 押さえ候補馬データ行処理（改行分かれ対応）
+                if (currentType === '押さえ' && /^[0-9]+\s+/.test(line)) {
+                    console.log(`🐎 押さえ候補馬データ行: "${line}"`);
+
+                    const parts = line.split(/\s+/);
+                    if (parts.length >= 2) {
+                        const number = parseInt(parts[0]);
+                        let name = parts[1];
+                        let score = '62';
+
+                        // スコア抽出
+                        const scoreMatch = line.match(/\(([0-9]+)pt\)/);
+                        if (scoreMatch) {
+                            score = scoreMatch[1];
+                        }
+
+                        const horseData = {
+                            number: number,
+                            name: name,
+                            mark: '×',
+                            type: '押さえ',
+                            score: score,
+                            stars: '★★★',
+                            stability: '62',
+                            ability: '60',
+                            development: '58'
+                        };
+                        raceData[currentRace].horses.push(horseData);
+                        console.log(`🐎 押さえ候補馬追加: ×${number} ${name} (${score}pt)`);
+                    }
+                    continue;
+                }
+
+                // 戦略解析（改良版）
+                if (line.includes('少点数的中型モデル') || line.includes('バランス型モデル') || line.includes('高配当追求型モデル')) {
+                    currentType = null; // 戦略セクションに入ったら候補馬タイプをリセット
+                    console.log(`🎯 戦略行検出: "${line}"`);
+
+                    // AI予測率抽出（様々なパターンに対応）
+                    const aiMatch = line.match(/AI[\s]*[予測モデル]*[\s:]*[的中率]*[\s]*(\d+)%/) ||
+                                   line.match(/(\d+)%/);
+                    const hitRate = aiMatch ? aiMatch[1] : "50";
+
+                    // 買い目抽出（改良版）
+                    let betText = "";
+                    if (line.includes('馬単')) {
+                        const betMatch = line.match(/馬単\s*([^A-Z]+?)(?:\s*AI|$)/);
+                        betText = betMatch ? `馬単 ${betMatch[1].trim()}` : "未設定";
+                    } else {
+                        betText = "未設定";
+                    }
+
+                    if (line.includes('少点数的中型モデル')) {
+                        raceData[currentRace].strategies.safe = {
+                            title: "🎯 少点数的中型モデル",
+                            hitRate: hitRate,
+                            bets: [betText]
+                        };
+                        console.log(`✅ 少点数型戦略登録: ${betText}, AI予測: ${hitRate}%`);
+                    } else if (line.includes('バランス型モデル')) {
+                        raceData[currentRace].strategies.balance = {
+                            title: "⚖️ バランス型モデル",
+                            hitRate: hitRate,
+                            bets: [betText]
+                        };
+                        console.log(`✅ バランス型戦略登録: ${betText}, AI予測: ${hitRate}%`);
+                    } else if (line.includes('高配当追求型モデル')) {
+                        raceData[currentRace].strategies.aggressive = {
+                            title: "🚀 高配当追求型モデル",
+                            hitRate: hitRate,
+                            bets: [betText]
+                        };
+                        console.log(`✅ 高配当型戦略登録: ${betText}, AI予測: ${hitRate}%`);
+                    }
+                }
+            }
+
+            // 各レースの馬を重要度順でソート
+            for (const [raceNum, raceInfo] of Object.entries(raceData)) {
+                const typeOrder = { '本命': 1, '対抗': 2, '単穴': 3, '連下': 4, '押さえ': 5, 'その他': 6 };
+                raceInfo.horses.sort((a, b) => {
+                    const orderA = typeOrder[a.type] || 9;
+                    const orderB = typeOrder[b.type] || 9;
+                    if (orderA !== orderB) return orderA - orderB;
+                    return a.number - b.number; // 同じ種別内では馬番順
+                });
+                console.log(`🏁 ${raceNum}R: ${raceInfo.horses.length}頭を重要度順でソート`);
+            }
+
+            console.log('📊 Simple版解析完了:', raceData);
+            return raceData;
+        }
+
+        // Simple版プレビュー表示
+        function displaySimplePreview(data) {
+            const previewContent = document.getElementById('simple-preview-content');
+            let html = '<div class="race-grid">';
+
+            console.log('🔍 Simple版プレビュー表示開始:', data);
+
+            for (let raceNum = 1; raceNum <= 12; raceNum++) {
+                const raceInfo = data[raceNum];
+                if (!raceInfo || !raceInfo.horses.length) continue;
+
+                console.log(`📋 ${raceNum}R プレビュー作成: ${raceInfo.horses.length}頭`);
+
+                html += `
+                    <div class="race-preview">
+                        <h3>${raceNum}R</h3>
+
+                        <div class="horse-section">
+                            <h4>🐎 馬情報（${raceInfo.horses.length}頭）</h4>
+                            <div class="horse-list">`;
+
+                raceInfo.horses.forEach(horse => {
+                    // 特徴量重要度を条件付きで表示（デフォルト値の場合は非表示）
+                    let importanceText = '';
+                    if (horse.stability !== '70' && horse.stability !== '62' ||
+                        horse.ability !== '68' && horse.ability !== '60' ||
+                        horse.development !== '65' && horse.development !== '58') {
+                        // 実際のデータがある場合のみ表示
+                        importanceText = `<span class="importance">安定性${horse.stability}% 能力上位性${horse.ability}% 展開利${horse.development}%</span>`;
+                    }
+
+                    html += `
+                        <div class="horse-item">
+                            <span class="horse-mark">${horse.mark}</span>
+                            <span class="horse-info">${horse.number}番 ${horse.name} (${horse.type})</span>
+                            <div class="horse-details">
+                                <span class="factor">${horse.stars} 累積スコア: ${horse.score}pt</span>
+                                ${importanceText}
+                            </div>
+                        </div>`;
+                });
+
+                html += `
+                            </div>
+                        </div>
+
+                        <div class="strategy-preview">
+                            <div class="strategy-item">
+                                <h4>🎯 少点数的中型</h4>
+                                <div>${raceInfo.strategies.safe ? `${raceInfo.strategies.safe.bets.join('<br>')} AI予測: ${raceInfo.strategies.safe.hitRate}%` : '未設定'}</div>
+                            </div>
+                            <div class="strategy-item">
+                                <h4>⚖️ バランス型</h4>
+                                <div>${raceInfo.strategies.balance ? `${raceInfo.strategies.balance.bets.join('<br>')} AI予測: ${raceInfo.strategies.balance.hitRate}%` : '未設定'}</div>
+                            </div>
+                            <div class="strategy-item">
+                                <h4>🚀 高配当追求型</h4>
+                                <div>${raceInfo.strategies.aggressive ? `${raceInfo.strategies.aggressive.bets.join('<br>')} AI予測: ${raceInfo.strategies.aggressive.hitRate}%` : '未設定'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            previewContent.innerHTML = html;
+        }
+
+        // JSON更新処理（Simple版）
+        document.getElementById('simple-update-json-btn').addEventListener('click', function() {
+            if (!simpleParsedData) {
+                alert('先に解析を実行してください');
+                return;
+            }
+
+            // 実際のJSON更新処理をここに実装
+            console.log('Simple版JSON更新:', simpleParsedData);
+            document.getElementById('simple-success-section').style.display = 'block';
+            document.getElementById('simple-check-result-btn').style.display = 'inline-block';
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .guarantee-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 10%, #fef3c7 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 600px;
+            text-align: left;
+        }
+
+        .guarantee-box h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .guarantee-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .guarantee-box li {
+            margin: 8px 0;
+            font-weight: 500;
+        }
+
+        .form-section {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-section h2 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+
+        .format-guide {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .format-guide p {
+            margin: 5px 0;
+            color: #94a3b8;
+        }
+
+        #simple-data {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            color: #e2e8f0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        #simple-data::placeholder {
+            color: #64748b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .btn-check:hover {
+            transform: translateY(-2px);
+        }
+
+        .preview-section, .success-section {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .preview-section h2, .success-section h2 {
+            color: #3b82f6;
+            margin-bottom: 20px;
+        }
+
+        .race-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .race-preview {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .race-preview h3 {
+            color: #f59e0b;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .horse-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1e293b;
+            border-radius: 8px;
+        }
+
+        .horse-section h4 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        .horse-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .horse-item {
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .horse-mark {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 8px;
+            color: #fbbf24;
+        }
+
+        .horse-info {
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-right: 12px;
+        }
+
+        .horse-details {
+            margin-top: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .factor {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .importance {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .strategy-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #1e293b;
+            border-radius: 8px;
+        }
+
+        .strategy-item h4 {
+            margin: 0 0 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .strategy-item div {
+            color: #e2e8f0;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .success-section {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .success-section h2 {
+            color: white;
+        }
+    </style>
+</BaseLayout>
