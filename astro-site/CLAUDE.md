@@ -1162,7 +1162,57 @@ bets: raceData.strategies?.balance?.bets || strategyB.bets.map(bet => ({ type: '
 
 ---
 
+### ✅ **本命累積スコア88pt信頼度反映・馬名表示追加完了**
+
+#### **🛠️ 最終調整と完成**
+**ユーザー要望**: 信頼度51%→88%本命累積スコア反映・馬名表示改善
+
+#### **🚀 最終実装完了**
+1. **本命累積スコア優先システム**
+   ```javascript
+   // 本命の累積スコアを信頼度として使用
+   let confidence = calculateAverageConfidence(strategies);
+   if (horses?.main?.factors) {
+       const scoreText = horses.main.factors.find(factor => factor.text && factor.text.includes('累積スコア'));
+       if (scoreText) {
+           const scoreMatch = scoreText.text.match(/(\d+)pt/);
+           if (scoreMatch) {
+               confidence = parseInt(scoreMatch[1]); // 88ptを88%として使用
+           }
+       }
+   }
+   ```
+
+2. **プレビュー表示最適化**
+   ```javascript
+   const summary = `${raceInfo.track} ${raceInfo.raceNumber} AI予想完了！`;
+   const features = `${horseInfo}\n信頼度${confidence}% | ${戦略タイトル}で的中と配当のバランスを最適化。`;
+   ```
+
+#### **📋 最終表示結果**
+```
+信頼度 88%
+
+9月17日 大井競馬 11R AI予想完了！
+
+本命グロリアムンディ・対抗マルカンラニ
+信頼度88% | 🎯 少点数的中型モデル・⚖️ バランス型モデル・🚀 高配当追求型モデルで的中と配当のバランスを最適化。
+```
+
+#### **🎉 コミット完了**
+- **コミットハッシュ**: 2a4f15c
+- **プッシュ**: origin/main 正常完了
+- **変更**: 2ファイル変更、155行追加・7行削除
+
+### 📊 **最終技術的成果**
+- **信頼度精度向上**: 戦略平均45%→本命累積スコア88%の正確な反映
+- **ユーザー体験向上**: 馬名表示による具体的な予想情報提供
+- **データ活用最適化**: 既存のJSONデータを最大限活用した動的システム
+- **保守性確保**: 将来のデータ変更・戦略追加への完全対応
+
+---
+
 **📅 最終更新日**: 2025-09-17
-**🏁 Project Phase**: トップページAI予想プレビュー修正完了 ★★★★★
+**🏁 Project Phase**: トップページAI予想プレビューシステム完全完成 ★★★★★
 **🎯 Next Priority**: システム統合テスト・UI/UX改善・マーケティング強化
-**✨ 本日の成果**: ホームページ信頼度0%問題完全解決・動的プレビュー生成システム実装・復活防止対策完成！
+**✨ 本日の成果**: 信頼度0%→88%完全解決・本命馬名表示・動的プレビューシステム・復活防止対策・コミットプッシュ完了！

@@ -299,14 +299,6 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="premium-overlay">
-                    <div class="premium-content">
-                        <div class="premium-icon">🔒</div>
-                        <div class="premium-text">有料会員限定</div>
-                        <div class="premium-subtitle">投資戦略を完全表示</div>
-                        <button class="premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
-                    </div>
-                </div>
             </div>
 
             <!-- 戦略2: バランス型 -->
@@ -336,14 +328,6 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <div class="risk-bar active expectation-medium" style="width: 75%;"></div>
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
-                </div>
-                <div class="premium-overlay">
-                    <div class="premium-content">
-                        <div class="premium-icon">🔒</div>
-                        <div class="premium-text">有料会員限定</div>
-                        <div class="premium-subtitle">投資戦略を完全表示</div>
-                        <button class="premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
-                    </div>
                 </div>
             </div>
 
@@ -375,14 +359,16 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="premium-overlay">
-                    <div class="premium-content">
-                        <div class="premium-icon">🔒</div>
-                        <div class="premium-text">有料会員限定</div>
-                        <div class="premium-subtitle">投資戦略を完全表示</div>
-                        <button class="premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
-                    </div>
-                </div>
+            </div>
+        </div>
+
+        <!-- 統一プレミアム投資戦略オーバーレイ -->
+        <div class="unified-premium-overlay">
+            <div class="unified-premium-content">
+                <div class="unified-premium-icon">🔒</div>
+                <div class="unified-premium-text">有料会員限定</div>
+                <div class="unified-premium-subtitle">投資戦略を完全表示</div>
+                <button class="unified-premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
             </div>
         </div>
 
@@ -957,6 +943,57 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
         transition: transform 0.2s;
     }
     .free-member-button:hover {
+        transform: scale(1.05);
+    }
+
+    /* 統一プレミアム投資戦略オーバーレイ */
+    .unified-premium-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom,
+            rgba(15, 23, 42, 0.4) 0%,
+            rgba(15, 23, 42, 0.7) 20%,
+            rgba(15, 23, 42, 0.9) 60%,
+            rgba(15, 23, 42, 0.98) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        backdrop-filter: blur(4px);
+        z-index: 10;
+    }
+    .unified-premium-content {
+        text-align: center;
+    }
+    .unified-premium-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    .unified-premium-text {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #3b82f6;
+        margin-bottom: 5px;
+    }
+    .unified-premium-subtitle {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-bottom: 15px;
+    }
+    .unified-premium-button {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .unified-premium-button:hover {
         transform: scale(1.05);
     }
 
