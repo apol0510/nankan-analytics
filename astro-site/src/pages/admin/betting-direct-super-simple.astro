@@ -174,20 +174,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             }
         }
 
-        // allRacesPrediction.json形式生成関数
+        // allRacesPrediction.json形式生成関数（既存システム互換版）
         function generateAllRacesPredictionJson(raceData) {
-            console.log('📋 JSON形式変換開始');
+            console.log('📋 既存形式JSON変換開始');
 
             // 入力データから競馬場を自動検出
             const inputData = document.getElementById('super-simple-data').value;
-            let detectedVenue = "川崎"; // デフォルト
+            let detectedVenue = "川崎競馬"; // デフォルト
 
             // 競馬場名検出パターン
             const venuePatterns = [
-                { pattern: /大井|ＴＣＫ/i, venue: "大井" },
-                { pattern: /川崎/i, venue: "川崎" },
-                { pattern: /船橋/i, venue: "船橋" },
-                { pattern: /浦和/i, venue: "浦和" }
+                { pattern: /大井|ＴＣＫ/i, venue: "大井競馬" },
+                { pattern: /川崎/i, venue: "川崎競馬" },
+                { pattern: /船橋/i, venue: "船橋競馬" },
+                { pattern: /浦和/i, venue: "浦和競馬" }
             ];
 
             for (const {pattern, venue} of venuePatterns) {
@@ -199,50 +199,127 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
             console.log(`🏁 検出された競馬場: ${detectedVenue}`);
 
+            // 既存システム互換形式のJSONデータ構造
             const jsonData = {
                 raceDate: new Date().toISOString().split('T')[0],
-                venue: detectedVenue,
-                races: {}
+                lastUpdated: new Date().toISOString(),
+                track: detectedVenue,
+                totalRaces: Object.keys(raceData).length,
+                races: []
             };
 
-            // 各レースデータを変換
+            // 各レースデータを既存形式に変換
             for (const [raceNum, raceInfo] of Object.entries(raceData)) {
                 if (!raceInfo || !raceInfo.horses.length) continue;
 
-                jsonData.races[raceNum] = {
-                    raceNumber: parseInt(raceNum),
+                const raceNumber = parseInt(raceNum);
+
+                // レース階層の判定
+                let tier = "premium";
+                if (raceNumber >= Math.max(Object.keys(raceData).length - 2, 10)) {
+                    if (raceNumber === Math.max(Object.keys(raceData).length - 1, 11)) {
+                        tier = "free"; // メインレース
+                    } else {
+                        tier = "standard";
+                    }
+                }
+
+                const raceEntry = {
+                    raceNumber: `${raceNum}R`,
+                    raceName: `${String(raceNumber).padStart(2, '0')}R`,
+                    tier: tier,
+                    isMainRace: tier === "free",
+                    displayOrder: raceNumber,
+                    raceInfo: {
+                        title: `${detectedVenue.replace('競馬', '')}${raceNum}R ${String(raceNumber).padStart(2, '0')}R`,
+                        date: new Date().toISOString().split('T')[0],
+                        track: detectedVenue,
+                        raceNumber: `${raceNum}R`,
+                        raceName: `${String(raceNumber).padStart(2, '0')}R`,
+                        abilityIndex: "85.0",
+                        recommendation: "A+",
+                        expectedReturn: "120",
+                        distance: "1400m",
+                        horseCount: raceInfo.horses.length,
+                        startTime: "14:45",
+                        raceCondition: "",
+                        raceDetails: `${detectedVenue}${raceNum}R 1400m （${raceInfo.horses.length}頭） 発走時刻14:45 ${String(raceNumber).padStart(2, '0')}R`
+                    },
                     horses: {
-                        main: raceInfo.horses.find(h => h.type === '本命') || null,
-                        sub: raceInfo.horses.find(h => h.type === '対抗') || null,
-                        hole1: raceInfo.horses.find(h => h.type === '単穴') || null,
-                        hole2: raceInfo.horses.filter(h => h.type === '単穴')[1] || null,
-                        connect: raceInfo.horses.filter(h => h.type === '連下'),
-                        reserve: raceInfo.horses.filter(h => h.type === '押さえ')
+                        main: convertHorseToExistingFormat(raceInfo.horses.find(h => h.type === '本命')),
+                        sub: convertHorseToExistingFormat(raceInfo.horses.find(h => h.type === '対抗')),
+                        hole1: convertHorseToExistingFormat(raceInfo.horses.find(h => h.type === '単穴')),
+                        hole2: convertHorseToExistingFormat(raceInfo.horses.filter(h => h.type === '単穴')[1]),
+                        connect: raceInfo.horses.filter(h => h.type === '連下').map(h => convertHorseToExistingFormat(h)),
+                        reserve: raceInfo.horses.filter(h => h.type === '押さえ').map(h => convertHorseToExistingFormat(h))
                     },
                     strategies: {
                         safe: raceInfo.strategies.safe ? {
                             title: raceInfo.strategies.safe.title || "🎯 少点数的中型モデル",
-                            bets: raceInfo.strategies.safe.bets || [],
-                            hitRate: raceInfo.strategies.safe.hitRate || "50"
+                            bets: raceInfo.strategies.safe.bets.map(bet => ({ text: bet })),
+                            hitRate: raceInfo.strategies.safe.hitRate || "50",
+                            confidence: parseInt(raceInfo.strategies.safe.hitRate || "50"),
+                            risk: "低リスク"
                         } : null,
                         balance: raceInfo.strategies.balance ? {
                             title: raceInfo.strategies.balance.title || "⚖️ バランス型モデル",
-                            bets: raceInfo.strategies.balance.bets || [],
-                            hitRate: raceInfo.strategies.balance.hitRate || "50"
+                            bets: raceInfo.strategies.balance.bets.map(bet => ({ text: bet })),
+                            hitRate: raceInfo.strategies.balance.hitRate || "50",
+                            confidence: parseInt(raceInfo.strategies.balance.hitRate || "50"),
+                            risk: "中リスク"
                         } : null,
                         aggressive: raceInfo.strategies.aggressive ? {
                             title: raceInfo.strategies.aggressive.title || "🚀 高配当追求型モデル",
-                            bets: raceInfo.strategies.aggressive.bets || [],
-                            hitRate: raceInfo.strategies.aggressive.hitRate || "50"
+                            bets: raceInfo.strategies.aggressive.bets.map(bet => ({ text: bet })),
+                            hitRate: raceInfo.strategies.aggressive.hitRate || "50",
+                            confidence: parseInt(raceInfo.strategies.aggressive.hitRate || "50"),
+                            risk: "高リスク"
                         } : null
                     }
                 };
 
-                console.log(`✅ ${raceNum}R JSON変換完了: ${raceInfo.horses.length}頭`);
+                jsonData.races.push(raceEntry);
+                console.log(`✅ ${raceNum}R 既存形式変換完了: ${raceInfo.horses.length}頭 (${tier})`);
             }
 
-            console.log('📊 JSON変換完了:', jsonData);
+            console.log('📊 既存形式JSON変換完了:', jsonData);
             return jsonData;
+        }
+
+        // 馬データを既存形式に変換する関数
+        function convertHorseToExistingFormat(horse) {
+            if (!horse) return null;
+
+            return {
+                number: horse.number,
+                name: horse.name,
+                mark: horse.mark,
+                type: horse.type,
+                factors: [
+                    {
+                        icon: "★",
+                        text: horse.stars ? `総合評価:${horse.stars}` : "総合評価:★★★"
+                    },
+                    {
+                        icon: "★",
+                        text: `累積スコア: ${horse.score}pt`
+                    }
+                ],
+                importance: horse.stability !== null && horse.ability !== null && horse.development !== null ? [
+                    {
+                        label: "安定性",
+                        value: parseFloat(horse.stability) / 100
+                    },
+                    {
+                        label: "能力上位性",
+                        value: parseFloat(horse.ability) / 100
+                    },
+                    {
+                        label: "展開利",
+                        value: parseFloat(horse.development) / 100
+                    }
+                ] : []
+            };
         }
 
         // Super Simple版データ解析関数（根本から新設計）
