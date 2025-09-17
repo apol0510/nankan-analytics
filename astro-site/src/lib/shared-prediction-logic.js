@@ -619,13 +619,58 @@ export function normalizeHorseData(raceData) {
         normalizedHorses.push(subHorse);
     }
 
-    // Phase 2: 他の馬を追加（main/subと重複回避）
+    // Phase 2: hole1とhole2を追加（単穴）
+    if (horses.hole1) {
+        const hole1Horse = {
+            ...horses.hole1,
+            role: "単穴",
+            displayMark: horses.hole1.mark || ROLE_DISPLAY_CONFIG["単穴"].defaultMark,
+            priority: ROLE_DISPLAY_CONFIG["単穴"].priority
+        };
+        normalizedHorses.push(hole1Horse);
+    }
+
+    if (horses.hole2) {
+        const hole2Horse = {
+            ...horses.hole2,
+            role: "単穴",
+            displayMark: horses.hole2.mark || ROLE_DISPLAY_CONFIG["単穴"].defaultMark,
+            priority: ROLE_DISPLAY_CONFIG["単穴"].priority
+        };
+        normalizedHorses.push(hole2Horse);
+    }
+
+    // Phase 3: connectとreserveの馬を追加
+    if (horses.connect && Array.isArray(horses.connect)) {
+        horses.connect.forEach(horse => {
+            const connectHorse = {
+                ...horse,
+                role: "連下",
+                displayMark: horse.mark || ROLE_DISPLAY_CONFIG["連下"].defaultMark,
+                priority: ROLE_DISPLAY_CONFIG["連下"].priority
+            };
+            normalizedHorses.push(connectHorse);
+        });
+    }
+
+    if (horses.reserve && Array.isArray(horses.reserve)) {
+        horses.reserve.forEach(horse => {
+            const reserveHorse = {
+                ...horse,
+                role: "押さえ",
+                displayMark: horse.mark || ROLE_DISPLAY_CONFIG["押さえ"].defaultMark,
+                priority: ROLE_DISPLAY_CONFIG["押さえ"].priority
+            };
+            normalizedHorses.push(reserveHorse);
+        });
+    }
+
+    // Phase 4: allHorsesの馬も追加（互換性のため）
     if (allHorses && Array.isArray(allHorses)) {
         allHorses.forEach(horse => {
-            // main/subと重複しないものを追加
-            if (horse.number !== horses.main?.number &&
-                horse.number !== horses.sub?.number) {
-
+            // 既に追加済みの馬と重複しないものを追加
+            const existingNumbers = normalizedHorses.map(h => h.number);
+            if (!existingNumbers.includes(horse.number)) {
                 const role = horse.type || "連下"; // 既存typeをroleとして使用
                 const config = ROLE_DISPLAY_CONFIG[role] || ROLE_DISPLAY_CONFIG["連下"];
 
