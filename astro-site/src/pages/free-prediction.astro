@@ -41,7 +41,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 <span class="pulse"></span>
                 <span class="ai-status">AI分析完了</span>
             </div>
-            <h1 class="race-title">{raceInfo.title}</h1>
+            <h1 class="race-title">{raceInfo.raceNumber} {raceInfo.distance} ({raceInfo.horseCount}頭) 第{parseInt(raceInfo.raceNumber)}レース 発走{raceInfo.startTime}</h1>
             <!-- 余計な詳細指標を削除し、シンプルに -->
         </div>
 

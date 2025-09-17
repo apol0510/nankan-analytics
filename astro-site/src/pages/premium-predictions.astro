@@ -134,8 +134,9 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                     <div class="race-accordion-header" onclick={`toggleRace${raceNum}R()`}>
                         <div class="race-basic-info">
                             <span class="race-number">{raceData.raceNumber}</span>
-                            <span class="race-name">{raceData.raceName}</span>
+                            <span class="race-name">{raceData.raceInfo?.distance || '1400m'} {raceData.raceInfo?.horseCount ? `(${raceData.raceInfo.horseCount}頭)` : ''}</span>
                             <span class="race-tier-badge">{`第${raceNum}レース`}</span>
+                            <span class="race-start-time">発走{raceData.raceInfo?.startTime || '14:45'}</span>
                             {isMainRace && <span class="main-race-badge">メインレース</span>}
                         </div>
                         <div class="race-preview">
@@ -720,6 +721,16 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         font-size: 0.8rem;
         font-weight: 600;
         text-transform: uppercase;
+    }
+
+    .race-start-time {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 6px;
     }
 
     .main-race-badge {
