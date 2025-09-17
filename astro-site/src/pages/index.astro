@@ -6,8 +6,16 @@ import allRacesData from '../data/allRacesPrediction.json';
 
 // データ取得
 const currentResults = raceResults; // raceResults.json contains the current results directly
-// メインレース（11R）のデータを取得
-const mainRace = allRacesData.races.find(race => race.isMainRace === true);
+// メインレース（11R）のデータを取得 - 防御的プログラミング実装
+const mainRace = (allRacesData && Array.isArray(allRacesData.races))
+    ? allRacesData.races.find(race => race.isMainRace === true)
+    : null;
+
+if (!mainRace) {
+    console.error('❌ メインレースデータが見つかりません:', { allRacesData: allRacesData ? 'exists' : 'missing' });
+    throw new Error('メインレースデータが見つかりません');
+}
+
 const { raceInfo, preview } = mainRace;
 
 // 日付フォーマット変換
