@@ -119,10 +119,10 @@ const standardRaces = sortedRaces.filter(race =>
             const raceMainHorseScore = getHorseConfidenceFromMark(raceData.horses.main);
             const raceSubHorseScore = getHorseConfidenceFromMark(raceData.horses.sub);
 
-            // プログレスバー用の計算（戦略A/B/C）
-            const progressBarA = calculateProgressBarConfidence(raceMainHorseScore, null, 'A');
-            const progressBarB = calculateProgressBarConfidence(raceMainHorseScore, raceSubHorseScore, 'B');
-            const progressBarC = calculateProgressBarConfidence(raceMainHorseScore, raceSubHorseScore, 'C');
+            // プログレスバー用の計算（戦略A/B/C）🔧引数順序修正
+            const progressBarA = calculateProgressBarConfidence('A', raceMainHorseScore);
+            const progressBarB = calculateProgressBarConfidence('B', raceMainHorseScore, raceSubHorseScore);
+            const progressBarC = calculateProgressBarConfidence('C', raceMainHorseScore, raceSubHorseScore);
 
             return (
                 <div class={`race-${raceNum}r-accordion`}>

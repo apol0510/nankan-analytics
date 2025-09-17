@@ -137,6 +137,40 @@ if (pointMatch) {
 2. ❌ 計算ロジックでの左右の馬数カウントミス
 3. ❌ JSONデータの点数を無視した再計算
 
+### 🚨 **プログレスバー引数順序問題対策（2025-09-17）**
+
+#### **問題：関数の引数順序間違い**
+```javascript
+// ❌ 間違った呼び出し（standard-predictions.astroで発生）
+calculateProgressBarConfidence(raceMainHorseScore, null, 'A');
+
+// ✅ 正しい呼び出し
+calculateProgressBarConfidence('A', raceMainHorseScore);
+```
+
+#### **関数定義の正確な引数順序**
+```javascript
+// shared-prediction-logic.js内の正しい定義
+export function calculateProgressBarConfidence(strategyType, mainHorseScore, subHorseScore = null)
+//                                             ↑第1引数    ↑第2引数      ↑第3引数
+
+// 戦略別の正しい呼び出し方法
+calculateProgressBarConfidence('A', raceMainHorseScore);                    // 少点数的中型
+calculateProgressBarConfidence('B', raceMainHorseScore, raceSubHorseScore); // バランス型
+calculateProgressBarConfidence('C', raceMainHorseScore, raceSubHorseScore); // 高配当追求型
+```
+
+#### **各ページでの対応状況**
+- `premium-predictions.astro`: JSONデータ直接使用（問題なし）
+- `standard-predictions.astro`: 引数順序修正完了 🔧
+- `free-prediction.astro`: 別構造（問題なし）
+
+#### **復活防止チェックポイント**
+1. `calculateProgressBarConfidence`の第1引数は必ず`strategyType`（'A', 'B', 'C'）
+2. 第2引数は`mainHorseScore`（数値）
+3. 第3引数は`subHorseScore`（数値、オプション）
+4. 引数を間違えると異常な%値が表示される
+
 ---
 
 ## 🎯 新しいシステムフロー
