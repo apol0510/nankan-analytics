@@ -154,12 +154,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             }
         });
 
-        // 馬データ保存ヘルパー関数
+        // 馬データ保存ヘルパー関数（全馬対応版）
         function saveHorseData(raceInfo, horseData) {
             if (!horseData || !horseData.type) return;
 
             console.log(`🐎 馬データ保存: ${horseData.mark}${horseData.number}${horseData.name} (${horseData.type})`);
 
+            // 主要馬情報保存
             if (horseData.type === '本命') {
                 raceInfo.horses.main = horseData;
             } else if (horseData.type === '対抗') {
@@ -171,6 +172,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     horseData.type = '単穴2';
                     raceInfo.horses.sub2 = horseData;
                 }
+            }
+
+            // 全馬情報をallHorses配列に保存（プレビュー用）
+            if (!raceInfo.allHorses) {
+                raceInfo.allHorses = [];
+            }
+
+            // 重複チェック（馬番で判定）
+            const existingIndex = raceInfo.allHorses.findIndex(h => h.number === horseData.number);
+            if (existingIndex >= 0) {
+                // 既存の馬を更新
+                raceInfo.allHorses[existingIndex] = horseData;
+            } else {
+                // 新しい馬を追加
+                raceInfo.allHorses.push(horseData);
             }
         }
 
@@ -217,8 +233,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
                 if (!currentRace) continue;
 
-                // 馬情報の開始行を検出
-                const horseStartMatch = line.match(/^([◎○▲△×])\s*([0-9]+)\s+([^\s]+)\s+(本命|対抗|単穴)/);
+                // 馬情報の開始行を検出（全種対応）
+                const horseStartMatch = line.match(/^([◎○▲△×])\s*([0-9]+)\s+([^\s]+)(?:\s+(本命|対抗|単穴|連下|押さえ))?/);
                 if (horseStartMatch) {
                     // 前の馬データを保存
                     if (currentHorseData) {
@@ -226,11 +242,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     }
 
                     const [, mark, number, name, type] = horseStartMatch;
+
+                    // 種別自動判定ロジック
+                    let horseType = type;
+                    if (!type || type === '') {
+                        // 種別が明示されていない場合、印で判定
+                        if (mark === '◎') horseType = '本命';
+                        else if (mark === '○') horseType = '対抗';
+                        else if (mark === '▲') horseType = '単穴';
+                        else if (mark === '△') horseType = '連下';
+                        else if (mark === '×') horseType = '押さえ';
+                        else horseType = 'その他';
+                    }
+
                     currentHorseData = {
                         number: parseInt(number),
                         name: name,
                         mark: mark,
-                        type: type,
+                        type: horseType,
                         factors: [],
                         importance: []
                     };
@@ -460,6 +489,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             // 最後の馬データを保存
             if (currentRace && currentHorseData) {
                 saveHorseData(raceData[currentRace], currentHorseData);
+            }
+
+            // 各レースのallHorsesを馬番順にソート
+            for (const [raceNum, raceInfo] of Object.entries(raceData)) {
+                if (raceInfo.allHorses) {
+                    raceInfo.allHorses.sort((a, b) => a.number - b.number);
+                    console.log(`🏁 ${raceNum}R: ${raceInfo.allHorses.length}頭の馬情報を保存`);
+                }
             }
 
             console.log('📊 解析完了:', raceData);
