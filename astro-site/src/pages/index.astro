@@ -16,7 +16,78 @@ if (!mainRace) {
     throw new Error('メインレースデータが見つかりません');
 }
 
-const { raceInfo, preview } = mainRace;
+const { raceInfo, strategies, horses } = mainRace;
+
+// 戦略データから信頼度を計算
+function calculateAverageConfidence(strategies) {
+    if (!strategies) return 0;
+
+    const strategyKeys = ['safe', 'balance', 'aggressive'];
+    const confidenceValues = strategyKeys
+        .map(key => strategies[key]?.confidence || strategies[key]?.hitRate)
+        .filter(value => value !== undefined && value !== null)
+        .map(value => parseInt(value));
+
+    if (confidenceValues.length === 0) return 0;
+
+    const average = confidenceValues.reduce((sum, val) => sum + val, 0) / confidenceValues.length;
+    return Math.round(average);
+}
+
+// プレビューコンテンツを生成
+function generatePreview(raceInfo, strategies, horses) {
+    if (!raceInfo || !strategies) {
+        return {
+            summary: 'AI予想データの準備中です',
+            features: ''
+        };
+    }
+
+    // 本命の累積スコアを信頼度として使用
+    let confidence = calculateAverageConfidence(strategies);
+    if (horses?.main?.factors) {
+        const scoreText = horses.main.factors.find(factor => factor.text && factor.text.includes('累積スコア'));
+        if (scoreText) {
+            const scoreMatch = scoreText.text.match(/(\d+)pt/);
+            if (scoreMatch) {
+                confidence = parseInt(scoreMatch[1]);
+            }
+        }
+    }
+
+    const safeTitle = strategies.safe?.title || '少点数的中型';
+    const balanceTitle = strategies.balance?.title || 'バランス型';
+    const aggressiveTitle = strategies.aggressive?.title || '高配当追求型';
+
+    // 本命・対抗の馬名を取得
+    const mainHorseName = horses?.main?.name || '';
+    const subHorseName = horses?.sub?.name || '';
+    const horseInfo = mainHorseName && subHorseName ? `本命${mainHorseName}・対抗${subHorseName}` : '';
+
+    const summary = `${raceInfo.track} ${raceInfo.raceNumber} AI予想完了！`;
+    const features = horseInfo ? `${horseInfo}\n信頼度${confidence}% | ${safeTitle}・${balanceTitle}・${aggressiveTitle}で的中と配当のバランスを最適化。` : `信頼度${confidence}% | ${safeTitle}・${balanceTitle}・${aggressiveTitle}で的中と配当のバランスを最適化。`;
+
+    return { summary, features };
+}
+
+// 信頼度計算とプレビュー生成（本命の累積スコアを使用）
+let calculatedConfidence = calculateAverageConfidence(strategies);
+if (horses?.main?.factors) {
+    const scoreText = horses.main.factors.find(factor => factor.text && factor.text.includes('累積スコア'));
+    if (scoreText) {
+        const scoreMatch = scoreText.text.match(/(\d+)pt/);
+        if (scoreMatch) {
+            calculatedConfidence = parseInt(scoreMatch[1]);
+        }
+    }
+}
+const preview = generatePreview(raceInfo, strategies, horses);
+
+// raceInfoに計算した信頼度を追加
+const enhancedRaceInfo = {
+    ...raceInfo,
+    confidence: calculatedConfidence
+};
 
 // 日付フォーマット変換
 function formatDate(dateStr) {
@@ -27,8 +98,8 @@ function formatDate(dateStr) {
 }
 
 // レース情報の整形
-const formattedDate = raceInfo?.date ? formatDate(raceInfo.date) : '日付未設定';
-const raceTitle = `${formattedDate} ${raceInfo?.track !== 'レース情報未検出' && raceInfo?.track ? raceInfo.track : ''} ${raceInfo?.raceNumber || ''}${raceInfo?.raceName !== 'レース情報未検出' && raceInfo?.raceName ? ' ' + raceInfo.raceName : ''}`;
+const formattedDate = enhancedRaceInfo?.date ? formatDate(enhancedRaceInfo.date) : '日付未設定';
+const raceTitle = `${formattedDate} ${enhancedRaceInfo?.track !== 'レース情報未検出' && enhancedRaceInfo?.track ? enhancedRaceInfo.track : ''} ${enhancedRaceInfo?.raceNumber || ''}${enhancedRaceInfo?.raceName !== 'レース情報未検出' && enhancedRaceInfo?.raceName ? ' ' + enhancedRaceInfo.raceName : ''}`;
 ---
 
 <BaseLayout title="NANKANアナリティクス | AI競馬予想で投資効率を最大化">
@@ -618,7 +689,7 @@ const raceTitle = `${formattedDate} ${raceInfo?.track !== 'レース情報未検
                     <div class="prediction-card">
                         <div class="race-info">
                             <span class="race-title">{raceTitle}</span>
-                            <span class="confidence-score">信頼度 {Math.floor(parseFloat(raceInfo?.confidence || '0'))}%</span>
+                            <span class="confidence-score">信頼度 {Math.floor(parseFloat(enhancedRaceInfo?.confidence || '0'))}%</span>
                         </div>
                         <div class="prediction-summary">
                             {preview?.summary || 'AI予想データの準備中です'}
