@@ -111,6 +111,56 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <script type="text/javascript">
         let superSimpleParsedData = null;
 
+        // 買い目点数自動計算関数（バグ防止用）
+        function calculateBetPoints(betStr) {
+            if (!betStr || typeof betStr !== 'string') return 1;
+
+            // 既に点数が含まれている場合は除去
+            const cleanBet = betStr.replace(/\s*\d+点\s*$/, '').trim();
+
+            if (cleanBet.includes('⇔')) {
+                // 双方向の場合: 軸馬と相手馬の組み合わせ × 2
+                const parts = cleanBet.split('⇔');
+                if (parts.length !== 2) return 1;
+
+                const leftHorses = parts[0].replace(/馬単/g, '').trim().split(',').filter(h => h.trim());
+                const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
+
+                // 左側の馬数 × 右側の馬数 × 2（双方向）
+                const points = leftHorses.length * rightHorses.length * 2;
+                console.log(`⇔ 計算: ${leftHorses.length}頭 × ${rightHorses.length}頭 × 2 = ${points}点`);
+                return points;
+            } else if (cleanBet.includes('→')) {
+                // 単方向の場合: 軸馬から相手馬への組み合わせ
+                const parts = cleanBet.split('→');
+                if (parts.length !== 2) return 1;
+
+                const leftHorses = parts[0].replace(/馬単/g, '').trim().split(',').filter(h => h.trim());
+                const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
+
+                // 左側の馬数 × 右側の馬数
+                const points = leftHorses.length * rightHorses.length;
+                console.log(`→ 計算: ${leftHorses.length}頭 × ${rightHorses.length}頭 = ${points}点`);
+                return points;
+            }
+
+            return 1; // デフォルト
+        }
+
+        // 買い目文字列に正しい点数を追加する
+        function addPointsToBet(betStr) {
+            if (!betStr || typeof betStr !== 'string') return betStr;
+
+            // 既存の点数表記を削除
+            const cleanBet = betStr.replace(/\s*\d+点\s*$/, '').trim();
+
+            // 正しい点数を計算
+            const points = calculateBetPoints(cleanBet);
+
+            // 点数を追加して返す
+            return `${cleanBet}　${points}点`;
+        }
+
         // DOMContentLoadedイベントでJavaScript初期化
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Super Simple版JavaScript初期化完了');
@@ -301,7 +351,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             bets: raceInfo.strategies.safe.bets.map(bet => {
                                 const pointMatch = bet.match(/(\d+)点/);
                                 const points = pointMatch ? pointMatch[1] : "3";
-                                const betNumbers = bet.replace(/馬単\s*/, '').replace(/\s*[\(（].*?[\)）]/, '').trim();
+                                // 点数を含めた正しい形式で保存
+                                const betNumbers = bet.replace(/馬単\s*/, '').trim();
                                 return {
                                     type: '馬単',
                                     numbers: betNumbers,
@@ -318,7 +369,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             bets: raceInfo.strategies.balance.bets.map(bet => {
                                 const pointMatch = bet.match(/(\d+)点/);
                                 const points = pointMatch ? pointMatch[1] : "11";
-                                const betNumbers = bet.replace(/馬単\s*/, '').replace(/\s*[\(（].*?[\)）]/, '').trim();
+                                // 点数を含めた正しい形式で保存
+                                const betNumbers = bet.replace(/馬単\s*/, '').trim();
                                 return {
                                     type: '馬単',
                                     numbers: betNumbers,
@@ -335,7 +387,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             bets: raceInfo.strategies.aggressive.bets.map(bet => {
                                 const pointMatch = bet.match(/(\d+)点/);
                                 const points = pointMatch ? pointMatch[1] : "14";
-                                const betNumbers = bet.replace(/馬単\s*/, '').replace(/\s*[\(（].*?[\)）]/, '').trim();
+                                // 点数を含めた正しい形式で保存
+                                const betNumbers = bet.replace(/馬単\s*/, '').trim();
                                 return {
                                     type: '馬単',
                                     numbers: betNumbers,
@@ -597,10 +650,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 if (line.includes('馬単') && currentStrategy && raceData[currentRace].strategies[currentStrategy]) {
                     console.log(`🎯 買い目行: "${line}" → ${currentStrategy}戦略`);
 
-                    // 買い目抽出（完全版）
+                    // 買い目抽出（自動点数計算付き）
                     const betText = line.trim();
-                    raceData[currentRace].strategies[currentStrategy].bets.push(betText);
-                    console.log(`✅ 買い目追加: ${betText}`);
+                    const correctedBet = addPointsToBet(betText);
+
+                    // 元の点数と計算値が異なる場合は警告
+                    const originalPoints = betText.match(/(\d+)点/);
+                    const calculatedPoints = calculateBetPoints(betText);
+                    if (originalPoints && parseInt(originalPoints[1]) !== calculatedPoints) {
+                        console.warn(`⚠️ 点数修正: ${betText} → ${correctedBet}`);
+                    }
+
+                    raceData[currentRace].strategies[currentStrategy].bets.push(correctedBet);
+                    console.log(`✅ 買い目追加: ${correctedBet}`);
                     continue;
                 }
 
