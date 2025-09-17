@@ -187,9 +187,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         type: type,
                         score: score,
                         stars: stars,
-                        stability: '75',
-                        ability: '75',
-                        development: '75'
+                        stability: null,  // 初期値をnullに設定（復活防止対策）
+                        ability: null,    // 初期値をnullに設定（復活防止対策）
+                        development: null // 初期値をnullに設定（復活防止対策）
                     };
 
                     raceData[currentRace].horses.push(horseData);
@@ -208,21 +208,40 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     continue;
                 }
 
-                // 特徴量重要度の解析（本命・対抗のみ）
-                if (line.includes('安定性') && line.includes('%') && raceData[currentRace] && raceData[currentRace].horses.length > 0) {
+                // 🛡️ 復活防止対策: 特徴量重要度の解析（本命・対抗のみ）- マルチライン対応
+                if ((line.includes('安定性') || line.includes('能力上位性') || line.includes('展開利')) && line.includes('%') &&
+                    raceData[currentRace] && raceData[currentRace].horses.length > 0) {
                     const lastHorse = raceData[currentRace].horses[raceData[currentRace].horses.length - 1];
+                    console.log(`🔍 特徴量重要度行検出: "${line}" → 対象馬: ${lastHorse.name} (${lastHorse.type})`);
 
-                    // 本命・対抗の場合のみ特徴量重要度を取得
+                    // 🛡️ 本命・対抗の場合のみ特徴量重要度を取得（復活防止対策）
                     if (lastHorse.type === '本命' || lastHorse.type === '対抗') {
+                        // 各特徴量を個別にチェック（マルチライン対応）
                         const stabilityMatch = line.match(/安定性([0-9]+)%/);
                         const abilityMatch = line.match(/能力上位性([0-9]+)%/);
                         const developmentMatch = line.match(/展開利([0-9]+)%/);
 
-                        if (stabilityMatch) lastHorse.stability = stabilityMatch[1];
-                        if (abilityMatch) lastHorse.ability = abilityMatch[1];
-                        if (developmentMatch) lastHorse.development = developmentMatch[1];
+                        if (stabilityMatch) {
+                            lastHorse.stability = stabilityMatch[1];
+                            console.log(`✅ 安定性取得: ${lastHorse.name} → ${lastHorse.stability}%`);
+                        }
+                        if (abilityMatch) {
+                            lastHorse.ability = abilityMatch[1];
+                            console.log(`✅ 能力上位性取得: ${lastHorse.name} → ${lastHorse.ability}%`);
+                        }
+                        if (developmentMatch) {
+                            lastHorse.development = developmentMatch[1];
+                            console.log(`✅ 展開利取得: ${lastHorse.name} → ${lastHorse.development}%`);
+                        }
 
-                        console.log(`📊 特徴量更新: ${lastHorse.name} → 安定性${lastHorse.stability}% 能力上位性${lastHorse.ability}% 展開利${lastHorse.development}%`);
+                        // 全ての値が取得できた場合のみ最終ログ表示
+                        if (lastHorse.stability !== null && lastHorse.ability !== null && lastHorse.development !== null) {
+                            console.log(`📊 特徴量完全取得: ${lastHorse.name} (${lastHorse.type}) → 安定性${lastHorse.stability}% 能力上位性${lastHorse.ability}% 展開利${lastHorse.development}%`);
+                        } else {
+                            console.log(`⏳ 特徴量部分取得: ${lastHorse.name} (${lastHorse.type}) → 安定性${lastHorse.stability}% 能力上位性${lastHorse.ability}% 展開利${lastHorse.development}%`);
+                        }
+                    } else {
+                        console.log(`⚠️ 特徴量重要度スキップ: ${lastHorse.name} (${lastHorse.type}) - 本命・対抗以外`);
                     }
                     continue;
                 }
@@ -274,9 +293,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             type: type,
                             score: score,
                             stars: '',
-                            stability: type === '連下' ? '70' : '62',
-                            ability: type === '連下' ? '68' : '60',
-                            development: type === '連下' ? '65' : '58'
+                            stability: null,    // 候補馬は特徴量重要度なし（復活防止対策）
+                            ability: null,      // 候補馬は特徴量重要度なし（復活防止対策）
+                            development: null   // 候補馬は特徴量重要度なし（復活防止対策）
                         };
 
                         raceData[currentRace].horses.push(horseData);
@@ -377,11 +396,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 raceInfo.horses.forEach(horse => {
                     const starsDisplay = horse.stars ? `${horse.stars} ` : '';
 
-                    // 本命・対抗の場合のみ特徴量重要度を表示
+                    // 🛡️ 復活防止対策: 本命・対抗のみに特徴量重要度を表示（厳格チェック）
                     let importanceText = '';
                     if ((horse.type === '本命' || horse.type === '対抗') &&
-                        horse.stability && horse.ability && horse.development) {
+                        horse.stability !== null && horse.ability !== null && horse.development !== null &&
+                        horse.stability !== undefined && horse.ability !== undefined && horse.development !== undefined &&
+                        horse.stability !== '' && horse.ability !== '' && horse.development !== '') {
+                        console.log(`✅ 特徴量重要度表示: ${horse.name} (${horse.type}) - 安定性${horse.stability}% 能力上位性${horse.ability}% 展開利${horse.development}%`);
                         importanceText = `<span class="importance">特徴量重要度 安定性${horse.stability}% 能力上位性${horse.ability}% 展開利${horse.development}%</span>`;
+                    } else {
+                        console.log(`⚠️ 特徴量重要度非表示: ${horse.name} (${horse.type}) - 条件不適合 (stability: ${horse.stability}, ability: ${horse.ability}, development: ${horse.development})`);
                     }
 
                     html += `

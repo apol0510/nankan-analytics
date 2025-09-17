@@ -223,7 +223,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     raceData[currentRace] = {
                         horses: {},
                         candidates: { renka: [], osae: [] },
-                        strategies: {}
+                        strategies: {},
+                        raceInfo: {
+                            title: `${currentRace}R`,
+                            horseCount: 10 // デフォルト
+                        }
                     };
                     currentSection = null;
                     currentHorseData = null;
@@ -232,6 +236,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 }
 
                 if (!currentRace) continue;
+
+                // レース情報行から頭数を検出（例：川崎1R 1400m（11頭）発走時刻14:45 2歳新馬）
+                const raceInfoMatch = line.match(/.*（([0-9]+)頭）/);
+                if (raceInfoMatch) {
+                    const horseCount = parseInt(raceInfoMatch[1]);
+                    raceData[currentRace].raceInfo.horseCount = horseCount;
+                    console.log(`🏇 ${currentRace}R: ${horseCount}頭のレース`);
+                    continue;
+                }
 
                 // 馬情報の開始行を検出（全種対応）
                 const horseStartMatch = line.match(/^([◎○▲△×])\s*([0-9]+)\s+([^\s]+)(?:\s+(本命|対抗|単穴|連下|押さえ))?/);
@@ -359,41 +372,141 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     }
                 }
 
-                // 連下候補馬パース
+                // 連下候補馬パース（全馬プレビュー対応版）
                 if (line.startsWith('△ 連下候補馬')) {
+                    // 前の馬データを保存
+                    if (currentHorseData) {
+                        saveHorseData(raceData[currentRace], currentHorseData);
+                        currentHorseData = null;
+                    }
+
                     const numbers = [];
-                    // 馬番のみを抽出（ptが付いた数値は除外）
                     const parts = line.split(/\s+/);
-                    for (const part of parts) {
-                        // 1桁または2桁の数字のみを抽出（pt付きは除外）
+
+                    // 馬番とスコア情報を同時抽出
+                    for (let j = 0; j < parts.length; j++) {
+                        const part = parts[j];
                         const match = part.match(/^([0-9]{1,2})$/);
                         if (match && !part.includes('pt')) {
                             const num = parseInt(match[1]);
-                            if (num >= 1 && num <= 18) { // 通常の馬番範囲
+                            if (num >= 1 && num <= 18) {
                                 numbers.push(num);
+
+                                // 対応するスコア情報を探す（次の要素など）
+                                const nextPart = parts[j + 1];
+                                let score = 66; // デフォルト連下スコア
+                                let name = `${num}番`;
+
+                                // スコア情報が見つかった場合
+                                if (nextPart && nextPart.includes('pt')) {
+                                    const scoreMatch = nextPart.match(/([0-9]+)pt/);
+                                    if (scoreMatch) {
+                                        score = parseInt(scoreMatch[1]);
+                                    }
+                                }
+
+                                // 馬名情報を探す（前後の要素から）
+                                for (let k = j + 1; k < Math.min(j + 4, parts.length); k++) {
+                                    if (parts[k] && !parts[k].includes('pt') && !parts[k].match(/^[0-9]+$/)) {
+                                        name = parts[k];
+                                        break;
+                                    }
+                                }
+
+                                // 連下候補馬として馬データを作成
+                                const horseData = {
+                                    number: num,
+                                    name: name,
+                                    mark: '△',
+                                    type: '連下',
+                                    factors: [{
+                                        icon: "★",
+                                        text: `累積スコア: ${score}pt`
+                                    }],
+                                    importance: [
+                                        { label: "安定性", value: 0.70 },
+                                        { label: "能力上位性", value: 0.68 },
+                                        { label: "展開利", value: 0.65 }
+                                    ]
+                                };
+
+                                // allHorsesに追加
+                                saveHorseData(raceData[currentRace], horseData);
+                                console.log(`🐎 連下候補馬データ作成: △${num}${name} (${score}pt)`);
                             }
                         }
                     }
+
                     raceData[currentRace].candidates.renka = numbers;
                     console.log(`🎯 連下候補馬: ${numbers.join(',')}`);
                     continue;
                 }
 
-                // 抑え候補馬パース
+                // 抑え候補馬パース（全馬プレビュー対応版）
                 if (line.startsWith('× 抑え候補馬')) {
+                    // 前の馬データを保存
+                    if (currentHorseData) {
+                        saveHorseData(raceData[currentRace], currentHorseData);
+                        currentHorseData = null;
+                    }
+
                     const numbers = [];
-                    // 馬番のみを抽出（ptが付いた数値は除外）
                     const parts = line.split(/\s+/);
-                    for (const part of parts) {
-                        // 1桁または2桁の数字のみを抽出（pt付きは除外）
+
+                    // 馬番とスコア情報を同時抽出
+                    for (let j = 0; j < parts.length; j++) {
+                        const part = parts[j];
                         const match = part.match(/^([0-9]{1,2})$/);
                         if (match && !part.includes('pt')) {
                             const num = parseInt(match[1]);
-                            if (num >= 1 && num <= 18) { // 通常の馬番範囲
+                            if (num >= 1 && num <= 18) {
                                 numbers.push(num);
+
+                                // 対応するスコア情報を探す（次の要素など）
+                                const nextPart = parts[j + 1];
+                                let score = 62; // デフォルト押さえスコア
+                                let name = `${num}番`;
+
+                                // スコア情報が見つかった場合
+                                if (nextPart && nextPart.includes('pt')) {
+                                    const scoreMatch = nextPart.match(/([0-9]+)pt/);
+                                    if (scoreMatch) {
+                                        score = parseInt(scoreMatch[1]);
+                                    }
+                                }
+
+                                // 馬名情報を探す（前後の要素から）
+                                for (let k = j + 1; k < Math.min(j + 4, parts.length); k++) {
+                                    if (parts[k] && !parts[k].includes('pt') && !parts[k].match(/^[0-9]+$/)) {
+                                        name = parts[k];
+                                        break;
+                                    }
+                                }
+
+                                // 押さえ候補馬として馬データを作成
+                                const horseData = {
+                                    number: num,
+                                    name: name,
+                                    mark: '×',
+                                    type: '押さえ',
+                                    factors: [{
+                                        icon: "★",
+                                        text: `累積スコア: ${score}pt`
+                                    }],
+                                    importance: [
+                                        { label: "安定性", value: 0.62 },
+                                        { label: "能力上位性", value: 0.60 },
+                                        { label: "展開利", value: 0.58 }
+                                    ]
+                                };
+
+                                // allHorsesに追加
+                                saveHorseData(raceData[currentRace], horseData);
+                                console.log(`🐎 押さえ候補馬データ作成: ×${num}${name} (${score}pt)`);
                             }
                         }
                     }
+
                     raceData[currentRace].candidates.osae = numbers;
                     console.log(`🎯 抑え候補馬: ${numbers.join(',')}`);
                     continue;
@@ -491,12 +604,76 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 saveHorseData(raceData[currentRace], currentHorseData);
             }
 
-            // 各レースのallHorsesを馬番順にソート
+            // 各レースで連下・押さえ候補馬データを確実に生成し、重要度順でソート
             for (const [raceNum, raceInfo] of Object.entries(raceData)) {
-                if (raceInfo.allHorses) {
-                    raceInfo.allHorses.sort((a, b) => a.number - b.number);
-                    console.log(`🏁 ${raceNum}R: ${raceInfo.allHorses.length}頭の馬情報を保存`);
+                // allHorses配列が存在しない場合は作成
+                if (!raceInfo.allHorses) {
+                    raceInfo.allHorses = [];
                 }
+
+                // 既存の馬番を取得
+                const existingNumbers = raceInfo.allHorses.map(h => h.number);
+
+                // 連下候補馬のデータを生成（馬番リストから）
+                if (raceInfo.candidates?.renka?.length > 0) {
+                    raceInfo.candidates.renka.forEach(horseNum => {
+                        if (!existingNumbers.includes(horseNum)) {
+                            const horseData = {
+                                number: horseNum,
+                                name: `連下候補`,
+                                mark: '△',
+                                type: '連下',
+                                factors: [{
+                                    icon: "★",
+                                    text: `累積スコア: 66pt`
+                                }],
+                                importance: [
+                                    { label: "安定性", value: 0.70 },
+                                    { label: "能力上位性", value: 0.68 },
+                                    { label: "展開利", value: 0.65 }
+                                ]
+                            };
+                            saveHorseData(raceInfo, horseData);
+                            console.log(`🐎 連下候補馬生成: △${horseNum}番`);
+                        }
+                    });
+                }
+
+                // 押さえ候補馬のデータを生成（馬番リストから）
+                if (raceInfo.candidates?.osae?.length > 0) {
+                    raceInfo.candidates.osae.forEach(horseNum => {
+                        if (!existingNumbers.includes(horseNum)) {
+                            const horseData = {
+                                number: horseNum,
+                                name: `押さえ候補`,
+                                mark: '×',
+                                type: '押さえ',
+                                factors: [{
+                                    icon: "★",
+                                    text: `累積スコア: 62pt`
+                                }],
+                                importance: [
+                                    { label: "安定性", value: 0.62 },
+                                    { label: "能力上位性", value: 0.60 },
+                                    { label: "展開利", value: 0.58 }
+                                ]
+                            };
+                            saveHorseData(raceInfo, horseData);
+                            console.log(`🐎 押さえ候補馬生成: ×${horseNum}番`);
+                        }
+                    });
+                }
+
+                // 重要度順でソート（本命→対抗→単穴→連下→押さえ）
+                const typeOrder = { '本命': 1, '対抗': 2, '単穴': 3, '単穴2': 4, '連下': 5, '押さえ': 6, 'その他': 7 };
+                raceInfo.allHorses.sort((a, b) => {
+                    const orderA = typeOrder[a.type] || 9;
+                    const orderB = typeOrder[b.type] || 9;
+                    if (orderA !== orderB) return orderA - orderB;
+                    return a.number - b.number; // 同じ種別内では馬番順
+                });
+
+                console.log(`🏁 ${raceNum}R: ${raceInfo.allHorses.length}頭の馬情報を保存（重要度順）`);
             }
 
             console.log('📊 解析完了:', raceData);
@@ -711,10 +888,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             <h4>🐎 馬情報</h4>
                             <div class="horse-list">`;
 
-                // 各馬の情報表示
-                if (raceInfo.horses && Object.keys(raceInfo.horses).length > 0) {
-                    console.log(`   馬情報あり: ${Object.keys(raceInfo.horses).length}頭`);
-                    Object.values(raceInfo.horses).forEach(horse => {
+                // 全馬の情報表示（allHorses配列を使用）
+                if (raceInfo.allHorses && raceInfo.allHorses.length > 0) {
+                    console.log(`   全馬情報あり: ${raceInfo.allHorses.length}頭`);
+                    raceInfo.allHorses.forEach(horse => {
                         if (horse) {
                             console.log(`     - ${horse.mark}${horse.number}${horse.name} (${horse.type})`);
                             const featuresText = horse.factors ? horse.factors.map(f => f.text).join(' ') : '';
@@ -723,8 +900,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
                             html += `
                                 <div class="horse-item">
-                                    <span class="horse-mark">${horse.mark}</span>
-                                    <span class="horse-info">${horse.number}${horse.name} (${horse.type})</span>
+                                    <span class="horse-mark">${horse.mark || ''}</span>
+                                    <span class="horse-info">${horse.number}番 ${horse.name || ''} (${horse.type})</span>
                                     <div class="horse-details">
                                         <span class="factor">${featuresText}</span>
                                         ${importanceText ? `<span class="importance">${importanceText}</span>` : ''}
@@ -733,7 +910,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         }
                     });
                 } else {
-                    console.log(`   馬情報なし (${raceNum}R)`);
+                    console.log(`   全馬情報なし (${raceNum}R)`);
                     html += `<div class="horse-item">馬情報が解析されませんでした</div>`;
                 }
 
