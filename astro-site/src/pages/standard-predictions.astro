@@ -333,22 +333,43 @@ const standardRaces = sortedRaces.filter(race =>
                                             <div class="strategy-title">🎯 少点数的中型モデル</div>
                                             <div class="bet-list">
                                                 {raceData.strategies?.safe?.bets && raceData.strategies.safe.bets.map(bet => {
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet));
-                                                    // 点数計算
-                                                    let points = 1;
+                                                    // 🔧 復活防止対策: JSONデータ構造に対応した取得方法
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.numbers || bet?.horses || JSON.stringify(bet));
+
+                                                    // 🔧 点数計算修正: 「X点」表記から正確に抽出
+                                                    let points = 1; // デフォルト
                                                     if (betStr && typeof betStr === 'string') {
-                                                        if (betStr.includes('⇔')) {
-                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                            points = targets * 2;
-                                                        } else if (betStr.includes('→')) {
-                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                            points = targets;
+                                                        // 「3点」のような表記から点数を抽出
+                                                        const pointMatch = betStr.match(/(\d+)点/);
+                                                        if (pointMatch) {
+                                                            points = parseInt(pointMatch[1]);
+                                                        } else {
+                                                            // フォールバック: 従来の計算方法
+                                                            if (betStr.includes('⇔')) {
+                                                                const parts = betStr.split('⇔');
+                                                                if (parts.length === 2) {
+                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
+                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
+                                                                    points = leftHorses.length * rightHorses.length * 2;
+                                                                }
+                                                            } else if (betStr.includes('→')) {
+                                                                const parts = betStr.split('→');
+                                                                if (parts.length === 2) {
+                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
+                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
+                                                                    points = leftHorses.length * rightHorses.length;
+                                                                }
+                                                            }
                                                         }
                                                     }
+
+                                                    // 買い目表示用: 点数表記を除いた馬券部分のみ表示
+                                                    const displayBet = betStr.replace(/\s*\d+点\s*$/, '');
+
                                                     return (
                                                     <div class="bet-item">
                                                         <span class="bet-type">馬単</span>
-                                                        <span class="bet-horses">{betStr}</span>
+                                                        <span class="bet-horses">{displayBet}</span>
                                                         <span class="bet-points">{points}点</span>
                                                     </div>
                                                 );
@@ -383,21 +404,43 @@ const standardRaces = sortedRaces.filter(race =>
                                             <div class="strategy-title">⚖️ バランス型モデル</div>
                                             <div class="bet-list">
                                                 {raceData.strategies?.balance?.bets && raceData.strategies.balance.bets.map(bet => {
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
-                                                    let points = 1;
+                                                    // 🔧 復活防止対策: JSONデータ構造に対応した取得方法
+                                                    const betStr = typeof bet === 'string' ? bet : (bet?.numbers || bet?.horses || JSON.stringify(bet) || '');
+
+                                                    // 🔧 点数計算修正: 「X点」表記から正確に抽出
+                                                    let points = 1; // デフォルト
                                                     if (betStr && typeof betStr === 'string') {
-                                                        if (betStr.includes('⇔')) {
-                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                            points = targets * 2;
-                                                        } else if (betStr.includes('→')) {
-                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                            points = targets;
+                                                        // 「3点」のような表記から点数を抽出
+                                                        const pointMatch = betStr.match(/(\d+)点/);
+                                                        if (pointMatch) {
+                                                            points = parseInt(pointMatch[1]);
+                                                        } else {
+                                                            // フォールバック: 従来の計算方法
+                                                            if (betStr.includes('⇔')) {
+                                                                const parts = betStr.split('⇔');
+                                                                if (parts.length === 2) {
+                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
+                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
+                                                                    points = leftHorses.length * rightHorses.length * 2;
+                                                                }
+                                                            } else if (betStr.includes('→')) {
+                                                                const parts = betStr.split('→');
+                                                                if (parts.length === 2) {
+                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
+                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
+                                                                    points = leftHorses.length * rightHorses.length;
+                                                                }
+                                                            }
                                                         }
                                                     }
+
+                                                    // 買い目表示用: 点数表記を除いた馬券部分のみ表示
+                                                    const displayBet = betStr.replace(/\s*\d+点\s*$/, '');
+
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
-                                                            <span class="bet-horses">{betStr}</span>
+                                                            <span class="bet-horses">{displayBet}</span>
                                                             <span class="bet-points">{points}点</span>
                                                         </div>
                                                     );
@@ -443,10 +486,14 @@ const standardRaces = sortedRaces.filter(race =>
                                                             points = targets;
                                                         }
                                                     }
+
+                                                    // 買い目表示用: 点数表記を除いた馬券部分のみ表示
+                                                    const displayBet = betStr.replace(/\s*\d+点\s*$/, '');
+
                                                     return (
                                                         <div class="bet-item">
                                                             <span class="bet-type">馬単</span>
-                                                            <span class="bet-horses">{betStr}</span>
+                                                            <span class="bet-horses">{displayBet}</span>
                                                             <span class="bet-points">{points}点</span>
                                                         </div>
                                                     );

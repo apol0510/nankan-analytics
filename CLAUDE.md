@@ -98,6 +98,45 @@
 - 手動で点数を記載する場合は必ず計算式で確認
 - デプロイ前に買い目点数の検証テストを実行
 
+### 🛡️ **復活防止対策実装済み（2025-09-17）**
+
+#### **買い目表示の重複問題対策**
+```javascript
+// ❌ 問題: JSONデータに「3,11,12 → 13　3点」が含まれているのに
+//           さらに{points}点を追加して「3点」が重複表示
+
+// ✅ 解決: 点数表記を除いた馬券部分のみ表示
+const displayBet = betStr.replace(/\s*\d+点\s*$/, '');
+return (
+    <div class="bet-item">
+        <span class="bet-horses">{displayBet}</span>  // 点数除去済み
+        <span class="bet-points">{points}点</span>    // 計算された点数
+    </div>
+);
+```
+
+#### **点数抽出の正確な実装**
+```javascript
+// 「X点」表記から正確に抽出し、フォールバックも完備
+const pointMatch = betStr.match(/(\d+)点/);
+if (pointMatch) {
+    points = parseInt(pointMatch[1]);  // JSONデータの点数を優先
+} else {
+    // フォールバック: 動的計算
+    // 双方向・単方向の正確な計算実装済み
+}
+```
+
+#### **対象ファイル**
+- `src/pages/premium-predictions.astro`: 修正完了
+- `src/pages/standard-predictions.astro`: 修正完了
+- `src/pages/free-prediction.astro`: 元々正しい構造のため対象外
+
+#### **絶対に復活させてはいけない問題**
+1. ❌ 買い目と点数の重複表示（例：「3,11,12 → 13　3点　3点」）
+2. ❌ 計算ロジックでの左右の馬数カウントミス
+3. ❌ JSONデータの点数を無視した再計算
+
 ---
 
 ## 🎯 新しいシステムフロー
