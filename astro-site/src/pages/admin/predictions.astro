@@ -383,68 +383,8 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
 
         <!-- [DELETED] 不要なセクション削除済み -->
 
-        <!-- 特徴量重要度バー編集 -->
-        <div class="form-section" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
-            <h2 class="section-title">📊 特徴量重要度バー編集</h2>
-            <p style="color: #94a3b8; margin-bottom: 20px; font-size: 0.9rem;">
-                ◎印と○印の特徴量重要度を個別設定。リアルタイムプレビューで確認しながら調整可能。
-            </p>
-            
-            <!-- ◎印（本命）の特徴量重要度 -->
-            <div class="feature-importance-controls" style="background: rgba(16, 185, 129, 0.1);">
-                <h4 style="color: #10b981; margin-bottom: 15px;">◎ 本命馬の特徴量重要度</h4>
-                <div class="slider-container">
-                    <label style="min-width: 80px; font-size: 0.9rem;">特徴量1:</label>
-                    <input type="text" id="mainFeature1Label" value="安定性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                    <input type="range" id="mainFeature1" class="slider" min="0" max="1" step="0.01" value="0.95" onchange="updateImportanceBars()">
-                    <span id="mainFeature1Value" style="min-width: 40px; font-size: 0.9rem;">95%</span>
-                </div>
-                <div class="slider-container">
-                    <label style="min-width: 80px; font-size: 0.9rem;">特徴量2:</label>
-                    <input type="text" id="mainFeature2Label" value="能力上位性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                    <input type="range" id="mainFeature2" class="slider" min="0" max="1" step="0.01" value="0.88" onchange="updateImportanceBars()">
-                    <span id="mainFeature2Value" style="min-width: 40px; font-size: 0.9rem;">88%</span>
-                </div>
-                <div class="slider-container">
-                    <label style="min-width: 80px; font-size: 0.9rem;">特徴量3:</label>
-                    <input type="text" id="mainFeature3Label" value="展開利" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                    <input type="range" id="mainFeature3" class="slider" min="0" max="1" step="0.01" value="0.82" onchange="updateImportanceBars()">
-                    <span id="mainFeature3Value" style="min-width: 40px; font-size: 0.9rem;">82%</span>
-                </div>
-            </div>
-
-            <!-- ○印（対抗）の特徴量重要度 -->
-            <div class="feature-importance-controls" style="background: rgba(59, 130, 246, 0.1);">
-                <h4 style="color: #3b82f6; margin-bottom: 15px;">○ 対抗馬の特徴量重要度</h4>
-                <div class="slider-container">
-                    <label style="min-width: 80px; font-size: 0.9rem;">特徴量1:</label>
-                    <input type="text" id="subFeature1Label" value="安定性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                    <input type="range" id="subFeature1" class="slider" min="0" max="1" step="0.01" value="0.96" onchange="updateImportanceBars()">
-                    <span id="subFeature1Value" style="min-width: 40px; font-size: 0.9rem;">96%</span>
-                </div>
-                <div class="slider-container">
-                    <label style="min-width: 80px; font-size: 0.9rem;">特徴量2:</label>
-                    <input type="text" id="subFeature2Label" value="能力上位性" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                    <input type="range" id="subFeature2" class="slider" min="0" max="1" step="0.01" value="0.85" onchange="updateImportanceBars()">
-                    <span id="subFeature2Value" style="min-width: 40px; font-size: 0.9rem;">85%</span>
-                </div>
-                <div class="slider-container">
-                    <label style="min-width: 80px; font-size: 0.9rem;">特徴量3:</label>
-                    <input type="text" id="subFeature3Label" value="展開利" placeholder="特徴量名" style="width: 120px; padding: 5px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); border-radius: 4px; color: white;">
-                    <input type="range" id="subFeature3" class="slider" min="0" max="1" step="0.01" value="0.79" onchange="updateImportanceBars()">
-                    <span id="subFeature3Value" style="min-width: 40px; font-size: 0.9rem;">79%</span>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-primary" onclick="applyImportanceToSelectedRace()">
-                    🎯 選択中レースに適用
-                </button>
-                <button class="btn btn-secondary" onclick="previewImportanceBars()" style="margin-left: 10px;">
-                    👁️ プレビュー表示
-                </button>
-            </div>
-        </div>
+        <!-- [DELETED] 特徴量重要度バー編集機能完全削除（復活防止対策） -->
+        <!-- 現在はJSONデータ最優先システムのため動的計算機能は不要 -->
 
         <!-- 個別レース詳細編集 -->
         <div class="form-section" id="race-edit-section" style="display: none; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
@@ -1029,7 +969,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
         window.editRace = function(raceNumber) {
             currentEditingRace = raceNumber;
             logAllRaces(`🎯 ${raceNumber}の編集を開始`);
-            showAlert(`${raceNumber}が選択されました。特徴量重要度バー編集セクションで調整してください。`, 'success');
+            showAlert(`${raceNumber}が選択されました。`, 'success');
             
             // レース選択状態を視覚的に表示
             document.querySelectorAll('.btn-secondary').forEach(btn => {
@@ -1069,96 +1009,8 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
             });
         }
 
-        // ===== 特徴量重要度バー編集機能 =====
-        window.updateImportanceBars = function() {
-            // リアルタイム値更新（パーセント表示）
-            document.getElementById('mainFeature1Value').textContent = Math.round(document.getElementById('mainFeature1').value * 100) + '%';
-            document.getElementById('mainFeature2Value').textContent = Math.round(document.getElementById('mainFeature2').value * 100) + '%';
-            document.getElementById('mainFeature3Value').textContent = Math.round(document.getElementById('mainFeature3').value * 100) + '%';
-            document.getElementById('subFeature1Value').textContent = Math.round(document.getElementById('subFeature1').value * 100) + '%';
-            document.getElementById('subFeature2Value').textContent = Math.round(document.getElementById('subFeature2').value * 100) + '%';
-            document.getElementById('subFeature3Value').textContent = Math.round(document.getElementById('subFeature3').value * 100) + '%';
-        };
-
-        window.applyImportanceToSelectedRace = function() {
-            if (!currentEditingRace) {
-                showAlert('先にレースを選択してください', 'error');
-                return;
-            }
-            
-            if (!allRacesData?.races) {
-                showAlert('先にレースデータを読み込んでください', 'error');
-                return;
-            }
-
-            const race = allRacesData.races.find(r => r.raceNumber === currentEditingRace);
-            if (!race) {
-                showAlert('選択されたレースが見つかりません', 'error');
-                return;
-            }
-
-            // 特徴量重要度データを適用
-            if (!race.horses) race.horses = {};
-            
-            // 本命馬の特徴量重要度
-            if (!race.horses.main) race.horses.main = {};
-            race.horses.main.importance = [
-                { 
-                    label: document.getElementById('mainFeature1Label').value || '特徴量1', 
-                    value: parseFloat(document.getElementById('mainFeature1').value) 
-                },
-                { 
-                    label: document.getElementById('mainFeature2Label').value || '特徴量2', 
-                    value: parseFloat(document.getElementById('mainFeature2').value) 
-                },
-                { 
-                    label: document.getElementById('mainFeature3Label').value || '特徴量3', 
-                    value: parseFloat(document.getElementById('mainFeature3').value) 
-                }
-            ];
-
-            // 対抗馬の特徴量重要度
-            if (!race.horses.sub) race.horses.sub = {};
-            race.horses.sub.importance = [
-                { 
-                    label: document.getElementById('subFeature1Label').value || '特徴量1', 
-                    value: parseFloat(document.getElementById('subFeature1').value) 
-                },
-                { 
-                    label: document.getElementById('subFeature2Label').value || '特徴量2', 
-                    value: parseFloat(document.getElementById('subFeature2').value) 
-                },
-                { 
-                    label: document.getElementById('subFeature3Label').value || '特徴量3', 
-                    value: parseFloat(document.getElementById('subFeature3').value) 
-                }
-            ];
-
-            logAllRaces(`✅ ${currentEditingRace}に特徴量重要度を適用しました`);
-            showAlert(`${currentEditingRace}に特徴量重要度を適用しました`, 'success');
-            updateRaceStatus();
-        };
-
-        window.previewImportanceBars = function() {
-            const preview = {
-                '本命馬': [
-                    `${document.getElementById('mainFeature1Label').value}: ${document.getElementById('mainFeature1').value}`,
-                    `${document.getElementById('mainFeature2Label').value}: ${document.getElementById('mainFeature2').value}`,
-                    `${document.getElementById('mainFeature3Label').value}: ${document.getElementById('mainFeature3').value}`
-                ],
-                '対抗馬': [
-                    `${document.getElementById('subFeature1Label').value}: ${document.getElementById('subFeature1').value}`,
-                    `${document.getElementById('subFeature2Label').value}: ${document.getElementById('subFeature2').value}`,
-                    `${document.getElementById('subFeature3Label').value}: ${document.getElementById('subFeature3').value}`
-                ]
-            };
-            
-            logAllRaces('👁️ 特徴量重要度プレビュー:');
-            logAllRaces(`本命: ${preview['本命馬'].join(', ')}`);
-            logAllRaces(`対抗: ${preview['対抗馬'].join(', ')}`);
-            
-            showAlert('特徴量重要度のプレビューをログに表示しました', 'success');
-        };
+        // [DELETED] 特徴量重要度バー編集機能（復活防止対策）
+        // JSONデータ最優先システムにより動的計算機能は完全不要
 
         // ===== 全レース一括変換機能 =====
         window.convertAllRaces = async function() {
@@ -1521,7 +1373,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
             
             return {
                 summary: `推奨投資戦略: ${mainHorse ? mainHorse.name : '本命'}${subHorse ? '、' + subHorse.name : ''}を中心とした馬単、期待値+${(5 + Math.random() * 25).toFixed(1)}%`,
-                features: "特徴量重要度: 安定性(0.90)、能力上位性(0.85)、展開利(0.75)",
+                features: "JSONデータから直接取得",
                 riskAnalysis: "中リスク、バランス型"
             };
         }
@@ -1866,7 +1718,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
             
             return {
                 summary: `推奨投資戦略: ${mainHorse ? mainHorse.name : '本命'}${subHorse ? '、' + subHorse.name : ''}を中心とした馬単、期待値+${(10 + Math.random() * 20).toFixed(1)}%`,
-                features: "特徴量重要度: 安定性(0.95)、能力上位性(0.88)、展開利(0.82)",
+                features: "JSONデータから直接取得",
                 riskAnalysis: "中リスク、バランス型"
             };
         }
@@ -2585,7 +2437,7 @@ import { convertToStarRating } from '../../lib/shared-prediction-logic.js';
         // ===== 初期化 =====
         document.addEventListener('DOMContentLoaded', function() {
             logAllRaces('🚀 システム初期化完了');
-            updateImportanceBars();
+            // [DELETED] updateImportanceBars() 呼び出し削除
             generateRaceEditButtons(); // レース編集ボタンを動的生成
             
             // 初期データをチェック（もしあれば）
