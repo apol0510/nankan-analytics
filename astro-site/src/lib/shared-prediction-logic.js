@@ -39,17 +39,8 @@ export function calculateMarkBasedConfidence(horse) {
 export function getHorseConfidenceFromMark(horse) {
     if (!horse) return 62;
 
-    // multiMarkがある場合は最優先でそれを使って計算（最新のベース62pt基準）
-    if (horse.multiMark) {
-        return calculateMarkBasedConfidence(horse);
-    }
-
-    // 単一印の場合は通常の計算
-    if (horse.mark) {
-        return calculateMarkBasedConfidence(horse);
-    }
-
-    // factors内の既存スコアがある場合はそれを使用（fallback）
+    // 🔧 復活防止対策: JSONデータの累積スコアを最優先使用
+    // factors内の累積スコアがある場合は最優先で使用（実際のデータ）
     if (horse.factors && Array.isArray(horse.factors)) {
         const scoreText = horse.factors.find(factor =>
             factor.text && factor.text.includes('累積スコア')
@@ -60,6 +51,18 @@ export function getHorseConfidenceFromMark(horse) {
                 return parseInt(match[1]);
             }
         }
+    }
+
+    // multiMarkがある場合は動的計算（JSONスコアがない場合のみ）
+    if (horse.multiMark) {
+        console.log(`⚠️ 動的計算使用(multiMark): ${horse.name || '名前不明'}`);
+        return calculateMarkBasedConfidence(horse);
+    }
+
+    // 単一印の場合は動的計算（JSONスコアがない場合のみ）
+    if (horse.mark) {
+        console.log(`⚠️ 動的計算使用(mark): ${horse.name || '名前不明'}`);
+        return calculateMarkBasedConfidence(horse);
     }
 
     return 62; // デフォルト
