@@ -12,6 +12,14 @@ if (!mainRace) {
     throw new Error('メインレースが見つかりません。allRacesPrediction.jsonのデータを確認してください。');
 }
 
+// 日付と会場を取得
+const raceDate = allRacesData.raceDate; // "2025-09-17"
+const track = allRacesData.track; // "大井競馬"
+
+// 日付を日本語形式に変換
+const [year, month, day] = raceDate.split('-');
+const formattedDate = `${parseInt(month)}月${parseInt(day)}日`;
+
 // Free会員向け: メインレース（11R）のデータを使用
 
 // メインレースのデータを取得
@@ -41,7 +49,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 <span class="pulse"></span>
                 <span class="ai-status">AI分析完了</span>
             </div>
-            <h1 class="race-title">{raceInfo.raceNumber} {raceInfo.distance} ({raceInfo.horseCount}頭) 第{parseInt(raceInfo.raceNumber)}レース 発走{raceInfo.startTime}</h1>
+            <h1 class="race-title">{formattedDate}{track}{raceInfo.raceName}</h1>
             <!-- 余計な詳細指標を削除し、シンプルに -->
         </div>
 
@@ -237,43 +245,13 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 <span>AI推奨投資戦略 - 期待度別最適化買い目</span>
             </h2>
             
-            <!-- リスクバー説明セクション（コンパクト版） -->
-            <div class="risk-guide-compact">
-                <div class="accordion-header-compact" onclick="toggleAccordion('riskGuide')">
-                    <span class="risk-title-compact">📈 期待度バーの見方</span>
-                    <span class="accordion-icon-compact" id="riskGuideIcon">▼</span>
-                </div>
-                <div class="accordion-content-compact" id="riskGuide">
-                    <div class="risk-examples-compact">
-                        <div class="risk-item-compact">
-                            <span class="risk-level">期待度:最高</span>
-                            <div class="risk-bar-mini">
-                                <div class="risk-fill-mini" style="width: 33%;"></div>
-                            </div>
-                            <span class="risk-text">安定志向</span>
-                        </div>
-                        <div class="risk-item-compact">
-                            <span class="risk-level">期待度:高</span>
-                            <div class="risk-bar-mini">
-                                <div class="risk-fill-mini" style="width: 67%;"></div>
-                            </div>
-                            <span class="risk-text">バランス型</span>
-                        </div>
-                        <div class="risk-item-compact">
-                            <span class="risk-level">期待度:標準</span>
-                            <div class="risk-bar-mini">
-                                <div class="risk-fill-mini" style="width: 100%;"></div>
-                            </div>
-                            <span class="risk-text">ハイリターン</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
 
-            <!-- 戦略1: 的中率重視型 -->
-            <div class="bet-strategy premium-masked">
-                <div class="strategy-title">🎯 少点数的中型モデル</div>
+            <!-- 戦略セクション -->
+            <div class="bet-strategies">
+                <!-- 戦略1: 的中率重視型 -->
+                <div class="bet-strategy premium-masked">
+                    <div class="strategy-title">🎯 少点数的中型モデル</div>
                 <div class="bet-list">
                     {strategies.safe.bets.map(bet => (
                         <div class="bet-item">
@@ -299,19 +277,11 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="premium-overlay">
-                    <div class="premium-content">
-                        <div class="premium-icon">🔒</div>
-                        <div class="premium-text">有料会員限定</div>
-                        <div class="premium-subtitle">投資戦略を完全表示</div>
-                        <button class="premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
-                    </div>
                 </div>
-            </div>
 
-            <!-- 戦略2: バランス型 -->
-            <div class="bet-strategy premium-masked">
-                <div class="strategy-title">⚖️ バランス型モデル</div>
+                <!-- 戦略2: バランス型 -->
+                <div class="bet-strategy premium-masked">
+                    <div class="strategy-title">⚖️ バランス型モデル</div>
                 <div class="bet-list">
                     {strategies.balance.bets.map(bet => (
                         <div class="bet-item">
@@ -337,19 +307,11 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="premium-overlay">
-                    <div class="premium-content">
-                        <div class="premium-icon">🔒</div>
-                        <div class="premium-text">有料会員限定</div>
-                        <div class="premium-subtitle">投資戦略を完全表示</div>
-                        <button class="premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
-                    </div>
                 </div>
-            </div>
 
-            <!-- 戦略3: 高配当狙い -->
-            <div class="bet-strategy premium-masked">
-                <div class="strategy-title">🚀 高配当追求型モデル</div>
+                <!-- 戦略3: 高配当狙い -->
+                <div class="bet-strategy premium-masked">
+                    <div class="strategy-title">🚀 高配当追求型モデル</div>
                 <div class="bet-list">
                     {strategies.aggressive.bets.map(bet => (
                         <div class="bet-item">
@@ -375,27 +337,43 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <div class="risk-bar"></div>
                     <div class="risk-bar"></div>
                 </div>
-                <div class="premium-overlay">
-                    <div class="premium-content">
-                        <div class="premium-icon">🔒</div>
-                        <div class="premium-text">有料会員限定</div>
-                        <div class="premium-subtitle">投資戦略を完全表示</div>
-                        <button class="premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
+                </div>
+
+                <!-- 統一プレミアム投資戦略オーバーレイ -->
+                <div class="unified-premium-overlay">
+                    <div class="unified-premium-content">
+                        <div class="unified-premium-icon">🔒</div>
+                        <div class="unified-premium-text">有料会員限定</div>
+                        <div class="unified-premium-subtitle">投資戦略を完全表示</div>
+                        <button class="unified-premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- AI分析サマリー -->
-                
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
-                    <h4 style="color: #3b82f6; margin-bottom: 10px;">重要指標</h4>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                        <div>展開予測精度: {analysis?.keyIndicators?.accuracy || '85'}%</div>
-                        <div>過去類似レース: {analysis?.keyIndicators?.similarRaces || '15戦'}</div>
-                        <div>信頼区間: {analysis?.keyIndicators?.confidenceInterval || '92'}%</div>
-                        <div>推奨投資額: {analysis?.keyIndicators?.recommendedInvestment || '1,000円～'}</div>
-                    </div>
+        <div class="analysis-summary">
+            <h4 style="color: #3b82f6; margin-bottom: 20px; margin-top: 30px; font-size: 1.2rem;">📊 重要指標</h4>
+            <div class="key-indicators-grid">
+                <div class="indicator-card">
+                    <div class="indicator-icon">🎯</div>
+                    <div class="indicator-label">展開予測精度</div>
+                    <div class="indicator-value">{analysis?.keyIndicators?.accuracy || '85'}%</div>
+                </div>
+                <div class="indicator-card">
+                    <div class="indicator-icon">📈</div>
+                    <div class="indicator-label">過去類似レース</div>
+                    <div class="indicator-value">{analysis?.keyIndicators?.similarRaces || '567戦'}</div>
+                </div>
+                <div class="indicator-card">
+                    <div class="indicator-icon">🔒</div>
+                    <div class="indicator-label">信頼区間</div>
+                    <div class="indicator-value">{analysis?.keyIndicators?.confidenceInterval || '92'}%</div>
+                </div>
+                <div class="indicator-card">
+                    <div class="indicator-icon">💰</div>
+                    <div class="indicator-label">推奨投資額</div>
+                    <div class="indicator-value">{analysis?.keyIndicators?.recommendedInvestment || '1,000円～'}</div>
                 </div>
             </div>
         </div>
@@ -443,21 +421,6 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 <li><strong style="color:#10b981">血統要因</strong>: 父系・母系・生産者データ</li>
             </ul>
             
-            <h3 style="color:#8b5cf6;margin-bottom:15px;margin-top:25px">戦略タイプと選び方について</h3>
-            <div class="strategy-explanations-tech">
-                <div class="strategy-explain-tech">
-                    <div class="strategy-type-tech">🎯 戦略A: 高的中率型</div>
-                    <div class="strategy-desc-tech">的中率を最優先とし、配当は控えめ。競馬初心者や安定した収益を求める方におすすめ。AIモデルが高確率で的中と判断した馬券のみを厳選し、リスクを最小限に抑えます。</div>
-                </div>
-                <div class="strategy-explain-tech">
-                    <div class="strategy-type-tech">⚖️ 戦略B: バランス型</div>
-                    <div class="strategy-desc-tech">的中率と配当のバランスを重視。中穴狙いで中級者向け。最も汎用性の高い戦略で、安定性と収益性の両立を図ります。多くの投資家に適した標準的なアプローチです。</div>
-                </div>
-                <div class="strategy-explain-tech">
-                    <div class="strategy-type-tech">🚀 戦略C: 高配当追求型</div>
-                    <div class="strategy-desc-tech">高配当を狙い撃ち。リスクは高いが大きなリターンを期待。上級者や一発逆転を狙う方向け。AIが大穴候補として抽出した馬を積極活用し、ハイリスク・ハイリターンを追求します。</div>
-                </div>
-            </div>
         </div>
 
         <!-- 免責事項 -->
@@ -958,6 +921,173 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
     }
     .free-member-button:hover {
         transform: scale(1.05);
+    }
+
+    /* 戦略セクション */
+    .bet-strategies {
+        position: relative;
+    }
+
+    /* 統一プレミアム投資戦略オーバーレイ */
+    .unified-premium-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg,
+            rgba(15, 23, 42, 0.85) 0%,
+            rgba(30, 41, 59, 0.9) 50%,
+            rgba(15, 23, 42, 0.95) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        z-index: 10;
+    }
+    .unified-premium-content {
+        text-align: center;
+        padding: 30px 40px;
+        max-width: 400px;
+        width: 100%;
+    }
+    .unified-premium-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+    .unified-premium-text {
+        font-size: 1.4rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .unified-premium-subtitle {
+        font-size: 1rem;
+        color: #cbd5e1;
+        margin-bottom: 24px;
+        opacity: 0.9;
+    }
+    .unified-premium-button {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        text-transform: none;
+    }
+    .unified-premium-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        filter: brightness(1.1);
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+        .unified-premium-content {
+            padding: 20px 24px;
+            max-width: 320px;
+        }
+        .unified-premium-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        .unified-premium-text {
+            font-size: 1.2rem;
+        }
+        .unified-premium-subtitle {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .unified-premium-button {
+            padding: 12px 24px;
+            font-size: 1rem;
+        }
+    }
+
+    /* 重要指標カード表示 */
+    .key-indicators-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 30px;
+    }
+
+    .indicator-card {
+        background: linear-gradient(135deg,
+            rgba(59, 130, 246, 0.1) 0%,
+            rgba(139, 92, 246, 0.1) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        padding: 20px 16px;
+        text-align: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(4px);
+    }
+
+    .indicator-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(59, 130, 246, 0.4);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+    }
+
+    .indicator-icon {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    .indicator-label {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+
+    .indicator-value {
+        color: #3b82f6;
+        font-size: 1.4rem;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* モバイル対応 - 重要指標 */
+    @media (max-width: 768px) {
+        .key-indicators-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .indicator-card {
+            padding: 16px 12px;
+        }
+
+        .indicator-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+
+        .indicator-label {
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+        }
+
+        .indicator-value {
+            font-size: 1.2rem;
+        }
     }
 
     /* 戦略説明セクション */
