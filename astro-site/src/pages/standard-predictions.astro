@@ -85,16 +85,32 @@ const standardRaces = sortedRaces.filter(race =>
                 console.warn(`Race ${raceData.raceNumber} integrity issues:`, integrity);
             }
 
-            // 戦略データ取得（JSONデータ優先システム）
-            // JSONに戦略データが存在する場合はそれを使用、存在しない場合のみ動的生成
+            // 戦略データ取得（JSONデータ完全優先システム）
+            // 🔒 動的生成を完全に無効化し、JSONデータのみ使用
             let raceStrategies;
-            if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balance && raceData.strategies.aggressive) {
-                // JSONデータが存在する場合は優先使用（復活防止対策）
-                console.log(`✅ Race ${raceData.raceNumber}: JSONデータを使用`);
+
+            // JSONデータが存在するかチェック（一つでも存在すればJSON使用）
+            const hasJsonStrategies = raceData.strategies &&
+                (raceData.strategies.safe || raceData.strategies.balance || raceData.strategies.aggressive);
+
+            if (hasJsonStrategies) {
+                // JSONデータを完全優先使用
+                console.log(`🔒 Race ${raceData.raceNumber}: JSONデータ完全使用（動的生成無効）`);
                 raceStrategies = raceData.strategies;
+
+                // JSONデータの内容を確認ログ
+                if (raceStrategies.safe?.bets) {
+                    console.log(`  ✅ Safe: ${raceStrategies.safe.bets.length}件の買い目`);
+                }
+                if (raceStrategies.balance?.bets) {
+                    console.log(`  ✅ Balance: ${raceStrategies.balance.bets.length}件の買い目`);
+                }
+                if (raceStrategies.aggressive?.bets) {
+                    console.log(`  ✅ Aggressive: ${raceStrategies.aggressive.bets.length}件の買い目`);
+                }
             } else {
-                // JSONデータが不完全な場合のみ動的生成
-                console.log(`⚠️ Race ${raceData.raceNumber}: 動的生成を使用`);
+                // JSONデータがない場合のみ動的生成（フォールバック）
+                console.warn(`⚠️ Race ${raceData.raceNumber}: JSONデータが存在しません。フォールバックとして動的生成を使用`);
                 const processedData = getPredictionDataWithStrategies(raceData.horses);
                 raceStrategies = processedData.strategies;
             }
