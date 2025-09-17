@@ -110,10 +110,10 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             const raceMainHorseScore = getHorseConfidenceFromMark(raceData.horses.main);
             const raceSubHorseScore = getHorseConfidenceFromMark(raceData.horses.sub);
 
-            // プログレスバー用データを直接計算
-            const progressBarA = calculateProgressBarConfidence('A', raceMainHorseScore);
-            const progressBarB = calculateProgressBarConfidence('B', raceMainHorseScore, raceSubHorseScore);
-            const progressBarC = calculateProgressBarConfidence('C', raceMainHorseScore, raceSubHorseScore);
+            // 🛡️ JSONデータ最優先: hitRateとconfidenceを直接使用（動的計算防止）
+            const progressBarA = { confidence: raceStrategies.safe.confidence || raceStrategies.safe.hitRate };
+            const progressBarB = { confidence: raceStrategies.balance.confidence || raceStrategies.balance.hitRate };
+            const progressBarC = { confidence: raceStrategies.aggressive.confidence || raceStrategies.aggressive.hitRate };
 
             // AI予測値計算完了（JSONスコア使用）
 
