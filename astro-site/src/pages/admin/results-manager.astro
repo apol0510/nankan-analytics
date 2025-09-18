@@ -456,7 +456,41 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 return;
             }
 
-            const sections = input.split(/(?=\d+\/\d+.*競馬)/);
+            // より確実な方法: 改行で全行を分割してから処理
+            const lines = input.split('\n');
+            const sections = [];
+            let currentSection = [];
+
+            for (const line of lines) {
+                const normalizedLine = normalizeText(line);
+                // 日付パターンを含む行が新しいセクションの開始
+                if (normalizedLine.match(/^\d+\/\d+.*競馬/)) {
+                    // 前のセクションを保存
+                    if (currentSection.length > 0) {
+                        sections.push(currentSection.join('\n'));
+                    }
+                    // 新しいセクション開始
+                    currentSection = [line];
+                } else if (currentSection.length > 0) {
+                    // 既存セクションに追加
+                    currentSection.push(line);
+                }
+            }
+
+            // 最後のセクションを保存
+            if (currentSection.length > 0) {
+                sections.push(currentSection.join('\n'));
+            }
+
+            console.log(`検出されたセクション数: ${sections.length}`);
+
+            // 各セクションから日付を抽出して表示
+            sections.forEach((section, index) => {
+                const firstLine = section.split('\n')[0];
+                const date = extractDate(firstLine);
+                console.log(`セクション${index + 1}: 日付=${date}, 最初の行=${firstLine.substring(0, 30)}...`);
+            });
+
             const dailyResults = [];
             let totalHits = 0;
             let totalRaces = 0;
@@ -467,6 +501,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
             for (const section of sections) {
                 if (!section.trim()) continue;
+                console.log(`処理中のセクション: ${section.substring(0, 50)}...`);
 
                 const lines = section.split('\n').filter(line => line.trim());
                 const headerLine = lines[0];
@@ -474,7 +509,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 const date = extractDate(headerLine);
                 track = extractTrack(headerLine);
 
-                if (!date) continue;
+                console.log(`抽出された日付: ${date}, トラック: ${track}`);
+
+                if (!date) {
+                    console.log(`日付が抽出できませんでした: ${headerLine}`);
+                    continue;
+                }
 
                 if (!startDate) startDate = date;
                 endDate = date;
@@ -517,8 +557,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 totalPayout += dayPayout;
             }
 
+            // 正確な計算：totalRacesは総レース数(12×日数)、購入額は1レース10点×100円
             const overallHitRate = ((totalHits / totalRaces) * 100).toFixed(1);
-            const purchaseAmount = totalRaces * 10 * 100;
+            const purchaseAmount = totalRaces * 10 * 100;  // 総レース数 × 10点 × 100円
             const recoveryRate = Math.round((totalPayout / purchaseAmount) * 100);
 
             weeklyData = {
