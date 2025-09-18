@@ -248,32 +248,32 @@ const raceTitle = `${formattedDate} ${enhancedRaceInfo?.track !== 'レース情�
                         🏆 先週の的中結果
                     </h2>
                     <p style="text-align: center; color: var(--body-text-color); font-size: 1.1rem; margin-bottom: 40px; opacity: 0.9;">
-                        8/11〜8/15 大井競馬での予想成績
+                        9/8〜9/12 川崎競馬での予想成績
                     </p>
-                    
+
                     <!-- 週間サマリー統計 -->
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; max-width: 900px; margin-left: auto; margin-right: auto;">
                         <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(34, 197, 94, 0.1) 100%); border: 2px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 25px; text-align: center;">
                             <div style="font-size: 3rem; font-weight: 800; color: #10b981; margin-bottom: 10px;">
-                                78.6%
+                                70.8%
                             </div>
                             <div style="color: var(--body-text-color); font-weight: 600;">
-                                的中率 (44/56)
+                                的中率 (34/48)
                             </div>
                         </div>
-                        
+
                         <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(99, 102, 241, 0.1) 100%); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 25px; text-align: center;">
                             <div style="font-size: 3rem; font-weight: 800; color: #3b82f6; margin-bottom: 10px;">
-                                ¥122,580
+                                ¥89,670
                             </div>
                             <div style="color: var(--body-text-color); font-weight: 600;">
                                 週間配当
                             </div>
                         </div>
-                        
+
                         <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 25px; text-align: center;">
                             <div style="font-size: 3rem; font-weight: 800; color: #8b5cf6; margin-bottom: 10px;">
-                                218.9%
+                                187%
                             </div>
                             <div style="color: var(--body-text-color); font-weight: 600;">
                                 週間回収率
@@ -284,15 +284,14 @@ const raceTitle = `${formattedDate} ${enhancedRaceInfo?.track !== 'レース情�
                     <!-- 日別タブ -->
                     <div style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 30px; border: 1px solid rgba(148, 163, 184, 0.1);">
                         <div style="display: flex; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; gap: 10px;">
-                            <button onclick="showWeeklyResults('0815')" id="tab-0815" class="weekly-tab active" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.3) 100%); color: #10b981; padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3); cursor: pointer;">8/15 (90%)</button>
-                            <button onclick="showWeeklyResults('0814')" id="tab-0814" class="weekly-tab" style="background: rgba(148, 163, 184, 0.1); color: var(--body-text-color); padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(148, 163, 184, 0.2); cursor: pointer;">8/14 (75%)</button>
-                            <button onclick="showWeeklyResults('0813')" id="tab-0813" class="weekly-tab" style="background: rgba(148, 163, 184, 0.1); color: var(--body-text-color); padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(148, 163, 184, 0.2); cursor: pointer;">8/13 (83%)</button>
-                            <button onclick="showWeeklyResults('0812')" id="tab-0812" class="weekly-tab" style="background: rgba(148, 163, 184, 0.1); color: var(--body-text-color); padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(148, 163, 184, 0.2); cursor: pointer;">8/12 (70%)</button>
-                            <button onclick="showWeeklyResults('0811')" id="tab-0811" class="weekly-tab" style="background: rgba(148, 163, 184, 0.1); color: var(--body-text-color); padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(148, 163, 184, 0.2); cursor: pointer;">8/11 (75%)</button>
+                            <button onclick="showWeeklyResults('0912')" id="tab-0912" class="weekly-tab active" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.3) 100%); color: #10b981; padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3); cursor: pointer;">9/12 (58%)</button>
+                            <button onclick="showWeeklyResults('0910')" id="tab-0910" class="weekly-tab" style="background: rgba(148, 163, 184, 0.1); color: var(--body-text-color); padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(148, 163, 184, 0.2); cursor: pointer;">9/10 (67%)</button>
+                            <button onclick="showWeeklyResults('0909')" id="tab-0909" class="weekly-tab" style="background: rgba(148, 163, 184, 0.1); color: var(--body-text-color); padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(148, 163, 184, 0.2); cursor: pointer;">9/9 (75%)</button>
+                            <button onclick="showWeeklyResults('0908')" id="tab-0908" class="weekly-tab" style="background: rgba(148, 163, 184, 0.1); color: var(--body-text-color); padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 1px solid rgba(148, 163, 184, 0.2); cursor: pointer;">9/8 (83%)</button>
                         </div>
                         
-                        <!-- 8/15 Results -->
-                        <div id="results-0815" class="weekly-results" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto;">
+                        <!-- 9/12 Results -->
+                        <div id="results-0912" class="weekly-results" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto;">
                             <div style="display: flex; flex-direction: column; align-items: center; padding: 15px 10px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
                                 <span style="color: var(--body-text-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">1R</span>
                                 <span style="color: #10b981; font-size: 1.3rem;">⭕</span>

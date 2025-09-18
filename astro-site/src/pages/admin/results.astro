@@ -1,0 +1,518 @@
+---
+export const prerender = false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="的中結果管理" description="NANKANアナリティクス的中結果更新管理画面">
+    <div class="admin-container">
+        <h1>🎯 的中結果管理画面</h1>
+        <p class="subtitle">昨日の的中結果と先週の的中結果を更新できます</p>
+
+        <!-- 昨日の的中結果セクション -->
+        <section class="results-section">
+            <h2>📊 昨日の的中結果</h2>
+
+            <!-- コピペ入力エリア -->
+            <div class="paste-section">
+                <h3>📝 結果をコピペで入力</h3>
+                <textarea id="paste-input" placeholder="９/１７大井競馬予想 結果
+１Ｒ 11-２馬単　2.250円 的中！
+２Ｒ ８-１馬単　1.060円 的中！
+３Ｒ ２-８馬単　2.380円 的中！
+４Ｒ ９-１
+５Ｒ 13-11馬単　3.300円 的中！
+..." rows="15"></textarea>
+                <button id="parse-btn" class="parse-btn">📋 自動解析して入力</button>
+            </div>
+
+            <div class="auto-fields">
+                <div class="form-group">
+                    <label>開催日（自動抽出）</label>
+                    <input type="text" id="yesterday-date" placeholder="コピペ解析で自動入力" readonly />
+                </div>
+                <div class="form-group">
+                    <label>競馬場（自動抽出）</label>
+                    <input type="text" id="yesterday-track" placeholder="コピペ解析で自動入力" readonly />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>総レース数</label>
+                <input type="number" id="yesterday-totalRaces" value="12" />
+            </div>
+            <div class="form-group">
+                <label>的中レース数</label>
+                <input type="number" id="yesterday-hits" value="6" />
+            </div>
+            <div class="form-group">
+                <label>的中率（%）</label>
+                <input type="text" id="yesterday-hitRate" placeholder="50.0" />
+            </div>
+            <div class="form-group">
+                <label>総配当（円）</label>
+                <input type="number" id="yesterday-payout" placeholder="47870" />
+            </div>
+            <div class="form-group">
+                <label>回収率（%）</label>
+                <input type="text" id="yesterday-returnRate" placeholder="399.2" />
+            </div>
+
+        </section>
+
+        <!-- 先週の的中結果セクション -->
+        <section class="results-section">
+            <h2>📈 先週の的中結果（ハードコード）</h2>
+            <p class="info">先週の的中結果はindex.astro内にハードコードされています。</p>
+            <p class="info">現在の仕様では、直接index.astroファイルを編集する必要があります。</p>
+            <div class="note">
+                <strong>表示されている週間データ:</strong>
+                <ul>
+                    <li>期間: 8/11〜8/15 大井競馬</li>
+                    <li>的中率: 78.6% (44/56)</li>
+                    <li>週間配当: ¥122,580</li>
+                    <li>週間回収率: 218.9%</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="button-container">
+            <button id="update-btn" class="update-btn">
+                📝 昨日の的中結果を更新
+            </button>
+            <button id="preview-btn" class="preview-btn">
+                👁️ プレビュー
+            </button>
+        </div>
+
+        <div id="preview-container" class="preview-container" style="display: none;">
+            <h3>プレビュー</h3>
+            <pre id="preview-content"></pre>
+        </div>
+    </div>
+
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 40px;
+        }
+
+        .results-section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .results-section h2 {
+            color: #e2e8f0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .results-section h3 {
+            color: #cbd5e1;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .update-btn,
+        .preview-btn {
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .update-btn {
+            background: linear-gradient(135deg, #10b981, #22c55e);
+            color: white;
+        }
+
+        .update-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .preview-btn {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+        }
+
+        .preview-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .preview-container {
+            margin-top: 30px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .preview-container h3 {
+            color: #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        .preview-container pre {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            color: #10b981;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+
+        .info {
+            color: #94a3b8;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .note {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .note strong {
+            color: #3b82f6;
+        }
+
+        .note ul {
+            margin: 10px 0 0 20px;
+            color: #cbd5e1;
+        }
+
+        .note li {
+            margin: 5px 0;
+        }
+
+        .paste-section {
+            background: rgba(59, 130, 246, 0.05);
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .paste-section h3 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+
+        .paste-section textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .paste-section textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .parse-btn {
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .parse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .divider {
+            text-align: center;
+            color: #64748b;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: calc(50% - 80px);
+            height: 1px;
+            background: rgba(148, 163, 184, 0.2);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .auto-fields {
+            background: rgba(34, 197, 94, 0.05);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .auto-fields .form-group input {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            cursor: not-allowed;
+        }
+
+        .auto-fields .form-group label {
+            color: #22c55e;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // コピペ解析機能
+            document.getElementById('parse-btn').addEventListener('click', function() {
+                const pasteText = document.getElementById('paste-input').value;
+                if (!pasteText) {
+                    alert('結果データを貼り付けてください');
+                    return;
+                }
+
+                // 1行目から日付と競馬場を抽出
+                const lines = pasteText.split('\n');
+                const firstLine = lines[0];
+                const dateMatch = firstLine.match(/(\d+)[\/月](\d+)/);
+                const trackMatch = firstLine.match(/(大井|川崎|船橋|浦和)競馬/);
+
+                if (dateMatch) {
+                    const month = dateMatch[1];
+                    const day = dateMatch[2];
+                    document.getElementById('yesterday-date').value = `${month}/${day}`;
+                }
+
+                if (trackMatch) {
+                    document.getElementById('yesterday-track').value = `${trackMatch[1]}競馬`;
+                }
+
+                // レース結果を解析
+                let totalPayout = 0;
+                let hitCount = 0;
+                const raceResults = {};
+
+                for (let i = 1; i <= 12; i++) {
+                    raceResults[i] = { status: 'miss', payout: 0 };
+                }
+
+                lines.forEach(line => {
+                    console.log('解析中の行:', line);
+
+                    // レース番号を抽出（全角・半角両対応）
+                    const raceMatch = line.match(/([０-９\d]+)[ＲR]/);
+                    if (!raceMatch) return;
+
+                    // 全角数字を半角数字に変換
+                    const raceNumStr = raceMatch[1].replace(/[０-９]/g, function(s) {
+                        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+                    });
+                    const raceNum = parseInt(raceNumStr);
+                    if (raceNum < 1 || raceNum > 12) return;
+
+                    console.log(`${raceNum}R を解析中:`, line);
+
+                    // 的中判定（「的中」または「！」がある場合）
+                    const isHit = line.includes('的中') || line.includes('！');
+
+                    if (isHit) {
+                        raceResults[raceNum].status = 'hit';
+                        hitCount++;
+                        console.log(`${raceNum}R: 的中と判定`);
+
+                        // 配当金額を抽出（より柔軟なパターン）
+                        const payoutMatch = line.match(/([0-9,\.]+)円/);
+                        if (payoutMatch) {
+                            // カンマを除去
+                            const payoutStr = payoutMatch[1].replace(/[,，]/g, '');
+
+                            let payout;
+                            if (payoutStr.includes('.')) {
+                                // 小数点がある場合（2.250 → 2250、1.700 → 1700）
+                                payout = Math.round(parseFloat(payoutStr) * 1000);
+                            } else {
+                                // 小数点がない場合（330 → 330）
+                                payout = parseInt(payoutStr);
+                            }
+
+                            raceResults[raceNum].payout = payout;
+                            totalPayout += payout;
+                            console.log(`${raceNum}R: 配当 ${payout}円`);
+                        }
+                    } else {
+                        raceResults[raceNum].status = 'miss';
+                        raceResults[raceNum].payout = 0;
+                        console.log(`${raceNum}R: 不的中と判定`);
+                    }
+                });
+
+                // フォームに反映（削除済み）
+
+                // 集計値を設定
+                document.getElementById('yesterday-totalRaces').value = 12;
+                document.getElementById('yesterday-hits').value = hitCount;
+                document.getElementById('yesterday-payout').value = totalPayout;
+
+                // 的中率と回収率を計算
+                const hitRate = ((hitCount / 12) * 100).toFixed(1);
+                // 1レース当たり10点（1,000円）で購入として計算
+                const totalCost = 12 * 1000; // 12レース × 1,000円
+                // 浮動小数点演算の精度を補正して四捨五入
+                const percentage = (totalPayout / totalCost) * 100;
+                const returnRate = Math.round(percentage + 0.0000001); // 微小値を加算して精度補正
+                console.log(`回収率計算: ${totalPayout} ÷ ${totalCost} = ${percentage} → ${returnRate}`);
+                document.getElementById('yesterday-hitRate').value = hitRate;
+                document.getElementById('yesterday-returnRate').value = returnRate;
+
+                alert(`✅ 解析完了！\n的中: ${hitCount}/12 (${hitRate}%)\n総配当: ¥${totalPayout.toLocaleString()}\n回収率: ${returnRate}%`);
+            });
+
+            // 的中率自動計算
+            document.getElementById('yesterday-hits').addEventListener('input', function() {
+                const hits = parseInt(this.value) || 0;
+                const total = parseInt(document.getElementById('yesterday-totalRaces').value) || 12;
+                const rate = ((hits / total) * 100).toFixed(1);
+                document.getElementById('yesterday-hitRate').value = rate;
+            });
+
+            // 回収率自動計算
+            document.getElementById('yesterday-payout').addEventListener('input', function() {
+                const payout = parseInt(this.value) || 0;
+                const total = parseInt(document.getElementById('yesterday-totalRaces').value) || 12;
+                // 1レース当たり10点（1,000円）で計算
+                const percentage = (payout / (total * 1000)) * 100;
+                const returnRate = Math.round(percentage + 0.0000001); // 精度補正
+                document.getElementById('yesterday-returnRate').value = returnRate;
+            });
+
+            // プレビュー機能
+            document.getElementById('preview-btn').addEventListener('click', function() {
+                const data = collectFormData();
+                document.getElementById('preview-content').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('preview-container').style.display = 'block';
+            });
+
+            // データ収集関数
+            function collectFormData() {
+                return {
+                    date: document.getElementById('yesterday-date').value,
+                    track: document.getElementById('yesterday-track').value,
+                    totalRaces: parseInt(document.getElementById('yesterday-totalRaces').value),
+                    hits: parseInt(document.getElementById('yesterday-hits').value),
+                    hitRate: document.getElementById('yesterday-hitRate').value + '%',
+                    payout: parseInt(document.getElementById('yesterday-payout').value),
+                    returnRate: document.getElementById('yesterday-returnRate').value + '%',
+                    races: [] // レース別結果は削除済み
+                };
+            }
+
+            // 更新ボタン
+            document.getElementById('update-btn').addEventListener('click', async function() {
+                const data = collectFormData();
+
+                try {
+                    const response = await fetch('/.netlify/functions/update-race-results', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        alert('✅ 的中結果を更新しました！');
+                    } else {
+                        // Netlify Functionが存在しない場合のフォールバック
+                        console.log('更新データ:', data);
+                        alert('📋 データをコンソールに出力しました。手動でraceResults.jsonを更新してください。');
+                    }
+                } catch (error) {
+                    console.error('更新エラー:', error);
+                    console.log('更新データ:', data);
+                    alert('⚠️ 自動更新に失敗しました。コンソールのデータを手動でraceResults.jsonに貼り付けてください。');
+                }
+            });
+        });
+    </script>
+</BaseLayout>
