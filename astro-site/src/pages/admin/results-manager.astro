@@ -497,6 +497,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             let totalPayout = 0;
             let startDate = null;
             let endDate = null;
+            let startDateValue = null;
+            let endDateValue = null;
             let track = '川崎競馬';
 
             for (const section of sections) {
@@ -516,8 +518,33 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     continue;
                 }
 
-                if (!startDate) startDate = date;
-                endDate = date;
+                // 日付の順序を正しく保持（数値で比較）
+                const dateParts = date.split('/');
+                const dateValue = parseInt(dateParts[0]) * 100 + parseInt(dateParts[1]); // 9/8 → 908, 9/12 → 912
+
+                if (!startDate) {
+                    startDate = date;
+                    startDateValue = dateValue;
+                } else {
+                    const startParts = startDate.split('/');
+                    const startValue = parseInt(startParts[0]) * 100 + parseInt(startParts[1]);
+                    if (dateValue < startValue) {
+                        startDate = date;
+                        startDateValue = dateValue;
+                    }
+                }
+
+                if (!endDate) {
+                    endDate = date;
+                    endDateValue = dateValue;
+                } else {
+                    const endParts = endDate.split('/');
+                    const endValue = parseInt(endParts[0]) * 100 + parseInt(endParts[1]);
+                    if (dateValue > endValue) {
+                        endDate = date;
+                        endDateValue = dateValue;
+                    }
+                }
 
                 // その日の結果を解析
                 const dayResults = [];
