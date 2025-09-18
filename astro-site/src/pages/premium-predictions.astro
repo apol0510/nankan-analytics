@@ -10,7 +10,7 @@ import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDis
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
 
 // 日付と会場を取得
-const raceDate = allRacesData.raceDate; // "2025-09-17"
+const raceDate = allRacesData.raceDate; // "2025-09-18"
 const track = allRacesData.track; // "大井競馬"
 const totalRaces = allRacesData.totalRaces || 12; // 全レース数
 
@@ -134,7 +134,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                     <div class="race-accordion-header" onclick={`toggleRace${raceNum}R()`}>
                         <div class="race-basic-info">
                             <span class="race-number">{raceData.raceNumber}</span>
-                            <span class="race-name">{raceData.raceName || '競走名'}</span>
+                            <span class="race-name">{(raceData.raceName || '競走名').replace(/\s*[ダ芝]\d+[,.]?\d*m.*$/, '').replace(/\s*（\d+頭）.*$/, '').replace(/\s*発走時刻.*$/, '')}</span>
                             <span class="race-tier-badge">{`第${raceNum}レース`}</span>
                             {isMainRace && <span class="main-race-badge">メインレース</span>}
                         </div>
@@ -148,7 +148,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
 
                             <!-- レース詳細情報 -->
                             <div class="race-details-info">
-                                <h3 class="race-detail-title">{raceData.raceNumber} {raceData.raceName || '競走名'} {raceData.raceInfo?.distance || '1400m'} ({raceData.raceInfo?.horseCount || 11}頭) 発走時刻{raceData.raceInfo?.startTime || '14:45'}</h3>
+                                <h3 class="race-detail-title">{raceData.raceNumber} {raceData.raceName || '競走名'}</h3>
                             </div>
 
                             <!-- AI選出馬分析 -->

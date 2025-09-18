@@ -97,17 +97,16 @@ const enhancedRaceInfo = {
     confidence: calculatedConfidence
 };
 
-// 日付フォーマット変換
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    return `${month}月${day}日`;
-}
+// 日付と競馬場の情報をallRacesDataから取得（他のページと統一）
+const raceDate = allRacesData.raceDate; // "2025-09-18"
+const track = allRacesData.track; // "大井競馬"
+
+// 日付を日本語形式に変換（他のページと統一）
+const [year, month, day] = raceDate.split('-');
+const formattedDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
 
 // レース情報の整形
-const formattedDate = enhancedRaceInfo?.date ? formatDate(enhancedRaceInfo.date) : '日付未設定';
-const raceTitle = `${formattedDate} ${enhancedRaceInfo?.track !== 'レース情報未検出' && enhancedRaceInfo?.track ? enhancedRaceInfo.track : ''} ${enhancedRaceInfo?.raceNumber || ''}${enhancedRaceInfo?.raceName !== 'レース情報未検出' && enhancedRaceInfo?.raceName ? ' ' + enhancedRaceInfo.raceName : ''}`;
+const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || ''}${enhancedRaceInfo?.raceName !== 'レース情報未検出' && enhancedRaceInfo?.raceName ? ' ' + enhancedRaceInfo.raceName : ''}`;
 ---
 
 <BaseLayout title="NANKANアナリティクス | AI競馬予想で投資効率を最大化">
