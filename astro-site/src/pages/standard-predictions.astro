@@ -51,7 +51,7 @@ export const yesterdayResults = {
 
 export const weeklyResults = {
     period: "9/8〜9/12",
-    track: "大井・川崎競馬",
+    track: "川崎競馬",
     hitRate: 68.8,
     hitCount: 33,
     totalCount: 48,
@@ -750,7 +750,7 @@ export const dailyResultsData = {
                     🏆 先週の的中結果
                 </h2>
                 <p style="text-align: center; color: var(--body-text-color); font-size: 1.1rem; margin-bottom: 40px; opacity: 0.9;">
-                    {weeklyResults.dateRange}の予想成績
+                    {weeklyResults.period} {weeklyResults.track}での予想成績
                 </p>
 
                 <!-- 先週のタブ表示 -->
@@ -758,7 +758,7 @@ export const dailyResultsData = {
                     {dailyTabs.map((tab, index) => (
                         <button
                             type="button"
-                            onclick={`switchTab(${index})`}
+                            data-tab-index={index}
                             style={`padding: 12px 24px; border-radius: 25px; border: 2px solid; font-weight: 600; transition: all 0.3s ease; cursor: pointer; ${
                                 index === 0
                                     ? 'background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border-color: #3b82f6;'
@@ -781,6 +781,7 @@ export const dailyResultsData = {
                     return (
                         <div id={`tab-${tabIndex}`} style={`${tabIndex === 0 ? 'display: block;' : 'display: none;'}`} class="tab-content">
                             <div style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 30px; border: 1px solid rgba(148, 163, 184, 0.1);">
+                                <!-- 削除: 日別タイトルと統計カード
                                 <div style="text-align: center; margin-bottom: 30px;">
                                     <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 10px;">
                                         {tab.date.slice(0, 2)}/{tab.date.slice(2)} 大井競馬
@@ -800,6 +801,7 @@ export const dailyResultsData = {
                                         </div>
                                     </div>
                                 </div>
+                                -->
 
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto;">
                                     {dayRaces.map((race) => (
@@ -832,6 +834,16 @@ export const dailyResultsData = {
 </BaseLayout>
 
 <script>
+// DOMContentLoadedでタブボタンにイベントリスナーを追加
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tab-btn').forEach((btn, index) => {
+        btn.addEventListener('click', function() {
+            const tabIndex = parseInt(this.getAttribute('data-tab-index'));
+            switchTab(tabIndex);
+        });
+    });
+});
+
 function switchTab(tabIndex) {
     // 全てのタブコンテンツを非表示にする
     document.querySelectorAll('.tab-content').forEach(content => {
