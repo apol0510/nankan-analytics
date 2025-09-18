@@ -59,6 +59,16 @@ const standardRaces = sortedRaces.filter(race =>
             <span class="premium-status-text">スタンダード会員限定コンテンツ</span>
         </div>
 
+        <!-- プレミアムアップグレード誘導バナー -->
+        <div class="upgrade-banner">
+            <div class="upgrade-content">
+                <div class="upgrade-text">
+                    <span class="upgrade-icon">👑</span>
+                    <span class="upgrade-message">全12レース完全分析 + 特別戦略で収益最大化</span>
+                </div>
+                <a href="/pricing" class="upgrade-btn-small">プレミアム</a>
+            </div>
+        </div>
 
         <!-- スタンダードレースアコーディオン（データドリブン） -->
         {standardRaces.map((raceData) => {
@@ -519,18 +529,6 @@ const standardRaces = sortedRaces.filter(race =>
                 </div>
             );
         })}
-
-
-        <!-- プレミアムアップグレード誘導バナー -->
-        <div class="upgrade-banner">
-            <div class="upgrade-content">
-                <div class="upgrade-text">
-                    <span class="upgrade-icon">👑</span>
-                    <span class="upgrade-message">全12レース完全分析 + 特別戦略で収益最大化</span>
-                </div>
-                <a href="/pricing" class="upgrade-btn-small">プレミアム</a>
-            </div>
-        </div>
 
         </div>
     </AccessControl>
@@ -1157,7 +1155,6 @@ const standardRaces = sortedRaces.filter(race =>
         margin: 0;
         line-height: 1.4;
     }
-
 </style>
 
 <script is:inline>
