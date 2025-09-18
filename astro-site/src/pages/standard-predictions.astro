@@ -50,28 +50,28 @@ console.log('🔍 StandardRaces結果:', {
 });
 
 // 昨日・先週の的中結果データ（トップページに反映される）
-// 昨日の的中結果データ（9/17 大井競馬）
+// 昨日の的中結果データ（9/18 大井競馬）
 export const yesterdayResults = {
-    date: "9/17",
+    date: "9/18",
     track: "大井競馬",
-    hitRate: 83.3,
-    hitCount: 10,
+    hitRate: 75,
+    hitCount: 9,
     totalCount: 12,
-    totalPayout: 28860,
-    recoveryRate: 241, // 手動で計算済みの値を直接設定
+    totalPayout: 25070,
+    recoveryRate: 209, // 🛡️ 復活防止: 回収率フィールド追加
     results: [
-        { race: '1R', result: 'win', payout: 2250 },
-        { race: '2R', result: 'win', payout: 1060 },
-        { race: '3R', result: 'win', payout: 2380 },
+        { race: '1R', result: 'lose', payout: 0 },
+        { race: '2R', result: 'lose', payout: 0 },
+        { race: '3R', result: 'win', payout: 3030 },
         { race: '4R', result: 'lose', payout: 0 },
-        { race: '5R', result: 'win', payout: 3300 },
-        { race: '6R', result: 'win', payout: 330 },
-        { race: '7R', result: 'win', payout: 550 },
-        { race: '8R', result: 'win', payout: 5580 },
-        { race: '9R', result: 'win', payout: 4110 },
-        { race: '10R', result: 'lose', payout: 0 },
-        { race: '11R', result: 'win', payout: 1700 },
-        { race: '12R', result: 'win', payout: 7600 },
+        { race: '5R', result: 'win', payout: 5680 },
+        { race: '6R', result: 'win', payout: 320 },
+        { race: '7R', result: 'win', payout: 2300 },
+        { race: '8R', result: 'win', payout: 270 },
+        { race: '9R', result: 'win', payout: 2650 },
+        { race: '10R', result: 'win', payout: 4820 },
+        { race: '11R', result: 'win', payout: 710 },
+        { race: '12R', result: 'win', payout: 5290 },
     ]
 };
 
