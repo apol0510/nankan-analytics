@@ -6,8 +6,27 @@ import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
 
-// 共有ロジックを使用してデータを処理
-const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
+// 🛡️ 復活防止対策: processRaceDataのエラーハンドリング強化
+let mainRace, race12R, sortedRaces;
+try {
+    const processedData = processRaceData(allRacesData);
+    mainRace = processedData.mainRace;
+    race12R = processedData.race12R;
+    sortedRaces = processedData.sortedRaces || [];
+
+    // デバッグ用ログ
+    console.log('🔍 ProcessRaceData結果:', {
+        mainRace: mainRace ? 'あり' : 'なし',
+        race12R: race12R ? 'あり' : 'なし',
+        sortedRacesLength: sortedRaces?.length || 0
+    });
+} catch (error) {
+    console.error('❌ processRaceData エラー:', error);
+    // フォールバック: 直接allRacesDataから取得
+    mainRace = allRacesData?.races?.find(race => race.isMainRace === true) || null;
+    race12R = allRacesData?.races?.find(r => r.raceNumber === '12R') || null;
+    sortedRaces = allRacesData?.races?.sort((a, b) => a.displayOrder - b.displayOrder) || [];
+}
 
 // 日付と会場を取得
 const raceDate = allRacesData.raceDate; // "2025-09-17"
@@ -18,33 +37,41 @@ const [year, month, day] = raceDate.split('-');
 const formattedDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
 
 // Standard会員向け: 後半3レース（10R, 11R=メインレース, 12R）
-const standardRaces = sortedRaces.filter(race =>
-    race.raceNumber === '10R' || race.raceNumber === '11R' || race.raceNumber === '12R'
+// 🛡️ 復活防止対策: sortedRacesの安全性チェック
+const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(race =>
+    race?.raceNumber === '10R' || race?.raceNumber === '11R' || race?.raceNumber === '12R'
 );
 
+console.log('🔍 StandardRaces結果:', {
+    sortedRacesIsArray: Array.isArray(sortedRaces),
+    sortedRacesLength: sortedRaces?.length || 0,
+    standardRacesLength: standardRaces?.length || 0,
+    standardRaceNumbers: standardRaces.map(r => r?.raceNumber).join(', ')
+});
+
 // 昨日・先週の的中結果データ（トップページに反映される）
-// 昨日の的中結果データ（9/16 大井競馬）
+// 昨日の的中結果データ（9/17 大井競馬）
 export const yesterdayResults = {
-    date: "9/16",
+    date: "9/17",
     track: "大井競馬",
-    hitRate: 91.7,
-    hitCount: 11,
+    hitRate: 83.3,
+    hitCount: 10,
     totalCount: 12,
-    totalPayout: 22090,
-    recoveryRate: 184,
-    races: [
-        { race: '1R', result: 'win', payout: 580 },
-        { race: '2R', result: 'lose', payout: 0 },
-        { race: '3R', result: 'win', payout: 1240 },
-        { race: '4R', result: 'win', payout: 680 },
-        { race: '5R', result: 'lose', payout: 0 },
-        { race: '6R', result: 'win', payout: 2870 },
-        { race: '7R', result: 'win', payout: 1560 },
-        { race: '8R', result: 'lose', payout: 0 },
-        { race: '9R', result: 'win', payout: 890 },
-        { race: '10R', result: 'win', payout: 3240 },
-        { race: '11R', result: 'lose', payout: 0 },
-        { race: '12R', result: 'win', payout: 7850 }
+    totalPayout: 28860,
+    recoveryRate: 241, // 手動で計算済みの値を直接設定
+    results: [
+        { race: '1R', result: 'win', payout: 2250 },
+        { race: '2R', result: 'win', payout: 1060 },
+        { race: '3R', result: 'win', payout: 2380 },
+        { race: '4R', result: 'lose', payout: 0 },
+        { race: '5R', result: 'win', payout: 3300 },
+        { race: '6R', result: 'win', payout: 330 },
+        { race: '7R', result: 'win', payout: 550 },
+        { race: '8R', result: 'win', payout: 5580 },
+        { race: '9R', result: 'win', payout: 4110 },
+        { race: '10R', result: 'lose', payout: 0 },
+        { race: '11R', result: 'win', payout: 1700 },
+        { race: '12R', result: 'win', payout: 7600 },
     ]
 };
 
@@ -199,7 +226,7 @@ export const dailyResultsData = {
                 <!-- 昨日のレース詳細結果 -->
                 <div style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 30px; border: 1px solid rgba(148, 163, 184, 0.1); margin-top: 30px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; max-width: 1000px; margin: 0 auto;">
-                        {yesterdayResults.races.map((race) => (
+                        {yesterdayResults.results.map((race) => (
                             <div style={`display: flex; flex-direction: column; align-items: center; padding: 15px 10px; ${race.result === 'win'
                                 ? 'background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.3);'
                                 : 'background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);'} border-radius: 12px;`}>
@@ -233,9 +260,11 @@ export const dailyResultsData = {
             const raceNum = raceData.raceNumber.replace('R', '');
             const isMainRace = raceData.isMainRace;
 
-            // 20年運営対応: データ正規化システム使用
-            const normalizedHorses = normalizeHorseData(raceData);
-            const raceHorses = normalizedHorses; // 正規化されたデータを使用
+            // 🛡️ 復活防止対策: データ正規化システム安全使用
+            const normalizedHorses = normalizeHorseData(raceData) || [];
+            const raceHorses = Array.isArray(normalizedHorses) ? normalizedHorses : []; // 正規化されたデータを使用
+
+            console.log(`🔍 Race ${raceData.raceNumber} - raceHorses長:`, raceHorses.length);
 
             // データ整合性チェック（開発環境でのみログ出力）
             const integrity = validateDataIntegrity(raceData);
@@ -312,7 +341,7 @@ export const dailyResultsData = {
                                 </h2>
 
                                 {/* 20年運営対応: role-based表示（本命）- 最も大きく表示 */}
-                                {raceHorses && raceHorses.filter(h => h.role === '本命').map((horse, index) => {
+                                {Array.isArray(raceHorses) && raceHorses.filter(h => h?.role === '本命').map((horse, index) => {
                                     const roleConfig = getRoleDisplayConfig(horse.role);
                                     return (
                                     <div class="horse-card horse-card-main">
@@ -356,7 +385,7 @@ export const dailyResultsData = {
                                 })}
 
                                 {/* 20年運営対応: role-based表示（対抗）- 中サイズで表示 */}
-                                {raceHorses && raceHorses.filter(h => h.role === '対抗').map((horse, index) => {
+                                {Array.isArray(raceHorses) && raceHorses.filter(h => h?.role === '対抗').map((horse, index) => {
                                     const roleConfig = getRoleDisplayConfig(horse.role);
                                     return (
                                     <div class="horse-card horse-card-sub">
@@ -400,7 +429,7 @@ export const dailyResultsData = {
                                 })}
 
                                 {/* 20年運営対応: role-based表示（単穴）- 中サイズで表示 */}
-                                {raceHorses && raceHorses.filter(h => h.role === '単穴').map((horse, index) => {
+                                {Array.isArray(raceHorses) && raceHorses.filter(h => h?.role === '単穴').map((horse, index) => {
                                     const roleConfig = getRoleDisplayConfig(horse.role);
                                     return (
                                     <div class="horse-card horse-card-sub">
@@ -438,7 +467,7 @@ export const dailyResultsData = {
                                             </div>
                                         </div>
                                         <div class="horse-grid">
-                                            {raceHorses.filter(h => h.role === '連下').map(horse => {
+                                            {Array.isArray(raceHorses) && raceHorses.filter(h => h?.role === '連下').map(horse => {
                                                 const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
                                                 const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
                                                 return (
@@ -462,7 +491,7 @@ export const dailyResultsData = {
                                             </div>
                                         </div>
                                         <div class="horse-grid">
-                                            {raceHorses.filter(h => h.role === '押さえ').map(horse => {
+                                            {Array.isArray(raceHorses) && raceHorses.filter(h => h?.role === '押さえ').map(horse => {
                                                 const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
                                                 const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
                                                 return (

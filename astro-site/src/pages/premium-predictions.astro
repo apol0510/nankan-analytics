@@ -659,17 +659,25 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         align-items: center;
         justify-content: center;
         gap: 10px;
-        background: linear-gradient(135deg, #f59e0b, #fb923c);
-        color: white;
-        padding: 15px 30px;
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: #f59e0b;
+        padding: 12px 40px;
         border-radius: 25px;
-        margin-bottom: 30px;
+        margin: 0 auto 30px;
         font-weight: 600;
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        backdrop-filter: blur(8px);
+        max-width: 600px;
     }
 
     .premium-icon {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        filter: saturate(1.5);
+    }
+
+    .premium-status-text {
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
     }
 
     /* アコーディオン統一スタイル */

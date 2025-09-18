@@ -430,7 +430,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             }
 
             const hitRate = ((hitCount / 12) * 100).toFixed(1);
-            const purchaseAmount = 12 * 10 * 100; // 12レース × 10点 × 100円
+            const purchaseAmount = 12 * 1000; // 🛡️ 復活防止: 12レース × 1000円（計算式統一）
             const recoveryRate = Math.round((totalPayout / purchaseAmount) * 100);
 
             dailyData = {
@@ -631,7 +631,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 code += `    hitRate: ${dailyData.hitRate},\n`;
                 code += `    hitCount: ${dailyData.hitCount},\n`;
                 code += `    totalCount: ${dailyData.totalCount},\n`;
-                code += `    totalPayout: ${dailyData.totalPayout}\n`;
+                code += `    totalPayout: ${dailyData.totalPayout},\n`;
+                code += `    recoveryRate: ${dailyData.recoveryRate}, // 🛡️ 復活防止: 回収率フィールド追加\n`;
+                code += `    results: [\n`;
+                dailyData.results.forEach(result => {
+                    code += `        { race: '${result.race}', result: '${result.result}', payout: ${result.payout} },\n`;
+                });
+                code += `    ]\n`;
                 code += `};\n\n`;
             }
 
