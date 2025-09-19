@@ -174,11 +174,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             </div>
                         </div>
 
-                        <!-- 次の目標までの情報 -->
-                        <div class="next-goal-info">
-                            <span id="next-goal-text">次の目標まで</span>
-                            <span id="remaining-points">1000</span>pt
-                        </div>
                     </div>
                 </div>
             </div>
@@ -900,21 +895,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 console.warn('⚠️ セグメント更新失敗、デフォルト表示を維持');
             }
 
-            // 次の目標までの情報を更新
-            const nextGoalText = document.getElementById('next-goal-text');
-            const remainingPoints = document.getElementById('remaining-points');
-
-            if (nextGoalText && remainingPoints) {
-                if (currentSegmentIndex < goals.length) {
-                    const nextGoal = goals[currentSegmentIndex].points;
-                    const remaining = nextGoal - points;
-                    nextGoalText.textContent = `次の目標(${nextGoal}pt)まで`;
-                    remainingPoints.textContent = remaining;
-                } else {
-                    nextGoalText.textContent = '🎉 全目標達成済み！';
-                    remainingPoints.textContent = '';
-                }
-            }
+            // 次の目標までの情報更新処理は削除（UI要素が削除されたため）
         }
 
         // ランク目安ガイド更新
