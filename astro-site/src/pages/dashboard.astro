@@ -67,18 +67,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div id="membership-details" class="status-details"></div>
                         </div>
                     </div>
-                    
-                    <!-- ランク表示のみ -->
-                    <div class="rank-display-only">
-                        <div class="rank-card-main">
-                            <div class="rank-icon-large" id="current-rank-icon">🌱</div>
-                            <div class="rank-info">
-                                <div class="rank-name" id="current-rank-name">ビギナー</div>
-                                <div class="rank-label">現在ランク</div>
-                            </div>
-                        </div>
-                    </div>
-                    
+
+
+
                     <!-- VIP情報カード（Premiumのみ） -->
                     <div class="vip-status-card" id="vip-status-card" style="display: none;">
                         <div class="vip-header">
@@ -104,57 +95,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         </div>
                     </div>
                     
-                    <!-- ランク目安カード -->
-                    <div class="rank-guide-card" id="rank-guide-card">
-                        <div class="rank-guide-header">
-                            <div class="rank-guide-icon">🏆</div>
-                            <div class="rank-guide-title">ランク目安</div>
-                        </div>
-                        <div class="rank-list" id="rank-list">
-                            <div class="rank-item">
-                                <div class="rank-badge beginner">🌱</div>
-                                <div class="rank-info">
-                                    <div class="rank-name">ビギナー</div>
-                                    <div class="rank-requirement">0-199pt</div>
-                                </div>
-                            </div>
-                            <div class="rank-item">
-                                <div class="rank-badge bronze">🥉</div>
-                                <div class="rank-info">
-                                    <div class="rank-name">ブロンズ</div>
-                                    <div class="rank-requirement">200-599pt</div>
-                                </div>
-                            </div>
-                            <div class="rank-item">
-                                <div class="rank-badge silver">🥈</div>
-                                <div class="rank-info">
-                                    <div class="rank-name">シルバー</div>
-                                    <div class="rank-requirement">600-1199pt</div>
-                                </div>
-                            </div>
-                            <div class="rank-item">
-                                <div class="rank-badge gold">🥇</div>
-                                <div class="rank-info">
-                                    <div class="rank-name">ゴールド</div>
-                                    <div class="rank-requirement">1200-2999pt</div>
-                                </div>
-                            </div>
-                            <div class="rank-item">
-                                <div class="rank-badge platinum">🏆</div>
-                                <div class="rank-info">
-                                    <div class="rank-name">プラチナ</div>
-                                    <div class="rank-requirement">3000-7999pt</div>
-                                </div>
-                            </div>
-                            <div class="rank-item">
-                                <div class="rank-badge diamond">💎</div>
-                                <div class="rank-info">
-                                    <div class="rank-name">ダイヤモンド</div>
-                                    <div class="rank-requirement">8000pt+</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -172,18 +112,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <div class="progress-bar">
                             <div id="progress-fill" class="progress-fill"></div>
                         </div>
-                        <div class="progress-info">
-                            <span id="current-rank">🥉 ブロンズ</span>
-                            <span id="next-rank-info">次のランクまで: 500pt</span>
-                        </div>
                     </div>
-                    <div class="rank-benefits">
-                        <h3>ランク特典</h3>
-                        <div id="rank-benefits-list" class="benefits-list"></div>
-                    </div>
-                    <button id="claim-reward-btn" class="claim-btn" style="display: none;">
-                        🎁 特典を申請する
-                    </button>
                 </div>
             </div>
 
@@ -800,11 +729,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     break;
                 }
             }
-            
-            const rankInfo = RANK_INFO[currentRankKey];
-            if (rankInfo) {
-                document.getElementById('current-rank-icon').textContent = rankInfo.icon;
-                document.getElementById('current-rank-name').textContent = rankInfo.name;
+
+            // プログレスバーの表示（簡単なバージョン）
+            const progressFill = document.getElementById('progress-fill');
+            if (progressFill) {
+                const progressPercentage = Math.min(100, (points / 100) * 10); // 100ptで10%、1000ptで100%
+                progressFill.style.width = progressPercentage + '%';
             }
         }
         
@@ -870,89 +800,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }
             }
             
-            const rankData = RANK_THRESHOLDS[currentRankKey];
-            document.getElementById('current-rank').textContent = rankData.name;
             
-            // 次のランクまでの情報と進捗バー
-            const progressFill = document.getElementById('progress-fill');
-            const nextRankInfo = document.getElementById('next-rank-info');
-            
-            if (rankData.next) {
-                const pointsToNext = rankData.next - points;
-                const progressPercentage = Math.round(((points - rankData.min) / (rankData.next - rankData.min)) * 100);
-                
-                // モチベーション向上の文言
-                let motivationalText = '';
-                if (progressPercentage >= 80) {
-                    motivationalText = '🔥 あと一歩で昇格！';
-                } else if (progressPercentage >= 60) {
-                    motivationalText = '⚡ 昇格まであと少し！';
-                } else if (progressPercentage >= 40) {
-                    motivationalText = '🌟 順調に成長中！';
-                } else {
-                    motivationalText = '💪 頑張って貯めよう！';
-                }
-                
-                nextRankInfo.innerHTML = `
-                    <span class="next-rank-label">次のランクまで</span>
-                    <span class="points-needed">${pointsToNext}pt (${progressPercentage}%)</span>
-                    <span class="motivational-text">${motivationalText}</span>
-                `;
-                
-                // より視覚的に満足感のある進捗計算
-                // 累積ポイントの全体的な進捗も考慮
-                const overallProgress = Math.min(95, (points / 10000) * 100); // 10000pt で95%
-                const currentRankProgress = ((points - rankData.min) / (rankData.next - rankData.min)) * 100;
-                
-                // 両方を組み合わせてより長い進捗感を演出
-                const finalProgress = Math.max(
-                    currentRankProgress,
-                    Math.min(currentRankProgress + (overallProgress * 0.3), 85)
-                );
-                
-                const safeProgress = Math.max(15, Math.min(100, finalProgress));
-                
-                console.log('プログレス計算:', {
-                    points,
-                    min: rankData.min,
-                    next: rankData.next,
-                    currentRankProgress: Math.round(currentRankProgress),
-                    overallProgress: Math.round(overallProgress),
-                    finalProgress: Math.round(safeProgress)
-                });
-                
-                // アニメーション付きでプログレスバー更新
-                animateProgressBar(progressFill, safeProgress);
-                
-                // 進捗に応じてバーの色を変更（射幸心演出）
-                updateProgressBarColor(progressFill, safeProgress, currentRankKey);
-                
-            } else {
-                // ダイヤモンドランクでも継続的な達成感を演出
-                const diamondProgress = Math.min(100, 60 + ((points - 8000) / 2000) * 40);
-                
-                nextRankInfo.innerHTML = `
-                    <span class="max-rank-achieved">🎉 最高ランク達成！</span>
-                    <span class="congratulations">ポイント: ${points}pt - 伝説の領域！</span>
-                `;
-                animateProgressBar(progressFill, diamondProgress);
-                updateProgressBarColor(progressFill, diamondProgress, currentRankKey);
-            }
-            
-            // ランク特典表示（より魅力的に）
-            const benefits = RANK_BENEFITS[currentRankKey] || RANK_BENEFITS['ビギナー'];
-            document.getElementById('rank-benefits-list').innerHTML = benefits
-                .map(b => `<div class="benefit-item premium-benefit">⭐ ${b}</div>`)
-                .join('');
-            
-            // 特典申請ボタン表示判定（より目立つように）
-            if (points >= 1000 && !hasClaimedReward) {
-                const button = document.getElementById('claim-reward-btn');
-                if (button) {
-                    button.style.display = 'block';
-                    button.classList.add('pulse-animation');
-                }
-            }
         }
 
         // ポイント数のアニメーション表示
@@ -1464,21 +1312,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         
         .status-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto auto;
+            grid-template-columns: 1fr 400px;
             gap: 1.5rem;
+            align-items: start;
         }
-        
+
         /* メインステータスカード */
         .main-status {
             grid-column: 1;
-            grid-row: 1 / 3;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
             border-radius: 1rem;
             padding: 2rem;
             border: 1px solid rgba(59, 130, 246, 0.3);
-            position: relative;
-            overflow: hidden;
+        }
+
+        /* プラン特典カード */
+
+        .plan-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .plan-icon {
+            font-size: 1.5rem;
+        }
+
+        .plan-header h3 {
+            color: #10b981;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .benefit-item, .plan-benefit {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
         }
         
         .main-status::before {
@@ -1702,7 +1584,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         /* プラン特典カード（Standard/Free用） */
         .plan-benefits-card {
             grid-column: 2;
-            grid-row: 2;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 1rem;
