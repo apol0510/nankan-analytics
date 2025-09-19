@@ -102,7 +102,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="points-section">
                 <div class="points-card">
                     <div class="points-header">
-                        <h2>💎 累計ポイント</h2>
+                        <h2>💰 保有ポイント</h2>
                         <div class="points-value">
                             <span id="current-points">0</span>
                             <span class="points-unit">pt</span>
@@ -112,7 +112,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <div class="progress-segments">
                             <!-- 動的セグメント表示 - JavaScriptで制御 -->
                             <div id="dynamic-segments">
-                                <!-- 段階的に表示されるセグメント -->
+                                <!-- 🛡️ 復活防止対策: デフォルト表示を追加 -->
+                                <div id="default-segment" class="segment-item current-segment">
+                                    <div class="segment-header">
+                                        <span class="segment-emoji">🔍</span>
+                                        <span class="segment-title">目標: 1000pt</span>
+                                        <span id="default-progress-text" class="segment-progress">45%</span>
+                                    </div>
+                                    <div class="segment-bar">
+                                        <div id="default-progress-fill" class="segment-fill" style="width: 45%; background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -739,20 +749,69 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }
             }
 
-            // セグメント式プログレスバーの表示
-            updateProgressSegments(points);
         }
         
+        // 🛡️ 復活防止対策: 確実なプログレスバー初期化
+        function initializeProgressBar() {
+            console.log('🚀 プログレスバー初期化開始');
+
+            // 最初に既存要素の確認
+            setTimeout(() => {
+                const defaultElement = document.getElementById('default-progress-fill');
+                if (defaultElement) {
+                    console.log('✅ デフォルト要素確認完了');
+                    // テスト用固定値で更新（450pt想定）
+                    updateProgressSegments(450);
+                } else {
+                    console.warn('⚠️ デフォルト要素が見つかりません');
+                }
+            }, 200);
+
+            // 実際のポイント値で更新（遅延実行）
+            setTimeout(() => {
+                const pointsElement = document.getElementById('current-points');
+                if (pointsElement) {
+                    const actualPoints = parseInt(pointsElement.textContent) || 0;
+                    console.log('🎯 実際のポイントで更新:', actualPoints);
+                    updateProgressSegments(actualPoints);
+                }
+            }, 800);
+        }
+
+        // 🛡️ 復活防止対策: 既存セグメント更新関数
+        function updateExistingSegment(currentSegmentIndex, goals, points) {
+            const defaultProgressFill = document.getElementById('default-progress-fill');
+            const defaultProgressText = document.getElementById('default-progress-text');
+
+            if (defaultProgressFill && defaultProgressText && currentSegmentIndex === 0) {
+                // 1000pt目標の場合、既存要素を更新
+                const progress = (points / 1000) * 100;
+                defaultProgressFill.style.width = Math.max(1, progress) + '%';
+                defaultProgressText.textContent = Math.round(progress) + '%';
+                console.log('🔄 既存セグメント更新成功:', Math.round(progress) + '%');
+                return true; // 更新成功
+            }
+
+            console.log('⚠️ 既存セグメント要素が見つからないか、対象外のセグメント');
+            return false; // 更新失敗
+        }
+
         // 段階的プログレスバー更新関数
         function updateProgressSegments(points) {
+            console.log('🎯 updateProgressSegments 呼び出し:', points);
+
             const goals = [
-                { points: 1000, reward: '隠れ上昇馬情報', emoji: '🔍' },
-                { points: 2000, reward: '激走穴馬情報', emoji: '⚡' },
-                { points: 3000, reward: '厩舎タイミング予測', emoji: '🎯' }
+                { points: 1000, reward: '', emoji: '🎯' },
+                { points: 2000, reward: '', emoji: '⚡' },
+                { points: 3000, reward: '', emoji: '🏆' }
             ];
 
             const container = document.getElementById('dynamic-segments');
-            if (!container) return;
+            console.log('📦 コンテナ要素:', container);
+            if (!container) {
+                console.error('❌ dynamic-segments 要素が見つかりません');
+                return;
+            }
 
             // 現在のセグメントを決定
             let currentSegmentIndex = 0;
@@ -788,13 +847,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <div class="segment-header">
                             <span class="segment-emoji">${currentGoal.emoji}</span>
                             <span class="segment-title">目標: ${currentGoal.points}pt</span>
+                            <span class="segment-progress">${Math.round(progress)}%</span>
                         </div>
                         <div class="segment-bar">
                             <div class="segment-fill" style="width: ${Math.max(1, progress)}%; background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);"></div>
-                        </div>
-                        <div class="segment-label">
-                            <span class="segment-reward">${currentGoal.reward}</span>
-                            <span class="segment-progress">${Math.round(progress)}%</span>
                         </div>
                     </div>
                 `;
@@ -827,8 +883,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 `;
             }
 
-            container.innerHTML = segmentHTML;
-            console.log('📊 セグメントHTML設定完了:', segmentHTML.substring(0, 200) + '...');
+            // 🛡️ 復活防止対策: 既存要素を優先更新（innerHTML上書き防止）
+            const existingUpdated = updateExistingSegment(currentSegmentIndex, goals, points);
+
+            if (!existingUpdated && segmentHTML.trim()) {
+                // 既存更新ができなかった場合のみ新HTMLを設定
+                container.innerHTML = segmentHTML;
+                console.log('📊 新セグメントHTML設定:', segmentHTML.substring(0, 200) + '...');
+            } else if (existingUpdated) {
+                console.log('✅ 既存セグメント更新で処理完了');
+            } else {
+                console.warn('⚠️ セグメント更新失敗、デフォルト表示を維持');
+            }
 
             // 次の目標までの情報を更新
             const nextGoalText = document.getElementById('next-goal-text');
@@ -896,10 +962,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // ポイント表示更新（射幸心を煽る演出付き）
         function updatePointsDisplay(points, hasClaimedReward = false) {
             console.log('ポイント表示更新:', points);
-            
+
             // ポイント数をアニメーション付きで表示
             animatePointsDisplay(points);
-            
+
+            // 🔥 セグメント式プログレスバーの表示
+            console.log('🔄 updateProgressSegments を呼び出します:', points);
+            updateProgressSegments(points);
+
             // ランク判定
             let currentRankKey = 'ビギナー';
             for (const [key, threshold] of Object.entries(RANK_THRESHOLDS)) {
@@ -1127,6 +1197,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         // ページ読み込み時の初期化（簡略化）
         document.addEventListener('DOMContentLoaded', async () => {
+            // 🛡️ 復活防止対策: プログレスバー即座に初期化
+            initializeProgressBar();
+
             // ログアウトボタンにイベントリスナーを追加
             const logoutBtn = document.getElementById('logout-btn');
             if (logoutBtn) {
@@ -1896,10 +1969,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
 
         .points-card {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
             border-radius: 1rem;
             padding: 2rem;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.1);
         }
 
         .points-header {
@@ -1912,6 +1986,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .points-header h2 {
             font-size: 1.5rem;
             margin: 0;
+            color: #fbbf24;
+            text-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
         }
 
         .points-value {
@@ -2327,9 +2403,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         /* 現在進行中のセグメント */
         .current-segment {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.1);
         }
 
         /* 達成済みセグメント（小さく表示） */
@@ -2362,7 +2438,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         .segment-title {
             font-weight: 600;
-            color: #fbbf24;
+            color: #e2e8f0;
             font-size: 0.95rem;
         }
 
@@ -2373,7 +2449,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         .segment-progress {
             font-weight: 600;
-            color: #f59e0b;
+            color: #fbbf24;
         }
 
         .segment-reward-small {
@@ -2388,7 +2464,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 8px;
-            border: 1px solid rgba(59, 130, 246, 0.4);
+            border: 1px solid rgba(251, 191, 36, 0.4);
             position: relative;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
         }
@@ -2424,7 +2500,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             left: -1px;
             right: -1px;
             bottom: -1px;
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), rgba(251, 191, 36, 0.2));
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.2));
             border-radius: 9px;
             z-index: 0;
         }
@@ -2450,12 +2526,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         /* 次の目標情報 */
         .next-goal-info {
             text-align: center;
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(30, 41, 59, 0.6);
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(251, 191, 36, 0.3);
             font-size: 0.95rem;
-            color: #fbbf24;
+            color: #e2e8f0;
             font-weight: 500;
         }
 
