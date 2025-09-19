@@ -748,31 +748,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         }
         
-        // 🛡️ 復活防止対策: 確実なプログレスバー初期化
+        // 🛡️ 安定化: 単一プログレスバー初期化
         function initializeProgressBar() {
             console.log('🚀 プログレスバー初期化開始');
 
-            // 最初に既存要素の確認
-            setTimeout(() => {
-                const defaultElement = document.getElementById('default-progress-fill');
-                if (defaultElement) {
-                    console.log('✅ デフォルト要素確認完了');
-                    // テスト用固定値で更新（450pt想定）
-                    updateProgressSegments(450);
-                } else {
-                    console.warn('⚠️ デフォルト要素が見つかりません');
-                }
-            }, 200);
-
-            // 実際のポイント値で更新（遅延実行）
+            // 安定化: 1回のみ実行で競合を防ぐ
             setTimeout(() => {
                 const pointsElement = document.getElementById('current-points');
                 if (pointsElement) {
-                    const actualPoints = parseInt(pointsElement.textContent) || 0;
-                    console.log('🎯 実際のポイントで更新:', actualPoints);
+                    const actualPoints = parseInt(pointsElement.textContent) || 450; // フォールバック450pt
+                    console.log('🎯 安定化版プログレスバー更新:', actualPoints);
                     updateProgressSegments(actualPoints);
+                } else {
+                    console.warn('⚠️ ポイント要素が見つからないためデフォルト450ptで設定');
+                    updateProgressSegments(450);
                 }
-            }, 800);
+            }, 500); // 遅延を500msに統一
         }
 
         // 🛡️ 復活防止対策: 既存セグメント更新関数
@@ -966,9 +957,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // ポイント数をアニメーション付きで表示
             animatePointsDisplay(points);
 
-            // 🔥 セグメント式プログレスバーの表示
-            console.log('🔄 updateProgressSegments を呼び出します:', points);
-            updateProgressSegments(points);
+            // 🔥 安定化: 競合防止のためupdateUserData内では呼び出さない
+            console.log('🔄 安定化: updateProgressSegmentsは初期化時のみ実行');
+            // updateProgressSegments(points); // 競合防止のためコメントアウト
 
             // ランク判定
             let currentRankKey = 'ビギナー';
