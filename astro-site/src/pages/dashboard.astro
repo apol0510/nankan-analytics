@@ -98,6 +98,52 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
             </div>
 
+            <!-- 今日の予想 -->
+            <div class="predictions-section">
+                <h2>🏇 今日の予想</h2>
+                <div class="predictions-grid">
+
+                    <!-- 無料予想 -->
+                    <div id="free-predictions" class="prediction-card free">
+                        <div class="card-header">
+                            <h3>🎁 無料予想</h3>
+                            <span class="plan-badge free">FREE</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">メインレース（11R）</div>
+                            <div class="confidence">予想精度: 87.3%</div>
+                        </div>
+                        <a href="/free-prediction/" class="view-btn">予想を見る</a>
+                    </div>
+
+                    <!-- Standard予想 -->
+                    <div id="standard-predictions" class="prediction-card standard" style="display: none;">
+                        <div class="card-header">
+                            <h3>⚡ Standard予想</h3>
+                            <span class="plan-badge standard">STANDARD</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">後半3レース（10R-12R）</div>
+                            <div class="confidence">予想精度: 89.1%</div>
+                        </div>
+                        <a href="/standard-predictions/" class="view-btn">予想を見る</a>
+                    </div>
+
+                    <!-- Premium予想 -->
+                    <div id="premium-predictions" class="prediction-card premium" style="display: none;">
+                        <div class="card-header">
+                            <h3>💎 Premium予想</h3>
+                            <span class="plan-badge premium">PREMIUM</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">全レース（1R-12R）</div>
+                            <div class="confidence">予想精度: 91.8%</div>
+                        </div>
+                        <a href="/premium-predictions/" class="view-btn">予想を見る</a>
+                    </div>
+                </div>
+            </div>
+
             <!-- ポイントカード -->
             <div class="points-section">
                 <div class="points-card">
@@ -175,52 +221,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     
                     <div class="exchange-note">
                         <small>※ 交換申請後、管理者が確認後に特典を提供いたします。</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 今日の予想 -->
-            <div class="predictions-section">
-                <h2>🏇 今日の予想</h2>
-                <div class="predictions-grid">
-                    
-                    <!-- 無料予想 -->
-                    <div id="free-predictions" class="prediction-card free">
-                        <div class="card-header">
-                            <h3>🎁 無料予想</h3>
-                            <span class="plan-badge free">FREE</span>
-                        </div>
-                        <div class="race-info">
-                            <div class="race-title">メインレース（11R）</div>
-                            <div class="confidence">予想精度: 87.3%</div>
-                        </div>
-                        <a href="/free-prediction/" class="view-btn">予想を見る</a>
-                    </div>
-
-                    <!-- Standard予想 -->
-                    <div id="standard-predictions" class="prediction-card standard" style="display: none;">
-                        <div class="card-header">
-                            <h3>⚡ Standard予想</h3>
-                            <span class="plan-badge standard">STANDARD</span>
-                        </div>
-                        <div class="race-info">
-                            <div class="race-title">後半3レース（10R-12R）</div>
-                            <div class="confidence">予想精度: 89.1%</div>
-                        </div>
-                        <a href="/standard-predictions/" class="view-btn">予想を見る</a>
-                    </div>
-
-                    <!-- Premium予想 -->
-                    <div id="premium-predictions" class="prediction-card premium" style="display: none;">
-                        <div class="card-header">
-                            <h3>💎 Premium予想</h3>
-                            <span class="plan-badge premium">PREMIUM</span>
-                        </div>
-                        <div class="race-info">
-                            <div class="race-title">全レース（1R-12R）</div>
-                            <div class="confidence">予想精度: 91.8%</div>
-                        </div>
-                        <a href="/premium-predictions/" class="view-btn">予想を見る</a>
                     </div>
                 </div>
             </div>
