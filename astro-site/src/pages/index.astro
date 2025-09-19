@@ -46,7 +46,7 @@ function calculateAverageConfidence(strategies) {
 function generatePreview(raceInfo, strategies, horses) {
     if (!raceInfo || !strategies) {
         return {
-            summary: 'AI予想データの準備中です',
+            summary: 'AIから最新の情報を取得しました！',
             features: ''
         };
     }
@@ -395,12 +395,15 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                             <span class="race-title">{raceTitle}</span>
                             <span class="confidence-score">信頼度 {Math.floor(parseFloat(enhancedRaceInfo?.confidence || '0'))}%</span>
                         </div>
-                        <div class="prediction-summary">
-                            {preview?.summary || 'AI予想データの準備中です'}
-                            <br><br>
-                            {preview?.features || ''}
-                            <br><br>
-                            リスク分析: {preview?.riskAnalysis || '分析中'}
+                        <div class="prediction-summary" data-initial-message="AIから最新の情報を取得しました！" data-actual-summary="{preview?.summary}" data-actual-features="{preview?.features}" data-actual-risk="{preview?.riskAnalysis || '分析中'}">
+                            <span class="initial-message">AIから最新の情報を取得しました！</span>
+                            <div class="actual-content" style="display: none;">
+                                {preview?.summary || 'AIから最新の情報を取得しました！'}
+                                <br><br>
+                                {preview?.features || ''}
+                                <br><br>
+                                リスク分析: {preview?.riskAnalysis || '分析中'}
+                            </div>
                         </div>
                         <div class="blur-overlay">
                             <span class="premium-badge"><a href="/free-prediction/" style="color: inherit; text-decoration: underline;">無料予想はこちら</a></span>
@@ -1115,6 +1118,49 @@ document.addEventListener("DOMContentLoaded",function(){
         console.log("要素:",t,"data-target:",e),
         o.observe(t)
     })
+});
+
+// メッセージ表示時間の制御
+document.addEventListener('DOMContentLoaded', function() {
+    const predictionSummary = document.querySelector('.prediction-summary');
+    console.log('予想サマリー要素:', predictionSummary);
+
+    if (predictionSummary) {
+        const initialMessageEl = predictionSummary.querySelector('.initial-message');
+        const actualContentEl = predictionSummary.querySelector('.actual-content');
+
+        console.log('初期メッセージ要素:', initialMessageEl);
+        console.log('実際のコンテンツ要素:', actualContentEl);
+
+        if (initialMessageEl && actualContentEl) {
+            // 実際のコンテンツがある場合（AI予想完了の文字を含むかチェック）
+            const actualText = actualContentEl.innerText.trim();
+            console.log('実際のコンテンツ:', actualText);
+
+            if (actualText && (actualText.includes('AI予想完了') || actualText.includes('信頼度') || actualText.length > 50)) {
+                console.log('条件一致: 2秒後に切り替え開始');
+                // 初期メッセージを表示
+                initialMessageEl.style.display = 'block';
+                actualContentEl.style.display = 'none';
+
+                // 2秒後に切り替え
+                setTimeout(() => {
+                    console.log('切り替え実行');
+                    initialMessageEl.style.display = 'none';
+                    actualContentEl.style.display = 'block';
+                }, 2000);
+            } else {
+                console.log('条件不一致: 初期メッセージのみ表示');
+                // 実際のコンテンツがない場合は初期メッセージをそのまま表示
+                initialMessageEl.style.display = 'block';
+                actualContentEl.style.display = 'none';
+            }
+        } else {
+            console.log('要素が見つかりません');
+        }
+    } else {
+        console.log('.prediction-summary要素が見つかりません');
+    }
 });
 </script>
 </body>

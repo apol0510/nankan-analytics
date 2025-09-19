@@ -1065,8 +1065,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             `;
             notification.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span>🔄</span>
-                    <span>最新データを準備中...</span>
+                    <span>✅</span>
+                    <span>AIから最新の情報を取得しました！</span>
                 </div>
             `;
 
@@ -1078,12 +1078,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                 notification.style.transform = 'translateX(0)';
             }, 100);
 
-            // 3秒後に自動消去
+            // 5秒後に自動消去
             setTimeout(() => {
                 notification.style.opacity = '0';
                 notification.style.transform = 'translateX(100%)';
                 setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            }, 5000);
         }
 
         function showAutoRefreshNotification() {
