@@ -780,13 +780,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const defaultProgressFill = document.getElementById('default-progress-fill');
             const defaultProgressText = document.getElementById('default-progress-text');
 
+            // 安全な数値変換
+            const numericPoints = typeof points === 'number' ? points : parseInt(points) || 0;
+
             if (defaultProgressFill && defaultProgressText && currentSegmentIndex === 0) {
                 // 1000pt目標の場合、既存要素を更新
-                const progress = (points / 1000) * 100;
-                console.log('🔍 詳細計算:', { points, goalPoints: 1000, calculation: `${points}/1000*100`, progress });
+                const progress = (numericPoints / 1000) * 100;
+                console.log('🔍 詳細計算:', {
+                    rawPoints: points,
+                    numericPoints: numericPoints,
+                    pointsType: typeof points,
+                    goalPoints: 1000,
+                    calculation: `${numericPoints}/1000*100`,
+                    progress,
+                    roundedProgress: Math.round(progress)
+                });
                 defaultProgressFill.style.width = Math.max(1, progress) + '%';
                 defaultProgressText.textContent = Math.round(progress) + '%';
                 console.log('🔄 既存セグメント更新成功:', Math.round(progress) + '%');
+                console.log('🎯 最終表示値:', defaultProgressText.textContent, 'バー幅:', defaultProgressFill.style.width);
                 return true; // 更新成功
             }
 
