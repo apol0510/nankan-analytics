@@ -161,8 +161,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                                 <!-- 🛡️ 復活防止対策: デフォルト表示を追加 -->
                                 <div id="default-segment" class="segment-item current-segment">
                                     <div class="segment-header">
-                                        <span class="segment-emoji">🔍</span>
-                                        <span class="segment-title">目標: 1000pt</span>
+                                        <div class="segment-left">
+                                            <span class="segment-emoji">🔍</span>
+                                            <span class="segment-title">目標: 1000pt</span>
+                                        </div>
                                         <span id="default-progress-text" class="segment-progress">45%</span>
                                     </div>
                                     <div class="segment-bar">
@@ -845,8 +847,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 segmentHTML = `
                     <div class="segment-item current-segment">
                         <div class="segment-header">
-                            <span class="segment-emoji">${currentGoal.emoji}</span>
-                            <span class="segment-title">目標: ${currentGoal.points}pt</span>
+                            <div class="segment-left">
+                                <span class="segment-emoji">${currentGoal.emoji}</span>
+                                <span class="segment-title">目標: ${currentGoal.points}pt</span>
+                            </div>
                             <span class="segment-progress">${Math.round(progress)}%</span>
                         </div>
                         <div class="segment-bar">
@@ -2429,8 +2433,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .segment-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
             margin-bottom: 8px;
+        }
+
+        .segment-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .segment-emoji {
