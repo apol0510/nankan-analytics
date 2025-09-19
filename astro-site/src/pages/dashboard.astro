@@ -756,14 +756,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             setTimeout(() => {
                 const pointsElement = document.getElementById('current-points');
                 if (pointsElement) {
-                    const actualPoints = parseInt(pointsElement.textContent) || 450; // フォールバック450pt
-                    console.log('🎯 安定化版プログレスバー更新:', actualPoints);
-                    updateProgressSegments(actualPoints);
+                    const actualPoints = parseInt(pointsElement.textContent) || 0; // フォールバック削除
+                    console.log('🎯 実際のポイント値:', actualPoints, 'textContent:', pointsElement.textContent);
+                    if (actualPoints > 0) {
+                        updateProgressSegments(actualPoints);
+                    } else {
+                        console.warn('⚠️ ポイント値が0または無効:', pointsElement.textContent);
+                    }
                 } else {
-                    console.warn('⚠️ ポイント要素が見つからないためデフォルト450ptで設定');
-                    updateProgressSegments(450);
+                    console.error('❌ current-points要素が見つかりません');
                 }
-            }, 500); // 遅延を500msに統一
+            }, 1000); // 遅延を1000msに延長してDOM更新を待つ
         }
 
         // 🛡️ 復活防止対策: 既存セグメント更新関数
@@ -957,9 +960,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // ポイント数をアニメーション付きで表示
             animatePointsDisplay(points);
 
-            // 🔥 安定化: 競合防止のためupdateUserData内では呼び出さない
-            console.log('🔄 安定化: updateProgressSegmentsは初期化時のみ実行');
-            // updateProgressSegments(points); // 競合防止のためコメントアウト
+            // 🔥 実際のポイント値でプログレスバー更新
+            console.log('🔄 updateUserData内でプログレスバー更新:', points);
+            updateProgressSegments(points);
 
             // ランク判定
             let currentRankKey = 'ビギナー';
