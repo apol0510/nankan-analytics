@@ -109,8 +109,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         </div>
                     </div>
                     <div class="points-progress">
-                        <div class="progress-bar">
-                            <div id="progress-fill" class="progress-fill"></div>
+                        <div class="progress-segments">
+                            <!-- 動的セグメント表示 - JavaScriptで制御 -->
+                            <div id="dynamic-segments">
+                                <!-- 段階的に表示されるセグメント -->
+                            </div>
+                        </div>
+
+                        <!-- 次の目標までの情報 -->
+                        <div class="next-goal-info">
+                            <span id="next-goal-text">次の目標まで</span>
+                            <span id="remaining-points">1000</span>pt
                         </div>
                     </div>
                 </div>
@@ -730,14 +739,114 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }
             }
 
-            // プログレスバーの表示（簡単なバージョン）
-            const progressFill = document.getElementById('progress-fill');
-            if (progressFill) {
-                const progressPercentage = Math.min(100, (points / 100) * 10); // 100ptで10%、1000ptで100%
-                progressFill.style.width = progressPercentage + '%';
-            }
+            // セグメント式プログレスバーの表示
+            updateProgressSegments(points);
         }
         
+        // 段階的プログレスバー更新関数
+        function updateProgressSegments(points) {
+            const goals = [
+                { points: 1000, reward: '隠れ上昇馬情報', emoji: '🔍' },
+                { points: 2000, reward: '激走穴馬情報', emoji: '⚡' },
+                { points: 3000, reward: '厩舎タイミング予測', emoji: '🎯' }
+            ];
+
+            const container = document.getElementById('dynamic-segments');
+            if (!container) return;
+
+            // 現在のセグメントを決定
+            let currentSegmentIndex = 0;
+            for (let i = 0; i < goals.length; i++) {
+                if (points < goals[i].points) {
+                    currentSegmentIndex = i;
+                    break;
+                } else if (i === goals.length - 1) {
+                    currentSegmentIndex = goals.length; // 全達成
+                    break;
+                }
+            }
+
+            // セグメントHTMLを生成
+            let segmentHTML = '';
+
+            if (currentSegmentIndex < goals.length) {
+                // 現在進行中のセグメント
+                const currentGoal = goals[currentSegmentIndex];
+                const prevGoal = currentSegmentIndex === 0 ? 0 : goals[currentSegmentIndex - 1].points;
+                const progress = ((points - prevGoal) / (currentGoal.points - prevGoal)) * 100;
+
+                console.log('🔍 プログレス計算:', {
+                    points,
+                    currentSegmentIndex,
+                    currentGoal: currentGoal.points,
+                    prevGoal,
+                    progress: Math.round(progress)
+                });
+
+                segmentHTML = `
+                    <div class="segment-item current-segment">
+                        <div class="segment-header">
+                            <span class="segment-emoji">${currentGoal.emoji}</span>
+                            <span class="segment-title">目標: ${currentGoal.points}pt</span>
+                        </div>
+                        <div class="segment-bar">
+                            <div class="segment-fill" style="width: ${Math.max(1, progress)}%; background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);"></div>
+                        </div>
+                        <div class="segment-label">
+                            <span class="segment-reward">${currentGoal.reward}</span>
+                            <span class="segment-progress">${Math.round(progress)}%</span>
+                        </div>
+                    </div>
+                `;
+
+                // 達成済みのセグメントも小さく表示
+                for (let i = 0; i < currentSegmentIndex; i++) {
+                    const achievedGoal = goals[i];
+                    segmentHTML = `
+                        <div class="segment-item achieved-segment">
+                            <div class="segment-header">
+                                <span class="segment-emoji">✅</span>
+                                <span class="segment-title">${achievedGoal.points}pt 達成済み</span>
+                            </div>
+                            <div class="segment-reward-small">${achievedGoal.reward}</div>
+                        </div>
+                    ` + segmentHTML;
+                }
+            } else {
+                // 全目標達成
+                segmentHTML = `
+                    <div class="segment-item completed-all">
+                        <div class="segment-header">
+                            <span class="segment-emoji">🎉</span>
+                            <span class="segment-title">全目標達成！</span>
+                        </div>
+                        <div class="segment-label">
+                            <span class="segment-reward">すべての特典が利用可能です</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = segmentHTML;
+            console.log('📊 セグメントHTML設定完了:', segmentHTML.substring(0, 200) + '...');
+
+            // 次の目標までの情報を更新
+            const nextGoalText = document.getElementById('next-goal-text');
+            const remainingPoints = document.getElementById('remaining-points');
+
+            if (nextGoalText && remainingPoints) {
+                if (currentSegmentIndex < goals.length) {
+                    const nextGoal = goals[currentSegmentIndex].points;
+                    const remaining = nextGoal - points;
+                    nextGoalText.textContent = `次の目標(${nextGoal}pt)まで`;
+                    remainingPoints.textContent = remaining;
+                } else {
+                    nextGoalText.textContent = '🎉 全目標達成済み！';
+                    remainingPoints.textContent = '';
+                }
+            }
+        }
+
         // ランク目安ガイド更新
         function updateRankGuide(currentPoints) {
             const rankItems = document.querySelectorAll('.rank-item');
@@ -2202,13 +2311,158 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             margin-top: 15px;
         }
         
-        /* レスポンシブ */
-        /* 射幸心を煽るプログレスバースタイル */
-        .progress-fill {
-            background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
-            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+        /* セグメント式プログレスバー */
+        .progress-segments {
+            margin-bottom: 1rem;
+        }
+
+        .segment-item {
+            margin-bottom: 1.2rem;
+            border-radius: 8px;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* 現在進行中のセグメント */
+        .current-segment {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+        }
+
+        /* 達成済みセグメント（小さく表示） */
+        .achieved-segment {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 8px 12px;
+            margin-bottom: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* 全達成セグメント */
+        .completed-all {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.15));
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        /* セグメントヘッダー */
+        .segment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .segment-emoji {
+            font-size: 1.2rem;
+        }
+
+        .segment-title {
+            font-weight: 600;
+            color: #fbbf24;
+            font-size: 0.95rem;
+        }
+
+        .achieved-segment .segment-title {
+            color: #10b981;
+            font-size: 0.85rem;
+        }
+
+        .segment-progress {
+            font-weight: 600;
+            color: #f59e0b;
+        }
+
+        .segment-reward-small {
+            font-size: 0.75rem;
+            color: #10b981;
+            opacity: 0.9;
+        }
+
+        .segment-bar {
+            height: 16px;
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .segment-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6b7280 0%, #4b5563 100%);
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 6px;
+            min-width: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* プログレス0%でも見えるように背景を調整 */
+        .segment-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(107, 114, 128, 0.4) 0%, rgba(75, 85, 99, 0.3) 100%);
+            border-radius: 6px;
+            z-index: 1;
+        }
+
+        /* プログレスバーの外枠ハイライト */
+        .segment-bar::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), rgba(251, 191, 36, 0.2));
+            border-radius: 9px;
+            z-index: 0;
+        }
+
+        .segment-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .segment-goal {
+            font-weight: 600;
+            color: #fbbf24;
+        }
+
+        .segment-reward {
+            color: #e2e8f0;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* 次の目標情報 */
+        .next-goal-info {
+            text-align: center;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-size: 0.95rem;
+            color: #fbbf24;
+            font-weight: 500;
+        }
+
+        /* レスポンシブ */
+        /* 旧プログレスバー（隠す） */
+        .progress-fill {
+            display: none;
         }
 
         .progress-fill::after {
