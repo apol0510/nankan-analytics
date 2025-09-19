@@ -48,7 +48,7 @@ export const handler = async (event, context) => {
         const planLower = plan ? plan.toLowerCase() : 'free';
         let pointsToAdd = 1; // free
         if (planLower === 'standard') pointsToAdd = 10;
-        if (planLower === 'premium') pointsToAdd = 50;
+        if (planLower === 'premium') pointsToAdd = 30;
         
         // 更新実行
         await base('Customers').update(record.id, {

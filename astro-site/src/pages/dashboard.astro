@@ -196,65 +196,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </div>
                     
                     <div class="exchange-grid">
-                        <!-- 100pt特典 -->
-                        <div class="exchange-option">
-                            <div class="exchange-cost">100pt</div>
-                            <div class="exchange-reward">Standard会員
-1日パス</div>
-                            <button class="exchange-btn" onclick="requestExchange(100, 'Standard会員1日パス')">
-                                交換申請
-                            </button>
-                        </div>
-                        
-                        <!-- 300pt特典 -->
-                        <div class="exchange-option">
-                            <div class="exchange-cost">300pt</div>
-                            <div class="exchange-reward">特別攻略
-レポート</div>
-                            <button class="exchange-btn" onclick="requestExchange(300, '特別攻略レポート配信')">
-                                交換申請
-                            </button>
-                        </div>
-                        
-                        <!-- 500pt特典 -->
-                        <div class="exchange-option">
-                            <div class="exchange-cost">500pt</div>
-                            <div class="exchange-reward">Premium会員
-1日パス</div>
-                            <button class="exchange-btn" onclick="requestExchange(500, 'Premium会員1日パス')">
-                                交換申請
-                            </button>
-                        </div>
-                        
                         <!-- 1000pt特典 -->
                         <div class="exchange-option">
                             <div class="exchange-cost">1000pt</div>
-                            <div class="exchange-reward">個別相談
-30分</div>
-                            <button class="exchange-btn" onclick="requestExchange(1000, '個別相談30分')">
+                            <div class="exchange-reward">AI解析による隠れ上昇馬情報</div>
+                            <button class="exchange-btn" onclick="requestExchange(1000, 'AI解析による隠れ上昇馬情報')">
                                 交換申請
                             </button>
                         </div>
-                        
+
                         <!-- 2000pt特典 -->
                         <div class="exchange-option premium-option">
                             <div class="exchange-cost">2000pt</div>
-                            <div class="exchange-reward">月額料金
-500円割引</div>
-                            <button class="exchange-btn" onclick="requestExchange(2000, '月額料金500円割引')">
+                            <div class="exchange-reward">AI解析による急上昇 激走穴馬情報</div>
+                            <button class="exchange-btn" onclick="requestExchange(2000, 'AI解析による急上昇 激走穴馬情報')">
                                 交換申請
                             </button>
                         </div>
                         
                         <!-- 3000pt特典 -->
-                        <div class="exchange-option premium-option">
+                        <div class="exchange-option orange-option">
                             <div class="exchange-cost">3000pt</div>
-                            <div class="exchange-reward">Premium会員
-1ヶ月無料</div>
-                            <button class="exchange-btn" onclick="requestExchange(3000, 'Premium会員1ヶ月無料')">
+                            <div class="exchange-reward">厩舎の発射タイミング予測による激走穴馬情報</div>
+                            <button class="exchange-btn" onclick="requestExchange(3000, '厩舎の発射タイミング予測による激走穴馬情報')">
                                 交換申請
                             </button>
                         </div>
+                        
                     </div>
                     
                     <div class="exchange-note">
@@ -443,12 +411,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         // ランク特典
         const RANK_BENEFITS = {
-            ビギナー: ['毎日のポイント獲得'],
-            ブロンズ: ['毎日のポイント獲得', '月間レポート'],
-            シルバー: ['毎日のポイント獲得', '月間レポート', '特典申請可能'],
-            ゴールド: ['毎日のポイント獲得', '優先サポート', '月間レポート', '特典申請可能'],
-            プラチナ: ['毎日のポイント獲得', '優先サポート', '詳細分析レポート', '特典申請可能'],
-            ダイヤモンド: ['毎日のポイント獲得', '個別AI分析', 'VIPサポート', '特典申請可能']
+            ビギナー: ['毎日10ポイント獲得'],
+            ブロンズ: ['毎日10ポイント獲得', '月間レポート'],
+            シルバー: ['毎日10ポイント獲得', '月間レポート', '特典申請可能'],
+            ゴールド: ['毎日10ポイント獲得', '優先サポート', '月間レポート', '特典申請可能'],
+            プラチナ: ['毎日10ポイント獲得', '優先サポート', '詳細分析レポート', '特典申請可能'],
+            ダイヤモンド: ['毎日10ポイント獲得', '個別AI分析', 'VIPサポート', '特典申請可能']
         };
 
         // 簡略化されたマジックリンクフォーム処理
@@ -782,12 +750,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 premium: [
                     '💎 全レース予想',
                     '🏆 優先サポート',
-                    '💰 デイリー50pt'
+                    '💰 デイリー30pt'
                 ],
                 Premium: [
                     '💎 全レース予想',
                     '🏆 優先サポート',
-                    '💰 デイリー50pt'
+                    '💰 デイリー30pt'
                 ]
             };
             
@@ -2299,10 +2267,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
         
+        .orange-option {
+            background: linear-gradient(135deg, #ff5722 0%, #e91e63 50%, #9c27b0 100%);
+        }
+
+        .orange-option:hover {
+            box-shadow: 0 10px 25px rgba(255, 87, 34, 0.4);
+        }
+
         .premium-option {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
-        
+
         .premium-option:hover {
             box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
         }
@@ -2735,7 +2711,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const testUser = {
                 email: 'test@example.com',
                 plan: plan,
-                points: plan === 'premium' ? 100 : plan === 'standard' ? 50 : 10,
+                points: plan === 'premium' ? 300 : plan === 'standard' ? 100 : 30,
                 name: 'テストユーザー',
                 registrationDate: '2024-01-01',
                 lastLogin: new Date().toISOString()
