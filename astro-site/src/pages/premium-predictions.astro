@@ -148,7 +148,36 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
 
                             <!-- レース詳細情報 -->
                             <div class="race-details-info">
-                                <h3 class="race-detail-title">{raceData.raceNumber} {raceData.raceName || '競走名'}</h3>
+                                {/* レース名から距離・頭数・発走時刻を抽出 */}
+                                {(() => {
+                                    const raceName = raceData.raceName || '競走名';
+                                    // レース名から距離、頭数、発走時刻を抽出
+                                    const distanceMatch = raceName.match(/[ダ芝]\s?(\d+[,.]?\d*)\s?m/);
+                                    const horseCountMatch = raceName.match(/[（(](\d+)頭[）)]/);
+                                    const startTimeMatch = raceName.match(/発走時刻\s?(\d+:\d+)/);
+
+                                    // 抽出した情報またはraceInfoから取得
+                                    const distance = distanceMatch ? distanceMatch[0] : (raceData.raceInfo?.distance || null);
+                                    const horseCount = horseCountMatch ? horseCountMatch[1] : (raceData.raceInfo?.horseCount || null);
+                                    const startTime = startTimeMatch ? startTimeMatch[1] : (raceData.raceInfo?.startTime || null);
+
+                                    // レース名から情報を除去してクリーンな名前を取得
+                                    let cleanRaceName = raceName
+                                        .replace(/\s*[ダ芝]\d+[,.]?\d*m.*$/, '')
+                                        .replace(/\s*[（(]\d+頭[）)].*$/, '')
+                                        .replace(/\s*発走時刻.*$/, '');
+
+                                    return (
+                                        <>
+                                            <h3 class="race-detail-title">{raceData.raceNumber} {cleanRaceName}</h3>
+                                            <div class="race-detail-meta">
+                                                {distance && <span class="meta-item">📏 {distance}</span>}
+                                                {horseCount && <span class="meta-item">🐎 {horseCount}頭</span>}
+                                                {startTime && <span class="meta-item">🕐 発走時刻 {startTime}</span>}
+                                            </div>
+                                        </>
+                                    );
+                                })()}
                             </div>
 
                             <!-- AI選出馬分析 -->
@@ -747,7 +776,6 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
 
     .race-details-info {
         background: rgba(31, 41, 55, 0.3);
-        border-left: 4px solid #3b82f6;
         padding: 12px 16px;
         margin-bottom: 20px;
         border-radius: 6px;
@@ -759,6 +787,25 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         font-weight: 600;
         margin: 0;
         text-align: center;
+    }
+
+    .race-detail-meta {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 8px;
+        background: rgba(30, 41, 59, 0.3);
+        border-radius: 4px;
     }
 
     .main-race-badge {
