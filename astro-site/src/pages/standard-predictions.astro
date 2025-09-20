@@ -50,16 +50,95 @@ console.log('🔍 StandardRaces結果:', {
 });
 
 // 昨日・先週の的中結果データ（トップページに反映される）
-// 昨日の的中結果データ（9/18 大井競馬）
+// 昨日の的中結果データ（9/19 大井競馬）
 export const yesterdayResults = {
-    date: "9/18",
+    date: "9/19",
     track: "大井競馬",
-    hitRate: 75,
-    hitCount: 9,
+    hitRate: 83.3,
+    hitCount: 10,
     totalCount: 12,
-    totalPayout: 25070,
-    recoveryRate: 209, // 🛡️ 復活防止: 回収率フィールド追加
+    totalPayout: 19920,
+    recoveryRate: 166, // 🛡️ 復活防止: 回収率フィールド追加
     results: [
+        { race: '1R', result: 'win', payout: 2890 },
+        { race: '2R', result: 'win', payout: 4160 },
+        { race: '3R', result: 'win', payout: 940 },
+        { race: '4R', result: 'win', payout: 3870 },
+        { race: '5R', result: 'win', payout: 1070 },
+        { race: '6R', result: 'lose', payout: 0 },
+        { race: '7R', result: 'win', payout: 690 },
+        { race: '8R', result: 'win', payout: 2190 },
+        { race: '9R', result: 'win', payout: 470 },
+        { race: '10R', result: 'win', payout: 3070 },
+        { race: '11R', result: 'lose', payout: 0 },
+        { race: '12R', result: 'win', payout: 570 },
+    ]
+};
+
+
+// 週間の的中結果データ（9/15〜9/19 大井競馬）
+export const weeklyResults = {
+    period: "9/15〜9/19",
+    track: "大井競馬",
+    hitRate: 81.7,
+    hitCount: 49,
+    totalCount: 60,
+    totalPayout: 124880,
+    recoveryRate: 208
+};
+
+export const dailyTabs = [
+    { date: '919', hitRate: 83, label: '9/19 (83%)' },
+    { date: '918', hitRate: 75, label: '9/18 (75%)' },
+    { date: '917', hitRate: 83, label: '9/17 (83%)' },
+    { date: '916', hitRate: 92, label: '9/16 (92%)' },
+    { date: '915', hitRate: 75, label: '9/15 (75%)' },
+];
+
+export const dailyResultsData = {
+    '915': [
+        { race: '1R', result: 'lose', payout: 0 },
+        { race: '2R', result: 'win', payout: 460 },
+        { race: '3R', result: 'win', payout: 490 },
+        { race: '4R', result: 'win', payout: 280 },
+        { race: '5R', result: 'win', payout: 590 },
+        { race: '6R', result: 'win', payout: 1280 },
+        { race: '7R', result: 'lose', payout: 0 },
+        { race: '8R', result: 'win', payout: 13430 },
+        { race: '9R', result: 'win', payout: 440 },
+        { race: '10R', result: 'win', payout: 470 },
+        { race: '11R', result: 'lose', payout: 0 },
+        { race: '12R', result: 'win', payout: 11500 },
+    ],
+    '916': [
+        { race: '1R', result: 'win', payout: 4220 },
+        { race: '2R', result: 'win', payout: 410 },
+        { race: '3R', result: 'win', payout: 1000 },
+        { race: '4R', result: 'win', payout: 1720 },
+        { race: '5R', result: 'win', payout: 1730 },
+        { race: '6R', result: 'win', payout: 620 },
+        { race: '7R', result: 'win', payout: 2190 },
+        { race: '8R', result: 'win', payout: 8100 },
+        { race: '9R', result: 'win', payout: 190 },
+        { race: '10R', result: 'win', payout: 1410 },
+        { race: '11R', result: 'lose', payout: 0 },
+        { race: '12R', result: 'win', payout: 500 },
+    ],
+    '917': [
+        { race: '1R', result: 'win', payout: 2250 },
+        { race: '2R', result: 'win', payout: 1060 },
+        { race: '3R', result: 'win', payout: 2380 },
+        { race: '4R', result: 'lose', payout: 0 },
+        { race: '5R', result: 'win', payout: 3300 },
+        { race: '6R', result: 'win', payout: 330 },
+        { race: '7R', result: 'win', payout: 550 },
+        { race: '8R', result: 'win', payout: 5580 },
+        { race: '9R', result: 'win', payout: 4110 },
+        { race: '10R', result: 'lose', payout: 0 },
+        { race: '11R', result: 'win', payout: 1700 },
+        { race: '12R', result: 'win', payout: 7600 },
+    ],
+    '918': [
         { race: '1R', result: 'lose', payout: 0 },
         { race: '2R', result: 'lose', payout: 0 },
         { race: '3R', result: 'win', payout: 3030 },
@@ -72,86 +151,23 @@ export const yesterdayResults = {
         { race: '10R', result: 'win', payout: 4820 },
         { race: '11R', result: 'win', payout: 710 },
         { race: '12R', result: 'win', payout: 5290 },
-    ]
-};
-
-
-// 週間の的中結果データ（9/8〜9/12 川崎競馬）
-export const weeklyResults = {
-    period: "9/8〜9/12",
-    track: "川崎競馬",
-    hitRate: 70.8,
-    hitCount: 34,
-    totalCount: 48,
-    totalPayout: 89670,
-    recoveryRate: 187
-};
-
-export const dailyTabs = [
-    { date: '912', hitRate: 58, label: '9/12 (58%)' },
-    { date: '910', hitRate: 67, label: '9/10 (67%)' },
-    { date: '99', hitRate: 75, label: '9/9 (75%)' },
-    { date: '98', hitRate: 83, label: '9/8 (83%)' },
-];
-
-export const dailyResultsData = {
-    '98': [
-        { race: '1R', result: 'win', payout: 1900 },
-        { race: '2R', result: 'win', payout: 1990 },
-        { race: '3R', result: 'win', payout: 1480 },
-        { race: '4R', result: 'win', payout: 580 },
-        { race: '5R', result: 'win', payout: 1250 },
-        { race: '6R', result: 'win', payout: 7340 },
-        { race: '7R', result: 'win', payout: 570 },
-        { race: '8R', result: 'win', payout: 380 },
-        { race: '9R', result: 'lose', payout: 0 },
-        { race: '10R', result: 'lose', payout: 0 },
-        { race: '11R', result: 'win', payout: 2750 },
-        { race: '12R', result: 'win', payout: 1620 },
     ],
-    '99': [
-        { race: '1R', result: 'lose', payout: 0 },
-        { race: '2R', result: 'win', payout: 1810 },
-        { race: '3R', result: 'win', payout: 750 },
-        { race: '4R', result: 'win', payout: 690 },
-        { race: '5R', result: 'win', payout: 1140 },
-        { race: '6R', result: 'win', payout: 2120 },
-        { race: '7R', result: 'win', payout: 1420 },
-        { race: '8R', result: 'win', payout: 850 },
-        { race: '9R', result: 'lose', payout: 0 },
-        { race: '10R', result: 'lose', payout: 0 },
-        { race: '11R', result: 'win', payout: 760 },
-        { race: '12R', result: 'win', payout: 8280 },
-    ],
-    '910': [
-        { race: '1R', result: 'win', payout: 420 },
-        { race: '2R', result: 'win', payout: 9600 },
-        { race: '3R', result: 'win', payout: 9340 },
-        { race: '4R', result: 'lose', payout: 0 },
-        { race: '5R', result: 'win', payout: 4500 },
+    '919': [
+        { race: '1R', result: 'win', payout: 2890 },
+        { race: '2R', result: 'win', payout: 4160 },
+        { race: '3R', result: 'win', payout: 940 },
+        { race: '4R', result: 'win', payout: 3870 },
+        { race: '5R', result: 'win', payout: 1070 },
         { race: '6R', result: 'lose', payout: 0 },
-        { race: '7R', result: 'lose', payout: 0 },
-        { race: '8R', result: 'win', payout: 4900 },
-        { race: '9R', result: 'win', payout: 760 },
-        { race: '10R', result: 'win', payout: 1050 },
-        { race: '11R', result: 'win', payout: 1520 },
-        { race: '12R', result: 'lose', payout: 0 },
-    ],
-    '912': [
-        { race: '1R', result: 'lose', payout: 0 },
-        { race: '2R', result: 'win', payout: 220 },
-        { race: '3R', result: 'win', payout: 520 },
-        { race: '4R', result: 'win', payout: 490 },
-        { race: '5R', result: 'win', payout: 390 },
-        { race: '6R', result: 'win', payout: 5560 },
-        { race: '7R', result: 'lose', payout: 0 },
-        { race: '8R', result: 'lose', payout: 0 },
-        { race: '9R', result: 'win', payout: 8380 },
-        { race: '10R', result: 'win', payout: 4340 },
+        { race: '7R', result: 'win', payout: 690 },
+        { race: '8R', result: 'win', payout: 2190 },
+        { race: '9R', result: 'win', payout: 470 },
+        { race: '10R', result: 'win', payout: 3070 },
         { race: '11R', result: 'lose', payout: 0 },
-        { race: '12R', result: 'lose', payout: 0 },
+        { race: '12R', result: 'win', payout: 570 },
     ],
 };
+
 ---
 
 <BaseLayout title="スタンダード会員予想" description={`AI技術による${track}後半3レース（10R, 11R, 12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
