@@ -121,8 +121,8 @@ exports.handler = async (event, context) => {
       'Free': 1,
       'standard': 10,
       'Standard': 10,
-      'premium': 50,
-      'Premium': 50
+      'premium': 30,
+      'Premium': 30
     };
 
     // 通常のログインポイント（1日1回）
