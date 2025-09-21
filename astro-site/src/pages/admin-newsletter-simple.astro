@@ -808,28 +808,129 @@ try {
             </div>
 
             
+            <!-- 🛡️ ドメイン保護 & ブラックリスト管理 -->
+            <div class="card">
+                <h2>🛡️ ドメイン保護システム</h2>
+
+                <!-- ドメイン保護統計 -->
+                <div class="domain-protection-stats" style="margin-bottom: 25px;">
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">🚫 ブロック中</div>
+                            <div class="stat-value" id="blockedEmailsCount">-</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">⚠️ 警告レベル</div>
+                            <div class="stat-value" id="warningEmailsCount">-</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">📊 失敗率</div>
+                            <div class="stat-value" id="failureRate">-</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">🎯 リスクレベル</div>
+                            <div class="stat-value" id="overallRisk">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- タブ切り替え -->
+                <div class="content-type-tabs">
+                    <button type="button" class="content-tab active" data-protection-tab="blacklist">🚫 ブラックリスト</button>
+                    <button type="button" class="content-tab" data-protection-tab="stats">📊 統計</button>
+                    <button type="button" class="content-tab" data-protection-tab="whitelist">✅ 復旧管理</button>
+                </div>
+
+                <!-- ブラックリスト表示 -->
+                <div id="blacklistTab" class="protection-tab-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>ブラックリスト一覧</h3>
+                        <button class="btn btn-secondary" id="refreshBlacklistBtn">🔄 更新</button>
+                    </div>
+
+                    <div id="blacklistContainer" style="max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead style="background-color: #f9fafb; position: sticky; top: 0;">
+                                <tr>
+                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">メールアドレス</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">失敗回数</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">種別</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">最終失敗</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blacklistTableBody">
+                                <tr>
+                                    <td colspan="5" style="padding: 20px; text-align: center; color: #6b7280;">データを読み込み中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 統計タブ -->
+                <div id="statsTab" class="protection-tab-content" style="display: none;">
+                    <h3>詳細統計</h3>
+                    <div id="detailedStats" style="background: #f9fafb; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 14px;">
+                        統計データを読み込み中...
+                    </div>
+
+                    <h3 style="margin-top: 25px;">推奨事項</h3>
+                    <div id="recommendations" style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                        推奨事項を読み込み中...
+                    </div>
+                </div>
+
+                <!-- 復旧管理タブ -->
+                <div id="whitelistTab" class="protection-tab-content" style="display: none;">
+                    <h3>メールアドレス復旧</h3>
+                    <p style="color: #6b7280; margin-bottom: 15px;">ソフトバウンスのメールアドレスのみ復旧可能です。ハードバウンスや苦情は手動で確認してください。</p>
+
+                    <div class="form-group">
+                        <label>復旧対象メールアドレス</label>
+                        <div class="unsubscribe-actions">
+                            <input type="email" class="form-control" id="whitelistEmail"
+                                   placeholder="復旧するメールアドレス" style="flex: 1; margin-right: 10px;">
+                            <button class="btn btn-primary" id="whitelistBtn">🔄 復旧</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>復旧理由</label>
+                        <select class="form-control" id="whitelistReason">
+                            <option value="user-request">ユーザーからの要請</option>
+                            <option value="technical-issue">技術的問題の解決</option>
+                            <option value="admin-review">管理者による再評価</option>
+                            <option value="temporary-failure">一時的な問題</option>
+                        </select>
+                    </div>
+
+                    <div id="whitelistStatus" class="status-message"></div>
+                </div>
+            </div>
+
             <!-- 配信停止管理 -->
             <div class="card">
-                <h2>🚫 配信停止管理</h2>
+                <h2>📧 配信停止管理</h2>
                 <div class="unsubscribe-section">
                     <div class="form-group">
                         <label>配信停止処理</label>
                         <div class="unsubscribe-actions">
-                            <input type="email" class="form-control" id="unsubscribeEmail" 
+                            <input type="email" class="form-control" id="unsubscribeEmail"
                                    placeholder="配信停止するメールアドレス" style="flex: 1; margin-right: 10px;">
                             <button class="btn btn-secondary" id="unsubscribeBtn">配信停止</button>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>配信再開</label>
                         <div class="unsubscribe-actions">
-                            <input type="email" class="form-control" id="resubscribeEmail" 
+                            <input type="email" class="form-control" id="resubscribeEmail"
                                    placeholder="配信再開するメールアドレス" style="flex: 1; margin-right: 10px;">
                             <button class="btn btn-primary" id="resubscribeBtn">配信再開</button>
                         </div>
                     </div>
-                    
+
                     <div class="unsubscribe-stats">
                         <div class="stat-box">
                             <div class="stat-label">配信停止者数</div>
@@ -1546,7 +1647,257 @@ try {
             }
         });
 
+        // 🛡️ ドメイン保護タブ切り替え
+        document.querySelectorAll('[data-protection-tab]').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabType = this.dataset.protectionTab;
+
+                // タブの状態更新
+                document.querySelectorAll('[data-protection-tab]').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // コンテンツの表示切り替え
+                document.querySelectorAll('.protection-tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+
+                if (tabType === 'blacklist') {
+                    document.getElementById('blacklistTab').style.display = 'block';
+                    loadBlacklistData();
+                } else if (tabType === 'stats') {
+                    document.getElementById('statsTab').style.display = 'block';
+                    loadDomainStats();
+                } else if (tabType === 'whitelist') {
+                    document.getElementById('whitelistTab').style.display = 'block';
+                }
+            });
+        });
+
+        // ブラックリスト更新ボタン
+        document.getElementById('refreshBlacklistBtn').addEventListener('click', loadBlacklistData);
+
+        // 復旧ボタン
+        document.getElementById('whitelistBtn').addEventListener('click', async function() {
+            const email = document.getElementById('whitelistEmail').value;
+            const reason = document.getElementById('whitelistReason').value;
+
+            if (!email) {
+                showDomainProtectionMessage('メールアドレスを入力してください', 'error', 'whitelistStatus');
+                return;
+            }
+
+            this.disabled = true;
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=whitelist-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, reason })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showDomainProtectionMessage(`${email} を復旧しました`, 'success', 'whitelistStatus');
+                    document.getElementById('whitelistEmail').value = '';
+                    // ブラックリストも更新
+                    loadBlacklistData();
+                    loadDomainStats();
+                } else {
+                    showDomainProtectionMessage(`復旧失敗: ${result.error}`, 'error', 'whitelistStatus');
+                }
+            } catch (error) {
+                showDomainProtectionMessage(`エラー: ${error.message}`, 'error', 'whitelistStatus');
+            } finally {
+                this.disabled = false;
+            }
+        });
+
+        // ドメイン保護メッセージ表示
+        function showDomainProtectionMessage(message, type, elementId) {
+            const messageDiv = document.getElementById(elementId);
+            messageDiv.textContent = message;
+            messageDiv.className = `status-message ${type}`;
+
+            if (type !== 'info') {
+                setTimeout(() => {
+                    messageDiv.className = 'status-message';
+                }, 5000);
+            }
+        }
+
+        // ブラックリストデータ読み込み
+        async function loadBlacklistData() {
+            console.log('🛡️ ブラックリストデータを読み込み中...');
+
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=get-blacklist');
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const tableBody = document.getElementById('blacklistTableBody');
+
+                if (data.blacklist.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #6b7280;">ブラックリストは空です 🎉</td></tr>';
+                    return;
+                }
+
+                tableBody.innerHTML = data.blacklist.map(item => {
+                    const statusColor = item.status === 'HARD_BOUNCE' ? '#ef4444' :
+                                       item.status === 'COMPLAINT' ? '#dc2626' : '#f59e0b';
+                    const statusText = item.status === 'HARD_BOUNCE' ? 'ハード' :
+                                      item.status === 'COMPLAINT' ? '苦情' : 'ソフト';
+
+                    const lastBounce = item.lastBounce ?
+                        new Date(item.lastBounce).toLocaleDateString('ja-JP') : '-';
+
+                    const whitelistButton = item.canWhitelist ?
+                        `<button class="btn btn-primary" onclick="quickWhitelist('${item.email}')" style="font-size: 12px; padding: 4px 8px;">復旧</button>` :
+                        '<span style="color: #6b7280; font-size: 12px;">復旧不可</span>';
+
+                    return `
+                        <tr style="border-bottom: 1px solid #f3f4f6;">
+                            <td style="padding: 10px; font-family: monospace; font-size: 13px;">${item.email}</td>
+                            <td style="padding: 10px; text-align: center;">
+                                <span style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">
+                                    ${item.bounceCount}回
+                                </span>
+                            </td>
+                            <td style="padding: 10px; text-align: center;">
+                                <span style="color: ${statusColor}; font-weight: 600; font-size: 13px;">${statusText}</span>
+                            </td>
+                            <td style="padding: 10px; text-align: center; font-size: 13px;">${lastBounce}</td>
+                            <td style="padding: 10px; text-align: center;">${whitelistButton}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                // サマリー統計を更新
+                document.getElementById('blockedEmailsCount').textContent = data.summary.total;
+
+                console.log('✅ ブラックリストデータ読み込み完了:', data.summary);
+
+            } catch (error) {
+                console.error('ブラックリストデータ読み込みエラー:', error);
+                document.getElementById('blacklistTableBody').innerHTML =
+                    '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #ef4444;">データ読み込みエラー</td></tr>';
+            }
+        }
+
+        // ドメイン統計読み込み
+        async function loadDomainStats() {
+            console.log('📊 ドメイン統計を読み込み中...');
+
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=get-stats');
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 統計表示を更新
+                document.getElementById('failureRate').textContent = data.riskAssessment.failureRate + '%';
+                document.getElementById('overallRisk').textContent = getRiskLevelText(data.riskAssessment.overallRisk);
+                document.getElementById('overallRisk').style.color = getRiskLevelColor(data.riskAssessment.overallRisk);
+
+                // 詳細統計
+                const detailedStatsHtml = `
+                    <strong>📊 配信統計:</strong><br>
+                    総失敗件数: ${data.stats.total}件<br>
+                    ハードバウンス: ${data.stats.hardBounces}件<br>
+                    ソフトバウンス: ${data.stats.softBounces}件<br>
+                    苦情: ${data.stats.complaints}件<br>
+                    最近24時間の失敗: ${data.stats.recentFailures}件<br>
+                    現在ブロック中: ${data.stats.blockedEmails}件<br><br>
+
+                    <strong>🎯 リスクレベル別分布:</strong><br>
+                    低リスク: ${data.stats.riskLevels.low}件<br>
+                    中リスク: ${data.stats.riskLevels.medium}件<br>
+                    高リスク: ${data.stats.riskLevels.high}件<br>
+                    危険レベル: ${data.stats.riskLevels.critical}件
+                `;
+                document.getElementById('detailedStats').innerHTML = detailedStatsHtml;
+
+                // 推奨事項
+                const recommendationsHtml = data.riskAssessment.recommendations.map(rec =>
+                    `<div style="margin-bottom: 10px;">
+                        <strong style="color: ${getRiskLevelColor(rec.level)};">[${rec.level.toUpperCase()}]</strong>
+                        ${rec.action}<br>
+                        <small style="color: #6b7280;">${rec.reason}</small>
+                    </div>`
+                ).join('');
+                document.getElementById('recommendations').innerHTML = recommendationsHtml;
+
+                console.log('✅ ドメイン統計読み込み完了');
+
+            } catch (error) {
+                console.error('ドメイン統計読み込みエラー:', error);
+                document.getElementById('detailedStats').textContent = 'データ読み込みエラー';
+                document.getElementById('recommendations').textContent = 'データ読み込みエラー';
+            }
+        }
+
+        // クイック復旧機能
+        async function quickWhitelist(email) {
+            if (!confirm(`${email} を復旧しますか？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=whitelist-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, reason: 'admin-review' })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`${email} を復旧しました`);
+                    loadBlacklistData();
+                    loadDomainStats();
+                } else {
+                    alert(`復旧失敗: ${result.error}`);
+                }
+            } catch (error) {
+                alert(`エラー: ${error.message}`);
+            }
+        }
+
+        // リスクレベルのテキスト・色取得
+        function getRiskLevelText(level) {
+            const levels = {
+                low: '低リスク',
+                medium: '中リスク',
+                high: '高リスク',
+                critical: '危険'
+            };
+            return levels[level] || level;
+        }
+
+        function getRiskLevelColor(level) {
+            const colors = {
+                low: '#10b981',
+                medium: '#f59e0b',
+                high: '#ef4444',
+                critical: '#dc2626'
+            };
+            return colors[level] || '#6b7280';
+        }
+
+        // グローバル関数として定義
+        window.quickWhitelist = quickWhitelist;
+
         // 初期化
         initializeStatistics();
+
+        // ドメイン保護データの初期読み込み
+        loadBlacklistData();
+        loadDomainStats();
     </script>
 </BaseLayout>
