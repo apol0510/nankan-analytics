@@ -891,6 +891,51 @@ async function filterRecipientsForDomainProtection(recipients) {
   return protectionResult;
 }
 
+// 🛡️ 無効メール自動ブラックリスト登録関数（根本解決）
+async function recordInvalidEmailToBlacklist(email, reason) {
+  const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+
+  try {
+    console.log(`🛡️ 自動ブラックリスト登録: ${email} (理由: ${reason})`);
+
+    const recordData = {
+      fields: {
+        Email: email,
+        BounceCount: 1,
+        BounceType: 'hard',
+        Status: 'HARD_BOUNCE',
+        AddedAt: new Date().toISOString().split('T')[0],
+        Notes: reason
+      }
+    };
+
+    const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(recordData)
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('✅ 自動ブラックリスト登録成功!');
+      console.log('📋 レコードID:', result.id);
+      return true;
+    } else {
+      const error = await response.text();
+      console.error('❌ 自動ブラックリスト登録失敗:', error);
+      return false;
+    }
+
+  } catch (error) {
+    console.error('❌ 自動ブラックリスト登録エラー:', error.message);
+    return false;
+  }
+}
+
 // ドメイン保護用の配信可否チェック（軽量版）
 async function checkEmailDeliverabilityForProtection(email) {
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
@@ -902,9 +947,12 @@ async function checkEmailDeliverabilityForProtection(email) {
   }
 
   try {
-    // 基本フォーマットチェック
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // 📧 厳密なメール形式検証（根本解決）
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     if (!emailRegex.test(email)) {
+      console.log(`⚡ 根本解決発動: 無効メール検出 ${email}`);
+      // 🛡️ 無効メールを自動ブラックリスト登録（根本解決）
+      await recordInvalidEmailToBlacklist(email, '無効なメール形式（@なしまたは形式エラー）');
       return { canDeliver: false, reason: 'invalid-format', failureCount: 0, riskLevel: 'critical' };
     }
 
