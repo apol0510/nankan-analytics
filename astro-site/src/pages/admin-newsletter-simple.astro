@@ -78,7 +78,7 @@ try {
                 if (!planValue || planValue === null || planValue === undefined || planValue === '') {
                     customerStats.free++;
                     console.log(`空のプラン値: "${planValue}" -> Free`);
-                    continue;
+                    return; // forEachではcontinueの代わりにreturnを使用
                 }
 
                 const plan = String(planValue).toLowerCase().trim();
