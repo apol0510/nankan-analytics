@@ -51,7 +51,7 @@ try {
 
                 // 全てのレコードを詳細分析（最初の10件）
                 const planField = fields['プラン'] || fields['Plan'] || fields['plan'] || fields['PLAN'] ||
-                                 fields['Subscription'] || fields['会員種別'] || 'Free';
+                                 fields['Subscription'] || fields['会員種別'];
 
                 if (debugInfo.sampleRecords.length < 10) {
                     debugInfo.sampleRecords.push({
