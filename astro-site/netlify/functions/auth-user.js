@@ -196,55 +196,51 @@ async function sendWelcomeEmail(email) {
     to: [{ email: email }],
     subject: "🎉 無料会員登録完了！NANKANアナリティクスへようこそ",
     htmlContent: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #3b82f6; font-size: 28px; margin-bottom: 10px;">🎉 登録完了！</h1>
-          <p style="color: #64748b; font-size: 16px;">NANKANアナリティクスへようこそ</p>
+          <h1 style="color: #3b82f6 !important; font-size: 28px; margin-bottom: 10px;">🎉 登録完了！</h1>
+          <p style="color: #64748b !important; font-size: 16px;">NANKANアナリティクスへようこそ</p>
         </div>
-        
-        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
-          <h2 style="color: #10b981; margin-bottom: 15px;">✨ 無料会員特典</h2>
+
+        <div style="background-color: #1e293b !important; color: #ffffff !important; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #334155;">
+          <h2 style="color: #10b981 !important; margin-bottom: 15px; font-size: 20px;">✨ 無料会員特典</h2>
           <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 10px;">📊 メインレース（11R）の詳細予想</li>
-            <li style="margin-bottom: 10px;">🤖 AI分析による予想データ</li>
-            <li style="margin-bottom: 10px;">🎯 基本的な競馬情報</li>
-            <li style="margin-bottom: 10px;">🎁 毎日ログインでポイント獲得</li>
+            <li style="margin-bottom: 10px; color: #ffffff !important;">📊 メインレース（11R）の詳細予想</li>
+            <li style="margin-bottom: 10px; color: #ffffff !important;">🤖 AI分析による予想データ</li>
+            <li style="margin-bottom: 10px; color: #ffffff !important;">🎯 基本的な競馬情報</li>
+            <li style="margin-bottom: 10px; color: #ffffff !important;">🎁 毎日ログインでポイント獲得</li>
           </ul>
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
-          <a href="https://nankan-analytics.keiba.link/free-prediction/" 
-             style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; margin-right: 10px;">
-            今すぐ予想を見る 🏇
-          </a>
-          <a href="https://nankan-analytics.keiba.link/dashboard/" 
-             style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+          <a href="https://nankan-analytics.keiba.link/dashboard/"
+             style="background-color: #3b82f6 !important; color: #ffffff !important; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; border: 2px solid #3b82f6;">
             マイページにログイン 📊
           </a>
         </div>
-        
-        <div style="background: #e0f2fe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-          <h3 style="color: #1565c0; margin-bottom: 10px;">🔑 ログインについて</h3>
-          <p style="color: #0277bd; margin-bottom: 10px; font-size: 14px;">
-            メールアドレス「<strong>${email}</strong>」でログインできます。
+
+        <div style="background-color: #e0f2fe !important; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+          <h3 style="color: #1565c0 !important; margin-bottom: 10px; font-size: 18px;">🔑 ログインについて</h3>
+          <p style="color: #0277bd !important; margin-bottom: 10px; font-size: 14px;">
+            メールアドレス「<strong style="color: #0277bd !important;">${email}</strong>」でログインできます。
           </p>
-          <p style="color: #0277bd; font-size: 14px; margin: 0;">
+          <p style="color: #0277bd !important; font-size: 14px; margin: 0;">
             マイページでポイント確認・交換申請が可能です！
           </p>
         </div>
-        
-        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-top: 20px;">
-          <h3 style="color: #3b82f6; margin-bottom: 10px;">📈 さらに詳しい予想をお求めの方へ</h3>
-          <p style="color: #64748b; margin-bottom: 15px;">スタンダード・プレミアムプランで、より詳細な分析と投資戦略をご利用いただけます。</p>
-          <a href="https://nankan-analytics.keiba.link/pricing/" 
-             style="color: #3b82f6; text-decoration: none; font-weight: 600;">
+
+        <div style="background-color: #f8fafc !important; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #e2e8f0;">
+          <h3 style="color: #3b82f6 !important; margin-bottom: 10px; font-size: 18px;">📈 さらに詳しい予想をお求めの方へ</h3>
+          <p style="color: #64748b !important; margin-bottom: 15px;">スタンダード・プレミアムプランで、より詳細な分析と投資戦略をご利用いただけます。</p>
+          <a href="https://nankan-analytics.keiba.link/pricing/"
+             style="color: #3b82f6 !important; text-decoration: none; font-weight: 600;">
             料金プランを見る →
           </a>
         </div>
-        
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 14px;">
-          <p>AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム</p>
-          <p><strong>NANKANアナリティクス</strong></p>
+
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+          <p style="color: #64748b !important; font-size: 14px; margin-bottom: 5px;">AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム</p>
+          <p style="color: #64748b !important; font-size: 14px; margin: 0;"><strong>NANKANアナリティクス</strong></p>
         </div>
       </div>
     `
