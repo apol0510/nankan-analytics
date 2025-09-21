@@ -783,18 +783,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // 安全な数値変換
             const numericPoints = typeof points === 'number' ? points : parseInt(points) || 0;
 
-            if (defaultProgressFill && defaultProgressText && currentSegmentIndex >= 0 && goals[currentSegmentIndex]) {
-                // 動的目標対応: 現在のセグメントの目標値を使用
-                const currentGoal = goals[currentSegmentIndex];
-                const progress = (numericPoints / currentGoal.points) * 100;
-                console.log('🔍 動的目標計算:', {
+            if (defaultProgressFill && defaultProgressText && currentSegmentIndex >= 0) {
+                // 🔧 根本修正: 正しいセグメント判定と目標計算
+                let targetGoal, actualProgress;
+
+                if (currentSegmentIndex >= goals.length) {
+                    // 全目標達成済み
+                    targetGoal = goals[goals.length - 1];
+                    actualProgress = 100;
+                } else {
+                    // 現在進行中の目標
+                    targetGoal = goals[currentSegmentIndex];
+                    const prevGoal = currentSegmentIndex === 0 ? 0 : goals[currentSegmentIndex - 1].points;
+                    actualProgress = ((numericPoints - prevGoal) / (targetGoal.points - prevGoal)) * 100;
+                }
+
+                const progress = Math.max(0, Math.min(100, actualProgress));
+                console.log('🔍 根本修正後計算:', {
                     rawPoints: points,
                     numericPoints: numericPoints,
                     pointsType: typeof points,
                     currentSegmentIndex: currentSegmentIndex,
-                    goalPoints: currentGoal.points,
-                    calculation: `${numericPoints}/${currentGoal.points}*100`,
-                    progress,
+                    targetGoalPoints: targetGoal.points,
+                    prevGoalPoints: currentSegmentIndex === 0 ? 0 : goals[currentSegmentIndex - 1]?.points,
+                    calculation: `(${numericPoints} - ${currentSegmentIndex === 0 ? 0 : goals[currentSegmentIndex - 1]?.points}) / (${targetGoal.points} - ${currentSegmentIndex === 0 ? 0 : goals[currentSegmentIndex - 1]?.points}) * 100`,
+                    actualProgress,
+                    finalProgress: progress,
                     roundedProgress: Math.round(progress)
                 });
                 // プログレスバー更新（100%超過時は100%に制限）
@@ -804,8 +818,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 // 🆕 目標テキストの動的更新
                 const defaultSegmentTitle = document.querySelector('#default-segment .segment-title');
                 if (defaultSegmentTitle) {
-                    defaultSegmentTitle.textContent = `目標: ${currentGoal.points}pt`;
-                    console.log('🎯 目標テキスト更新:', `目標: ${currentGoal.points}pt`);
+                    defaultSegmentTitle.textContent = `目標: ${targetGoal.points}pt`;
+                    console.log('🎯 目標テキスト更新:', `目標: ${targetGoal.points}pt`);
                 }
 
                 console.log('🔄 既存セグメント更新成功:', Math.round(progress) + '%');
