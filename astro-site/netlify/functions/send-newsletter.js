@@ -132,9 +132,37 @@ export default async function handler(request, context) {
       );
     }
 
+    // 🛡️ ドメイン保護: 配信前に受信者をフィルタリング
+    console.log('🛡️ ドメイン保護チェック開始...');
+    const filteredRecipients = await filterRecipientsForDomainProtection(recipients);
+
+    if (filteredRecipients.blocked.length > 0) {
+      console.log(`🚫 ドメイン保護により${filteredRecipients.blocked.length}件をブロック:`,
+        filteredRecipients.blocked.slice(0, 5).map(b => `${b.email}(${b.reason})`));
+    }
+
+    if (filteredRecipients.deliverable.length === 0) {
+      return new Response(
+        JSON.stringify({
+          error: 'All recipients blocked by domain protection',
+          details: {
+            totalRequested: recipients.length,
+            blocked: filteredRecipients.blocked.length,
+            blockedReasons: filteredRecipients.summary
+          }
+        }),
+        {
+          status: 400,
+          headers
+        }
+      );
+    }
+
+    console.log(`✅ 配信許可: ${filteredRecipients.deliverable.length}/${recipients.length}件`);
+
     // SendGrid APIでメール送信（即座）
     const result = await sendNewsletterViaSendGrid({
-      recipients,
+      recipients: filteredRecipients.deliverable,
       subject,
       htmlContent
     });
@@ -353,10 +381,31 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
         console.error(`❌ 個別送信失敗 ${recipient}:`, errorData);
 
         // 🔍 SendGridエラー詳細解析でバウンス検知
+        console.log(`🔍 バウンス分析開始: ${recipient} - Status: ${response.status}`);
+        console.log(`🔍 Error Data: ${errorData.substring(0, 200)}...`);
+
         const bounceInfo = await analyzeSendGridBounce(recipient, response.status, errorData);
+        console.log(`🔍 バウンス分析結果:`, bounceInfo);
+
         if (bounceInfo.isBounce) {
-          await updateBounceRecord(recipient, bounceInfo);
-          console.log(`🚫 バウンス検知・記録更新: ${recipient} (${bounceInfo.type})`);
+          console.log(`🚫 バウンス検知！記録更新開始: ${recipient} (${bounceInfo.type})`);
+
+          try {
+            await updateBounceRecord(recipient, bounceInfo);
+            console.log(`✅ バウンス記録更新成功: ${recipient}`);
+          } catch (updateError) {
+            console.error(`❌ バウンス記録更新失敗: ${recipient}`, updateError);
+          }
+
+          // 🛡️ ドメイン保護システムに失敗を報告
+          try {
+            await reportFailureToDomainProtection(recipient, bounceInfo.type, errorData, response.status);
+            console.log(`🛡️ ドメイン保護システムに報告完了: ${recipient}`);
+          } catch (reportError) {
+            console.error(`❌ ドメイン保護報告失敗: ${recipient}`, reportError);
+          }
+        } else {
+          console.log(`ℹ️ バウンスではないエラー: ${recipient} - ${bounceInfo.reason || 'unknown'}`);
         }
 
         results.totalFailed += 1;
@@ -471,7 +520,7 @@ async function checkBounceHistory(email) {
     const bounceCount = record.BounceCount || 0;
     const bounceType = record.BounceType || 'unknown';
     const status = record.Status || 'UNKNOWN';
-    const lastBounceDate = record.LastBounceDate;
+    // LastBounceDateフィールドは現在のテーブルに存在しないため削除
 
     // 永続的エラー（Hard Bounce）= 即座にブラックリスト
     if (bounceType === 'hard' || status === 'HARD_BOUNCE' || status === 'COMPLAINT') {
@@ -576,7 +625,8 @@ async function analyzeSendGridBounce(email, statusCode, errorData) {
       'no such user',
       'user unknown',
       'recipient address rejected',
-      'does not match a verified sender identity'
+      'does not match a verified sender identity',
+      'does not contain a valid address'
     ];
 
     // Soft Bounce判定条件
@@ -626,28 +676,40 @@ async function updateBounceRecord(email, bounceInfo) {
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
+  console.log(`📝 バウンス記録開始: ${email} - Type: ${bounceInfo.type}, Reason: ${bounceInfo.reason}`);
+
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
-    console.log('⚠️ Airtable環境変数未設定のためバウンス記録をスキップ');
-    return;
+    console.error('❌ Airtable環境変数未設定のためバウンス記録をスキップ');
+    console.log('📊 環境変数状況:', {
+      hasApiKey: !!AIRTABLE_API_KEY,
+      hasBaseId: !!AIRTABLE_BASE_ID
+    });
+    throw new Error('Airtable環境変数が設定されていません');
   }
 
   try {
+    console.log(`🔍 既存記録をチェック中: ${email}`);
+
     // 既存記録チェック
-    const existingRecordResponse = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist?filterByFormula=SEARCH('${email}',{Email})`,
-      {
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
+    const searchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist?filterByFormula=SEARCH('${email}',{Email})`;
+    console.log(`🔗 Airtable検索URL: ${searchUrl}`);
+
+    const existingRecordResponse = await fetch(searchUrl, {
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json'
       }
-    );
+    });
+
+    console.log(`📡 Airtable検索レスポンス: ${existingRecordResponse.status} ${existingRecordResponse.statusText}`);
 
     if (!existingRecordResponse.ok) {
       throw new Error(`既存記録検索失敗: ${existingRecordResponse.status}`);
     }
 
     const existingData = await existingRecordResponse.json();
+    console.log(`📊 検索結果: ${existingData.records.length}件の既存記録`);
+
     const now = new Date().toISOString();
 
     if (existingData.records.length > 0) {
@@ -656,11 +718,13 @@ async function updateBounceRecord(email, bounceInfo) {
       const currentCount = record.fields.BounceCount || 0;
       const newCount = currentCount + 1;
 
+      console.log(`📝 既存記録更新: ${email} - ${currentCount}回 → ${newCount}回`);
+
       // Soft Bounceが5回に達したらHard Bounceに昇格
       const finalType = bounceInfo.type === 'soft' && newCount >= 5 ? 'hard' : bounceInfo.type;
       const finalStatus = finalType === 'hard' ? 'HARD_BOUNCE' : 'SOFT_BOUNCE';
 
-      await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist/${record.id}`, {
+      const updateResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist/${record.id}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
@@ -671,13 +735,20 @@ async function updateBounceRecord(email, bounceInfo) {
             BounceCount: newCount,
             BounceType: finalType,
             Status: finalStatus,
-            LastBounceDate: now,
             Notes: `${bounceInfo.reason} (${currentCount}→${newCount}回)${newCount >= 5 && bounceInfo.type === 'soft' ? ' [自動昇格]' : ''}`
           }
         })
       });
 
-      console.log(`📝 バウンス記録更新完了: ${email} (${currentCount}→${newCount}回, ${finalType})`);
+      console.log(`📡 更新レスポンス: ${updateResponse.status} ${updateResponse.statusText}`);
+
+      if (!updateResponse.ok) {
+        const updateErrorText = await updateResponse.text();
+        console.error(`❌ 更新失敗: ${updateErrorText}`);
+        throw new Error(`更新失敗: ${updateResponse.status} - ${updateErrorText}`);
+      }
+
+      console.log(`✅ バウンス記録更新完了: ${email} (${currentCount}→${newCount}回, ${finalType})`);
 
     } else {
       // 新規記録作成
@@ -693,9 +764,7 @@ async function updateBounceRecord(email, bounceInfo) {
             BounceCount: 1,
             BounceType: bounceInfo.type,
             Status: bounceInfo.type === 'hard' ? 'HARD_BOUNCE' : 'SOFT_BOUNCE',
-            LastBounceDate: now,
-            AddedAt: now,
-            Source: 'SendGrid API Direct',
+            AddedAt: new Date().toISOString().split('T')[0],
             Notes: `初回バウンス: ${bounceInfo.reason}`
           }
         })
@@ -706,5 +775,200 @@ async function updateBounceRecord(email, bounceInfo) {
 
   } catch (error) {
     console.error(`バウンス記録更新エラー ${email}:`, error);
+  }
+}
+
+// 🛡️ ドメイン保護: 配信前フィルタリング
+async function filterRecipientsForDomainProtection(recipients) {
+  console.log(`🛡️ ドメイン保護チェック開始: ${recipients.length}件`);
+
+  const deliverable = [];
+  const blocked = [];
+  const summary = { hardBounce: 0, softBounceLimit: 0, complaints: 0, invalidFormat: 0 };
+
+  for (const email of recipients) {
+    try {
+      // ドメイン保護システムに配信可否を問い合わせ
+      const status = await checkEmailDeliverabilityForProtection(email);
+
+      if (status.canDeliver) {
+        deliverable.push(email);
+
+        // 警告レベルの場合はログ出力
+        if (status.riskLevel === 'high') {
+          console.log(`⚠️ 高リスクだが配信許可: ${email} (${status.failureCount}回失敗)`);
+        }
+      } else {
+        blocked.push({
+          email,
+          reason: status.reason,
+          failureCount: status.failureCount,
+          riskLevel: status.riskLevel
+        });
+
+        // 理由別カウント
+        if (status.reason === 'hard-bounce') summary.hardBounce++;
+        else if (status.reason === 'soft-bounce-limit') summary.softBounceLimit++;
+        else if (status.reason === 'complaint') summary.complaints++;
+        else if (status.reason === 'invalid-format') summary.invalidFormat++;
+      }
+
+    } catch (error) {
+      console.error(`ドメイン保護チェックエラー ${email}:`, error);
+      // エラー時は安全のため配信許可
+      deliverable.push(email);
+    }
+  }
+
+  const protectionResult = {
+    deliverable,
+    blocked,
+    summary: {
+      total: recipients.length,
+      deliverable: deliverable.length,
+      blocked: blocked.length,
+      ...summary
+    }
+  };
+
+  console.log('🛡️ ドメイン保護結果:', {
+    配信許可: protectionResult.summary.deliverable,
+    ブロック: protectionResult.summary.blocked,
+    ハードバウンス: summary.hardBounce,
+    ソフトバウンス上限: summary.softBounceLimit,
+    苦情: summary.complaints
+  });
+
+  return protectionResult;
+}
+
+// ドメイン保護用の配信可否チェック（軽量版）
+async function checkEmailDeliverabilityForProtection(email) {
+  const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+
+  if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+    // 設定なしの場合は配信許可
+    return { canDeliver: true, reason: 'no-protection', failureCount: 0, riskLevel: 'unknown' };
+  }
+
+  try {
+    // 基本フォーマットチェック
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { canDeliver: false, reason: 'invalid-format', failureCount: 0, riskLevel: 'critical' };
+    }
+
+    // Airtableからバウンス履歴をチェック
+    const response = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist?filterByFormula=SEARCH('${email}',{Email})`,
+      {
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      // API失敗時は配信許可（安全側）
+      return { canDeliver: true, reason: 'api-error', failureCount: 0, riskLevel: 'unknown' };
+    }
+
+    const data = await response.json();
+
+    if (data.records.length === 0) {
+      // クリーンなメールアドレス
+      return { canDeliver: true, reason: 'clean', failureCount: 0, riskLevel: 'low' };
+    }
+
+    const record = data.records[0].fields;
+    const bounceCount = record.BounceCount || 0;
+    const bounceType = record.BounceType || 'unknown';
+    const status = record.Status || 'UNKNOWN';
+
+    // 🚫 ブロック条件
+    if (status === 'HARD_BOUNCE' || status === 'COMPLAINT') {
+      return {
+        canDeliver: false,
+        reason: status === 'HARD_BOUNCE' ? 'hard-bounce' : 'complaint',
+        failureCount: bounceCount,
+        riskLevel: 'critical'
+      };
+    }
+
+    // 🚫 ソフトバウンス上限
+    if (bounceType === 'soft' && bounceCount >= 5) {
+      return {
+        canDeliver: false,
+        reason: 'soft-bounce-limit',
+        failureCount: bounceCount,
+        riskLevel: 'critical'
+      };
+    }
+
+    // ⚠️ 警告レベル（配信は継続）
+    if (bounceType === 'soft' && bounceCount >= 3) {
+      return {
+        canDeliver: true,
+        reason: 'soft-bounce-warning',
+        failureCount: bounceCount,
+        riskLevel: 'high'
+      };
+    }
+
+    // ✅ 軽微な問題（配信継続）
+    return {
+      canDeliver: true,
+      reason: 'minor-issues',
+      failureCount: bounceCount,
+      riskLevel: 'medium'
+    };
+
+  } catch (error) {
+    console.error(`配信可否チェックエラー ${email}:`, error);
+    // エラー時は配信許可
+    return { canDeliver: true, reason: 'check-error', failureCount: 0, riskLevel: 'unknown' };
+  }
+}
+
+// ドメイン保護システムに失敗を報告
+async function reportFailureToDomainProtection(email, errorType, errorMessage, statusCode) {
+  try {
+    console.log(`🛡️ ドメイン保護に失敗報告: ${email} (${errorType})`);
+
+    // domain-protection.js のreport-failure機能を呼び出し
+    const baseUrl = 'http://localhost:8888'; // 開発環境
+    // const baseUrl = process.env.SITE_URL || 'https://nankan-analytics.keiba.link'; // 本番環境
+
+    const reportResponse = await fetch(`${baseUrl}/.netlify/functions/domain-protection?action=report-failure`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        errorType,
+        errorMessage,
+        statusCode
+      })
+    });
+
+    if (!reportResponse.ok) {
+      console.error(`ドメイン保護への報告失敗: ${reportResponse.status}`);
+      return;
+    }
+
+    const result = await reportResponse.json();
+    console.log(`✅ ドメイン保護報告完了: ${email} - ${result.message}`);
+
+    // 5回に達した場合は警告ログ
+    if (result.isBlocked) {
+      console.warn(`🚨 ドメイン保護により自動ブロック: ${email} (${result.newFailureCount}回失敗)`);
+    }
+
+  } catch (error) {
+    console.error(`ドメイン保護報告エラー ${email}:`, error);
+    // エラーが発生しても配信処理は継続
   }
 }
