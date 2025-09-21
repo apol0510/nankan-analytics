@@ -76,18 +76,19 @@ try {
 
                 const plan = String(planValue).toLowerCase().trim();
 
-                // より詳細な判定ロジック
-                if (plan.includes('standard') || plan.includes('スタンダード')) {
+                // Airtableの実際のプラン値に基づく正確な判定ロジック
+                if (plan === 'standard' || plan === 'スタンダード') {
                     customerStats.standard++;
-                } else if (plan.includes('premium') || plan.includes('プレミアム')) {
+                } else if (plan === 'premium' || plan === 'プレミアム') {
                     customerStats.premium++;
-                } else if (plan.includes('test') || plan.includes('テスト')) {
+                } else if (plan === 'test' || plan === 'テスト') {
                     customerStats.test++;
-                } else if (plan.includes('free') || plan.includes('フリー') || plan === '' || plan === 'undefined' || !plan || plan === 'free') {
+                } else if (plan === 'free' || plan === 'フリー' || plan === '' || plan === 'undefined' || !planValue) {
                     customerStats.free++;
                 } else {
-                    // 未分類の場合は詳細ログに残す
-                    customerStats.free++; // デフォルトはFree
+                    // 未分類の場合も詳細ログに記録してからFreeに分類
+                    console.log(`未分類プラン値: "${planValue}" -> Free扱い`);
+                    customerStats.free++;
                 }
             });
         } else {
