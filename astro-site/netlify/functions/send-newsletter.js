@@ -340,9 +340,58 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
     failedEmails: []
   };
 
+  // 📧 メール形式検証関数（根本解決）
+  const validateEmailFormat = (email) => {
+    // RFC 5322準拠の厳格なメール形式チェック
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    return emailRegex.test(email);
+  };
+
+  // 📝 無効なメールを自動的にEmailBlacklistに記録
+  const recordInvalidEmailToBlacklist = async (email, reason) => {
+    try {
+      const recordData = {
+        fields: {
+          Email: email,
+          BounceCount: 1,
+          BounceType: 'hard',
+          Status: 'HARD_BOUNCE',
+          AddedAt: new Date().toISOString().split('T')[0],
+          Notes: `自動検知: ${reason}`
+        }
+      };
+
+      const response = await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/EmailBlacklist`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(recordData)
+      });
+
+      if (response.ok) {
+        console.log(`✅ EmailBlacklistに自動記録: ${email} - ${reason}`);
+      }
+    } catch (error) {
+      console.error(`❌ EmailBlacklist記録エラー: ${error.message}`);
+    }
+  };
+
   // 🔐 プライバシー保護個別配信システム（BCC問題対応）
   for (let i = 0; i < recipients.length; i++) {
     const recipient = recipients[i];
+
+    // 🛡️ 送信前の厳格なメール形式チェック（根本解決）
+    if (!validateEmailFormat(recipient)) {
+      console.log(`🚫 無効なメール形式検出: ${recipient}`);
+      results.totalFailed += 1;
+      results.failedEmails.push(recipient);
+
+      // 自動的にEmailBlacklistに記録
+      await recordInvalidEmailToBlacklist(recipient, '無効なメール形式（@なしまたは形式エラー）');
+      continue; // SendGridには送信しない
+    }
 
     try {
       const emailData = {
