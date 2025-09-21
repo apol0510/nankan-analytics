@@ -62,9 +62,9 @@ try {
                     });
                 }
 
-                // 可能なプランフィールド名を確認
+                // 可能なプランフィールド名を確認（デフォルト値は設定しない）
                 const planValue = fields['プラン'] || fields['Plan'] || fields['plan'] || fields['PLAN'] ||
-                                 fields['Subscription'] || fields['会員種別'] || 'Free';
+                                 fields['Subscription'] || fields['会員種別'];
 
                 // 全てのプラン値を収集
                 debugInfo.uniquePlanValues.add(planValue);
@@ -74,20 +74,31 @@ try {
                     debugInfo.planCounts[planValue] = 1;
                 }
 
+                // null/undefined/空文字の場合は事前にFree判定
+                if (!planValue || planValue === null || planValue === undefined || planValue === '') {
+                    customerStats.free++;
+                    console.log(`空のプラン値: "${planValue}" -> Free`);
+                    continue;
+                }
+
                 const plan = String(planValue).toLowerCase().trim();
 
                 // Airtableの実際のプラン値に基づく正確な判定ロジック
                 if (plan === 'standard' || plan === 'スタンダード') {
                     customerStats.standard++;
+                    console.log(`Standard判定: "${planValue}"`);
                 } else if (plan === 'premium' || plan === 'プレミアム') {
                     customerStats.premium++;
+                    console.log(`Premium判定: "${planValue}"`);
                 } else if (plan === 'test' || plan === 'テスト') {
                     customerStats.test++;
-                } else if (plan === 'free' || plan === 'フリー' || plan === '' || plan === 'undefined' || !planValue) {
+                    console.log(`Test判定: "${planValue}"`);
+                } else if (plan === 'free' || plan === 'フリー') {
                     customerStats.free++;
+                    console.log(`Free判定: "${planValue}"`);
                 } else {
                     // 未分類の場合も詳細ログに記録してからFreeに分類
-                    console.log(`未分類プラン値: "${planValue}" -> Free扱い`);
+                    console.log(`未分類プラン値: "${planValue}" (type: ${typeof planValue}) -> Free扱い`);
                     customerStats.free++;
                 }
             });
