@@ -161,21 +161,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         </div>
                     </div>
                     <div class="points-progress">
-                        <div class="progress-segments">
-                            <!-- 動的セグメント表示 - JavaScriptで制御 -->
-                            <div id="dynamic-segments">
-                                <!-- 🛡️ 復活防止対策: デフォルト表示を追加 -->
-                                <div id="default-segment" class="segment-item current-segment">
-                                    <div class="segment-header">
-                                        <div class="segment-left">
-                                            <span class="segment-emoji">🔍</span>
-                                            <span class="segment-title">目標: 1000pt</span>
-                                        </div>
-                                        <span id="default-progress-text" class="segment-progress">45%</span>
-                                    </div>
-                                    <div class="segment-bar">
-                                        <div id="default-progress-fill" class="segment-fill" style="width: 45%; background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);"></div>
-                                    </div>
+                        <!-- 🎯 シンプルプログレス表示（復活防止対策） -->
+                        <div class="simple-progress-container">
+                            <div id="simple-progress-display">
+                                <div class="progress-info-row">
+                                    <span class="progress-current">💰 保有ポイント: <span id="current-points-simple">0</span>pt</span>
+                                    <span class="progress-target">🎯 次の目標: <span id="target-points-simple">1000</span>pt</span>
+                                </div>
+                                <div class="progress-remaining">
+                                    あと<span id="remaining-points-simple">1000</span>ptで次の目標達成！
+                                </div>
+                                <div class="simple-progress-bar">
+                                    <div class="simple-progress-fill" id="simple-progress-fill" style="width: 0%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -765,7 +762,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     const actualPoints = parseInt(pointsElement.textContent) || 0; // フォールバック削除
                     console.log('🎯 実際のポイント値:', actualPoints, 'textContent:', pointsElement.textContent);
                     if (actualPoints > 0) {
-                        updateProgressSegments(actualPoints);
+                        updateSimpleProgress(actualPoints);
                     } else {
                         console.warn('⚠️ ポイント値が0または無効:', pointsElement.textContent);
                     }
@@ -831,7 +828,73 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             return false; // 更新失敗
         }
 
-        // 段階的プログレスバー更新関数
+        // 🎯 シンプルプログレス更新関数（復活防止対策）
+        function updateSimpleProgress(points) {
+            console.log('🎯 シンプルプログレス更新開始:', { points, type: typeof points });
+
+            const goals = [
+                { points: 1000, emoji: '🎯' },
+                { points: 2000, emoji: '⚡' },
+                { points: 3000, emoji: '🏆' }
+            ];
+
+            // 安全な数値変換
+            const numericPoints = typeof points === 'number' ? points : parseInt(points) || 0;
+
+            // 要素取得
+            const currentPointsEl = document.getElementById('current-points-simple');
+            const targetPointsEl = document.getElementById('target-points-simple');
+            const remainingPointsEl = document.getElementById('remaining-points-simple');
+            const progressFillEl = document.getElementById('simple-progress-fill');
+
+            if (!currentPointsEl || !targetPointsEl || !remainingPointsEl || !progressFillEl) {
+                console.error('❌ シンプルプログレス要素が見つかりません');
+                return;
+            }
+
+            // 現在の目標を決定
+            let targetGoal = goals[0]; // デフォルト1000pt
+            let prevGoal = 0;
+
+            for (let i = 0; i < goals.length; i++) {
+                if (numericPoints < goals[i].points) {
+                    targetGoal = goals[i];
+                    prevGoal = i === 0 ? 0 : goals[i - 1].points;
+                    break;
+                } else if (i === goals.length - 1) {
+                    // 全目標達成
+                    targetGoal = goals[goals.length - 1];
+                    prevGoal = goals[goals.length - 1].points;
+                    break;
+                }
+            }
+
+            // 残りポイント計算
+            const remainingPoints = Math.max(0, targetGoal.points - numericPoints);
+
+            // 進行度計算
+            let progressPercent = 0;
+            if (numericPoints >= targetGoal.points) {
+                progressPercent = 100; // 全達成
+            } else {
+                progressPercent = ((numericPoints - prevGoal) / (targetGoal.points - prevGoal)) * 100;
+            }
+
+            // 表示更新
+            currentPointsEl.textContent = numericPoints;
+            targetPointsEl.textContent = targetGoal.points;
+            remainingPointsEl.textContent = remainingPoints;
+            progressFillEl.style.width = Math.max(1, Math.min(100, progressPercent)) + '%';
+
+            console.log('✅ シンプルプログレス更新完了:', {
+                現在: numericPoints,
+                目標: targetGoal.points,
+                残り: remainingPoints,
+                進行度: progressPercent + '%'
+            });
+        }
+
+        // 旧複雑関数（非使用）
         function updateProgressSegments(points) {
             // 安全な数値変換
             const numericPoints = typeof points === 'number' ? points : parseInt(points) || 0;
@@ -991,9 +1054,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // ポイント数をアニメーション付きで表示
             animatePointsDisplay(points);
 
-            // 🔥 実際のポイント値でプログレスバー更新
-            console.log('🔄 updateUserData内でプログレスバー更新:', points);
-            updateProgressSegments(points);
+            // 🔥 実際のポイント値でシンプルプログレス更新
+            console.log('🔄 updateUserData内でシンプルプログレス更新:', points);
+            updateSimpleProgress(points);
 
             // ランク判定
             let currentRankKey = 'ビギナー';
@@ -2438,9 +2501,60 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             margin-top: 15px;
         }
         
-        /* セグメント式プログレスバー */
-        .progress-segments {
+        /* 🎯 シンプルプログレス表示 */
+        .simple-progress-container {
             margin-bottom: 1rem;
+        }
+
+        .progress-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .progress-current {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .progress-target {
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .progress-remaining {
+            text-align: center;
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .simple-progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .simple-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+            border-radius: 6px;
+            transition: width 0.6s ease;
+            min-width: 2px;
+        }
+
+        /* セグメント式プログレスバー（旧システム・非表示） */
+        .progress-segments {
+            display: none;
         }
 
         .segment-item {
