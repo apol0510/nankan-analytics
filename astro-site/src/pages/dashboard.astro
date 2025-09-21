@@ -7,15 +7,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="dashboard-container">
         <!-- ヘッダー -->
         <div class="dashboard-header">
-            <h1>✨ マイページ</h1>
-            <p class="subtitle">NANKANアナリティクス - AI競馬予想システム</p>
+            <h1>🔑 会員ログイン</h1>
+            <p class="subtitle">ご登録済みの会員様専用 - NANKANアナリティクス</p>
         </div>
 
         <!-- ログインフォーム（初期表示） -->
         <div id="login-section" class="login-section">
             <div class="login-card">
-                <h2>🔐 簡単ログイン</h2>
-                <p>メールアドレスを入力してログインしてください</p>
+                <h2>🔐 会員様ログイン</h2>
+                <p>ご登録済みのメールアドレスでマイページにアクセスしてください</p>
                 <form id="magic-link-form">
                     <input 
                         type="email" 
@@ -30,6 +30,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </form>
                 <div id="success-message" class="success-message" style="display: none;"></div>
                 <div id="error-message" class="error-message" style="display: none;"></div>
+
+                <!-- 新規ユーザー向け案内 -->
+                <div class="new-user-notice">
+                    <p>🆕 <strong>初めてご利用の方</strong></p>
+                    <p>まずは<a href="/free-signup/" class="link">こちらから無料で始める</a>で会員登録をお済ませください。</p>
+                </div>
             </div>
         </div>
 
@@ -1334,6 +1340,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             border-radius: 0.5rem;
             margin-top: 1rem;
             text-align: center;
+        }
+
+        .new-user-notice {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .new-user-notice p {
+            margin: 0.25rem 0;
+        }
+
+        .new-user-notice .link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .new-user-notice .link:hover {
+            color: #60a5fa;
+            text-decoration: underline;
         }
 
         .success-message {
