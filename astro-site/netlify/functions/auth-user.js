@@ -180,22 +180,29 @@ exports.handler = async (event, context) => {
   }
 }
 
-// Brevoウェルカムメール送信関数
+// SendGridウェルカムメール送信関数
 async function sendWelcomeEmail(email) {
-  const brevoApiKey = process.env.BREVO_API_KEY;
-  
-  if (!brevoApiKey) {
-    throw new Error('BREVO_API_KEY not configured');
+  const sendGridApiKey = process.env.SENDGRID_API_KEY;
+
+  if (!sendGridApiKey) {
+    throw new Error('SENDGRID_API_KEY not configured');
   }
 
   const emailData = {
-    sender: {
+    personalizations: [
+      {
+        to: [{ email: email }],
+        subject: "🎉 無料会員登録完了！NANKANアナリティクスへようこそ"
+      }
+    ],
+    from: {
       name: "NANKANアナリティクス",
-      email: "noreply@keiba.link"
+      email: "nankan-analytics@keiba.link"
     },
-    to: [{ email: email }],
-    subject: "🎉 無料会員登録完了！NANKANアナリティクスへようこそ",
-    htmlContent: `
+    content: [
+      {
+        type: "text/html",
+        value: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
         <div style="text-align: center; margin-bottom: 30px;">
           <h1 style="color: #3b82f6 !important; font-size: 28px; margin-bottom: 10px;">🎉 登録完了！</h1>
@@ -243,22 +250,23 @@ async function sendWelcomeEmail(email) {
           <p style="color: #64748b !important; font-size: 14px; margin: 0;"><strong>NANKANアナリティクス</strong></p>
         </div>
       </div>
-    `
+        `
+      }
+    ]
   };
 
-  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'api-key': brevoApiKey
+      'Authorization': `Bearer ${sendGridApiKey}`,
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(emailData)
   });
 
   if (!response.ok) {
     const errorData = await response.text();
-    throw new Error(`Brevo API error: ${response.status} ${errorData}`);
+    throw new Error(`SendGrid API error: ${response.status} ${errorData}`);
   }
 
   return await response.json();
