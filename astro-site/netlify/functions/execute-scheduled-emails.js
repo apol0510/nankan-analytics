@@ -16,9 +16,9 @@ export default async function handler(request, context) {
   try {
     const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
     const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
-    if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || !BREVO_API_KEY) {
+    if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || !SENDGRID_API_KEY) {
       return new Response(
         JSON.stringify({ 
           error: 'Missing configuration',
@@ -82,37 +82,46 @@ export default async function handler(request, context) {
         // 受信者リストを解析
         const recipientList = Recipients.split(',').map(email => email.trim()).filter(Boolean);
 
-        // 🔐 プライバシー保護個別配信（Brevo BCC問題対応）
+        // 🔐 プライバシー保護個別配信（SendGrid API使用）
         let successCount = 0;
         let failedCount = 0;
-        
+
         for (const email of recipientList) {
           try {
-            const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+            const emailData = {
+              personalizations: [
+                {
+                  to: [{ email: email.trim() }], // 個別配信でプライバシー完全保護
+                  subject: Subject
+                }
+              ],
+              from: {
+                name: "NANKANアナリティクス",
+                email: "nankan-analytics@keiba.link"
+              },
+              content: [
+                {
+                  type: "text/html",
+                  value: Content
+                }
+              ]
+            };
+
+            const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
               method: 'POST',
               headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'api-key': BREVO_API_KEY
+                'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+                'Content-Type': 'application/json'
               },
-              body: JSON.stringify({
-                sender: {
-                  name: 'NANKANアナリティクス',
-                  email: 'info@keiba.link'
-                },
-                to: [{ email: email.trim() }], // 個別配信でプライバシー完全保護
-                subject: Subject,
-                htmlContent: Content,
-                tags: ['scheduled', 'newsletter', 'individual-delivery']
-              })
+              body: JSON.stringify(emailData)
             });
-            
-            if (brevoResponse.ok) {
+
+            if (sendGridResponse.ok) {
               successCount++;
               console.log(`✅ 個別送信成功: ${email}`);
             } else {
               failedCount++;
-              const errorData = await brevoResponse.text();
+              const errorData = await sendGridResponse.text();
               console.error(`❌ 個別送信失敗 ${email}:`, errorData);
             }
           } catch (individualError) {

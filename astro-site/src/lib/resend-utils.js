@@ -1,4 +1,4 @@
-// Resend統一メール送信システム
+// SendGrid統一メール送信システム
 // マジックリンク認証とお問い合わせフォーム用
 
 // メールアドレスバリデーション
@@ -7,60 +7,76 @@ function validateEmail(email) {
     return emailRegex.test(email?.trim() || '');
 }
 
-// 統一メール送信関数（Resend API）
+// 統一メール送信関数（SendGrid API）
 export async function sendEmail({ to, subject, html, replyTo, fromName = "NANKANアナリティクス" }) {
-    const apiKey = process.env.RESEND_API_KEY;
+    const apiKey = process.env.SENDGRID_API_KEY;
     const fromEmail = process.env.FROM_EMAIL || 'nankan-analytics@keiba.link';
-    
+
     if (!apiKey) {
-        console.error('RESEND_API_KEY環境変数が設定されていません');
-        return { success: false, error: 'RESEND_API_KEY環境変数が設定されていません' };
+        console.error('SENDGRID_API_KEY環境変数が設定されていません');
+        return { success: false, error: 'SENDGRID_API_KEY環境変数が設定されていません' };
     }
-    
+
     try {
-        const response = await fetch('https://api.resend.com/emails', {
+        const emailData = {
+            personalizations: [
+                {
+                    to: [{ email: to }],
+                    subject: subject
+                }
+            ],
+            from: {
+                name: fromName,
+                email: fromEmail
+            },
+            content: [
+                {
+                    type: "text/html",
+                    value: html
+                }
+            ]
+        };
+
+        // Reply-Toが指定されている場合は設定
+        if (replyTo) {
+            emailData.reply_to = {
+                email: replyTo || 'nankan.analytics@gmail.com'
+            };
+        }
+
+        const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                from: `${fromName} <${fromEmail}>`,
-                to: to,
-                subject: subject,
-                html: html,
-                reply_to: replyTo || 'nankan.analytics@gmail.com'
-            })
+            body: JSON.stringify(emailData)
         });
 
         if (!response.ok) {
             const error = await response.text();
-            console.error('Resend APIエラー:', error);
+            console.error('SendGrid APIエラー:', error);
             return { success: false, error: 'メール送信に失敗しました' };
         }
 
-        const result = await response.json();
-        console.log('✅ Resendメール送信成功:', result.id);
-        return { success: true, id: result.id };
-        
+        console.log('✅ SendGridメール送信成功');
+        return { success: true };
+
     } catch (error) {
-        console.error('Resend送信エラー:', error);
+        console.error('SendGrid送信エラー:', error);
         return { success: false, error: 'メール送信に失敗しました' };
     }
 }
 
-// お問い合わせメール送信（Brevo API使用）
+// お問い合わせメール送信（SendGrid API使用）
 export async function sendContactEmail({ name, email, subject, message }) {
     if (!validateEmail(email)) {
         return { success: false, error: '有効なメールアドレスを入力してください' };
     }
 
     try {
-        // Brevo APIでメール送信
-        const { sendTransactionalEmail } = await import('./brevo-utils.js');
-        
         // 管理者向けメール
-        const adminResult = await sendTransactionalEmail({
+        const adminResult = await sendEmail({
             to: 'nankan.analytics@gmail.com',
             subject: `【お問い合わせ】${subject}`,
             replyTo: email,
@@ -130,20 +146,20 @@ export async function sendContactEmail({ name, email, subject, message }) {
                     </div>
                     <div class="content">
                         <p>${name || 'お客'}様</p>
-                        
+
                         <p>この度はNANKANアナリティクスへお問い合わせいただき、誠にありがとうございます。</p>
                         <p>以下の内容でお問い合わせを受け付けました。</p>
-                        
+
                         <div class="message-copy">
                             <h3>📝 お問い合わせ内容</h3>
                             <p><strong>件名:</strong> ${subject}</p>
                             <hr style="border: none; border-top: 1px solid #e5e7eb;">
                             <pre>${message}</pre>
                         </div>
-                        
+
                         <p>担当者より<strong>2営業日以内</strong>にご返信させていただきます。</p>
                         <p>しばらくお待ちくださいませ。</p>
-                        
+
                         <center>
                             <a href="https://nankan-analytics.keiba.link" class="button">
                                 🏇 サイトトップへ
@@ -164,7 +180,7 @@ export async function sendContactEmail({ name, email, subject, message }) {
             adminResult,
             userResult
         };
-        
+
     } catch (error) {
         console.error('お問い合わせメール送信エラー:', error);
         return {
@@ -205,7 +221,7 @@ export async function sendWelcomeEmail(userEmail) {
                 <div class="content">
                     <h2>ようこそ、${userEmail}さん！</h2>
                     <p>NANKANアナリティクスにご登録いただき、ありがとうございます。</p>
-                    
+
                     <div class="features">
                         <h3>🎁 ご利用可能なサービス</h3>
                         <div class="feature-item">📊 AIによる競馬予想</div>
@@ -213,13 +229,13 @@ export async function sendWelcomeEmail(userEmail) {
                         <div class="feature-item">🏇 無料予想の閲覧</div>
                         <div class="feature-item">💎 プレミアム機能へのアップグレード</div>
                     </div>
-                    
+
                     <center style="margin: 30px 0;">
                         <a href="https://nankan-analytics.keiba.link/dashboard" class="button">
                             🏇 ダッシュボードを開く
                         </a>
                     </center>
-                    
+
                     <p>ご不明な点がございましたら、お気軽にお問い合わせください。</p>
                 </div>
             </body>

@@ -1,4 +1,4 @@
-// Brevoメルマガ配信Function
+// SendGridメルマガ配信Function
 // 南関競馬の予想結果や攻略情報を配信
 
 export default async function handler(request, context) {
@@ -12,16 +12,16 @@ export default async function handler(request, context) {
 
   // OPTIONSリクエスト対応
   if (request.method === 'OPTIONS') {
-    return new Response('', { 
-      status: 200, 
-      headers 
+    return new Response('', {
+      status: 200,
+      headers
     });
   }
 
   // POSTメソッドのみ受付
   if (request.method !== 'POST') {
     return new Response(
-      JSON.stringify({ error: `Method ${request.method} not allowed` }), 
+      JSON.stringify({ error: `Method ${request.method} not allowed` }),
       {
         status: 405,
         headers
@@ -32,7 +32,7 @@ export default async function handler(request, context) {
   try {
     const requestBody = await request.text();
     console.log('Received request body:', requestBody);
-    
+
     const { subject, htmlContent, scheduledAt, targetPlan = 'all', retryEmails } = JSON.parse(requestBody);
 
     // 🔍 デバッグログ追加
@@ -59,7 +59,7 @@ export default async function handler(request, context) {
     // 予約配信の場合は自作スケジューラーを使用
     if (isScheduledRequest) {
       console.log('📅 予約配信リクエスト - 自作スケジューラーに転送');
-      
+
       // 配信リスト取得
       const recipients = await getRecipientsList(targetPlan);
       if (recipients.length === 0) {
@@ -121,7 +121,7 @@ export default async function handler(request, context) {
     } else {
       recipients = await getRecipientsList(targetPlan);
     }
-    
+
     if (recipients.length === 0) {
       return new Response(
         JSON.stringify({ error: 'No recipients found' }),
@@ -132,8 +132,8 @@ export default async function handler(request, context) {
       );
     }
 
-    // Brevo APIでメール送信（即座）
-    const result = await sendNewsletterViaBrevo({
+    // SendGrid APIでメール送信（即座）
+    const result = await sendNewsletterViaSendGrid({
       recipients,
       subject,
       htmlContent
@@ -142,7 +142,7 @@ export default async function handler(request, context) {
     // 即時配信もAirtableに履歴を保存
     const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
     const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-    
+
     if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
       try {
         const now = new Date();
@@ -163,9 +163,9 @@ export default async function handler(request, context) {
             Notes: `即時配信: 成功${result.totalSent}件, 失敗${result.totalFailed}件`
           }
         };
-        
+
         console.log('📝 即時配信履歴をAirtableに保存中...');
-        
+
         const airtableResponse = await fetch(
           `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/ScheduledEmails`,
           {
@@ -177,7 +177,7 @@ export default async function handler(request, context) {
             body: JSON.stringify(historyData)
           }
         );
-        
+
         if (airtableResponse.ok) {
           console.log('✅ 即時配信履歴をAirtableに保存しました');
         } else {
@@ -207,11 +207,11 @@ export default async function handler(request, context) {
 
   } catch (error) {
     console.error('Newsletter send error:', error);
-    
+
     return new Response(
-      JSON.stringify({ 
-        error: error.message || 'Unknown error', 
-        timestamp: new Date().toISOString() 
+      JSON.stringify({
+        error: error.message || 'Unknown error',
+        timestamp: new Date().toISOString()
       }),
       {
         status: 500,
@@ -224,18 +224,18 @@ export default async function handler(request, context) {
 // Airtableから受信者リストを取得
 async function getRecipientsList(targetPlan) {
   console.log('配信対象プラン:', targetPlan);
-  
+
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-  
+
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
     console.error('Airtable設定が見つかりません');
     return [];
   }
-  
+
   try {
     let filterFormula = '';
-    
+
     // プランに基づくフィルタリング
     if (targetPlan === 'free') {
       filterFormula = "{プラン} = 'Free'";
@@ -249,29 +249,29 @@ async function getRecipientsList(targetPlan) {
       // 全員に配信
       filterFormula = '';
     }
-    
+
     const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers`;
     const queryParams = filterFormula ? `?filterByFormula=${encodeURIComponent(filterFormula)}` : '';
-    
+
     console.log('🔍 Airtable検索:', {
       url: url + queryParams,
       filterFormula,
       targetPlan: '指定されたプラン'
     });
-    
+
     const response = await fetch(url + queryParams, {
       headers: {
         'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
         'Content-Type': 'application/json'
       }
     });
-    
+
     if (!response.ok) {
       throw new Error(`Airtable API error: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    
+
     console.log('📋 Airtable生データ:', {
       recordCount: data.records?.length || 0,
       records: data.records?.slice(0, 3).map(r => ({
@@ -279,90 +279,97 @@ async function getRecipientsList(targetPlan) {
         plan: r.fields['プラン'] || r.fields.Plan
       })) || []
     });
-    
+
     const recipients = data.records
       .map(record => record.fields.Email)
       .filter(email => email && email.includes('@'));
-    
+
     console.log(`📧 取得した受信者数: ${recipients.length}`, recipients);
-    
+
     // バウンス管理: 無効なメールアドレスをフィルタリング
     const validRecipients = await filterValidEmails(recipients);
     console.log(`✅ 有効な受信者数: ${validRecipients.length} (除外: ${recipients.length - validRecipients.length}件)`);
-    
+
     return validRecipients;
-    
+
   } catch (error) {
     console.error('受信者リスト取得エラー:', error);
     return [];
   }
 }
 
-// Brevo APIでメール送信
-async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
-  const BREVO_API_KEY = process.env.BREVO_API_KEY;
-  
-  if (!BREVO_API_KEY) {
-    throw new Error('Brevo API key not configured');
+// SendGrid APIでメール送信
+async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
+  const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+
+  if (!SENDGRID_API_KEY) {
+    throw new Error('SendGrid API key not configured');
   }
-  
-  const batchSize = 100; // Brevoの推奨バッチサイズ
+
   const results = {
     totalSent: 0,
     totalFailed: 0,
     failedEmails: []
   };
-  
+
   // 🔐 プライバシー保護個別配信システム（BCC問題対応）
   for (let i = 0; i < recipients.length; i++) {
     const recipient = recipients[i];
-    
+
     try {
-      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      const emailData = {
+        personalizations: [
+          {
+            to: [{ email: recipient }], // 個別配信でプライバシー完全保護
+            subject: subject
+          }
+        ],
+        from: {
+          name: "NANKANアナリティクス",
+          email: "nankan-analytics@keiba.link"
+        },
+        content: [
+          {
+            type: "text/html",
+            value: htmlContent
+          }
+        ]
+      };
+
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'api-key': BREVO_API_KEY
+          'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          sender: {
-            name: 'NANKANアナリティクス',
-            email: 'info@keiba.link'
-          },
-          to: [{ email: recipient }], // 個別配信でプライバシー完全保護
-          subject,
-          htmlContent,
-          tags: ['newsletter', 'nankan', 'individual-delivery']
-        })
+        body: JSON.stringify(emailData)
       });
-      
+
       if (response.ok) {
-        const responseData = await response.json();
         results.totalSent += 1;
-        console.log(`✅ 個別送信成功: ${recipient}`, responseData);
+        console.log(`✅ 個別送信成功: ${recipient}`);
       } else {
         const errorData = await response.text();
         console.error(`❌ 個別送信失敗 ${recipient}:`, errorData);
-        
-        // 🔍 Brevoエラー詳細解析でバウンス検知
-        const bounceInfo = await analyzeBrevoBounce(recipient, response.status, errorData);
+
+        // 🔍 SendGridエラー詳細解析でバウンス検知
+        const bounceInfo = await analyzeSendGridBounce(recipient, response.status, errorData);
         if (bounceInfo.isBounce) {
           await updateBounceRecord(recipient, bounceInfo);
           console.log(`🚫 バウンス検知・記録更新: ${recipient} (${bounceInfo.type})`);
         }
-        
+
         results.totalFailed += 1;
         results.failedEmails.push(recipient);
       }
-      
+
     } catch (error) {
       console.error(`個別送信エラー ${recipient}:`, error);
       results.totalFailed += 1;
       results.failedEmails.push(recipient);
     }
   }
-  
+
   return results;
 }
 
@@ -370,7 +377,7 @@ async function sendNewsletterViaBrevo({ recipients, subject, htmlContent }) {
 async function filterValidEmails(emails) {
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-  
+
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
     console.log('⚠️ バウンス管理: 環境変数未設定のため全メール有効として処理');
     return emails;
@@ -379,7 +386,7 @@ async function filterValidEmails(emails) {
   const validEmails = [];
   const invalidEmails = [];
   const quarantinedEmails = []; // 検疫中のメール
-  
+
   for (const email of emails) {
     try {
       // 基本的なフォーマットチェック
@@ -388,20 +395,20 @@ async function filterValidEmails(emails) {
         invalidEmails.push({ email, reason: 'invalid-format' });
         continue;
       }
-      
+
       // バウンス履歴チェック
       const bounceStatus = await checkBounceHistory(email);
-      
+
       if (bounceStatus.isBlacklisted) {
-        invalidEmails.push({ 
-          email, 
+        invalidEmails.push({
+          email,
           reason: bounceStatus.reason,
           bounceCount: bounceStatus.bounceCount,
           lastBounce: bounceStatus.lastBounceDate
         });
         continue;
       }
-      
+
       if (bounceStatus.isQuarantined) {
         quarantinedEmails.push({
           email,
@@ -411,16 +418,16 @@ async function filterValidEmails(emails) {
         });
         // 検疫中でも配信は継続（最後のチャンス）
       }
-      
+
       validEmails.push(email);
-      
+
     } catch (error) {
       console.error(`バウンス管理エラー ${email}:`, error);
       // エラー時は安全のため有効として扱う
       validEmails.push(email);
     }
   }
-  
+
   // 詳細ログ出力
   if (invalidEmails.length > 0) {
     console.log('🚫 ブラックリスト除外:', invalidEmails);
@@ -428,9 +435,9 @@ async function filterValidEmails(emails) {
   if (quarantinedEmails.length > 0) {
     console.log('⚠️ 検疫中（最後のチャンス）:', quarantinedEmails);
   }
-  
+
   console.log(`📊 バウンス管理結果: 有効${validEmails.length}件, 除外${invalidEmails.length}件, 検疫${quarantinedEmails.length}件`);
-  
+
   return validEmails;
 }
 
@@ -438,7 +445,7 @@ async function filterValidEmails(emails) {
 async function checkBounceHistory(email) {
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-  
+
   try {
     const response = await fetch(
       `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist?filterByFormula=SEARCH('${email}',{Email})`,
@@ -449,23 +456,23 @@ async function checkBounceHistory(email) {
         }
       }
     );
-    
+
     if (!response.ok) {
       return { isBlacklisted: false, isQuarantined: false };
     }
-    
+
     const data = await response.json();
-    
+
     if (data.records.length === 0) {
       return { isBlacklisted: false, isQuarantined: false };
     }
-    
+
     const record = data.records[0].fields;
     const bounceCount = record.BounceCount || 0;
     const bounceType = record.BounceType || 'unknown';
     const status = record.Status || 'UNKNOWN';
     const lastBounceDate = record.LastBounceDate;
-    
+
     // 永続的エラー（Hard Bounce）= 即座にブラックリスト
     if (bounceType === 'hard' || status === 'HARD_BOUNCE' || status === 'COMPLAINT') {
       return {
@@ -476,7 +483,7 @@ async function checkBounceHistory(email) {
         lastBounceDate
       };
     }
-    
+
     // 一時的エラー（Soft Bounce）= 5回で昇格
     if (bounceType === 'soft' && bounceCount >= 5) {
       // 5回に達したので永続的エラーに昇格
@@ -489,7 +496,7 @@ async function checkBounceHistory(email) {
         lastBounceDate
       };
     }
-    
+
     // 一時的エラー（Soft Bounce）= 検疫中（3-4回）
     if (bounceType === 'soft' && bounceCount >= 3) {
       return {
@@ -500,10 +507,10 @@ async function checkBounceHistory(email) {
         lastBounceDate
       };
     }
-    
+
     // その他は有効
     return { isBlacklisted: false, isQuarantined: false };
-    
+
   } catch (error) {
     console.error(`バウンス履歴チェックエラー ${email}:`, error);
     return { isBlacklisted: false, isQuarantined: false };
@@ -514,10 +521,10 @@ async function checkBounceHistory(email) {
 async function upgradeToHardBounce(email, currentRecord) {
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-  
+
   try {
     const recordId = currentRecord.id || currentRecord.recordId;
-    
+
     await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist/${recordId}`, {
       method: 'PATCH',
       headers: {
@@ -533,16 +540,16 @@ async function upgradeToHardBounce(email, currentRecord) {
         }
       })
     });
-    
+
     console.log(`🔄 ${email}: Soft→Hard Bounce昇格完了`);
-    
+
   } catch (error) {
     console.error(`Bounce昇格エラー ${email}:`, error);
   }
 }
 
-// 🔍 Brevoエラー詳細解析でバウンス種別判定
-async function analyzeBrevoBounce(email, statusCode, errorData) {
+// 🔍 SendGridエラー詳細解析でバウンス種別判定
+async function analyzeSendGridBounce(email, statusCode, errorData) {
   const bounceInfo = {
     isBounce: false,
     type: 'unknown',
@@ -550,7 +557,7 @@ async function analyzeBrevoBounce(email, statusCode, errorData) {
   };
 
   try {
-    // Brevo APIエラーレスポンス解析
+    // SendGrid APIエラーレスポンス解析
     let errorObj;
     try {
       errorObj = JSON.parse(errorData);
@@ -559,7 +566,7 @@ async function analyzeBrevoBounce(email, statusCode, errorData) {
     }
 
     const errorMessage = (errorObj.message || errorData || '').toLowerCase();
-    
+
     // Hard Bounce判定条件
     const hardBounceIndicators = [
       'invalid',
@@ -568,9 +575,10 @@ async function analyzeBrevoBounce(email, statusCode, errorData) {
       'mailbox not found',
       'no such user',
       'user unknown',
-      'recipient address rejected'
+      'recipient address rejected',
+      'does not match a verified sender identity'
     ];
-    
+
     // Soft Bounce判定条件
     const softBounceIndicators = [
       'mailbox full',
@@ -647,7 +655,7 @@ async function updateBounceRecord(email, bounceInfo) {
       const record = existingData.records[0];
       const currentCount = record.fields.BounceCount || 0;
       const newCount = currentCount + 1;
-      
+
       // Soft Bounceが5回に達したらHard Bounceに昇格
       const finalType = bounceInfo.type === 'soft' && newCount >= 5 ? 'hard' : bounceInfo.type;
       const finalStatus = finalType === 'hard' ? 'HARD_BOUNCE' : 'SOFT_BOUNCE';
@@ -687,7 +695,7 @@ async function updateBounceRecord(email, bounceInfo) {
             Status: bounceInfo.type === 'hard' ? 'HARD_BOUNCE' : 'SOFT_BOUNCE',
             LastBounceDate: now,
             AddedAt: now,
-            Source: 'Brevo API Direct',
+            Source: 'SendGrid API Direct',
             Notes: `初回バウンス: ${bounceInfo.reason}`
           }
         })

@@ -107,8 +107,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         </div>
                         
                         <div class="email-actions">
-                            <button class="action-btn warning" onclick="manageBrevoLists()">
-                                📋 リスト管理
+                            <button class="action-btn warning" onclick="manageSendGridLists()">
+                                📋 SendGridリスト管理
                             </button>
                         </div>
                     </div>
@@ -625,7 +625,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             document.getElementById('db-status').textContent = 'Airtable接続';
             document.getElementById('db-status').className = 'status-badge ok';
             document.getElementById('payment-status').textContent = 'Zapier連携';
-            document.getElementById('email-status').textContent = 'Brevo正常';
+            document.getElementById('email-status').textContent = 'SendGrid稼働中';
         } catch (error) {
             console.error('System status error:', error);
         }
@@ -659,22 +659,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     window.exportUsers = () => alert('ユーザーデータエクスポート機能は準備中です');
     window.viewRecentUsers = () => alert('最近の登録者表示機能は準備中です');
     
-    // Brevo顧客リスト管理
-    window.manageBrevoLists = async () => {
+    // SendGrid顧客リスト管理
+    window.manageSendGridLists = async () => {
         try {
-            // リスト作成
-            const response = await fetch('/.netlify/functions/brevo-manage-lists?action=create', {
-                method: 'GET'
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok) {
-                const summary = result.results.map(r => `${r.name}: ${r.status}`).join('\\n');
-                alert(`📋 NANKANリスト管理完了:\\n\\n${summary}`);
-            } else {
-                alert(`❌ エラー: ${result.error}`);
-            }
+            alert('📋 SendGrid統合完了\\n\\n現在はAirtableで顧客管理を行っています。\\n\\nSendGridは直接メール配信のみ使用しており、\\nリスト管理はAirtableで一元化されています。');
         } catch (error) {
             console.error('リスト管理エラー:', error);
             alert(`❌ リスト管理失敗: ${error.message}`);
@@ -687,18 +675,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         logDiv.innerHTML = '<div class="loading-small">配信履歴を読み込み中...</div>';
         
         try {
-            const response = await fetch('/.netlify/functions/brevo-manage-lists?action=list');
-            const result = await response.json();
-            
-            if (response.ok) {
-                const listHtml = result.nankanLists.map(list => 
-                    `<div class="log-entry">📋 ${list.name}: ${list.totalSubscribers || 0}名</div>`
-                ).join('');
-                
-                logDiv.innerHTML = listHtml || '<div class="log-entry">リストがありません</div>';
-            } else {
-                logDiv.innerHTML = '<div class="log-entry error">履歴読み込み失敗</div>';
-            }
+            // SendGrid統合後はAirtable Customersからユーザー統計を取得
+            logDiv.innerHTML = `
+                <div class="log-entry">📧 SendGrid統合完了</div>
+                <div class="log-entry">🎯 メール配信: Airtable + SendGrid API直接送信</div>
+                <div class="log-entry">📊 詳細統計は個別Functionで確認可能</div>
+            `;
         } catch (error) {
             console.error('メール履歴読み込みエラー:', error);
             logDiv.innerHTML = '<div class="log-entry error">読み込みエラー</div>';

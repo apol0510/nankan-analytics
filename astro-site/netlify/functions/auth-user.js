@@ -1,4 +1,4 @@
-// ユーザー認証関数（メールアドレスでシンプル認証）+ Brevoメール送信
+// ユーザー認証関数（メールアドレスでシンプル認証）+ SendGridメール送信
 const Airtable = require('airtable');
 
 exports.handler = async (event, context) => {
