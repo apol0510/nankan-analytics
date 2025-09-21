@@ -45,6 +45,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
         </div>
 
+        <!-- ログイン情報カード -->
+        <div id="login-info-section" class="login-info-section" style="display: none;">
+            <div class="login-info-card">
+                <div class="login-info-icon">🎉</div>
+                <div class="login-info-content">
+                    <h3 id="login-info-title">ログイン成功</h3>
+                    <div id="login-info-message" class="login-info-message"></div>
+                    <div id="login-info-points" class="login-info-points" style="display: none;">
+                        <span class="points-icon">🎆</span>
+                        <span id="login-points-text">ログインポイント獲得！</span>
+                        <span id="login-points-value" class="points-value">+0pt</span>
+                    </div>
+                </div>
+                <button id="close-login-info" class="close-btn">✕</button>
+            </div>
+        </div>
+
         <!-- 登録完了後のメッセージ -->
         <div id="completed-section" style="display: none;" class="completed-section">
             <div class="completed-card">
@@ -254,6 +271,85 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         border-color: #3b82f6;
     }
 
+    .login-info-section {
+        margin-bottom: 2rem;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .login-info-card {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .login-info-icon {
+        font-size: 2rem;
+    }
+
+    .login-info-content {
+        flex: 1;
+    }
+
+    .login-info-content h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+    }
+
+    .login-info-message {
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+
+    .login-info-points {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .points-icon {
+        font-size: 1.2rem;
+    }
+
+    .login-info-points .points-value {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.75rem;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+
+    .close-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
     @media (max-width: 640px) {
         .signup-header h1 {
             font-size: 2rem;
@@ -317,11 +413,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 localStorage.setItem('userPlan', 'free');
                 
                 showSuccess('無料会員登録が完了しました！（開発モード）');
-                
+
+                // ログイン情報カードを表示（開発モード）
+                const mockData = {
+                    isNewUser: true,
+                    user: userData,
+                    message: '無料会員登録が完了しました！初回ログインポイント1pt付与'
+                };
+                mockData.user.pointsAdded = 1;
+                showLoginInfo(mockData.isNewUser, mockData.user, mockData.message);
+
                 setTimeout(() => {
                     document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('login-info-section').style.display = 'none';
                     document.getElementById('completed-section').style.display = 'block';
-                }, 2000);
+                }, 3000);
                 
                 return;
             }
@@ -358,12 +464,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 localStorage.setItem('userPlan', userData.plan);
                 
                 showSuccess(`無料会員登録が完了しました！${data.user.pointsAdded > 0 ? ' ログインポイント' + data.user.pointsAdded + 'pt獲得！' : ''}`);
-                
-                // 2秒後に完了画面を表示
+
+                // ログイン情報カードを表示
+                showLoginInfo(data.isNewUser, data.user, data.message);
+
+                // 3秒後に完了画面を表示
                 setTimeout(() => {
                     document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('login-info-section').style.display = 'none';
                     document.getElementById('completed-section').style.display = 'block';
-                }, 2000);
+                }, 3000);
                 
             } else {
                 throw new Error(data.message || 'サーバーエラー');
@@ -396,5 +506,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    }
+
+    function showLoginInfo(isNewUser, user, message) {
+        const loginInfoSection = document.getElementById('login-info-section');
+        const loginInfoTitle = document.getElementById('login-info-title');
+        const loginInfoMessage = document.getElementById('login-info-message');
+        const loginInfoPoints = document.getElementById('login-info-points');
+        const loginPointsValue = document.getElementById('login-points-value');
+
+        // タイトル設定
+        loginInfoTitle.textContent = isNewUser ? '登録完了' : 'ログイン成功';
+
+        // メッセージ設定
+        const planName = user.plan === 'free' ? '無料会員' :
+                        user.plan === 'standard' ? 'スタンダード会員' :
+                        user.plan === 'premium' ? 'プレミアム会員' : '会員';
+
+        loginInfoMessage.textContent = isNewUser ?
+            `${planName}として登録完了！` :
+            `${planName}でログイン成功！`;
+
+        // ポイント情報設定
+        if (user.pointsAdded && user.pointsAdded > 0) {
+            loginInfoPoints.style.display = 'flex';
+            loginPointsValue.textContent = `+${user.pointsAdded}pt`;
+        }
+
+        // 表示
+        loginInfoSection.style.display = 'block';
+
+        // 閉じるボタンの処理
+        document.getElementById('close-login-info').addEventListener('click', function() {
+            loginInfoSection.style.display = 'none';
+        });
     }
 </script>

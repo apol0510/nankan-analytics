@@ -783,20 +783,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // 安全な数値変換
             const numericPoints = typeof points === 'number' ? points : parseInt(points) || 0;
 
-            if (defaultProgressFill && defaultProgressText && currentSegmentIndex === 0) {
-                // 1000pt目標の場合、既存要素を更新
-                const progress = (numericPoints / 1000) * 100;
-                console.log('🔍 詳細計算:', {
+            if (defaultProgressFill && defaultProgressText && currentSegmentIndex >= 0 && goals[currentSegmentIndex]) {
+                // 動的目標対応: 現在のセグメントの目標値を使用
+                const currentGoal = goals[currentSegmentIndex];
+                const progress = (numericPoints / currentGoal.points) * 100;
+                console.log('🔍 動的目標計算:', {
                     rawPoints: points,
                     numericPoints: numericPoints,
                     pointsType: typeof points,
-                    goalPoints: 1000,
-                    calculation: `${numericPoints}/1000*100`,
+                    currentSegmentIndex: currentSegmentIndex,
+                    goalPoints: currentGoal.points,
+                    calculation: `${numericPoints}/${currentGoal.points}*100`,
                     progress,
                     roundedProgress: Math.round(progress)
                 });
-                defaultProgressFill.style.width = Math.max(1, progress) + '%';
+                // プログレスバー更新（100%超過時は100%に制限）
+                defaultProgressFill.style.width = Math.max(1, Math.min(100, progress)) + '%';
                 defaultProgressText.textContent = Math.round(progress) + '%';
+
+                // 🆕 目標テキストの動的更新
+                const defaultSegmentTitle = document.querySelector('#default-segment .segment-title');
+                if (defaultSegmentTitle) {
+                    defaultSegmentTitle.textContent = `目標: ${currentGoal.points}pt`;
+                    console.log('🎯 目標テキスト更新:', `目標: ${currentGoal.points}pt`);
+                }
+
                 console.log('🔄 既存セグメント更新成功:', Math.round(progress) + '%');
                 console.log('🎯 最終表示値:', defaultProgressText.textContent, 'バー幅:', defaultProgressFill.style.width);
                 return true; // 更新成功
