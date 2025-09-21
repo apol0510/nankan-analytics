@@ -762,14 +762,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     const actualPoints = parseInt(pointsElement.textContent) || 0; // フォールバック削除
                     console.log('🎯 実際のポイント値:', actualPoints, 'textContent:', pointsElement.textContent);
                     if (actualPoints > 0) {
+                        console.log('🔄 initializeProgressBar からシンプルプログレス更新:', actualPoints);
                         updateSimpleProgress(actualPoints);
                     } else {
                         console.warn('⚠️ ポイント値が0または無効:', pointsElement.textContent);
+                        // ⚠️ デバッグ: 0の場合でもsipmle progressを初期化
+                        console.log('🔧 デバッグ: 0ptでもシンプルプログレス初期化');
+                        updateSimpleProgress(0);
                     }
                 } else {
                     console.error('❌ current-points要素が見つかりません');
                 }
             }, 1000); // 遅延を1000msに延長してDOM更新を待つ
+
+            // 🔧 定期的なシンク確認: メインポイント表示と同期
+            setInterval(() => {
+                const pointsElement = document.getElementById('current-points');
+                const simplePointsElement = document.getElementById('current-points-simple');
+                if (pointsElement && simplePointsElement) {
+                    const mainPoints = parseInt(pointsElement.textContent) || 0;
+                    const simplePoints = parseInt(simplePointsElement.textContent) || 0;
+
+                    if (mainPoints !== simplePoints && mainPoints > 0) {
+                        console.log(`🔧 シンク修正: メイン${mainPoints}pt → シンプル${simplePoints}pt を同期`);
+                        updateSimpleProgress(mainPoints);
+                    }
+                }
+            }, 2000); // 2秒ごとに同期チェック
         }
 
         // 🛡️ 復活防止対策: 既存セグメント更新関数
@@ -1082,11 +1101,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const timer = setInterval(() => {
                 step++;
                 const currentValue = currentPoints + (increment * step);
-                pointsElement.textContent = Math.round(currentValue);
+                const roundedValue = Math.round(currentValue);
+                pointsElement.textContent = roundedValue;
+                // 🔧 アニメーション中もシンプルプログレス更新
+                updateSimpleProgress(roundedValue);
                 
                 if (step >= steps) {
                     clearInterval(timer);
                     pointsElement.textContent = targetPoints;
+                    // 🔧 アニメーション完了時にシンプルプログレス同期
+                    console.log('🔧 アニメーション完了: シンプルプログレス更新', targetPoints);
+                    updateSimpleProgress(targetPoints);
                     // 完了時にキラキラ演出
                     pointsElement.classList.add('points-sparkle');
                     setTimeout(() => {
