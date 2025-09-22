@@ -764,10 +764,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 }
 
                 // 候補馬データ行の解析（番号 + 名前 + スコア形式）
-                if (line.match(/^[0-9]+\s+[^\s]+\s+\([0-9]+pt\)/) && raceData[currentRace]) {
-                    const candidateMatch = line.match(/^([0-9]+)\s+([^\s]+)\s+\(([0-9]+)pt\)/);
+                // 実際のデータ形式に合わせた正規表現：「4 ペプチドシナノ(77pt)」形式
+                if (line.match(/^[0-9]+\s+[^()]+\([0-9]+pt\)/) && raceData[currentRace]) {
+                    console.log(`🔍 候補馬データ行検出: "${line}"`);
+                    const candidateMatch = line.match(/^([0-9]+)\s+([^()]+)\(([0-9]+)pt\)/);
                     if (candidateMatch) {
                         const [, number, name, score] = candidateMatch;
+                        console.log(`📊 候補馬解析成功: 番号=${number}, 名前=${name.trim()}, スコア=${score}`);
 
                         // 最後に見たヘッダーに基づいて種別を決定（簡易版）
                         let mark = '△';
