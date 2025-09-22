@@ -98,6 +98,9 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 - `src/data/raceResults.json` - 古いデータファイル（削除済み・復活禁止）
 - `admin/betting-direct.astro` - 古い管理画面（削除済み）
 - `admin/betting-direct-simple.astro` - 使用されていない管理画面（削除済み）
+- `admin/race-converter-single.astro` - 未使用管理画面（2025-09-22削除）
+- `admin/newsletter.astro` - 古いメルマガ管理画面（2025-09-22削除）
+- `admin/predictions.astro` - 古い予想管理画面（2025-09-22削除）
 
 #### **❌ 削除済みUI要素（復活禁止）**
 - raceResults.jsonの直接使用（古いデータソース）
