@@ -287,15 +287,44 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 }
             }
 
-            // 日付フォーマット変換（M/D → YYYY-MM-DD）
+            // 🛡️ 日付フォーマット変換の根本強化（M/D → YYYY-MM-DD）
             let formattedDate = new Date().toISOString().split('T')[0]; // フォールバック
             if (detectedDate) {
+                console.log(`🔍 原始日付検出: "${detectedDate}"`);
                 const currentYear = new Date().getFullYear();
-                const [month, day] = detectedDate.split('/').map(n => parseInt(n));
-                if (month && day) {
+                const [monthStr, dayStr] = detectedDate.split('/');
+                const month = parseInt(monthStr);
+                const day = parseInt(dayStr);
+
+                // 🚨 復活防止対策：月・日の値を明示的に検証
+                if (month && day && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
                     formattedDate = `${currentYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    console.log(`📅 日付変換: ${detectedDate} → ${formattedDate}`);
+
+                    // 🛡️ 【根本防止対策】前日エラー検出システム
+                    const today = new Date();
+                    const convertedDate = new Date(formattedDate);
+                    const yesterdayCheck = new Date(today);
+                    yesterdayCheck.setDate(today.getDate() - 1);
+
+                    if (convertedDate.toDateString() === yesterdayCheck.toDateString()) {
+                        console.warn(`⚠️ 前日日付検出: "${formattedDate}" は昨日の日付です`);
+                        console.log(`📅 今日の日付: ${today.toDateString()}`);
+                        console.log(`📅 変換された日付: ${convertedDate.toDateString()}`);
+
+                        const shouldContinue = confirm(`⚠️ 日付エラー検出\n\n変換された日付: ${formattedDate}\n今日の日付: ${today.toISOString().split('T')[0]}\n\n昨日の日付になっていますが、このまま続行しますか？`);
+                        if (!shouldContinue) {
+                            throw new Error('ユーザーによりキャンセルされました');
+                        }
+                    }
+
+                    console.log(`✅ 日付変換成功: "${detectedDate}" → "${formattedDate}"`);
+                } else {
+                    console.error(`❌ 無効な日付形式: "${detectedDate}" (月=${month}, 日=${day})`);
+                    alert(`⚠️ 日付の解析に失敗しました: "${detectedDate}"\n正しい形式（例：9/23）で入力してください。`);
+                    throw new Error(`無効な日付形式: ${detectedDate}`);
                 }
+            } else {
+                console.warn('⚠️ 日付が検出されませんでした。フォールバック日付を使用します。');
             }
 
             // 競馬場が検出できなかった場合のエラー処理
@@ -502,21 +531,37 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     console.log(`📅 全体日付検出成功: "${line}" → ${globalDate}`);
                 }
 
-                // M/D 形式の日付も検索（「浦和9/23」形式に対応）
+                // 🛡️ M/D 形式の日付検索強化（「浦和9/23」形式対応・復活防止対策）
                 const trackDateMatch = line.match(/^(大井|川崎|船橋|浦和)(\d{1,2}\/\d{1,2})(?:\s|$)/);
                 if (trackDateMatch) {
                     globalTrack = `${trackDateMatch[1]}競馬`;
-                    if (!globalDate) {
-                        globalDate = trackDateMatch[2];
+                    const dateString = trackDateMatch[2]; // "9/23" 形式
+
+                    // 🚨 復活防止：日付の妥当性検証
+                    const [monthCheck, dayCheck] = dateString.split('/').map(n => parseInt(n));
+                    if (monthCheck >= 1 && monthCheck <= 12 && dayCheck >= 1 && dayCheck <= 31) {
+                        if (!globalDate) {
+                            globalDate = dateString;
+                        }
+                        console.log(`✅ 競馬場・日付検出成功: "${line}" → 競馬場=${globalTrack}, 日付=${globalDate} (検証済み)`);
+                    } else {
+                        console.error(`❌ 無効な日付形式をスキップ: "${line}" → 日付="${dateString}"`);
                     }
-                    console.log(`📅 競馬場・日付検出成功: "${line}" → 競馬場=${globalTrack}, 日付=${globalDate}`);
                 }
 
-                // 単独のM/D形式日付
+                // 🛡️ 単独のM/D形式日付（復活防止対策・検証強化）
                 const simpleDateMatch = line.match(/^(\d{1,2}\/\d{1,2})(?:\s|$)/);
                 if (simpleDateMatch && !globalDate) {
-                    globalDate = simpleDateMatch[1];
-                    console.log(`📅 全体日付検出成功(M/D形式): "${line}" → ${globalDate}`);
+                    const dateCandidate = simpleDateMatch[1];
+
+                    // 🚨 復活防止：単独日付の妥当性検証
+                    const [monthSingle, daySingle] = dateCandidate.split('/').map(n => parseInt(n));
+                    if (monthSingle >= 1 && monthSingle <= 12 && daySingle >= 1 && daySingle <= 31) {
+                        globalDate = dateCandidate;
+                        console.log(`✅ 全体日付検出成功(M/D形式検証済み): "${line}" → ${globalDate}`);
+                    } else {
+                        console.error(`❌ 無効な単独日付をスキップ: "${line}" → "${dateCandidate}"`);
+                    }
                 }
             }
 
