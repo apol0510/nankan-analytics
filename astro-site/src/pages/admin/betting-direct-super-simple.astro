@@ -272,7 +272,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
             // 日付と競馬場を解析されたレース情報から取得
             let detectedDate = null;
-            let detectedVenue = "川崎競馬"; // デフォルト
+            let detectedVenue = null; // デフォルトは設定しない
 
             // 最初のレースから日付と競馬場を取得
             for (const [raceNum, raceInfo] of Object.entries(raceData)) {
@@ -296,6 +296,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     formattedDate = `${currentYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     console.log(`📅 日付変換: ${detectedDate} → ${formattedDate}`);
                 }
+            }
+
+            // 競馬場が検出できなかった場合のエラー処理
+            if (!detectedVenue || detectedVenue === "未指定") {
+                console.error('❌ 競馬場が検出できませんでした');
+                alert('⚠️ 競馬場名が検出できませんでした。入力データに「浦和」「大井」「川崎」「船橋」のいずれかが含まれているか確認してください。');
+                throw new Error('競馬場名が検出できませんでした');
             }
 
             console.log(`🏁 検出された情報: 日付=${detectedDate}, 競馬場=${detectedVenue}`);
@@ -517,7 +524,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     continue;
                 }
 
-                // レース番号検出（大井1R形式に対応） + レース詳細解析
+                // レース番号検出（浦和1R形式にも対応） + レース詳細解析
                 const raceMatch = line.match(/^(大井|川崎|船橋|浦和)?(\d{1,2})[rRレース]/);
                 if (raceMatch) {
                     currentRace = parseInt(raceMatch[2]);
@@ -532,9 +539,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     console.log(`📅 日付抽出結果: ${extractedDate}`);
 
                     const raceDetailMatch = line.match(/^(\d+\/\d+)?(大井|川崎|船橋|浦和)?(\d{1,2})[rRレース]\s*([^\d]*?)\s*([ダ芝]?\d+[mM]?)?\s*[（(](\d+)頭[）)]\s*発走時刻(\d{1,2}:\d{2})?/);
+
+                    // 競馬場を正確に検出（浦和対応）
+                    const trackMatch = line.match(/(大井|川崎|船橋|浦和)/);
+                    const detectedTrack = trackMatch ? `${trackMatch[1]}競馬` : null;
+
                     let parsedInfo = {
                         date: extractedDate || globalDate, // 行内日付またはグローバル日付を使用
-                        track: raceMatch[1] || "大井競馬",
+                        track: detectedTrack || "未指定", // 検出された競馬場名を使用
                         raceName: "",
                         distance: "1400m",
                         horseCount: 0,
@@ -547,7 +559,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         if (raceDetailMatch[1] && !parsedInfo.date) {
                             parsedInfo.date = raceDetailMatch[1];
                         }
-                        parsedInfo.track = raceDetailMatch[2] ? `${raceDetailMatch[2]}競馬` : parsedInfo.track;
+                        // trackは既に上で検出済みなので、優先度を正しく設定
+                        if (raceDetailMatch[2]) {
+                            parsedInfo.track = `${raceDetailMatch[2]}競馬`;
+                        }
                         parsedInfo.raceName = raceDetailMatch[4] ? raceDetailMatch[4].trim() : "";
                         parsedInfo.distance = raceDetailMatch[5] || "1400m";
                         parsedInfo.horseCount = parseInt(raceDetailMatch[6]) || 0;
@@ -562,7 +577,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             } else if (!parsedInfo.date) {
                                 parsedInfo.date = globalDate; // グローバル日付をフォールバックに使用
                             }
-                            if (simpleMatch[2]) {
+                            // trackが既に検出されていない場合のみ設定
+                            if (simpleMatch[2] && parsedInfo.track === "未指定") {
                                 parsedInfo.track = `${simpleMatch[2]}競馬`;
                             }
                             parsedInfo.raceName = simpleMatch[4] ? simpleMatch[4].trim() : "";
