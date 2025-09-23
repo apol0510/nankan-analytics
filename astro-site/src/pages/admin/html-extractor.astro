@@ -328,9 +328,6 @@ const title = "HTML予想印抽出ツール";
                 // レース番号がない場合：テーブル行のみの処理
                 console.log('📋 レース番号なし：テーブル行のみで処理');
 
-                // デフォルトレース名
-                output += `レース01R\n`;
-
                 const horses = extractHorsesFromSection(html);
                 console.log(`🐎 抽出された馬数: ${horses.length}`);
 
@@ -341,8 +338,10 @@ const title = "HTML予想印抽出ツール";
                     console.log(`✅ 馬データ: ${horse.number} ${horse.marks} ${horse.name}`);
                 }
 
-                output += '\n';
-                extractionStats.processedRaces = 1;
+                if (horses.length > 0) {
+                    output += '\n';
+                    extractionStats.processedRaces = 1;
+                }
             }
 
             console.log('📊 最終統計:', extractionStats);
