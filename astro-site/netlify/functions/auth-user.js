@@ -143,6 +143,9 @@ exports.handler = async (event, context) => {
       await base('Customers').update(user.id, updateData);
     }
 
+    // 🔧 プラン値正規化: 大文字小文字混在問題解決
+    const normalizedPlan = normalizePlan(currentPlan);
+
     return {
       statusCode: 200,
       headers: { ...headers, 'Content-Type': 'application/json' },
@@ -151,14 +154,14 @@ exports.handler = async (event, context) => {
         isNewUser: false,
         user: {
           email,
-          plan: currentPlan,
+          plan: normalizedPlan,
           points: newPoints,
           pointsAdded,
           lastLogin: today,
           registeredAt: user.get('登録日')
         },
-        message: pointsAdded > 0 
-          ? `ログイン成功！本日のポイント${pointsAdded}pt付与` 
+        message: pointsAdded > 0
+          ? `ログイン成功！本日のポイント${pointsAdded}pt付与`
           : 'ログイン成功！（本日のポイントは付与済み）'
       }, null, 2)
     };
@@ -177,6 +180,30 @@ exports.handler = async (event, context) => {
         stack: error.stack
       })
     };
+  }
+}
+
+// 🔧 プラン値正規化関数: Airtableの大文字小文字混在問題解決
+function normalizePlan(planValue) {
+  if (!planValue) return 'free';
+
+  const planLower = planValue.toString().toLowerCase();
+
+  // 正規化マッピング
+  switch (planLower) {
+    case 'premium':
+    case 'プレミアム':
+      return 'premium';
+    case 'standard':
+    case 'スタンダード':
+      return 'standard';
+    case 'free':
+    case 'フリー':
+    case '無料':
+      return 'free';
+    default:
+      console.warn(`⚠️ 未知のプラン値: "${planValue}" -> デフォルト 'free'`);
+      return 'free';
   }
 }
 
