@@ -33,6 +33,7 @@ exports.handler = async (event, context) => {
 
   try {
     console.log('🔍 Event received:', JSON.stringify(event, null, 2));
+  console.log('🔍 Force rebuild - current SITE_URL:', process.env.SITE_URL);
     console.log('🔍 Event body:', event.body);
     console.log('🔍 Event httpMethod:', event.httpMethod);
     
