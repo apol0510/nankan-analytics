@@ -160,7 +160,7 @@ async function sendEmailViaSendGrid({ to, subject, html, replyTo, fromName }) {
         ],
         from: {
             name: fromName || "NANKANアナリティクス",
-            email: "nankan-analytics@keiba.link"
+            email: "noreply@keiba.link"
         },
         content: [
             {

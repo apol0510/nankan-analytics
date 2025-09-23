@@ -97,7 +97,7 @@ export default async function handler(request, context) {
               ],
               from: {
                 name: "NANKANアナリティクス",
-                email: "nankan-analytics@keiba.link"
+                email: "noreply@keiba.link"
               },
               content: [
                 {

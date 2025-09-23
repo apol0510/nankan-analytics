@@ -403,7 +403,7 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
         ],
         from: {
           name: "NANKANアナリティクス",
-          email: "nankan-analytics@keiba.link"
+          email: "noreply@keiba.link"
         },
         content: [
           {

@@ -249,7 +249,7 @@ async function sendAlertEmail({ alertType, message, riskLevel, stats }) {
     throw new Error('SendGrid API key not configured');
   }
 
-  const adminEmail = 'nankan-analytics@keiba.link'; // 管理者メールアドレス
+  const adminEmail = 'noreply@keiba.link'; // 管理者メールアドレス
 
   const emailData = {
     personalizations: [
@@ -260,7 +260,7 @@ async function sendAlertEmail({ alertType, message, riskLevel, stats }) {
     ],
     from: {
       name: "NANKAN Domain Protection",
-      email: "nankan-analytics@keiba.link"
+      email: "noreply@keiba.link"
     },
     content: [
       {
