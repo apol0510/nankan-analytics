@@ -540,11 +540,19 @@ const title = "特徴量重要度完成形変換ツール";
         }
 
         function generateFeatureImportance(horse) {
-            // 特徴量重要度をスコアベースで生成
-            const base = horse.score;
-            const stability = Math.min(99, Math.max(70, base + Math.floor(Math.random() * 20) - 10));
-            const ability = Math.min(99, Math.max(70, base + Math.floor(Math.random() * 20) - 10));
-            const advantage = Math.min(99, Math.max(70, base + Math.floor(Math.random() * 20) - 10));
+            // 🔧 根本解決: 特徴量重要度の平均 = 累積スコア
+            const targetScore = horse.score;
+
+            // ランダム要素を加えつつ、平均が目標スコアになるように調整
+            const variation = 6; // ±6の範囲でランダム
+            const stability = Math.min(99, Math.max(70, targetScore + Math.floor(Math.random() * variation * 2) - variation));
+            const ability = Math.min(99, Math.max(70, targetScore + Math.floor(Math.random() * variation * 2) - variation));
+
+            // 3番目の値は平均が目標スコアになるように逆算
+            const advantage = Math.min(99, Math.max(70, targetScore * 3 - stability - ability));
+
+            console.log(`🎯 特徴量重要度生成: ${horse.name} - 目標${targetScore}pt`);
+            console.log(`   安定性${stability}% + 能力上位性${ability}% + 展開利${advantage}% = ${stability + ability + advantage} (平均${Math.round((stability + ability + advantage) / 3)})`);
 
             return { stability, ability, advantage };
         }
