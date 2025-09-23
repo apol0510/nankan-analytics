@@ -247,7 +247,7 @@ async function sendWelcomeEmail(email) {
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
-          <a href="https://nankan-analytics.keiba.link/dashboard/"
+          <a href="https://nankan-analytics.keiba.link/dashboard"
              style="background-color: #3b82f6 !important; color: #ffffff !important; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; border: 2px solid #3b82f6;">
             マイページにログイン 📊
           </a>
@@ -266,7 +266,7 @@ async function sendWelcomeEmail(email) {
         <div style="background-color: #f8fafc !important; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #e2e8f0;">
           <h3 style="color: #3b82f6 !important; margin-bottom: 10px; font-size: 18px;">📈 さらに詳しい予想をお求めの方へ</h3>
           <p style="color: #64748b !important; margin-bottom: 15px;">スタンダード・プレミアムプランで、より詳細な分析と投資戦略をご利用いただけます。</p>
-          <a href="https://nankan-analytics.keiba.link/pricing/"
+          <a href="https://nankan-analytics.keiba.link/pricing"
              style="color: #3b82f6 !important; text-decoration: none; font-weight: 600;">
             料金プランを見る →
           </a>
