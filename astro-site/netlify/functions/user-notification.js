@@ -44,21 +44,25 @@ export default async function handler(request, context) {
       );
     }
 
-    // 環境変数の確認
-    const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+    // 環境変数の確認（Netlify Functions用）
+    const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || context.SENDGRID_API_KEY;
 
     if (!SENDGRID_API_KEY) {
       console.error('🚨 SENDGRID_API_KEY not found in environment');
+      console.error('🔍 Available env vars:', Object.keys(process.env).filter(key => key.includes('SENDGRID')));
       // 本番環境では動作するが、開発環境では環境変数の問題があるため一時的にスキップ
       return new Response(
         JSON.stringify({
           success: false,
-          message: 'SendGrid API key not available in development',
+          message: 'SendGrid API key not available',
           email: email,
-          note: 'This will work in production environment'
+          debug: {
+            processEnvKeys: Object.keys(process.env).length,
+            contextKeys: Object.keys(context || {})
+          }
         }),
         {
-          status: 200,  // 開発環境では200で返して処理を継続
+          status: 500,  // API キーがない場合は500エラーで明確に失敗させる
           headers
         }
       );

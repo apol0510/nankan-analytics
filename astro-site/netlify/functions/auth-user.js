@@ -74,7 +74,27 @@ exports.handler = async (event, context) => {
       });
 
       // 新規ユーザー通知は独立したuser-notification.jsで処理（復活防止対策）
-      console.log('✅ 新規ユーザー登録完了 - 通知は別システムで処理:', email);
+      try {
+        const notificationResponse = await fetch(`${context.NETLIFY_DEV ? 'http://localhost:8888' : 'https://nankan-analytics.netlify.app'}/.netlify/functions/user-notification`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            isNewUser: true
+          })
+        });
+
+        if (notificationResponse.ok) {
+          const notificationResult = await notificationResponse.json();
+          console.log('✅ 新規ユーザー通知送信成功:', notificationResult);
+        } else {
+          console.error('⚠️ 新規ユーザー通知送信失敗（処理は継続）:', notificationResponse.status);
+        }
+      } catch (notificationError) {
+        console.error('⚠️ 新規ユーザー通知エラー（処理は継続）:', notificationError.message);
+      }
 
       return {
         statusCode: 200,
