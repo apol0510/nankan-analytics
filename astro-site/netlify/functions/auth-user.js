@@ -73,7 +73,27 @@ exports.handler = async (event, context) => {
         '最終ポイント付与日': new Date().toISOString().split('T')[0]
       });
 
-      // ウェルカムメール機能は削除済み
+      // 新規ユーザー通知システム呼び出し（2025-09-24新規実装）
+      try {
+        const notificationResponse = await fetch('/.netlify/functions/user-notification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            isNewUser: true
+          })
+        });
+
+        if (notificationResponse.ok) {
+          console.log('✅ 新規ユーザー通知送信成功:', email);
+        } else {
+          console.log('⚠️ 新規ユーザー通知送信失敗（処理は継続）:', email);
+        }
+      } catch (notificationError) {
+        console.error('⚠️ 新規ユーザー通知エラー（処理は継続）:', notificationError.message);
+      }
 
       return {
         statusCode: 200,
