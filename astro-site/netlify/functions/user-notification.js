@@ -151,12 +151,16 @@ export default async function handler(request, context) {
     }
 
     console.log(`✅ 新規ユーザー通知送信成功: ${email}`);
+    console.log(`🔗 使用されたドメイン: ${SAFE_DOMAIN}`);
+    console.log(`📧 送信されたリンク: ${SAFE_DOMAIN}/dashboard`);
 
     return new Response(
       JSON.stringify({
         success: true,
         message: 'User notification sent successfully',
-        email: email
+        email: email,
+        domain_used: SAFE_DOMAIN,
+        login_link: `${SAFE_DOMAIN}/dashboard`
       }),
       {
         status: 200,
