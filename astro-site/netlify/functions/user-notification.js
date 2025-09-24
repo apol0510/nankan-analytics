@@ -76,7 +76,7 @@ export default async function handler(request, context) {
       personalizations: [
         {
           to: [{ email: email }],
-          subject: '🎉 NANKANアナリティクス登録完了！'
+          subject: '🎉 NANKANアナリティクス登録完了！（独立システム配信）'
         }
       ],
       from: {
@@ -127,6 +127,11 @@ export default async function handler(request, context) {
                 <p style="margin: 5px 0 0 0;">
                   <strong>NANKANアナリティクス</strong><br>
                   📧 support@nankan-analytics.keiba.link
+                </p>
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+                <p style="font-size: 12px; color: #94a3b8;">
+                  このメールは独立システム（user-notification.js）から配信されています<br>
+                  安全ドメイン: ${SAFE_DOMAIN} | 配信時刻: ${new Date().toISOString()}
                 </p>
               </div>
             </div>
