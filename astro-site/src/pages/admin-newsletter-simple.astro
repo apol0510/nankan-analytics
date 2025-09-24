@@ -212,39 +212,20 @@ try {
             font-family: inherit;
         }
         
-        .target-plan {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .plan-option {
+        select.form-control {
+            width: 100%;
             padding: 12px;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
             background: white;
+            font-size: 16px;
+            margin-top: 5px;
         }
-        
-        .plan-option:hover {
+
+        select.form-control:focus {
             border-color: #3b82f6;
-            background: #eff6ff;
-        }
-        
-        .plan-option.active {
-            border-color: #3b82f6;
-            background: #3b82f6;
-            color: white;
-        }
-        
-        .plan-option span {
-            display: block;
-            font-size: 0.9rem;
-            margin-top: 4px;
-            opacity: 0.8;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         
         .action-buttons {
@@ -585,28 +566,13 @@ try {
 
                 <div class="form-group">
                     <label>配信対象</label>
-                    <div class="target-plan">
-                        <div class="plan-option active" data-plan="all">
-                            全員
-                            <span id="allCount">-</span>
-                        </div>
-                        <div class="plan-option" data-plan="free">
-                            Free
-                            <span id="freeCountOption">-</span>
-                        </div>
-                        <div class="plan-option" data-plan="standard">
-                            Standard
-                            <span id="standardCountOption">-</span>
-                        </div>
-                        <div class="plan-option" data-plan="premium">
-                            Premium
-                            <span id="premiumCountOption">-</span>
-                        </div>
-                        <div class="plan-option" data-plan="test">
-                            🧪 テスト
-                            <span>テスト用</span>
-                        </div>
-                    </div>
+                    <select id="targetPlan" class="form-control">
+                        <option value="all">全員 (${customerStats.total}名)</option>
+                        <option value="free">Free会員 (${customerStats.free}名)</option>
+                        <option value="standard">Standard会員 (${customerStats.standard}名)</option>
+                        <option value="premium">Premium会員 (${customerStats.premium}名)</option>
+                        <option value="test">🧪 テスト用</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -958,37 +924,6 @@ try {
                     <div id="whitelistStatus" class="status-message"></div>
                 </div>
             </div>
-
-            <!-- 配信停止管理 -->
-            <div class="card">
-                <h2>📧 配信停止管理</h2>
-                <div class="unsubscribe-section">
-                    <div class="form-group">
-                        <label>配信停止処理</label>
-                        <div class="unsubscribe-actions">
-                            <input type="email" class="form-control" id="unsubscribeEmail"
-                                   placeholder="配信停止するメールアドレス" style="flex: 1; margin-right: 10px;">
-                            <button class="btn btn-secondary" id="unsubscribeBtn">配信停止</button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>配信再開</label>
-                        <div class="unsubscribe-actions">
-                            <input type="email" class="form-control" id="resubscribeEmail"
-                                   placeholder="配信再開するメールアドレス" style="flex: 1; margin-right: 10px;">
-                            <button class="btn btn-primary" id="resubscribeBtn">配信再開</button>
-                        </div>
-                    </div>
-
-                    <div class="unsubscribe-stats">
-                        <div class="stat-box">
-                            <div class="stat-label">配信停止者数</div>
-                            <div class="stat-value" id="unsubscribedCount">-</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
         </div>
     </div>
@@ -1012,13 +947,7 @@ try {
         }
         
         
-        // プラン選択
-        document.querySelectorAll('.plan-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+        // プラン選択（セレクトボックス対応）
 
         // 配信確認ボタン
         document.getElementById('checkLastDelivery').addEventListener('click', async function() {
@@ -1653,7 +1582,7 @@ Premium会員: \${stats.premium}名<br><br>
                 content = document.getElementById('content').value;
             }
             
-            const targetPlan = document.querySelector('.plan-option.active').dataset.plan;
+            const targetPlan = document.getElementById('targetPlan').value;
             const isScheduled = document.getElementById('scheduleCheck').checked;
             const scheduleTime = document.getElementById('scheduleTime').value;
             
