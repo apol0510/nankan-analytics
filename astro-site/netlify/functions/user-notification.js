@@ -68,8 +68,16 @@ export default async function handler(request, context) {
       );
     }
 
-    // 🔒 安全なドメイン（ハードコーディング）
+    // 🔒 安全なドメイン（ハードコーディング）- 不正ドメイン防止
     const SAFE_DOMAIN = 'https://nankan-analytics.keiba.link';
+
+    console.log('🔗 使用予定ドメイン確認:', SAFE_DOMAIN);
+    console.log('🚫 8912/8219ドメインは使用禁止');
+
+    // ドメイン安全性チェック
+    if (SAFE_DOMAIN.includes('8912') || SAFE_DOMAIN.includes('8219')) {
+      throw new Error('🚨 不正ドメイン検出: SAFE_DOMAINに8912/8219が含まれています');
+    }
 
     // 🎯 SendGrid API直接呼び出し（execute-scheduled-emails.jsと同様）
     const emailData = {
@@ -138,6 +146,14 @@ export default async function handler(request, context) {
           `
         }
       ]
+    };
+
+    // SendGridリンク追跡を無効化してダイレクトリンク保証
+    emailData.tracking_settings = {
+      click_tracking: { enable: false },
+      open_tracking: { enable: false },
+      subscription_tracking: { enable: false },
+      ganalytics: { enable: false }
     };
 
     const sendgridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
