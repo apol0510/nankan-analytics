@@ -562,6 +562,21 @@ try {
                         <div class="stat-value" id="testCount">{customerStats.test}</div>
                     </div>
                 </div>
+
+                <!-- 配信確認ボタン -->
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="btn btn-secondary" id="checkLastDelivery" style="background: #059669; color: white;">
+                        📧 最新配信数を確認
+                    </button>
+                </div>
+
+                <!-- 配信結果表示エリア -->
+                <div id="deliveryResult" style="margin-top: 15px; padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981; display: none;">
+                    <h4 style="color: #065f46; margin: 0 0 10px 0;">📊 配信結果</h4>
+                    <div id="deliveryDetails" style="font-family: monospace; font-size: 14px; color: #1f2937;">
+                        確認中...
+                    </div>
+                </div>
             </div>
 
             <!-- メール作成フォーム -->
@@ -1003,6 +1018,49 @@ try {
                 document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
             });
+        });
+
+        // 配信確認ボタン
+        document.getElementById('checkLastDelivery').addEventListener('click', async function() {
+            const resultDiv = document.getElementById('deliveryResult');
+            const detailsDiv = document.getElementById('deliveryDetails');
+
+            resultDiv.style.display = 'block';
+            detailsDiv.textContent = '確認中...';
+            this.disabled = true;
+            this.textContent = '確認中...';
+
+            try {
+                // 各プランの現在の配信対象者数を確認
+                const stats = {
+                    all: ${customerStats.total},
+                    free: ${customerStats.free},
+                    standard: ${customerStats.standard},
+                    premium: ${customerStats.premium}
+                };
+
+                detailsDiv.innerHTML = \`
+<strong>📊 現在の配信対象者数:</strong><br>
+全体配信: \${stats.all}名<br>
+無料会員: \${stats.free}名<br>
+Standard会員: \${stats.standard}名<br>
+Premium会員: \${stats.premium}名<br><br>
+
+<strong>📧 注意:</strong><br>
+• 配信停止ユーザーは自動除外されます<br>
+• ブラックリストユーザーは自動除外されます<br>
+• 実際の配信数は若干異なる場合があります
+                \`;
+
+            } catch (error) {
+                detailsDiv.innerHTML = \`
+<span style="color: #dc2626;">❌ エラー:</span><br>
+\${error.message}
+                \`;
+            } finally {
+                this.disabled = false;
+                this.textContent = '📧 最新配信数を確認';
+            }
         });
         
         // 予約配信チェックボックス
