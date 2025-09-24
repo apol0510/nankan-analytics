@@ -264,19 +264,33 @@ async function getRecipientsList(targetPlan) {
   try {
     let filterFormula = '';
 
-    // プランに基づくフィルタリング
+    // プランに基づくフィルタリング + 配信停止ユーザー除外
+    let planFilter = '';
     if (targetPlan === 'free') {
-      filterFormula = "{プラン} = 'Free'";
+      planFilter = "{プラン} = 'Free'";
     } else if (targetPlan === 'standard') {
-      filterFormula = "OR({プラン} = 'Standard', {プラン} = 'Premium')";
+      planFilter = "OR({プラン} = 'Standard', {プラン} = 'Premium')";
     } else if (targetPlan === 'premium') {
-      filterFormula = "{プラン} = 'Premium'";
+      planFilter = "{プラン} = 'Premium'";
     } else if (targetPlan === 'test') {
-      filterFormula = "{プラン} = 'Test'"; // バウンス管理テスト専用
-    } else if (targetPlan === 'all') {
-      // 全員に配信
-      filterFormula = '';
+      planFilter = "{プラン} = 'Test'"; // バウンス管理テスト専用
     }
+
+    // 配信停止ユーザーを除外する条件（メール配信フィールドがOFF/UNSUBSCRIBEDでない）
+    const unsubscribeFilter = "AND({メール配信} != 'OFF', {メール配信} != 'UNSUBSCRIBED')";
+
+    if (planFilter) {
+      filterFormula = `AND(${planFilter}, ${unsubscribeFilter})`;
+    } else if (targetPlan === 'all') {
+      // 'all'の場合は配信停止ユーザーのみ除外
+      filterFormula = unsubscribeFilter;
+    }
+
+    console.log('🔍 配信停止フィルター適用:', {
+      planFilter,
+      unsubscribeFilter,
+      finalFormula: filterFormula
+    });
 
     const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers`;
     const queryParams = filterFormula ? `?filterByFormula=${encodeURIComponent(filterFormula)}` : '';
@@ -419,6 +433,26 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
     }
 
     try {
+      // 配信停止リンクを自動追加
+      const unsubscribeLink = `https://nankan-analytics.netlify.app/.netlify/functions/unsubscribe?email=${encodeURIComponent(recipient)}`;
+      const htmlWithUnsubscribe = `
+        ${htmlContent}
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+        <div style="text-align: center; padding: 20px; background-color: #f9fafb; font-size: 12px; color: #6b7280; font-family: Arial, sans-serif;">
+          <p style="margin: 0 0 10px 0;">このメールは NANKANアナリティクス からお送りしています</p>
+          <p style="margin: 10px 0;">
+            <a href="${unsubscribeLink}" style="color: #dc2626; text-decoration: underline;">
+              🚫 配信停止はこちら
+            </a>
+          </p>
+          <p style="margin: 15px 0 5px 0; color: #9ca3af; font-size: 11px;">
+            〒123-4567 東京都〇〇区〇〇1-2-3<br>
+            NANKANアナリティクス運営事務局
+          </p>
+        </div>
+      `;
+
       const emailData = {
         personalizations: [
           {
@@ -433,7 +467,7 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
         content: [
           {
             type: "text/html",
-            value: htmlContent
+            value: htmlWithUnsubscribe
           }
         ]
       };
