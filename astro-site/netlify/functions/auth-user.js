@@ -73,13 +73,8 @@ exports.handler = async (event, context) => {
         '最終ポイント付与日': new Date().toISOString().split('T')[0]
       });
 
-      // 新規ユーザーウェルカムメール送信（2025-09-24新規実装）
-      try {
-        await sendWelcomeEmailDirect(email);
-        console.log('✅ ウェルカムメール送信成功:', email);
-      } catch (emailError) {
-        console.error('⚠️ ウェルカムメール送信エラー（処理は継続）:', emailError.message);
-      }
+      // 新規ユーザー通知は独立したuser-notification.jsで処理（復活防止対策）
+      console.log('✅ 新規ユーザー登録完了 - 通知は別システムで処理:', email);
 
       return {
         statusCode: 200,
@@ -203,106 +198,14 @@ function normalizePlan(planValue) {
   }
 }
 
-// 🚫 旧ウェルカムメール機能は完全削除済み・復活禁止
-// 削除日: 2025-09-24 理由: 8912keibalink.keiba.link不正ドメイン問題解決
+// 🚫 ウェルカムメール機能は完全削除済み・復活禁止（2025-09-24）
+// 削除理由: 8912keibalink.keiba.link不正ドメイン問題解決
 // ⚠️ 絶対に復活させてはいけない機能:
-//   - 旧sendWelcomeEmail関数
+//   - sendWelcomeEmail関数・sendWelcomeEmailDirect関数
 //   - 90行以上のHTMLメールテンプレート
 //   - 環境変数SITE_URLに依存するURL生成
+//   - NANKANアナリティクスへようこそメール
+//   - マイページログインリンク付きメール
 //
-// ✅ 新しいウェルカムメール機能（2025-09-24実装）
-// - 完全に新しい実装・安全なドメイン固定
-// - 削除されたコードの再利用なし
-// - シンプルで確実なメール送信
-
-// 新しいウェルカムメール送信関数（復活防止ガイドライン完全遵守）
-async function sendWelcomeEmailDirect(email) {
-  const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-
-  if (!SENDGRID_API_KEY) {
-    throw new Error('SendGrid API key not configured');
-  }
-
-  // 🔒 安全なドメイン（ハードコーディング）
-  const SAFE_DOMAIN = 'https://nankan-analytics.keiba.link';
-
-  const emailData = {
-    personalizations: [
-      {
-        to: [{ email: email }],
-        subject: '🎉 NANKANアナリティクス登録完了！'
-      }
-    ],
-    from: {
-      name: 'NANKANアナリティクス',
-      email: 'nankan-analytics@keiba.link'
-    },
-    content: [
-      {
-        type: 'text/html',
-        value: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 20px;">
-            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 30px; text-align: center; border-radius: 12px; margin-bottom: 20px;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">🏇 NANKANアナリティクス</h1>
-              <p style="color: #cbd5e1; margin: 10px 0 0 0; font-size: 16px;">南関競馬AI予想プラットフォーム</p>
-            </div>
-
-            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-              <h2 style="color: #1e293b; margin-top: 0;">🎉 登録完了！</h2>
-              <p style="color: #475569; line-height: 1.6;">
-                この度はNANKANアナリティクスにご登録いただき、誠にありがとうございます！
-              </p>
-
-              <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #1e293b; margin-top: 0;">🎁 無料会員特典</h3>
-                <ul style="color: #475569; padding-left: 20px;">
-                  <li>メインレース（11R）詳細予想</li>
-                  <li>AI分析による予想データ</li>
-                  <li>毎日ログインで1ポイント獲得</li>
-                </ul>
-              </div>
-
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${SAFE_DOMAIN}/dashboard"
-                   style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                  📊 マイページにログイン
-                </a>
-              </div>
-
-              <div style="background: #ecfdf5; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
-                <p style="color: #065f46; margin: 0; font-size: 14px;">
-                  <strong>ログイン方法：</strong> メールアドレス「${email}」でログイン
-                </p>
-              </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px; color: #64748b; font-size: 14px;">
-              <p>ご不明な点がございましたら、お気軽にお問い合わせください</p>
-              <p style="margin: 5px 0 0 0;">
-                <strong>NANKANアナリティクス</strong><br>
-                📧 support@nankan-analytics.keiba.link
-              </p>
-            </div>
-          </div>
-        `
-      }
-    ]
-  };
-
-  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${SENDGRID_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(emailData)
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('🚨 SendGrid API error:', errorText);
-    throw new Error(`SendGrid API error: ${response.status}`);
-  }
-
-  console.log('📧 ウェルカムメール送信成功:', email);
-}
+// 📧 新規ユーザー通知が必要な場合は、独立したuser-notification.jsを使用
+// 復活防止ガイド: WELCOME_EMAIL_REVIVAL_PREVENTION.md参照
