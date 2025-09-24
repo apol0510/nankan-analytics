@@ -287,28 +287,53 @@ async function getRecipientsList(targetPlan) {
       targetPlan: '指定されたプラン'
     });
 
-    const response = await fetch(url + queryParams, {
-      headers: {
-        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-        'Content-Type': 'application/json'
+    // Airtableページネーション対応: 全レコード取得
+    let allRecords = [];
+    let offset = null;
+    let pageCount = 0;
+
+    do {
+      pageCount++;
+      let urlWithPagination = url + queryParams;
+      if (queryParams) {
+        urlWithPagination += offset ? `&offset=${offset}` : '';
+      } else {
+        urlWithPagination += offset ? `?offset=${offset}` : '';
       }
-    });
 
-    if (!response.ok) {
-      throw new Error(`Airtable API error: ${response.status}`);
-    }
+      console.log(`📄 Airtableページ${pageCount}取得中: ${allRecords.length}件取得済み`);
 
-    const data = await response.json();
+      const response = await fetch(urlWithPagination, {
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-    console.log('📋 Airtable生データ:', {
-      recordCount: data.records?.length || 0,
-      records: data.records?.slice(0, 3).map(r => ({
+      if (!response.ok) {
+        throw new Error(`Airtable API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.records && data.records.length > 0) {
+        allRecords.push(...data.records);
+        console.log(`✅ ページ${pageCount}: ${data.records.length}件取得 (累計: ${allRecords.length}件)`);
+      }
+
+      offset = data.offset;
+    } while (offset);
+
+    console.log('📋 全ページAirtableデータ:', {
+      totalRecords: allRecords.length,
+      totalPages: pageCount,
+      sampleRecords: allRecords.slice(0, 3).map(r => ({
         email: r.fields.Email,
         plan: r.fields['プラン'] || r.fields.Plan
-      })) || []
+      }))
     });
 
-    const recipients = data.records
+    const recipients = allRecords
       .map(record => record.fields.Email)
       .filter(email => email && email.includes('@'));
 
