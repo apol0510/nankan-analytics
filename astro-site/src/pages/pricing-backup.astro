@@ -48,13 +48,48 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </a>
             </div>
 
-            <!-- プレミアムプラン（中央に配置） -->
+            <!-- スタンダードプラン -->
             <div class="plan-card plan-card-recommended">
                 <!-- 人気バッジ -->
                 <div class="recommended-badge">
                     <span>おすすめ</span>
                 </div>
 
+                <div class="plan-header">
+                    <h3 class="plan-name">スタンダード</h3>
+                    <div class="plan-price">
+                        <span class="price-amount">¥5,980</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                    <p class="plan-description">後半戦で勝負したい方に</p>
+                </div>
+
+                <ul class="plan-features">
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>後半3レース（10R、11R、12R）</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>AI予想の詳細分析</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>投資戦略の提案</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>メール通知</span>
+                    </li>
+                </ul>
+
+                <a href="https://buy.stripe.com/4gMeVd3Gx1W85BV0Wndby0L" class="plan-button plan-button-standard">
+                    スタンダードプランを始める
+                </a>
+            </div>
+
+            <!-- プレミアムプラン -->
+            <div class="plan-card">
                 <div class="plan-header">
                     <h3 class="plan-name">プレミアム</h3>
                     <div class="plan-price">
@@ -89,41 +124,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
                 <a href="https://buy.stripe.com/5kQ8wP0ulcAMggzgVldby0M" class="plan-button plan-button-premium">
                     プレミアムプランを始める
-                </a>
-            </div>
-
-            <!-- スタンダードプラン -->
-            <div class="plan-card">
-                <div class="plan-header">
-                    <h3 class="plan-name">スタンダード</h3>
-                    <div class="plan-price">
-                        <span class="price-amount">¥5,980</span>
-                        <span class="price-period">/月</span>
-                    </div>
-                    <p class="plan-description">後半戦で勝負したい方に</p>
-                </div>
-
-                <ul class="plan-features">
-                    <li class="feature-item">
-                        <span class="check-icon">✓</span>
-                        <span>後半3レース（10R、11R、12R）</span>
-                    </li>
-                    <li class="feature-item">
-                        <span class="check-icon">✓</span>
-                        <span>AI予想の詳細分析</span>
-                    </li>
-                    <li class="feature-item">
-                        <span class="check-icon">✓</span>
-                        <span>投資戦略の提案</span>
-                    </li>
-                    <li class="feature-item">
-                        <span class="check-icon">✓</span>
-                        <span>メール通知</span>
-                    </li>
-                </ul>
-
-                <a href="https://buy.stripe.com/4gMeVd3Gx1W85BV0Wndby0L" class="plan-button plan-button-standard">
-                    スタンダードプランを始める
                 </a>
             </div>
         </div>
