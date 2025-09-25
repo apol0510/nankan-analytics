@@ -299,9 +299,19 @@ export const dailyResultsData = {
                                     <span class="race-name">{(raceData.raceName || '競走名').replace(/\s*[ダ芝]\d+[,.]?\d*m.*$/, '').replace(/\s*（\d+頭）.*$/, '').replace(/\s*発走時刻.*$/, '')}</span>
                                     <span class="race-tier-badge">プレビュー</span>
                                     <span class="race-detail-info">
-                                        📏 {raceData.raceInfo?.distance || '距離未定'}
-                                        🐎 {raceData.raceInfo?.horseCount || raceData.totalHorses || '頭数未定'}頭
-                                        🕐 {raceData.raceInfo?.startTime || '時刻未定'}
+                                        {(() => {
+                                            // レース名から距離・頭数・発走時刻を抽出
+                                            const raceName = raceData.raceName || '';
+                                            const distanceMatch = raceName.match(/[ダ芝](\d+[,.]?\d*)m/);
+                                            const horseCountMatch = raceName.match(/（(\d+)頭）/);
+                                            const timeMatch = raceName.match(/発走時刻(\d{1,2}:\d{2})/);
+
+                                            const distance = distanceMatch ? distanceMatch[1].replace(',', '') + 'm' : (raceData.raceInfo?.distance || '距離未定');
+                                            const horseCount = horseCountMatch ? horseCountMatch[1] : (raceData.raceInfo?.horseCount || raceData.totalHorses || '頭数未定');
+                                            const startTime = timeMatch ? timeMatch[1] : (raceData.raceInfo?.startTime || '時刻未定');
+
+                                            return `📏 ${distance} 🐎 ${horseCount}頭 🕐 ${startTime}`;
+                                        })()}
                                     </span>
                                 </div>
                                 <div class="race-preview">
@@ -1820,6 +1830,49 @@ function switchTab(tabIndex) {
                 icon.style.transform = 'rotate(0deg)';
             }
         };
+    }
+
+    // プレビュー用のトグル関数を生成（1R-9R）
+    function createPreviewToggleFunction(raceNumber) {
+        return function() {
+            const content = document.getElementById(`preview-${raceNumber}r`);
+            const icon = document.getElementById(`toggle-preview-${raceNumber}r`);
+
+            if (!content || !icon) return;
+
+            // 他のプレビューアコーディオンをすべて閉じる
+            for (let i = 1; i <= 9; i++) {
+                if (i !== raceNumber) {
+                    const otherContent = document.getElementById(`preview-${i}r`);
+                    const otherIcon = document.getElementById(`toggle-preview-${i}r`);
+                    if (otherContent && otherIcon) {
+                        otherContent.style.maxHeight = '0px';
+                        otherContent.style.opacity = '0';
+                        otherIcon.textContent = '▼';
+                        otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+
+            // 現在のアコーディオンの状態をチェックして開く
+            if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                icon.textContent = '◎';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                // 既に開いている場合は閉じる
+                content.style.maxHeight = '0px';
+                content.style.opacity = '0';
+                icon.textContent = '▼';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        };
+    }
+
+    // 1R-9Rのプレビュートグル関数を生成
+    for (let i = 1; i <= 9; i++) {
+        window[`togglePreview${i}R`] = createPreviewToggleFunction(i);
     }
 
     // 1R-12Rのすべてのトグル関数を生成
