@@ -64,7 +64,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 </p>
 
                 <!-- 全レースアコーディオン（1R-12R順番通り） -->
-                <div style="display: grid; gap: 16px;">
+                <div style="display: grid; gap: 10px;">
                     {allRacesData.races.map((raceData) => {
                         const raceNum = raceData.raceNumber.replace('R', '');
                         const isMainRace = raceData.isMainRace;
@@ -702,30 +702,30 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
     .importance-bar {
         display: flex;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
     .importance-label {
-        width: 120px;
+        width: 100px;
         font-size: 0.85rem;
         color: #94a3b8;
     }
     .importance-value {
         flex: 1;
-        height: 20px;
+        height: 16px;
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
+        border-radius: 8px;
         overflow: hidden;
     }
     .importance-fill {
         height: 100%;
         background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-        border-radius: 10px;
+        border-radius: 7px;
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        padding-right: 8px;
+        padding-right: 6px;
         color: white;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 700;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
@@ -1266,17 +1266,17 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
         
         /* プログレスバーをモバイル向けに最適化 */
         .importance-fill {
-            font-size: 0.7rem;
-            padding-right: 6px;
+            font-size: 0.65rem;
+            padding-right: 5px;
         }
-        
+
         .importance-bar {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
-        
+
         .importance-label {
-            width: 100px;
-            font-size: 0.8rem;
+            width: 80px;
+            font-size: 0.75rem;
         }
     }
 
@@ -1326,12 +1326,12 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
         background: rgba(16, 185, 129, 0.05);
         border-radius: 12px;
         border: 1px solid rgba(16, 185, 129, 0.2);
-        margin-bottom: 25px;
+        margin-bottom: 12px;
         overflow: hidden;
     }
 
     .race-accordion-header {
-        padding: 20px 25px;
+        padding: 16px 20px;
         cursor: pointer;
         display: flex;
         justify-content: space-between;
@@ -1553,7 +1553,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
     /* モバイル対応 - アコーディオン */
     @media (max-width: 768px) {
         .race-accordion-header {
-            padding: 15px 20px;
+            padding: 12px 16px;
         }
 
         .race-basic-info {
@@ -1597,9 +1597,9 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
 
     .importance-bar {
         flex: 1;
-        height: 24px;
+        height: 16px;
         background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
+        border-radius: 8px;
         overflow: hidden;
         position: relative;
         border: 1px solid rgba(148, 163, 184, 0.2);
@@ -1608,15 +1608,15 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
     .importance-fill {
         height: 100%;
         background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-        border-radius: 11px;
+        border-radius: 7px;
         transition: width 0.6s ease;
         position: relative;
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        padding-right: 10px;
+        padding-right: 8px;
         color: white;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         font-weight: 700;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
@@ -1628,26 +1628,26 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
     /* モバイル対応 - 特徴量重要度 */
     @media (max-width: 768px) {
         .importance-item {
-            gap: 10px;
+            gap: 8px;
         }
 
         .importance-label {
-            min-width: 80px;
+            min-width: 70px;
             font-size: 0.8rem;
         }
 
         .importance-bar {
-            height: 20px;
+            height: 14px;
         }
 
         .importance-fill {
-            font-size: 0.75rem;
-            padding-right: 8px;
+            font-size: 0.7rem;
+            padding-right: 6px;
         }
 
         .importance-value {
-            min-width: 35px;
-            font-size: 0.8rem;
+            min-width: 30px;
+            font-size: 0.75rem;
         }
     }
 </style>
