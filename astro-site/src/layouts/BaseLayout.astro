@@ -633,6 +633,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             }
         }
     </style>
+    <!-- 開発環境用テスト認証スクリプト -->
+    {import.meta.env.DEV && <script src="/test-auth.js"></script>}
 </head>
 <body>
     <!-- Header -->

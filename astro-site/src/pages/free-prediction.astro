@@ -260,6 +260,57 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                                                 );
                                             })}
 
+                                            {/* 連下・抑えの実際のデータ（デフォルト非表示）*/}
+                                            <div class="free-member-unlock-content" style="display: none;">
+                                                {/* 連下候補馬 */}
+                                                {raceHorses && raceHorses.filter(h => h.role === '連下').length > 0 && (
+                                                    <div class="horse-card horse-card-minor">
+                                                        <div class="horse-header">
+                                                            <div>
+                                                                <span class="horse-mark-minor">△</span>
+                                                                <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="horse-grid">
+                                                            {raceHorses.filter(h => h.role === '連下').map(horse => {
+                                                                const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                                                                const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                                                                return (
+                                                                    <div class="horse-grid-item">
+                                                                        <span class="horse-number-small">{horse.number}</span>
+                                                                        <span class="horse-name-small">{horse.name}{score ? ` (${score}pt)` : ''}</span>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* 抑え候補馬 */}
+                                                {raceHorses && raceHorses.filter(h => h.role === '押さえ').length > 0 && (
+                                                    <div class="horse-card horse-card-minor">
+                                                        <div class="horse-header">
+                                                            <div>
+                                                                <span class="horse-mark-minor">×</span>
+                                                                <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="horse-grid">
+                                                            {raceHorses.filter(h => h.role === '押さえ').map(horse => {
+                                                                const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                                                                const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                                                                return (
+                                                                    <div class="horse-grid-item">
+                                                                        <span class="horse-number-small">{horse.number}</span>
+                                                                        <span class="horse-name-small">{horse.name}{score ? ` (${score}pt)` : ''}</span>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+
                                             <!-- Free会員用アクセス制御（レース別） -->
                                             <div class="access-control-section">
                                                 {/* 連下・押さえ - メインレースかどうかで表示変更 */}
@@ -1716,10 +1767,16 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
 
         const { user, plan } = getCurrentUserPlan();
         const isRegistered = user !== null;
-        
-        console.log('🔍 無料会員アクセスチェック:', { user, plan, isRegistered });
 
-        // 穴馬データのオーバーレイ制御
+        console.log('🔍 無料会員アクセスチェック:', {
+            user,
+            plan,
+            isRegistered,
+            localStorage_userPlan: localStorage.getItem('user-plan'),
+            localStorage_isLoggedIn: localStorage.getItem('isLoggedIn')
+        });
+
+        // 穴馬データのオーバーレイ制御（メインレース11R用）
         const freeMemberOverlay = document.querySelector('.free-member-overlay');
         if (freeMemberOverlay) {
             if (isRegistered) {
@@ -1732,6 +1789,59 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 console.log('🔒 穴馬データアクセス拒否（未登録ユーザー）');
             }
         }
+
+        // 連下・抑えの実際のデータ表示制御（復活防止対策済み）
+        const freeMemberUnlockContents = document.querySelectorAll('.free-member-unlock-content');
+        freeMemberUnlockContents.forEach(content => {
+            if (isRegistered) {
+                // 登録済み：実際のデータを表示
+                content.style.display = 'block';
+                console.log('✅ 連下・抑えの実データ表示（登録済み）');
+            } else {
+                // 未登録：実際のデータを非表示
+                content.style.display = 'none';
+                console.log('🔒 連下・抑えの実データ非表示（未登録）');
+            }
+        });
+
+        // アコーディオン内の連下・抑えアクセス制御セクション制御（有料鍵は維持）
+        const accessControlSections = document.querySelectorAll('.access-control-section');
+        accessControlSections.forEach(section => {
+            const lockedContents = section.querySelectorAll('.locked-content');
+
+            // 連下・押さえ候補馬の鍵のみを制御（有料鍵は除外）
+            const renshitaOsaeLock = Array.from(lockedContents).find(content =>
+                content.querySelector('h3')?.textContent?.includes('連下・押さえ候補馬')
+            );
+
+            if (renshitaOsaeLock) {
+                if (isRegistered) {
+                    // 登録済み：連下・押さえの鍵のみ非表示
+                    renshitaOsaeLock.style.display = 'none';
+                    console.log('✅ 連下・押さえ鍵のみ非表示（登録済み）');
+                } else {
+                    // 未登録：連下・押さえの鍵表示
+                    renshitaOsaeLock.style.display = 'flex';
+                    console.log('🔒 連下・押さえ鍵表示（未登録）');
+                }
+            }
+
+            // 有料会員の鍵（AI予測買い目）は常に表示維持
+            const paidLock = Array.from(lockedContents).find(content =>
+                content.querySelector('h3')?.textContent?.includes('AI予測買い目')
+            );
+
+            if (paidLock) {
+                // 有料鍵は常に表示
+                paidLock.style.display = 'flex';
+                console.log('💰 有料鍵は常に表示維持');
+            }
+        });
+
+        console.log('📊 アコーディオン内アクセス制御完了:', {
+            accessControlSections: accessControlSections.length,
+            isRegistered
+        });
     }
 
     // アコーディオン共通化: 一つ開けたら他を自動で閉じる（premium-predictions.astroから完全移植）
@@ -1777,8 +1887,47 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
         window[`toggleRace${i}R`] = createToggleFunction(i);
     }
 
+    // デバッグ用：テスト認証関数を直接定義
+    window.setTestAuth = function(plan = 'premium') {
+        const userData = {
+            email: 'test@example.com',
+            plan: plan,
+            name: 'テストユーザー',
+            createdAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        localStorage.setItem('user-plan', JSON.stringify(userData));
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userPlan', plan);
+        console.log(`✅ テスト認証設定完了: ${plan}会員`);
+        setTimeout(() => location.reload(), 100);
+    };
+
+    window.clearTestAuth = function() {
+        localStorage.removeItem('user-plan');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userPlan');
+        console.log('🗑️ テスト認証データをクリアしました');
+        setTimeout(() => location.reload(), 100);
+    };
+
+    console.log('🛠️ テスト認証関数準備完了: setTestAuth("free"), clearTestAuth()');
+
     // ページ読み込み後に実行
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 DOMContentLoaded - 無料会員アクセスチェック開始');
         checkFreeMemberAccess();
+
+        // LocalStorage変更時にも再チェック（setTestAuthからのリロード後）
+        window.addEventListener('storage', function() {
+            console.log('📦 LocalStorage変更検知 - アクセスチェック再実行');
+            setTimeout(() => checkFreeMemberAccess(), 100);
+        });
+    });
+
+    // ページが完全に読み込まれた後にも再チェック（フォールバック）
+    window.addEventListener('load', function() {
+        console.log('🌟 Window load完了 - アクセスチェック再実行');
+        setTimeout(() => checkFreeMemberAccess(), 500);
     });
 </script>
