@@ -296,304 +296,6 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
             </div>
         </section>
 
-        <!-- AI選出馬分析 -->
-        <div class="analysis-section">
-            <h2 class="section-title">
-                <span>🤖</span>
-                <span>AIモデル選出馬 - XGBoost×LSTM統合分析</span>
-            </h2>
-
-            {/* 20年運営対応: role-based表示（本命）- 最も大きく表示 */}
-            {normalizedHorses && normalizedHorses.filter(h => h.role === '本命').map((horse, index) => {
-                const roleConfig = getRoleDisplayConfig(horse.role);
-                return (
-                <div class="horse-card horse-card-main">
-                    <div class="horse-header">
-                        <div>
-                            <span class={roleConfig.markClass}>{horse.displayMark}</span>
-                            <span class="horse-number">{horse.number}</span>
-                            <span class="horse-name">{horse.name}</span>
-                            <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
-                        </div>
-                    </div>
-                    <div class="ai-factors">
-                        {/* 累積スコアと星評価のみ表示 */}
-                        {horse.factors && horse.factors.filter(factor =>
-                            factor.text.includes('累積スコア') ||
-                            factor.text.includes('総合評価')
-                        ).map(factor => (
-                            <div class="factor">
-                                <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* 本命馬の特徴量重要度を表示 */}
-                    {horses.main.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.main.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                );
-            })}
-
-            {/* 20年運営対応: role-based表示（対抗）- 中サイズで表示 */}
-            {normalizedHorses && normalizedHorses.filter(h => h.role === '対抗').map((horse, index) => {
-                const roleConfig = getRoleDisplayConfig(horse.role);
-                return (
-                <div class="horse-card horse-card-sub">
-                    <div class="horse-header">
-                        <div>
-                            <span class={roleConfig.markClass}>{horse.displayMark}</span>
-                            <span class="horse-number">{horse.number}</span>
-                            <span class="horse-name">{horse.name}</span>
-                            <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
-                        </div>
-                    </div>
-                    <div class="ai-factors">
-                        {/* 累積スコアと星評価のみ表示 */}
-                        {horse.factors && horse.factors.filter(factor =>
-                            factor.text.includes('累積スコア') ||
-                            factor.text.includes('総合評価')
-                        ).map(factor => (
-                            <div class="factor">
-                                <span class="factor-icon">{factor.icon}</span>
-                                <span>{factor.text}</span>
-                            </div>
-                        ))}
-                    </div>
-                    {/* 対抗馬の特徴量重要度を表示 */}
-                    {horses.sub.importance && (
-                        <div class="feature-importance">
-                            <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                            {horses.sub.importance.map(item => (
-                                <div class="importance-bar">
-                                    <span class="importance-label">{item.label}</span>
-                                    <div class="importance-value">
-                                        <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                );
-            })}
-
-            {/* 20年運営対応: role-based表示（単穴）- 中サイズで表示 */}
-            {normalizedHorses && normalizedHorses.filter(h => h.role === '単穴').length > 0 && (
-                <div class="premium-horses-wrapper free-member-masked">
-                    {normalizedHorses.filter(h => h.role === '単穴').map((horse, index) => {
-                        const roleConfig = getRoleDisplayConfig(horse.role);
-                        return (
-                        <div class="horse-card horse-card-sub">
-                            <div class="horse-header">
-                                <div>
-                                    <span class={roleConfig.markClass}>{horse.displayMark}</span>
-                                    <span class="horse-number">{horse.number}</span>
-                                    <span class="horse-name">{horse.name}</span>
-                                    <span class={roleConfig.typeClass} style={roleConfig.style}>{horse.role}</span>
-                                </div>
-                            </div>
-                            <div class="ai-factors">
-                                {/* 累積スコアと星評価のみ表示 */}
-                                {horse.factors && horse.factors.filter(factor =>
-                                    factor.text.includes('累積スコア') ||
-                                    factor.text.includes('総合評価')
-                                ).map(factor => (
-                                    <div class="factor">
-                                        <span class="factor-icon">{factor.icon}</span>
-                                        <span>{factor.text}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        );
-                    })}
-
-                    {/* △印（連下）- まとめて表示 */}
-                    {normalizedHorses && normalizedHorses.filter(h => h.role === '連下').length > 0 && (
-                        <div class="horse-card horse-card-minor">
-                            <div class="horse-header">
-                                <div>
-                                    <span class="horse-mark-minor">{normalizedHorses.find(h => h.role === '連下')?.displayMark || '△'}</span>
-                                    <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
-                                </div>
-                            </div>
-                            <div class="horse-grid">
-                                {normalizedHorses.filter(h => h.role === '連下').map(horse => {
-                                    const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
-                                    const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
-                                    return (
-                                        <div class="horse-grid-item">
-                                            <span class="horse-number-small">{horse.number}</span>
-                                            <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* ×印（押さえ）- まとめて表示 */}
-                    {normalizedHorses && normalizedHorses.filter(h => h.role === '押さえ').length > 0 && (
-                        <div class="horse-card horse-card-minor">
-                            <div class="horse-header">
-                                <div>
-                                    <span class="horse-mark-minor">{normalizedHorses.find(h => h.role === '押さえ')?.displayMark || '×'}</span>
-                                    <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
-                                </div>
-                            </div>
-                            <div class="horse-grid">
-                                {normalizedHorses.filter(h => h.role === '押さえ').map(horse => {
-                                    const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
-                                    const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
-                                    return (
-                                        <div class="horse-grid-item">
-                                            <span class="horse-number-small">{horse.number}</span>
-                                            <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    <div class="free-member-overlay">
-                        <div class="free-member-content">
-                            <div class="free-member-icon">🔒</div>
-                            <div class="free-member-text">無料会員限定</div>
-                            <div class="free-member-subtitle">穴馬データを表示</div>
-                            <button class="free-member-button" onclick="window.location.href='/free-signup/'">無料登録する</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-
-        <!-- AI推奨投資戦略 -->
-        <div class="recommendation-section">
-            <h2 class="section-title">
-                <span>📊</span>
-                <span>AI推奨投資戦略 - 期待度別最適化買い目</span>
-            </h2>
-            
-
-
-            <!-- 戦略セクション -->
-            <div class="bet-strategies">
-                <!-- 戦略1: 的中率重視型 -->
-                <div class="bet-strategy premium-masked">
-                    <div class="strategy-title">🎯 少点数的中型モデル</div>
-                <div class="bet-list">
-                    {strategies.safe.bets.map(bet => (
-                        <div class="bet-item">
-                            <span class="bet-type">{bet.type}</span>
-                            <span class="bet-horses">{bet.horses}</span>
-                            <span class="bet-points">{bet.points}</span>
-                        </div>
-                    ))}
-                </div>
-                <div class="strategy-features">
-                    <div class="feature-item">
-                        <span class="feature-label">🎯 的中重視</span>
-                        <span class="feature-badge blue">中</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-label">💰 配当期待</span>
-                        <span class="feature-badge gray">低</span>
-                    </div>
-                </div>
-                <div class="risk-indicator">
-                    <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                    <div class="risk-bar active expectation-high" style="width: 60%;"></div>
-                    <div class="risk-bar"></div>
-                    <div class="risk-bar"></div>
-                </div>
-                </div>
-
-                <!-- 戦略2: バランス型 -->
-                <div class="bet-strategy premium-masked">
-                    <div class="strategy-title">⚖️ バランス型モデル</div>
-                <div class="bet-list">
-                    {strategies.balance.bets.map(bet => (
-                        <div class="bet-item">
-                            <span class="bet-type">{bet.type}</span>
-                            <span class="bet-horses">{bet.horses}</span>
-                            <span class="bet-points">{bet.points}</span>
-                        </div>
-                    ))}
-                </div>
-                <div class="strategy-features">
-                    <div class="feature-item">
-                        <span class="feature-label">🎯 的中重視</span>
-                        <span class="feature-badge blue">中</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-label">💰 配当期待</span>
-                        <span class="feature-badge blue">中</span>
-                    </div>
-                </div>
-                <div class="risk-indicator">
-                    <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                    <div class="risk-bar active expectation-medium" style="width: 75%;"></div>
-                    <div class="risk-bar"></div>
-                    <div class="risk-bar"></div>
-                </div>
-                </div>
-
-                <!-- 戦略3: 高配当狙い -->
-                <div class="bet-strategy premium-masked">
-                    <div class="strategy-title">🚀 高配当追求型モデル</div>
-                <div class="bet-list">
-                    {strategies.aggressive.bets.map(bet => (
-                        <div class="bet-item">
-                            <span class="bet-type">{bet.type}</span>
-                            <span class="bet-horses">{bet.horses}</span>
-                            <span class="bet-points">{bet.points}</span>
-                        </div>
-                    ))}
-                </div>
-                <div class="strategy-features">
-                    <div class="feature-item">
-                        <span class="feature-label">🎯 的中重視</span>
-                        <span class="feature-badge gray">低</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-label">💰 配当期待</span>
-                        <span class="feature-badge green">高</span>
-                    </div>
-                </div>
-                <div class="risk-indicator">
-                    <span style="color: #64748b; font-size: 0.85rem;">期待度:</span>
-                    <div class="risk-bar active expectation-low" style="width: 90%;"></div>
-                    <div class="risk-bar"></div>
-                    <div class="risk-bar"></div>
-                </div>
-                </div>
-
-                <!-- 統一プレミアム投資戦略オーバーレイ -->
-                <div class="unified-premium-overlay">
-                    <div class="unified-premium-content">
-                        <div class="unified-premium-icon">🔒</div>
-                        <div class="unified-premium-text">有料会員限定</div>
-                        <div class="unified-premium-subtitle">投資戦略を完全表示</div>
-                        <button class="unified-premium-button" onclick="window.location.href='/pricing/'">今すぐ登録</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- AI分析サマリー -->
         <div class="analysis-summary">
             <h4 style="color: #3b82f6; margin-bottom: 20px; margin-top: 30px; font-size: 1.2rem;">📊 重要指標</h4>
@@ -627,9 +329,9 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 <span>🔬</span>
                 <span>AI予想の技術的背景</span>
             </h2>
-            
+
             <h3 style="color:#8b5cf6;margin-bottom:15px">使用モデル</h3>
-            
+
             <div style="margin-bottom:20px">
                 <h4 style="color:#3b82f6;margin-bottom:8px">🤖 XGBoost</h4>
                 <ul style="color:#e2e8f0;line-height:1.6;margin-left:20px">
@@ -638,7 +340,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <li>過去10,000レース以上の学習データ</li>
                 </ul>
             </div>
-            
+
             <div style="margin-bottom:20px">
                 <h4 style="color:#3b82f6;margin-bottom:8px">🧠 LSTM（長短期記憶）</h4>
                 <ul style="color:#e2e8f0;line-height:1.6;margin-left:20px">
@@ -647,7 +349,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <li>リカレント構造で過去パフォーマンスを記憶</li>
                 </ul>
             </div>
-            
+
             <div style="margin-bottom:20px">
                 <h4 style="color:#3b82f6;margin-bottom:8px">🔥 ニューラルネットワーク</h4>
                 <ul style="color:#e2e8f0;line-height:1.6;margin-left:20px">
@@ -655,7 +357,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                     <li>深層学習による非線形パターン抽出</li>
                 </ul>
             </div>
-            
+
             <h3 style="color:#8b5cf6;margin-bottom:15px;margin-top:25px">主要特徴量（50項目から抜粋）</h3>
             <ul style="color:#e2e8f0;line-height:1.8;margin-left:20px">
                 <li><strong style="color:#10b981">過去パフォーマンス</strong>: 5走の着順・タイム・上がり3ハロン</li>
@@ -663,7 +365,7 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
                 <li><strong style="color:#10b981">市場要因</strong>: オッズ変動パターン・人気度推移</li>
                 <li><strong style="color:#10b981">血統要因</strong>: 父系・母系・生産者データ</li>
             </ul>
-            
+
         </div>
 
         <!-- 免責事項 -->
