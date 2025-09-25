@@ -266,7 +266,7 @@ export const dailyResultsData = {
             </div>
         </section>
 
-        <!-- 【新規追加】プレミアムレースプレビュー（1R-9R） -->
+        <!-- 【新規追加】プレミアムレースプレビュー（1R-9R）- アコーディオン形式 -->
         <section style="margin-bottom: 60px;">
             <div class="analysis-section">
                 <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--primary-color); text-align: center; margin-bottom: 15px;">
@@ -276,8 +276,8 @@ export const dailyResultsData = {
                     プレミアムレース（1R-9R）の本命・対抗・単穴情報をプレビュー表示
                 </p>
 
-                <!-- プレミアムレース一覧（1R-9R） -->
-                <div style="display: grid; gap: 25px;">
+                <!-- プレミアムレース一覧（1R-9R）- アコーディオン -->
+                <div class="races-container">
                     {sortedRaces.filter(race => !['10R', '11R', '12R'].includes(race.raceNumber)).map((raceData) => {
                         // 各レースのデータ処理
                         const normalizedHorses = normalizeHorseData(raceData) || [];
@@ -288,161 +288,194 @@ export const dailyResultsData = {
                         const subHorse = raceHorses.find(h => h.role === '対抗');
                         const tanaHorses = raceHorses.filter(h => h.role === '単穴');
 
+                        const raceNum = raceData.raceNumber.replace('R', '');
+
                         return (
-                        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 20px; padding: 30px; transition: all 0.3s ease;">
-                            <!-- レースヘッダー -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
-                                <div>
-                                    <h3 style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin-bottom: 5px;">
-                                        {raceData.raceName || `${raceData.raceNumber} レース`}
-                                    </h3>
-                                    <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                                        <span style="color: var(--body-text-color); font-size: 0.9rem;">
-                                            📏 {raceData.raceInfo?.distance || '距離未定'}
-                                        </span>
-                                        <span style="color: var(--body-text-color); font-size: 0.9rem;">
-                                            🐎 {raceData.raceInfo?.horseCount || raceData.totalHorses || '頭数未定'}頭
-                                        </span>
-                                        <span style="color: var(--body-text-color); font-size: 0.9rem;">
-                                            🕐 {raceData.raceInfo?.startTime || '時刻未定'}
-                                        </span>
-                                    </div>
+                        <div class="race-accordion-item">
+                            <!-- アコーディオンヘッダー（既存デザインと統一） -->
+                            <div class="race-accordion-header" onclick={`togglePreview${raceNum}R()`}>
+                                <div class="race-basic-info">
+                                    <span class="race-number">{raceData.raceNumber}</span>
+                                    <span class="race-name">{(raceData.raceName || '競走名').replace(/\s*[ダ芝]\d+[,.]?\d*m.*$/, '').replace(/\s*（\d+頭）.*$/, '').replace(/\s*発走時刻.*$/, '')}</span>
+                                    <span class="race-tier-badge">プレビュー</span>
+                                    <span class="race-detail-info">
+                                        📏 {raceData.raceInfo?.distance || '距離未定'}
+                                        🐎 {raceData.raceInfo?.horseCount || raceData.totalHorses || '頭数未定'}頭
+                                        🕐 {raceData.raceInfo?.startTime || '時刻未定'}
+                                    </span>
+                                </div>
+                                <div class="race-preview">
+                                    <span class="toggle-icon" id={`toggle-preview-${raceNum}r`}>▼</span>
                                 </div>
                             </div>
 
-                            <!-- 馬情報表示 -->
-                            <div style="display: grid; gap: 20px;">
-                                <!-- 本命馬 -->
-                                {mainHorse && (
-                                    <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 12px; padding: 20px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                            <div>
-                                                <span style="color: #ffd700; font-weight: 700; margin-right: 10px;">◎</span>
-                                                <span style="color: #ffd700; font-weight: 600; margin-right: 10px;">{mainHorse.number}</span>
-                                                <span style="color: var(--body-text-color); font-weight: 600;">{mainHorse.name}</span>
-                                                <span style="color: #ffd700; font-weight: 600; margin-left: 15px;">本命</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- 星評価・スコア -->
-                                        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
-                                            {mainHorse.factors && mainHorse.factors.map(factor => (
-                                                <div style="display: flex; align-items: center; gap: 5px;">
-                                                    <span style="color: #ffd700;">{factor.icon}</span>
-                                                    <span style="color: var(--body-text-color); font-size: 0.9rem;">{factor.text}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <!-- 特徴量重要度 -->
-                                        {raceData.horses?.main?.importance && (
-                                            <div style="margin-top: 15px;">
-                                                <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                                                <div style="display: grid; gap: 8px;">
-                                                    {raceData.horses.main.importance.map(item => (
-                                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                            <span style="color: var(--body-text-color); font-size: 0.85rem;">{item.label}</span>
-                                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                                <div style="width: 60px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-                                                                    <div style={`width: ${item.value * 100}%; height: 100%; background: linear-gradient(90deg, #ffd700, #ffed4e); transition: width 0.3s ease;`}></div>
-                                                                </div>
-                                                                <span style="color: #ffd700; font-weight: 600; font-size: 0.85rem; min-width: 35px;">{Math.round(item.value * 100)}%</span>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
+                            <!-- アコーディオンコンテンツ -->
+                            <div class="race-accordion-content" id={`preview-${raceNum}r`} style="max-height: 0; opacity: 0;">
+                                <div class={`race-content-preview-${raceNum}r`}>
+                                    <!-- レース詳細情報 -->
+                                    <div class="race-details-info">
+                                        <h3 class="race-detail-title">{raceData.raceNumber} {raceData.raceName || '競走名'}</h3>
                                     </div>
-                                )}
 
-                                <!-- 対抗馬 -->
-                                {subHorse && (
-                                    <div style="background: rgba(0, 191, 255, 0.1); border: 1px solid rgba(0, 191, 255, 0.3); border-radius: 12px; padding: 20px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                            <div>
-                                                <span style="color: #00bfff; font-weight: 700; margin-right: 10px;">○</span>
-                                                <span style="color: #00bfff; font-weight: 600; margin-right: 10px;">{subHorse.number}</span>
-                                                <span style="color: var(--body-text-color); font-weight: 600;">{subHorse.name}</span>
-                                                <span style="color: #00bfff; font-weight: 600; margin-left: 15px;">対抗</span>
-                                            </div>
-                                        </div>
+                                    <!-- AI選出馬分析 -->
+                                    <div class="analysis-section">
+                                        <h2 class="section-title">
+                                            <span>👀</span>
+                                            <span>プレビュー - 本命・対抗・単穴</span>
+                                        </h2>
 
-                                        <!-- 星評価・スコア -->
-                                        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
-                                            {subHorse.factors && subHorse.factors.map(factor => (
-                                                <div style="display: flex; align-items: center; gap: 5px;">
-                                                    <span style="color: #00bfff;">{factor.icon}</span>
-                                                    <span style="color: var(--body-text-color); font-size: 0.9rem;">{factor.text}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <!-- 特徴量重要度 -->
-                                        {raceData.horses?.sub?.importance && (
-                                            <div style="margin-top: 15px;">
-                                                <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
-                                                <div style="display: grid; gap: 8px;">
-                                                    {raceData.horses.sub.importance.map(item => (
-                                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                            <span style="color: var(--body-text-color); font-size: 0.85rem;">{item.label}</span>
-                                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                                <div style="width: 60px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-                                                                    <div style={`width: ${item.value * 100}%; height: 100%; background: linear-gradient(90deg, #00bfff, #87ceeb); transition: width 0.3s ease;`}></div>
-                                                                </div>
-                                                                <span style="color: #00bfff; font-weight: 600; font-size: 0.85rem; min-width: 35px;">{Math.round(item.value * 100)}%</span>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                <!-- 単穴馬 -->
-                                {tanaHorses.length > 0 && (
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
-                                        {tanaHorses.map(horse => (
-                                            <div style="background: rgba(255, 140, 0, 0.1); border: 1px solid rgba(255, 140, 0, 0.3); border-radius: 12px; padding: 20px;">
-                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                        <!-- 本命馬 -->
+                                        {mainHorse && (
+                                            <div class="horse-card horse-card-main">
+                                                <div class="horse-header">
                                                     <div>
-                                                        <span style="color: #ff8c00; font-weight: 700; margin-right: 10px;">▲</span>
-                                                        <span style="color: #ff8c00; font-weight: 600; margin-right: 10px;">{horse.number}</span>
-                                                        <span style="color: var(--body-text-color); font-weight: 600;">{horse.name}</span>
-                                                        <span style="color: #ff8c00; font-weight: 600; margin-left: 15px;">単穴</span>
+                                                        <span class="horse-mark-main">◎</span>
+                                                        <span class="horse-number">{mainHorse.number}</span>
+                                                        <span class="horse-name">{mainHorse.name}</span>
+                                                        <span class="horse-type-main">本命</span>
                                                     </div>
                                                 </div>
+                                                <div class="ai-factors">
+                                                    {mainHorse.factors && mainHorse.factors.map(factor => (
+                                                        <div class="factor">
+                                                            <span class="factor-icon">{factor.icon}</span>
+                                                            <span>{factor.text}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
 
-                                                <!-- 星評価・スコア -->
-                                                <div style="display: flex; gap: 20px; align-items: center;">
+                                                <!-- 特徴量重要度 -->
+                                                {raceData.horses?.main?.importance && (
+                                                    <div class="feature-importance">
+                                                        <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                                                        {raceData.horses.main.importance.map(item => (
+                                                            <div class="importance-bar">
+                                                                <span class="importance-label">{item.label}</span>
+                                                                <div class="importance-value">
+                                                                    <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <!-- 対抗馬 -->
+                                        {subHorse && (
+                                            <div class="horse-card horse-card-sub">
+                                                <div class="horse-header">
+                                                    <div>
+                                                        <span class="horse-mark-sub">○</span>
+                                                        <span class="horse-number">{subHorse.number}</span>
+                                                        <span class="horse-name">{subHorse.name}</span>
+                                                        <span class="horse-type-sub">対抗</span>
+                                                    </div>
+                                                </div>
+                                                <div class="ai-factors">
+                                                    {subHorse.factors && subHorse.factors.map(factor => (
+                                                        <div class="factor">
+                                                            <span class="factor-icon">{factor.icon}</span>
+                                                            <span>{factor.text}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <!-- 特徴量重要度 -->
+                                                {raceData.horses?.sub?.importance && (
+                                                    <div class="feature-importance">
+                                                        <h4 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">特徴量重要度</h4>
+                                                        {raceData.horses.sub.importance.map(item => (
+                                                            <div class="importance-bar">
+                                                                <span class="importance-label">{item.label}</span>
+                                                                <div class="importance-value">
+                                                                    <div class="importance-fill" style={`width: ${item.value * 100}%;`}>{Math.round(item.value * 100)}%</div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <!-- 単穴馬 -->
+                                        {tanaHorses.length > 0 && tanaHorses.map(horse => (
+                                            <div class="horse-card horse-card-sub">
+                                                <div class="horse-header">
+                                                    <div>
+                                                        <span class="horse-mark-minor">▲</span>
+                                                        <span class="horse-number">{horse.number}</span>
+                                                        <span class="horse-name">{horse.name}</span>
+                                                        <span class="horse-type-minor">単穴</span>
+                                                    </div>
+                                                </div>
+                                                <div class="ai-factors">
                                                     {horse.factors && horse.factors.map(factor => (
-                                                        <div style="display: flex; align-items: center; gap: 5px;">
-                                                            <span style="color: #ff8c00;">{factor.icon}</span>
-                                                            <span style="color: var(--body-text-color); font-size: 0.9rem;">{factor.text}</span>
+                                                        <div class="factor">
+                                                            <span class="factor-icon">{factor.icon}</span>
+                                                            <span>{factor.text}</span>
                                                         </div>
                                                     ))}
                                                 </div>
                                             </div>
                                         ))}
-                                    </div>
-                                )}
 
-                                <!-- 統合鍵セクション -->
-                                <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 25px; text-align: center; margin-top: 20px;">
-                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-                                        <div style="display: flex; align-items: center; gap: 10px;">
-                                            <i style="font-size: 2rem;">🔐</i>
-                                            <h4 style="color: #8b5cf6; font-size: 1.2rem; margin: 0;">Premium会員限定</h4>
+                                        <!-- Standard会員は連下・押さえ解放 -->
+                                        {raceHorses && raceHorses.filter(h => h.role === '連下').length > 0 && (
+                                            <div class="horse-card horse-card-minor">
+                                                <div class="horse-header">
+                                                    <div>
+                                                        <span class="horse-mark-minor">{raceHorses.find(h => h.role === '連下')?.displayMark || '△'}</span>
+                                                        <span style="color: #f59e0b; font-weight: 600;">連下候補馬</span>
+                                                    </div>
+                                                </div>
+                                                <div class="horse-grid">
+                                                    {Array.isArray(raceHorses) && raceHorses.filter(h => h?.role === '連下').map(horse => {
+                                                        const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                                                        const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                                                        return (
+                                                            <div class="horse-grid-item">
+                                                                <span class="horse-number-small">{horse.number}</span>
+                                                                <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {raceHorses && raceHorses.filter(h => h.role === '押さえ').length > 0 && (
+                                            <div class="horse-card horse-card-minor">
+                                                <div class="horse-header">
+                                                    <div>
+                                                        <span class="horse-mark-minor">{raceHorses.find(h => h.role === '押さえ')?.displayMark || '×'}</span>
+                                                        <span style="color: #64748b; font-weight: 600;">抑え候補馬</span>
+                                                    </div>
+                                                </div>
+                                                <div class="horse-grid">
+                                                    {Array.isArray(raceHorses) && raceHorses.filter(h => h?.role === '押さえ').map(horse => {
+                                                        const scoreText = horse.factors?.find(f => f.text.includes('累積スコア'))?.text;
+                                                        const score = scoreText ? scoreText.match(/\d+/)?.[0] : '';
+                                                        return (
+                                                            <div class="horse-grid-item">
+                                                                <span class="horse-number-small">{horse.number}</span>
+                                                                <span class="horse-name-small">{horse.name}{score ? `(${score}pt)` : ''}</span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <!-- Premium限定はAI買い目のみ -->
+                                        <div class="unified-premium-overlay">
+                                            <div class="unified-premium-content">
+                                                <div class="unified-premium-icon">🔐</div>
+                                                <div class="unified-premium-text">Premium会員限定</div>
+                                                <div class="unified-premium-subtitle">AI推奨投資戦略・買い目を完全表示</div>
+                                                <button class="unified-premium-button" onclick="window.location.href='/pricing/'">Premium会員になる</button>
+                                            </div>
                                         </div>
-                                        <div style="color: var(--body-text-color); opacity: 0.8; font-size: 0.95rem; margin-bottom: 10px;">
-                                            <p style="margin: 5px 0;">• 連下候補馬情報</p>
-                                            <p style="margin: 5px 0;">• 押さえ候補馬情報</p>
-                                            <p style="margin: 5px 0;">• AI予測買い目（3戦略）</p>
-                                        </div>
-                                        <a href="/pricing" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; display: inline-block;">
-                                            Premium会員になる
-                                        </a>
                                     </div>
                                 </div>
                             </div>
