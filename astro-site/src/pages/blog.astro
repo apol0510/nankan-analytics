@@ -64,39 +64,41 @@ const categories = [...new Set(sortedPosts.map(post => post.data.category))];
       <section class="posts-grid">
         {sortedPosts.map((post) => (
           <article class="post-card">
-            {post.data.heroImage && (
-              <img 
-                src={post.data.heroImage} 
-                alt={post.data.title}
-                class="post-image"
-              />
-            )}
-            <div class="post-content">
-              <div class="post-meta">
-                <span class="category-badge">{post.data.category}</span>
-                <time datetime={post.data.pubDate.toISOString()}>
-                  {post.data.pubDate.toLocaleDateString('ja-JP', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </time>
-              </div>
-              
-              <h2 class="post-title">
-                <a href={`/blog/${post.slug}`}>{post.data.title}</a>
-              </h2>
-              
-              <p class="post-description">{post.data.description}</p>
-              
-              {post.data.tags && (
-                <div class="post-tags">
-                  {post.data.tags.slice(0, 3).map(tag => (
-                    <span class="tag">#{tag}</span>
-                  ))}
-                </div>
+            <a href={`/blog/${post.slug}`} class="card-link">
+              {post.data.heroImage && (
+                <img
+                  src={post.data.heroImage}
+                  alt={post.data.title}
+                  class="post-image"
+                />
               )}
-            </div>
+              <div class="post-content">
+                <div class="post-meta">
+                  <span class="category-badge">{post.data.category}</span>
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {post.data.pubDate.toLocaleDateString('ja-JP', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+
+                <h2 class="post-title">
+                  {post.data.title}
+                </h2>
+
+                <p class="post-description">{post.data.description}</p>
+
+                {post.data.tags && (
+                  <div class="post-tags">
+                    {post.data.tags.slice(0, 3).map(tag => (
+                      <span class="tag">#{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
           </article>
         ))}
       </section>
@@ -185,12 +187,26 @@ const categories = [...new Set(sortedPosts.map(post => post.data.category))];
   border: 1px solid #374151;
   border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: pointer;
 }
 
 .post-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: #3b82f6;
+}
+
+.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  transition: all 0.2s ease;
+}
+
+.card-link:active {
+  transform: scale(0.98);
 }
 
 .post-image {
@@ -226,17 +242,14 @@ const categories = [...new Set(sortedPosts.map(post => post.data.category))];
 
 .post-title {
   margin-bottom: 1rem;
-}
-
-.post-title a {
   color: #f1f5f9;
-  text-decoration: none;
   font-size: 1.3rem;
   font-weight: 600;
   line-height: 1.3;
+  transition: color 0.2s;
 }
 
-.post-title a:hover {
+.card-link:hover .post-title {
   color: #3b82f6;
 }
 
