@@ -294,11 +294,32 @@ const description = "大井競馬場の1000m〜2600m全11距離を実データ�
                 </div>
             </section>
 
+            <!-- 関連記事セクション -->
+            <section class="related-articles">
+                <h2>📚 大井競馬場 関連記事</h2>
+                <div class="articles-grid">
+                    <a href="/blog/course/ooi-1000m" class="article-card-link">
+                        <div class="article-card">
+                            <h3>📊 大井競馬場1000m完全攻略ガイド</h3>
+                            <p>超短距離戦1000mの馬番別・人気別成績データを徹底分析。勝率28.6%の10番馬番、信頼度71.4%の1番人気など実戦データから見える攻略法を詳しく解説。</p>
+                            <div class="article-meta">
+                                <span class="highlight-data">📈 勝率28.6%（10番馬番）</span>
+                                <span class="highlight-data">🎯 信頼度71.4%（1番人気）</span>
+                            </div>
+                            <div class="article-action">
+                                <span class="action-text">詳細な攻略法を見る</span>
+                                <span class="action-arrow">→</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
             <section class="cta-section">
                 <div class="cta-content">
                     <h2>⚡ 大井競馬場で勝率アップ！</h2>
                     <p>実データに基づいた攻略法で、大井競馬場での的中率を向上させましょう。486mの長い直線と右回りの特性を理解することで、より精度の高い予想が可能になります。</p>
-                    
+
                     <div class="action-buttons">
                         <a href="/course/" class="cta-button primary">他の競馬場も見る</a>
                         <a href="/beginner/" class="cta-button secondary">初心者講座を見る</a>
@@ -671,6 +692,133 @@ const description = "大井競馬場の1000m〜2600m全11距離を実データ�
             .cta-button {
                 width: 100%;
                 max-width: 300px;
+            }
+        }
+
+        /* 関連記事セクション */
+        .related-articles {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .related-articles h2 {
+            color: #10b981;
+            margin-bottom: 1.5rem;
+        }
+
+        .articles-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .article-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .article-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .article-card-link:hover .article-card {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .article-card h3 {
+            color: #10b981;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .article-card p {
+            color: var(--body-text-color);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .highlight-data {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .article-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .action-text {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .action-arrow {
+            color: #10b981;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .article-card-link:hover .action-arrow {
+            transform: translateX(5px);
+        }
+
+        .article-card-link:hover .action-text {
+            color: #059669;
+        }
+
+        @media (max-width: 768px) {
+            .related-articles {
+                padding: 1.5rem;
+            }
+
+            .article-card {
+                padding: 1.25rem;
+            }
+
+            .article-meta {
+                gap: 0.5rem;
+            }
+
+            .highlight-data {
+                font-size: 0.8rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .action-text {
+                font-size: 0.9rem;
             }
         }
     </style>
