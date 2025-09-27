@@ -4,11 +4,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort(
+
+// Astroページの記事を手動で追加
+const astroPosts = [
+  {
+    slug: 'course/ooi-1000m',
+    data: {
+      title: '大井競馬場1000m完全攻略ガイド【2025年最新版】',
+      description: '大井競馬場1000mレースの馬番別・人気別成績を徹底分析。データから導き出す的中率アップの攻略法を解説。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '1000m', 'データ分析'],
+      heroImage: '/course_data/ooi_1000m.png',
+      featured: true
+    }
+  }
+  // 今後、他のコース攻略記事もここに追加予定
+  // 例: 川崎1400m、浦和1400m、船橋1200m など
+];
+
+// コンテンツコレクションとAstroページを結合
+const combinedPosts = [...allPosts, ...astroPosts];
+const sortedPosts = combinedPosts.sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
 );
 
-const categories = [...new Set(allPosts.map(post => post.data.category))];
+const categories = [...new Set(sortedPosts.map(post => post.data.category))];
 ---
 
 <BaseLayout 
