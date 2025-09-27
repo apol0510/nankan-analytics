@@ -8,14 +8,122 @@ const allPosts = await getCollection('blog');
 // Astroページの記事を手動で追加
 const astroPosts = [
   {
+    slug: 'course/ooi-1400m',
+    data: {
+      title: '大井競馬場1400m完全攻略ガイド【2025年最新版】',
+      description: '大井競馬場1400mレースの馬番別・人気別成績を徹底分析。5番枠11.1%の中枠優勢と1番人気49.8%の高信頼度を解説。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '1400m', 'データ分析', '特殊距離'],
+      heroImage: '/course_data/ooi_1400m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-1200m',
+    data: {
+      title: '大井競馬場1200m完全攻略ガイド【2025年最新版】',
+      description: '大井競馬場1200mレースの馬番別・人気別成績を徹底分析。16番枠13.6%の驚異的勝率など実戦データから導く攻略法を解説。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '1200m', 'データ分析'],
+      heroImage: '/course_data/ooi_1200m.png',
+      featured: true
+    }
+  },
+  {
     slug: 'course/ooi-1000m',
     data: {
       title: '大井競馬場1000m完全攻略ガイド【2025年最新版】',
-      description: '大井競馬場1000mレースの馬番別・人気別成績を徹底分析。データから導き出す的中率アップの攻略法を解説。',
+      description: '大井競馬場1000mレースの馬番別・人気別成績を徹底分析。12番枠33.3%の驚異的勝率など実戦データから導く攻略法を解説。',
       pubDate: new Date('2025-09-27'),
       category: 'コース攻略',
       tags: ['大井競馬', '1000m', 'データ分析'],
       heroImage: '/course_data/ooi_1000m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-1600m',
+    data: {
+      title: '大井競馬場1600m完全攻略ガイド【2025年最新版】',
+      description: '大井競馬場1600mレースの馬番別・人気別成績を徹底分析。4番枠12.5%の高勝率と1番人気42.2%の信頼度を解説。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '1600m', 'データ分析', 'マイル'],
+      heroImage: '/course_data/ooi_1600m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-1650m',
+    data: {
+      title: '大井競馬場1650m完全攻略ガイド【2025年最新版】左回り特殊コース',
+      description: '大井唯一の左回りコース1650mの特殊性を徹底分析。13番枠20.0%の高勝率と左回り適性が勝負の分かれ目。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '1650m', 'データ分析', '左回り', '特殊'],
+      heroImage: '/course_data/ooi_1650m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-1700m',
+    data: {
+      title: '大井競馬場1700m完全攻略ガイド【2025年最新版】超レア距離',
+      description: '年間数レースしか施行されない超レア距離1700mの特殊性を分析。14番枠33.3%の勝率と1番人気75.0%の信頼度。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '1700m', 'データ分析', '超レア距離'],
+      heroImage: '/course_data/ooi_1700m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-1800m',
+    data: {
+      title: '大井競馬場1800m完全攻略ガイド【2025年最新版】中距離戦',
+      description: 'スピードとスタミナのバランスが問われる中距離戦1800mを分析。12番枠20.6%の勝率と1番人気79.7%の信頼度。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '1800m', 'データ分析', '中距離戦'],
+      heroImage: '/course_data/ooi_1800m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-2000m',
+    data: {
+      title: '大井競馬場2000m完全攻略ガイド【2025年最新版】長距離戦',
+      description: '真の実力が問われる長距離戦2000mを分析。1番人気複勝率90.6%は全距離最高、勝率18.8%の12番枠、スタミナが全ての本格派レース。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '2000m', 'データ分析', '長距離戦', 'スタミナ'],
+      heroImage: '/course_data/ooi_2000m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-2400m',
+    data: {
+      title: '大井競馬場2400m完全攻略ガイド【2025年最新版】超長距離戦',
+      description: '極めて稀な開催頻度の超長距離戦2400mを分析。わずか2レースのサンプルから見える傾向と統計的信頼性の注意点を詳述。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '2400m', 'データ分析', '超長距離戦', '統計注意'],
+      heroImage: '/course_data/ooi_2400m.png',
+      featured: true
+    }
+  },
+  {
+    slug: 'course/ooi-2600m',
+    data: {
+      title: '大井競馬場2600m完全攻略ガイド【2025年最新版】最長距離戦',
+      description: '大井競馬2600mレースの馬番別・人気別成績を徹底分析。最長距離戦の特徴と攻略法をデータから解説します。',
+      pubDate: new Date('2025-09-27'),
+      category: 'コース攻略',
+      tags: ['大井競馬', '2600m', 'データ分析', '最長距離戦', '究極スタミナ'],
+      heroImage: '/course_data/ooi_2600m.png',
       featured: true
     }
   }

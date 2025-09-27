@@ -1,5 +1,10 @@
 ---
-export const prerender = true;
+// 大井競馬場1600m完全攻略ガイド
+const title = "大井競馬1600m完全攻略ガイド - 馬番別・人気別成績データ分析 | NANKANアナリティクス";
+const description = "大井競馬1600m（マイル）レースの馬番別・人気別成績を徹底分析。勝率・連対率・複勝率のデータから導き出す的中率アップの攻略法を解説します。";
+const keywords = "大井競馬,1600m,マイル,馬番,人気,勝率,連対率,複勝率,データ分析,南関東,地方競馬,予想,攻略";
+const canonical = "https://nankan-analytics.keiba.link/blog/course/ooi-1600m";
+const ogImage = "https://nankan-analytics.keiba.link/course_data/ooi_1600m.png";
 ---
 
 <!DOCTYPE html>
@@ -7,47 +12,46 @@ export const prerender = true;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="大井競馬1000mレースの馬番別・人気別成績を徹底分析。勝率・連対率・複勝率のデータから導き出す的中率アップの攻略法を解説します。">
-    <meta name="keywords" content="大井競馬,1000m,馬番,人気,勝率,連対率,複勝率,データ分析,南関東,地方競馬,予想,攻略">
-    <meta property="og:title" content="大井競馬1000m完全攻略ガイド｜馬番別・人気別成績データ分析">
-    <meta property="og:description" content="大井競馬場1000mレースの詳細データ分析。馬番別・人気別の成績から見える傾向と攻略法を解説。">
+    <meta name="description" content={description}>
+    <meta name="keywords" content={keywords}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
     <meta property="og:type" content="article">
-    <meta property="og:image" content="/course_data/ooi_1000m.png">
+    <meta property="og:image" content={ogImage}>
+    <meta property="og:url" content={canonical}>
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="canonical" href="https://example.com/ooi-keiba-1000m">
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={ogImage}>
+    <link rel="canonical" href={canonical}>
     <meta name="robots" content="index, follow">
-    <meta name="author" content="南関アナリティクス">
-    <title>大井競馬1000m完全攻略ガイド - 馬番別・人気別成績データ分析 | 南関アナリティクス</title>
+    <meta name="author" content="NANKANアナリティクス">
+    <title>{title}</title>
 
     <!-- 構造化データ（JSON-LD） -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "大井競馬場1000m完全攻略ガイド【2025年最新版】",
-      "description": "大井競馬1000mレースの馬番別・人気別成績を徹底分析。データから導き出す的中率アップの攻略法",
+      "headline": "大井競馬場1600m完全攻略ガイド【2025年最新版】",
+      "description": "大井競馬1600mマイルレースの馬番別・人気別成績を徹底分析。データから導き出す的中率アップの攻略法",
       "author": {
         "@type": "Organization",
-        "name": "南関アナリティクス"
+        "name": "NANKANアナリティクス"
       },
-      "datePublished": "2025-01-01",
-      "dateModified": "2025-01-01",
+      "datePublished": "2025-09-27",
+      "dateModified": "2025-09-27",
       "publisher": {
         "@type": "Organization",
-        "name": "南関アナリティクス",
+        "name": "NANKANアナリティクス",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://example.com/logo.png"
+          "url": "https://nankan-analytics.keiba.link/logo.png"
         }
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://example.com/ooi-keiba-1000m"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "reviewCount": "156"
+        "@id": "https://nankan-analytics.keiba.link/blog/course/ooi-1600m"
       }
     }
     </script>
@@ -59,17 +63,17 @@ export const prerender = true;
       "@type": "FAQPage",
       "mainEntity": [{
         "@type": "Question",
-        "name": "大井競馬1000mで最も勝率が高い馬番は？",
+        "name": "大井競馬1600mで最も勝率が高い馬番は？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "12番枠が33.3%で最も高い勝率を記録しています。次いで10番枠が28.6%となっています。"
+          "text": "実質的には4番枠が12.5%、9番枠が12.1%という順になっています。16番枠は25.0%ですがサンプル数が4と極端に少ないため参考値です。"
         }
       },{
         "@type": "Question",
-        "name": "大井1000mの1番人気の信頼度は？",
+        "name": "大井1600mの1番人気の信頼度は？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "1番人気の勝率は71.4%と非常に高く、連対率・複勝率も同じく71.4%を記録しています。"
+          "text": "1番人気の勝率は42.2%、連対率56.3%、複勝率70.2%と安定した信頼度を示しています。1200mや1400mと比較して標準的な数値です。"
         }
       }]
     }
@@ -194,6 +198,21 @@ export const prerender = true;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
+        /* 画像レスポンシブ対応 */
+        .course-images {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .course-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
         /* グラフコンテナ - モバイル対応 */
         .chart-container {
             background: white;
@@ -202,11 +221,20 @@ export const prerender = true;
             margin: 20px 0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow-x: auto;
+            min-height: 250px;
         }
 
         .chart-wrapper {
             min-width: 300px;
             position: relative;
+        }
+
+        .chart-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+            color: #95a5a6;
         }
 
         canvas {
@@ -293,23 +321,6 @@ export const prerender = true;
             margin-top: 5px;
         }
 
-        /* CTA部分 - モバイル最適化 */
-        .cta-section {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 30px 20px;
-            border-radius: 12px;
-            margin: 30px 0;
-            text-align: center;
-        }
-
-        .cta-section h2 {
-            color: white;
-            border: none;
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-
         .cta-buttons {
             display: flex;
             flex-direction: column;
@@ -339,7 +350,71 @@ export const prerender = true;
             border: 2px solid white;
         }
 
-        /* タブレット対応 */
+        /* 関連記事カードスタイル */
+        .related-articles-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .related-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .related-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #3498db;
+        }
+
+        .related-card:active {
+            transform: scale(0.98);
+        }
+
+        .related-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .related-card-content {
+            padding: 15px;
+        }
+
+        .related-card h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .related-card:hover h3 {
+            color: #3498db;
+        }
+
+        .related-card p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .related-card .tag {
+            display: inline-block;
+            background: #ecf0f1;
+            color: #7f8c8d;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        /* レスポンシブ対応 */
         @media (min-width: 768px) {
             body {
                 padding: 20px;
@@ -356,6 +431,15 @@ export const prerender = true;
 
             h2 {
                 font-size: 22px;
+            }
+
+            .course-images {
+                flex-direction: row;
+                gap: 20px;
+            }
+
+            .course-image {
+                flex: 1;
             }
 
             .stats-grid {
@@ -377,10 +461,8 @@ export const prerender = true;
                 padding: 15px 40px;
             }
 
-            /* コース画像をタブレットで横並び表示 */
-            .course-images {
-                grid-template-columns: 1fr 1fr !important;
-                gap: 20px !important;
+            .related-articles-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -393,6 +475,10 @@ export const prerender = true;
             .data-table th,
             .data-table td {
                 padding: 12px;
+            }
+
+            .related-articles-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
@@ -439,6 +525,10 @@ export const prerender = true;
             .data-table th {
                 background-color: #1e3a5f;
             }
+
+            .related-card {
+                background: #2d2d2d;
+            }
         }
     </style>
 </head>
@@ -451,32 +541,16 @@ export const prerender = true;
                 <li style="display: inline; margin: 0 8px;">›</li>
                 <li style="display: inline;"><a href="/course/ooi" style="color: #3498db; text-decoration: none;">大井競馬場</a></li>
                 <li style="display: inline; margin: 0 8px;">›</li>
-                <li style="display: inline;"><span style="color: #7f8c8d;">1000m攻略ガイド</span></li>
+                <li style="display: inline;"><span style="color: #7f8c8d;">1600m攻略ガイド</span></li>
             </ol>
         </nav>
 
-        <h1>大井競馬場1000m完全攻略ガイド 【2025年最新版】データが示す勝利への道</h1>
-
-        <!-- コース画像セクション -->
-        <div class="course-images" style="display: grid; grid-template-columns: 1fr; gap: 15px; margin: 25px 0;">
-            <div style="text-align: center;">
-                <img src="/course_data/ooi_course_right.png"
-                     alt="大井競馬場コースレイアウト図 - 右回りダートコース全体図"
-                     style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <p style="font-size: 12px; color: #666; margin-top: 5px;">大井競馬場コースレイアウト（右回り）</p>
-            </div>
-            <div style="text-align: center;">
-                <img src="/course_data/ooi_1000m.png"
-                     alt="大井競馬場1000mコース詳細図 - スタート地点から決勝線までのコース形状"
-                     style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <p style="font-size: 12px; color: #666; margin-top: 5px;">大井1000mコース詳細図</p>
-            </div>
-        </div>
+        <h1>大井競馬場1600m完全攻略ガイド 【2025年最新版】マイル戦必勝法</h1>
 
         <div class="highlight-box">
             <strong>📊 最新データ分析結果</strong><br>
-            大井競馬場の1000mレースにおける馬番別・人気別の詳細データを徹底分析。<br>
-            合計112レースのデータから見えてきた、驚きの傾向と攻略法をお伝えします。
+            大井競馬場の1600m（マイル）レースにおける馬番別・人気別の詳細データを徹底分析。<br>
+            南関東競馬の主要距離として、3,000レース以上のビッグデータから導き出した攻略法をお伝えします。
         </div>
 
         <!-- 目次セクション -->
@@ -485,27 +559,42 @@ export const prerender = true;
             <ul class="toc-list">
                 <li class="toc-item"><a href="#horse-number-analysis" class="toc-link">馬番別成績から見る有利な枠順</a></li>
                 <li class="toc-item"><a href="#popularity-analysis" class="toc-link">人気別成績が示す鉄板の法則</a></li>
-                <li class="toc-item"><a href="#optimal-strategy" class="toc-link">データから導き出される最適戦略</a></li>
+                <li class="toc-item"><a href="#mile-strategy" class="toc-link">マイル戦特有の攻略ポイント</a></li>
+                <li class="toc-item"><a href="#distance-comparison" class="toc-link">全距離比較から見る1600mの位置付け</a></li>
                 <li class="toc-item"><a href="#summary" class="toc-link">まとめ</a></li>
             </ul>
         </div>
 
+        <!-- コース画像セクション -->
+        <div class="course-images">
+            <img
+                src="/course_data/ooi_course_right.png"
+                alt="大井競馬場右回りコースレイアウト図 - 1600mマイルスタート地点とコース全体図を示した詳細レイアウト"
+                class="course-image"
+            >
+            <img
+                src="/course_data/ooi_1600m.png"
+                alt="大井競馬場1600mマイル距離分析図 - 4番枠12.5%勝率と内枠～中枠バランス傾向を可視化したデータインフォグラフィック"
+                class="course-image"
+            >
+        </div>
+
         <h2 id="horse-number-analysis">馬番別成績から見る有利な枠順</h2>
 
-        <p>大井競馬場の1000mレースは、南関東地方競馬の中でも特にスピードが求められる短距離戦です。スタート直後から全力疾走となるこのレースでは、枠順の有利不利が結果に大きく影響します。</p>
+        <p>大井競馬場の1600mレースは、南関東地方競馬におけるマイル戦の主戦場です。スタミナとスピードのバランスが求められる距離で、枠順による有利不利は他の距離とは異なる特徴を示しています。</p>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value">33.3%</div>
-                <div class="stat-label">12番枠の勝率（最高）</div>
+                <div class="stat-value">12.5%</div>
+                <div class="stat-label">4番枠の勝率（実質最高）</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">28.6%</div>
-                <div class="stat-label">10番枠の勝率</div>
+                <div class="stat-value">12.1%</div>
+                <div class="stat-label">9番枠の勝率</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">20.0%</div>
-                <div class="stat-label">1番・6番枠の勝率</div>
+                <div class="stat-value">31.1%</div>
+                <div class="stat-label">2番枠の複勝率</div>
             </div>
         </div>
 
@@ -531,39 +620,60 @@ export const prerender = true;
                 </thead>
                 <tbody>
                     <tr style="background-color: #ffe4e1;">
-                        <td><strong>12番</strong></td>
-                        <td><strong>33.3%</strong></td>
-                        <td>33.3%</td>
-                        <td>33.3%</td>
-                        <td>3</td>
+                        <td><strong>4番</strong></td>
+                        <td><strong>12.5%</strong></td>
+                        <td>20.5%</td>
+                        <td>26.9%</td>
+                        <td>312</td>
                     </tr>
                     <tr style="background-color: #ffe4e1;">
-                        <td><strong>10番</strong></td>
-                        <td><strong>28.6%</strong></td>
-                        <td>28.6%</td>
-                        <td>28.6%</td>
-                        <td>7</td>
+                        <td><strong>9番</strong></td>
+                        <td><strong>12.1%</strong></td>
+                        <td>18.1%</td>
+                        <td>25.5%</td>
+                        <td>282</td>
+                    </tr>
+                    <tr style="background-color: #fff0f5;">
+                        <td><strong>2番</strong></td>
+                        <td><strong>10.6%</strong></td>
+                        <td>18.6%</td>
+                        <td>31.1%</td>
+                        <td>312</td>
                     </tr>
                     <tr>
-                        <td>1番</td>
-                        <td>20.0%</td>
-                        <td>40.0%</td>
-                        <td>40.0%</td>
-                        <td>10</td>
+                        <td>14番</td>
+                        <td>10.4%</td>
+                        <td>14.3%</td>
+                        <td>18.2%</td>
+                        <td>77</td>
                     </tr>
                     <tr>
-                        <td>6番</td>
-                        <td>20.0%</td>
-                        <td>30.0%</td>
-                        <td>40.0%</td>
-                        <td>10</td>
+                        <td>8番</td>
+                        <td>9.5%</td>
+                        <td>19.9%</td>
+                        <td>26.4%</td>
+                        <td>296</td>
                     </tr>
                     <tr>
                         <td>5番</td>
-                        <td>18.2%</td>
-                        <td>36.4%</td>
-                        <td>36.4%</td>
-                        <td>11</td>
+                        <td>8.4%</td>
+                        <td>20.3%</td>
+                        <td>27.7%</td>
+                        <td>311</td>
+                    </tr>
+                    <tr>
+                        <td>10番</td>
+                        <td>8.4%</td>
+                        <td>16.0%</td>
+                        <td>26.7%</td>
+                        <td>262</td>
+                    </tr>
+                    <tr style="background-color: #f0f0f0;">
+                        <td>16番</td>
+                        <td>25.0%</td>
+                        <td>25.0%</td>
+                        <td>25.0%</td>
+                        <td>4（参考値）</td>
                     </tr>
                 </tbody>
             </table>
@@ -571,12 +681,12 @@ export const prerender = true;
 
         <div class="important">
             <strong>⚠️ 注目ポイント</strong><br>
-            外枠の10番・12番枠が高い勝率を記録。大井の直線1000mでは、外枠からでも十分に勝負できることがデータから明らかになりました。
+            大井1600mでは、内枠から中枠にかけてバランスよく好走馬が出ています。4番枠の12.5%、9番枠の12.1%が高勝率を記録。特に2番枠は複勝率31.1%と最高値を示しており、馬券に絡む確率が高いです。16番枠は25%と高い数値ですが、サンプル数が4と極端に少ないため参考程度に留めましょう。
         </div>
 
         <h2 id="popularity-analysis">人気別成績が示す鉄板の法則</h2>
 
-        <p>人気馬の信頼度は極めて高く、特に1番人気の成績は圧倒的です。堅実な馬券戦略を立てる上で、このデータは非常に重要な指標となります。</p>
+        <p>1600mの人気別成績は、1番人気の勝率42.2%と標準的な信頼度を示しています。2番人気も20.3%と安定しており、上位人気の信頼性は維持されています。</p>
 
         <!-- 人気別勝率グラフ -->
         <div class="chart-container">
@@ -600,33 +710,39 @@ export const prerender = true;
                 <tbody>
                     <tr style="background-color: #ffd700;">
                         <td><strong>1番人気</strong></td>
-                        <td><strong>71.4%</strong></td>
-                        <td><strong>71.4%</strong></td>
-                        <td><strong>71.4%</strong></td>
+                        <td><strong>42.2%</strong></td>
+                        <td><strong>56.3%</strong></td>
+                        <td><strong>70.2%</strong></td>
                     </tr>
                     <tr>
                         <td>2番人気</td>
-                        <td>28.6%</td>
-                        <td>57.1%</td>
-                        <td>71.4%</td>
+                        <td>20.3%</td>
+                        <td>39.7%</td>
+                        <td>57.2%</td>
                     </tr>
                     <tr>
                         <td>3番人気</td>
-                        <td>0.0%</td>
-                        <td>42.9%</td>
-                        <td>57.1%</td>
+                        <td>8.9%</td>
+                        <td>28.0%</td>
+                        <td>44.6%</td>
                     </tr>
                     <tr>
                         <td>4番人気</td>
-                        <td>0.0%</td>
-                        <td>14.3%</td>
-                        <td>28.6%</td>
+                        <td>9.5%</td>
+                        <td>24.8%</td>
+                        <td>38.3%</td>
                     </tr>
                     <tr>
                         <td>5番人気</td>
-                        <td>0.0%</td>
-                        <td>0.0%</td>
-                        <td>14.3%</td>
+                        <td>4.6%</td>
+                        <td>14.9%</td>
+                        <td>20.7%</td>
+                    </tr>
+                    <tr>
+                        <td>6番人気以下</td>
+                        <td>2.3%</td>
+                        <td>5.6%</td>
+                        <td>10.6%</td>
                     </tr>
                 </tbody>
             </table>
@@ -634,63 +750,104 @@ export const prerender = true;
 
         <div class="recommendation">
             <strong>✅ 推奨馬券戦略</strong><br>
-            1. <strong>1番人気を軸とした馬券構成</strong>：71.4%という驚異的な勝率<br>
-            2. <strong>2番人気との組み合わせ</strong>：1-2番人気のワイドや馬連は高確率<br>
-            3. <strong>外枠の穴馬に注目</strong>：10番・12番枠から出走する中穴馬は要チェック
+            1. <strong>1番人気の複勝率70.2%を基軸に</strong>：安定感のある軸馬として活用<br>
+            2. <strong>2番枠の複勝率31.1%は狙い目</strong>：内枠有利を活かした馬券構成<br>
+            3. <strong>4番・9番枠の人気馬に注目</strong>：勝率上位枠との組み合わせ<br>
+            4. <strong>4番人気までのボックス買い</strong>：3-4番人気の妙味あり
         </div>
 
-        <h2 id="optimal-strategy">データから導き出される最適戦略</h2>
+        <h2 id="mile-strategy">マイル戦特有の攻略ポイント</h2>
 
-        <p>大井1000mにおける勝利の方程式は、人気馬の信頼性と特定枠番の優位性を組み合わせることにあります。1番人気が1番枠、6番枠、10番枠、12番枠から出走する場合は、特に注目度を高める必要があります。</p>
+        <p>1600mマイル戦は、スピードとスタミナのバランスが最も問われる距離です。以下の特徴を押さえて予想精度を高めましょう：</p>
+
+        <div style="background: #e8f4f8; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <strong>【1600m攻略の重要ポイント】</strong><br>
+            <strong>1. ペース配分が勝負を分ける</strong><br>
+            ・前半のポジション取りが重要<br>
+            ・中団からの差しが決まりやすい<br>
+            ・逃げ馬は粘り込みが難しい傾向<br><br>
+
+            <strong>2. 内枠～中枠のバランス</strong><br>
+            ・極端な枠順の有利不利がない<br>
+            ・2-4番、8-9番が安定ゾーン<br>
+            ・大外枠は出走頭数次第<br><br>
+
+            <strong>3. 展開の読みが重要</strong><br>
+            ・ペースメーカーの有無を確認<br>
+            ・差し馬が多い場合は前残りも<br>
+            ・スローペースなら内枠有利
+        </div>
+
+        <h2 id="distance-comparison">全距離比較から見る1600mの位置付け</h2>
+
+        <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <strong>【距離別データ比較】</strong><br>
+            <strong>◆1番人気勝率</strong><br>
+            ・1000m：71.4%（超高信頼）<br>
+            ・1200m：40.9%（標準）<br>
+            ・1400m：49.8%（高信頼）<br>
+            ・<span style="color: #e74c3c; font-weight: bold;">1600m：42.2%（標準的）</span><br><br>
+
+            <strong>◆最高勝率馬番の特徴</strong><br>
+            ・1000m：12番（33.3%）- 外枠優勢<br>
+            ・1200m：16番（13.6%）- 大外優勢<br>
+            ・1400m：5番（11.1%）- 中枠優勢<br>
+            ・<span style="color: #e74c3c; font-weight: bold;">1600m：4番（12.5%）- 内寄り優勢</span><br><br>
+
+            <strong>◆複勝率の傾向</strong><br>
+            1600mは2番枠の複勝率31.1%が特徴的。内枠の安定感が他距離より顕著です。
+        </div>
 
         <div class="important">
             <strong>💡 最終結論</strong><br>
-            大井1000mは「堅いレース」の典型です。1-2番人気を中心に、外枠の好走歴がある馬を組み合わせる戦略が最も効率的です。
+            大井1600mは「バランス型レース」の代表格です。1番人気を軸としながら、2番・4番・9番枠の好走馬を組み合わせる戦略が有効。極端な傾向がない分、展開予想と馬場適性の見極めが的中への鍵となります。データを基に、レース条件に応じた柔軟な馬券構成を心がけましょう。
         </div>
 
-        <h2>まとめ</h2>
+        <h2 id="summary">まとめ</h2>
 
-        <p>今回の分析により、大井競馬場1000mレースには明確な傾向があることが判明しました。1番人気の圧倒的な強さ、外枠の意外な好成績、そして上位人気馬の安定感。これらのデータを活用することで、より精度の高い予想が可能となります。</p>
+        <p>大井競馬場1600mマイル戦は、南関東競馬の中核を成す重要な距離です。今回の分析により、内枠から中枠にかけてのバランスの良さと、上位人気の安定感が明らかになりました。</p>
+
+        <p>極端な傾向がない分、総合的な予想力が試される距離とも言えます。枠順データを参考にしながら、展開予想、馬場適性、調子の見極めなど、多角的な分析を組み合わせることで、回収率の向上を目指しましょう。継続的なデータ収集と分析により、さらなる精度向上を図ってまいります。</p>
     </article>
 
     <!-- 追加セクション -->
-    <section style="margin-top: 40px;">
+    <div style="max-width: 800px; margin: 0 auto; padding: 0 15px;">
 
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin: 20px auto; max-width: 800px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin: 30px 0;">
             <h2 style="color: white; border: none; font-size: 20px; margin-top: 0;">📊 さらに詳しいデータ分析をチェック</h2>
             <p style="font-size: 15px; margin: 15px 0;">
                 大井競馬場の全距離別データ、騎手別成績、血統傾向など、<br>
                 より詳細な分析データをインタラクティブに確認できます。
             </p>
             <div style="margin-top: 20px;">
-                <a href="/course/ooi" class="cta-button cta-button-primary" style="margin-right: 10px;">
+                <a href="/course/ooi" class="cta-button cta-button-primary" style="margin: 5px;">
                     大井競馬場データ分析ページへ →
                 </a>
-                <a href="/course" class="cta-button cta-button-secondary">
+                <a href="/blog" class="cta-button cta-button-secondary" style="margin: 5px;">
                     全競馬場コース分析一覧
                 </a>
             </div>
         </div>
 
-        <div class="cta-section">
-            <h2>🚀 AI予想で的中率を最大化！</h2>
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px 20px; border-radius: 12px; margin: 30px 0;">
+            <h2 style="color: white; border: none; font-size: 22px; margin-top: 0;">🚀 AI予想で的中率を最大化！</h2>
             <p style="font-size: 16px; margin: 15px 0;">
                 NANKANアナリティクスのAI機械学習モデルが<br>
-                <span style="font-size: 28px; font-weight: bold;">的中率87%、回収率156%を実現</span>
+                <span style="font-size: 26px; font-weight: bold;">的中率87%、回収率156%を実現</span>
             </p>
 
             <div class="stats-grid" style="margin: 25px 0;">
                 <div style="background: rgba(255,255,255,0.95); color: #333; padding: 15px; border-radius: 10px;">
                     <div style="font-size: 32px; font-weight: bold; color: #f5576c;">87.3%</div>
-                    <div style="color: #666; margin-top: 5px; font-weight: bold;">AIモデル精度</div>
+                    <div style="color: #666; margin-top: 5px; font-weight: bold; font-size: 12px;">AIモデル精度</div>
                 </div>
                 <div style="background: rgba(255,255,255,0.95); color: #333; padding: 15px; border-radius: 10px;">
                     <div style="font-size: 32px; font-weight: bold; color: #f5576c;">156.0%</div>
-                    <div style="color: #666; margin-top: 5px; font-weight: bold;">回収率</div>
+                    <div style="color: #666; margin-top: 5px; font-weight: bold; font-size: 12px;">回収率</div>
                 </div>
                 <div style="background: rgba(255,255,255,0.95); color: #333; padding: 15px; border-radius: 10px;">
                     <div style="font-size: 32px; font-weight: bold; color: #f5576c;">10,000+</div>
-                    <div style="color: #666; margin-top: 5px; font-weight: bold;">学習データ数</div>
+                    <div style="color: #666; margin-top: 5px; font-weight: bold; font-size: 12px;">学習データ数</div>
                 </div>
             </div>
 
@@ -704,23 +861,50 @@ export const prerender = true;
             </div>
         </div>
 
-        <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin: 20px auto; max-width: 800px;">
+        <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin: 30px 0;">
             <h2 style="font-size: 20px; color: #2c3e50; border-left: 5px solid #3498db; padding-left: 15px;">📚 関連記事</h2>
 
-            <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px;">
-                <a href="/blog/course/ooi-1200m" style="display: block; background: white; padding: 15px; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <h3 style="color: #3498db; margin: 0 0 8px 0; font-size: 16px;">大井1200m攻略ガイド</h3>
-                    <p style="color: #666; font-size: 14px; margin: 0;">1200mレースの詳細データと勝利への戦略を解説</p>
+            <div class="related-articles-grid">
+                <a href="/blog/course/ooi-1000m" class="related-card">
+                    <img src="/course_data/ooi_1000m.png" alt="大井競馬場1000m攻略ガイドのサムネイル画像">
+                    <div class="related-card-content">
+                        <h3>大井競馬1000m完全攻略ガイド</h3>
+                        <p>12番枠が驚異の33.3%勝率を記録！1番人気の71.4%の信頼度と合わせて分析</p>
+                        <span class="tag">データ分析</span>
+                    </div>
+                </a>
+
+                <a href="/blog/course/ooi-1200m" class="related-card">
+                    <img src="/course_data/ooi_1200m.png" alt="大井競馬場1200m攻略ガイドのサムネイル画像">
+                    <div class="related-card-content">
+                        <h3>大井競馬1200m完全攻略ガイド</h3>
+                        <p>16番枠が13.6%の高勝率！1番人気40.9%の信頼度と大外枠の好走傾向を分析</p>
+                        <span class="tag">データ分析</span>
+                    </div>
+                </a>
+
+                <a href="/blog/course/ooi-1400m" class="related-card">
+                    <img src="/course_data/ooi_1400m.png" alt="大井競馬場1400m攻略ガイドのサムネイル画像">
+                    <div class="related-card-content">
+                        <h3>大井競馬1400m完全攻略ガイド</h3>
+                        <p>5番枠が11.1%の最高勝率！1番人気49.8%の信頼度と中枠優勢傾向を分析</p>
+                        <span class="tag">データ分析</span>
+                    </div>
                 </a>
             </div>
         </div>
 
         <!-- フッター -->
         <footer style="text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; margin-top: 40px; color: #666;">
-            <p>© 2024 南関アナリティクス - データで勝つ地方競馬予想</p>
+            <p>© 2025 NANKANアナリティクス - データで勝つ地方競馬予想</p>
+            <p style="font-size: 14px; margin-top: 10px;">
+                <a href="#" style="color: #3498db; text-decoration: none; margin: 0 10px;">プライバシーポリシー</a> |
+                <a href="#" style="color: #3498db; text-decoration: none; margin: 0 10px;">利用規約</a> |
+                <a href="#" style="color: #3498db; text-decoration: none; margin: 0 10px;">お問い合わせ</a>
+            </p>
         </footer>
 
-    </section>
+    </div>
 
     <script is:inline>
         // Astro対応 - DOMContentLoadedまたは即時実行
@@ -744,8 +928,9 @@ export const prerender = true;
                 hideLoading('horseChartLoading');
 
                 const ctx = canvas.getContext('2d');
-                const horseData = [20.0, 9.1, 0, 0, 18.2, 20.0, 11.1, 0, 0, 28.6, 0, 33.3];
-                const labels = ['1番', '2番', '3番', '4番', '5番', '6番', '7番', '8番', '9番', '10番', '11番', '12番'];
+                // 馬番別データ（1-16番）
+                const horseData = [7.4, 10.6, 7.7, 12.5, 8.4, 8.0, 5.8, 9.5, 12.1, 8.4, 5.8, 7.7, 6.5, 10.4, 0, 25.0];
+                const labels = ['1番', '2番', '3番', '4番', '5番', '6番', '7番', '8番', '9番', '10番', '11番', '12番', '13番', '14番', '15番', '16番'];
 
                 // レスポンシブ対応
                 const containerWidth = canvas.parentElement.offsetWidth;
@@ -769,33 +954,57 @@ export const prerender = true;
 
                 // グラフ描画
                 horseData.forEach((value, index) => {
-                    const barHeight = (value / 40) * (height - padding * 2);
-                    const x = padding + index * barWidth + barWidth * 0.15;
+                    const barHeight = (value / 30) * (height - padding * 2);
+                    const x = padding + index * barWidth + barWidth * 0.1;
                     const y = height - padding - barHeight;
 
                     // バーの色分け
-                    if (index === 11 || index === 9) {
+                    if (index === 15) {
+                        // 16番は参考値（グレー）
+                        ctx.fillStyle = '#95a5a6';
+                    } else if (index === 3) {
+                        // 4番は赤系（最高勝率）
                         ctx.fillStyle = '#e74c3c';
-                    } else if (value > 0) {
+                    } else if (index === 8) {
+                        // 9番はオレンジ系（2番目）
+                        ctx.fillStyle = '#f39c12';
+                    } else if (index === 1) {
+                        // 2番は青系（3番目・複勝率高）
                         ctx.fillStyle = '#3498db';
+                    } else if (index === 13) {
+                        // 14番は水色
+                        ctx.fillStyle = '#5dade2';
+                    } else if (value > 8) {
+                        // 8%以上
+                        ctx.fillStyle = '#85c1e2';
+                    } else if (value === 0) {
+                        // 0%
+                        ctx.fillStyle = '#7f8c8d';
                     } else {
+                        // その他
                         ctx.fillStyle = '#bdc3c7';
                     }
 
                     // バー描画
-                    ctx.fillRect(x, y, barWidth * 0.7, barHeight);
+                    ctx.fillRect(x, y, barWidth * 0.8, barHeight || 2); // 0%でも最小高さ2px
 
-                    // 値表示
-                    ctx.fillStyle = '#2c3e50';
-                    ctx.font = 'bold 11px sans-serif';
-                    ctx.textAlign = 'center';
-                    if (value > 0) {
-                        ctx.fillText(value.toFixed(1) + '%', x + barWidth * 0.35, y - 5);
+                    // 値表示（主要な枠のみ）
+                    if (index === 3 || index === 8 || index === 1 || index === 15) {
+                        ctx.fillStyle = '#2c3e50';
+                        ctx.font = 'bold 10px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(value.toFixed(1) + '%', x + barWidth * 0.4, y - 5);
                     }
 
                     // ラベル表示
-                    ctx.font = '10px sans-serif';
-                    ctx.fillText(labels[index], x + barWidth * 0.35, height - 20);
+                    ctx.fillStyle = '#34495e';
+                    ctx.font = '9px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.save();
+                    ctx.translate(x + barWidth * 0.4, height - 15);
+                    ctx.rotate(-Math.PI / 6);
+                    ctx.fillText(labels[index], 0, 0);
+                    ctx.restore();
                 });
 
                 // 軸線
@@ -805,6 +1014,17 @@ export const prerender = true;
                 ctx.moveTo(padding, height - padding);
                 ctx.lineTo(width - padding, height - padding);
                 ctx.stroke();
+
+                // タイトル
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('勝率(%)', 10, 20);
+
+                // 16番の注釈
+                ctx.fillStyle = '#95a5a6';
+                ctx.font = '9px sans-serif';
+                ctx.fillText('※16番はサンプル数4', width - 120, 20);
             };
 
             // 人気別勝率グラフ
@@ -819,8 +1039,8 @@ export const prerender = true;
                 hideLoading('popularityChartLoading');
 
                 const ctx = canvas.getContext('2d');
-                const popularityData = [71.4, 28.6, 0, 0, 0, 0];
-                const popLabels = ['1番人気', '2番人気', '3番人気', '4番人気', '5番人気', '6番以下'];
+                const popularityData = [42.2, 20.3, 8.9, 9.5, 4.6, 2.3];
+                const popLabels = ['1番人気', '2番人気', '3番人気', '4番人気', '5番人気', '6番人気以下'];
 
                 // レスポンシブ対応
                 const containerWidth = canvas.parentElement.offsetWidth;
@@ -844,16 +1064,25 @@ export const prerender = true;
 
                 // グラフ描画
                 popularityData.forEach((value, index) => {
-                    const barHeight = (value / 80) * (height - padding * 2);
+                    const barHeight = (value / 50) * (height - padding * 2);
                     const x = padding + index * barWidth + barWidth * 0.15;
                     const y = height - padding - barHeight;
 
                     // バーの色分け
                     if (index === 0) {
+                        // 1番人気は金色
                         ctx.fillStyle = '#f39c12';
-                    } else if (value > 0) {
+                    } else if (index === 1) {
+                        // 2番人気は青系
                         ctx.fillStyle = '#3498db';
+                    } else if (index === 2 || index === 3) {
+                        // 3-4番人気は水色
+                        ctx.fillStyle = '#5dade2';
+                    } else if (value > 4) {
+                        // 4%以上
+                        ctx.fillStyle = '#85c1e2';
                     } else {
+                        // 4%未満
                         ctx.fillStyle = '#bdc3c7';
                     }
 
@@ -864,11 +1093,10 @@ export const prerender = true;
                     ctx.fillStyle = '#2c3e50';
                     ctx.font = 'bold 12px sans-serif';
                     ctx.textAlign = 'center';
-                    if (value > 0) {
-                        ctx.fillText(value.toFixed(1) + '%', x + barWidth * 0.35, y - 5);
-                    }
+                    ctx.fillText(value.toFixed(1) + '%', x + barWidth * 0.35, y - 5);
 
                     // ラベル表示
+                    ctx.fillStyle = '#34495e';
                     ctx.font = '10px sans-serif';
                     ctx.fillText(popLabels[index], x + barWidth * 0.35, height - 20);
                 });
@@ -880,6 +1108,12 @@ export const prerender = true;
                 ctx.moveTo(padding, height - padding);
                 ctx.lineTo(width - padding, height - padding);
                 ctx.stroke();
+
+                // タイトル
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('勝率(%)', 10, 20);
             };
 
             // グラフを描画
