@@ -151,6 +151,12 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/funabashi-240
             color: #333 !important;
         }
 
+        /* CTAセクション・AI CTAセクションは除外 */
+        .cta-section *,
+        .ai-cta-section * {
+            color: white !important;
+        }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -456,25 +462,26 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/funabashi-240
         }
 
         .cta-button-primary {
-            background: white;
-            color: #6c757d;
+            background: white !important;
+            color: #6c757d !important;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .cta-button-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            color: #6c757d !important;
         }
 
         .cta-button-secondary {
-            background: rgba(255,255,255,0.2);
-            color: white;
+            background: rgba(255,255,255,0.2) !important;
+            color: white !important;
             border: 2px solid white;
         }
 
         .cta-button-secondary:hover {
-            background: white;
-            color: #6c757d;
+            background: white !important;
+            color: #6c757d !important;
         }
 
         /* AI予想CTAセクション */
@@ -511,19 +518,23 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/funabashi-240
 
         .ai-stat-card {
             background: rgba(255,255,255,0.95);
-            color: #333;
+            color: #333 !important;
             padding: 15px;
             border-radius: 10px;
+        }
+
+        .ai-stat-card * {
+            color: #333 !important;
         }
 
         .ai-stat-value {
             font-size: 32px;
             font-weight: bold;
-            color: #f5576c;
+            color: #f5576c !important;
         }
 
         .ai-stat-label {
-            color: #666;
+            color: #666 !important;
             margin-top: 5px;
             font-weight: bold;
             font-size: 12px;
@@ -594,6 +605,39 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/funabashi-240
             .data-table td strong {
                 font-size: 14px;
             }
+        }
+
+        /* CTAセクション強制スタイル（最優先） */
+        .cta-section,
+        .ai-cta-section {
+            color: white !important;
+        }
+
+        .cta-section h2,
+        .cta-section p,
+        .cta-section span,
+        .cta-section div,
+        .ai-cta-section h2,
+        .ai-cta-section p,
+        .ai-cta-section span,
+        .ai-cta-section div {
+            color: white !important;
+        }
+
+        .ai-stat-card,
+        .ai-stat-card h2,
+        .ai-stat-card p,
+        .ai-stat-card span,
+        .ai-stat-card div {
+            color: #333 !important;
+        }
+
+        .ai-stat-value {
+            color: #f5576c !important;
+        }
+
+        .ai-stat-label {
+            color: #666 !important;
         }
     </style>
 
