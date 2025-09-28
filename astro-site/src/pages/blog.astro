@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('blog');
 
-// Astroページの記事を手動で追加
+// Astroページの記事を手動で追加（競馬場別カテゴリー分け）
 const astroPosts = [
   {
     slug: 'course/funabashi-1000m',
@@ -13,7 +13,7 @@ const astroPosts = [
       title: '船橋競馬場1000m完全攻略ガイド【2025年最新版】',
       description: '船橋競馬場1000mレースの馬番別・人気別成績を徹底分析。左回り340m直線の特性と先行有利の展開を解説。',
       pubDate: new Date('2025-09-28'),
-      category: 'コース攻略',
+      category: '船橋競馬',
       tags: ['船橋競馬', '1000m', 'データ分析', '左回り'],
       heroImage: '/course_data/funabashi_1000m.png',
       featured: true
@@ -25,7 +25,7 @@ const astroPosts = [
       title: '大井競馬場1400m完全攻略ガイド【2025年最新版】',
       description: '大井競馬場1400mレースの馬番別・人気別成績を徹底分析。5番枠11.1%の中枠優勢と1番人気49.8%の高信頼度を解説。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '1400m', 'データ分析', '特殊距離'],
       heroImage: '/course_data/ooi_1400m.png',
       featured: true
@@ -37,7 +37,7 @@ const astroPosts = [
       title: '大井競馬場1200m完全攻略ガイド【2025年最新版】',
       description: '大井競馬場1200mレースの馬番別・人気別成績を徹底分析。16番枠13.6%の驚異的勝率など実戦データから導く攻略法を解説。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '1200m', 'データ分析'],
       heroImage: '/course_data/ooi_1200m.png',
       featured: true
@@ -49,7 +49,7 @@ const astroPosts = [
       title: '大井競馬場1000m完全攻略ガイド【2025年最新版】',
       description: '大井競馬場1000mレースの馬番別・人気別成績を徹底分析。12番枠33.3%の驚異的勝率など実戦データから導く攻略法を解説。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '1000m', 'データ分析'],
       heroImage: '/course_data/ooi_1000m.png',
       featured: true
@@ -61,7 +61,7 @@ const astroPosts = [
       title: '大井競馬場1600m完全攻略ガイド【2025年最新版】',
       description: '大井競馬場1600mレースの馬番別・人気別成績を徹底分析。4番枠12.5%の高勝率と1番人気42.2%の信頼度を解説。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '1600m', 'データ分析', 'マイル'],
       heroImage: '/course_data/ooi_1600m.png',
       featured: true
@@ -73,7 +73,7 @@ const astroPosts = [
       title: '大井競馬場1650m完全攻略ガイド【2025年最新版】左回り特殊コース',
       description: '大井唯一の左回りコース1650mの特殊性を徹底分析。13番枠20.0%の高勝率と左回り適性が勝負の分かれ目。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '1650m', 'データ分析', '左回り', '特殊'],
       heroImage: '/course_data/ooi_1650m.png',
       featured: true
@@ -85,7 +85,7 @@ const astroPosts = [
       title: '大井競馬場1700m完全攻略ガイド【2025年最新版】超レア距離',
       description: '年間数レースしか施行されない超レア距離1700mの特殊性を分析。14番枠33.3%の勝率と1番人気75.0%の信頼度。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '1700m', 'データ分析', '超レア距離'],
       heroImage: '/course_data/ooi_1700m.png',
       featured: true
@@ -97,7 +97,7 @@ const astroPosts = [
       title: '大井競馬場1800m完全攻略ガイド【2025年最新版】中距離戦',
       description: 'スピードとスタミナのバランスが問われる中距離戦1800mを分析。12番枠20.6%の勝率と1番人気79.7%の信頼度。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '1800m', 'データ分析', '中距離戦'],
       heroImage: '/course_data/ooi_1800m.png',
       featured: true
@@ -109,7 +109,7 @@ const astroPosts = [
       title: '大井競馬場2000m完全攻略ガイド【2025年最新版】長距離戦',
       description: '真の実力が問われる長距離戦2000mを分析。1番人気複勝率90.6%は全距離最高、勝率18.8%の12番枠、スタミナが全ての本格派レース。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '2000m', 'データ分析', '長距離戦', 'スタミナ'],
       heroImage: '/course_data/ooi_2000m.png',
       featured: true
@@ -121,7 +121,7 @@ const astroPosts = [
       title: '大井競馬場2400m完全攻略ガイド【2025年最新版】超長距離戦',
       description: '極めて稀な開催頻度の超長距離戦2400mを分析。わずか2レースのサンプルから見える傾向と統計的信頼性の注意点を詳述。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '2400m', 'データ分析', '超長距離戦', '統計注意'],
       heroImage: '/course_data/ooi_2400m.png',
       featured: true
@@ -133,7 +133,7 @@ const astroPosts = [
       title: '大井競馬場2600m完全攻略ガイド【2025年最新版】最長距離戦',
       description: '大井競馬2600mレースの馬番別・人気別成績を徹底分析。最長距離戦の特徴と攻略法をデータから解説します。',
       pubDate: new Date('2025-09-27'),
-      category: 'コース攻略',
+      category: '大井競馬',
       tags: ['大井競馬', '2600m', 'データ分析', '最長距離戦', '究極スタミナ'],
       heroImage: '/course_data/ooi_2600m.png',
       featured: true
@@ -150,6 +150,12 @@ const sortedPosts = combinedPosts.sort(
 );
 
 const categories = [...new Set(sortedPosts.map(post => post.data.category))];
+
+// カテゴリー別記事数をカウント
+const categoryCounts = categories.reduce((acc, category) => {
+  acc[category] = sortedPosts.filter(post => post.data.category === category).length;
+  return acc;
+}, {});
 ---
 
 <BaseLayout 
@@ -168,22 +174,41 @@ const categories = [...new Set(sortedPosts.map(post => post.data.category))];
         <div class="category-filter">
           <h3>📚 カテゴリー</h3>
           <ul class="category-list">
-            <li><a href="/blog" class="category-link active">すべて</a></li>
+            <li>
+              <button class="category-button active" data-category="all">
+                すべて <span class="count">({sortedPosts.length})</span>
+              </button>
+            </li>
             {categories.map(category => (
               <li>
-                <a href={`/blog/category/${category.toLowerCase().replace(/\s+/g, '-')}`} class="category-link">
-                  {category}
-                </a>
+                <button class="category-button" data-category={category}>
+                  {category} <span class="count">({categoryCounts[category]})</span>
+                </button>
               </li>
             ))}
           </ul>
+        </div>
+
+        <!-- 競馬場ガイド -->
+        <div class="course-guide">
+          <h3>🏁 競馬場ガイド</h3>
+          <div class="guide-links">
+            <a href="/course/ooi" class="guide-link">
+              <span class="icon">🎯</span>
+              <span class="text">大井競馬場</span>
+            </a>
+            <a href="/course/funabashi" class="guide-link">
+              <span class="icon">⚓</span>
+              <span class="text">船橋競馬場</span>
+            </a>
+          </div>
         </div>
       </aside>
 
       <!-- 記事一覧 -->
       <section class="posts-grid">
         {sortedPosts.map((post) => (
-          <article class="post-card">
+          <article class="post-card" data-category={post.data.category}>
             <a href={`/blog/${post.slug}`} class="card-link">
               {post.data.heroImage && (
                 <img
@@ -224,6 +249,46 @@ const categories = [...new Set(sortedPosts.map(post => post.data.category))];
       </section>
     </div>
   </main>
+
+  <!-- カテゴリーフィルタリング用JavaScript -->
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+      const categoryButtons = document.querySelectorAll('.category-button');
+      const postCards = document.querySelectorAll('.post-card');
+
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const selectedCategory = this.getAttribute('data-category');
+
+          // ボタンのアクティブ状態更新
+          categoryButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+
+          // 記事のフィルタリング
+          postCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+
+            if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+              card.style.display = 'block';
+              card.style.animation = 'fadeIn 0.3s ease-in-out';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+
+    // フェードインアニメーション
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 </BaseLayout>
 
 <style>
@@ -281,8 +346,54 @@ const categories = [...new Set(sortedPosts.map(post => post.data.category))];
   margin-bottom: 0.5rem;
 }
 
-.category-link {
+.category-button {
   display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  color: #cbd5e1;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  transition: all 0.2s;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.category-button:hover,
+.category-button.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.count {
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+/* 競馬場ガイドセクション */
+.course-guide {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #374151;
+}
+
+.course-guide h3 {
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.guide-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guide-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   color: #cbd5e1;
   text-decoration: none;
@@ -290,10 +401,17 @@ const categories = [...new Set(sortedPosts.map(post => post.data.category))];
   transition: all 0.2s;
 }
 
-.category-link:hover,
-.category-link.active {
-  background: #3b82f6;
+.guide-link:hover {
+  background: #10b981;
   color: white;
+}
+
+.guide-link .icon {
+  font-size: 1.1rem;
+}
+
+.guide-link .text {
+  font-size: 0.95rem;
 }
 
 .posts-grid {
