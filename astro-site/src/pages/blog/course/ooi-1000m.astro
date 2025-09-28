@@ -440,6 +440,46 @@ export const prerender = true;
                 background-color: #1e3a5f;
             }
         }
+
+        /* ページトップに戻るボタン */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-to-top:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -648,7 +688,7 @@ export const prerender = true;
             大井1000mは「堅いレース」の典型です。1-2番人気を中心に、外枠の好走歴がある馬を組み合わせる戦略が最も効率的です。
         </div>
 
-        <h2>まとめ</h2>
+        <h2 id="summary">まとめ</h2>
 
         <p>今回の分析により、大井競馬場1000mレースには明確な傾向があることが判明しました。1番人気の圧倒的な強さ、外枠の意外な好成績、そして上位人気馬の安定感。これらのデータを活用することで、より精度の高い予想が可能となります。</p>
     </article>
@@ -721,6 +761,11 @@ export const prerender = true;
         </footer>
 
     </section>
+
+    <!-- ページトップに戻るボタン -->
+    <button class="back-to-top" id="backToTop" title="ページトップへ戻る">
+        ↑
+    </button>
 
     <script is:inline>
         // Astro対応 - DOMContentLoadedまたは即時実行
@@ -894,6 +939,26 @@ export const prerender = true;
                     drawHorseChart();
                     drawPopularityChart();
                 }, 250);
+            });
+
+            // ページトップに戻るボタンの動作
+            const backToTopButton = document.getElementById('backToTop');
+
+            // スクロール監視
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            });
+
+            // クリック時の動作
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
         }
 

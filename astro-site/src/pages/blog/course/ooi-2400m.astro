@@ -489,6 +489,12 @@ const heroImage = '/course_data/ooi_2400m.png';
   </article>
 
   <!-- チャート描画スクリプト -->
+  
+    <!-- ページトップに戻るボタン -->
+    <button class="back-to-top" id="backToTop" title="ページトップへ戻る">
+        ↑
+    </button>
+  
   <script is:inline>
     function initCharts() {
       console.log('2400mチャート初期化開始');
@@ -1439,5 +1445,45 @@ const heroImage = '/course_data/ooi_2400m.png';
     .strategy-grid {
       grid-template-columns: 1fr;
     }
+  
+        /* ページトップに戻るボタン */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-to-top:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+        }
   }
 </style>

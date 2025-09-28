@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# ユーザーが直接アクセスする必要のない管理画面をブロック
+Disallow: /admin/
+Disallow: /.netlify/
+
+# サイトマップの場所を指定
+Sitemap: https://nankan-analytics.keiba.link/sitemap.xml
+
+# 主要ページを推奨
+Allow: /blog/
+Allow: /course/
+Allow: /pricing
+Allow: /free-prediction
+Allow: /standard-predictions
+Allow: /premium-predictions

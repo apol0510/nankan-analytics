@@ -29,6 +29,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <!-- SEO -->
     <meta name="keywords" content="競馬,AI,機械学習,南関競馬,データサイエンス,Python,予想,分析" />
     <link rel="canonical" href={canonicalURL} />
+
+    <!-- Google Search Console 検証用（実際の検証コードは後で置き換え） -->
+    <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" /> -->
+
+    <!-- Google Analytics 4（実際のGTAG IDは後で置き換え） -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    -->
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={type} />
