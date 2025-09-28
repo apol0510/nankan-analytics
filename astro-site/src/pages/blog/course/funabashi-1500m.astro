@@ -503,7 +503,7 @@ export const prerender = true;
         <div class="chart-container">
             <h3 style="color: #34495e; font-size: 16px; margin-bottom: 15px;">馬番別勝率グラフ</h3>
             <div class="chart-wrapper">
-                <canvas id="horseNumberChart" width="600" height="250"></canvas>
+                <canvas id="horseNumberChart" width="800" height="400"></canvas>
                 <div class="chart-loading" id="horseChartLoading">グラフを読み込み中...</div>
             </div>
         </div>
@@ -635,7 +635,7 @@ export const prerender = true;
         <div class="chart-container">
             <h3 style="color: #34495e; font-size: 16px; margin-bottom: 15px;">人気別成績グラフ</h3>
             <div class="chart-wrapper">
-                <canvas id="popularityChart" width="600" height="250"></canvas>
+                <canvas id="popularityChart" width="800" height="400"></canvas>
                 <div class="chart-loading" id="popularityChartLoading">グラフを読み込み中...</div>
             </div>
         </div>
@@ -846,7 +846,7 @@ export const prerender = true;
         ↑
     </button>
 
-    <script>
+    <script is:inline>
         // DOMContentLoadedまたは即時実行
         function initCharts() {
             console.log('チャート初期化開始');
@@ -898,14 +898,14 @@ export const prerender = true;
                 const devicePixelRatio = window.devicePixelRatio || 1;
 
                 canvas.width = containerWidth * devicePixelRatio;
-                canvas.height = 250 * devicePixelRatio;
+                canvas.height = 400 * devicePixelRatio;
                 canvas.style.width = containerWidth + 'px';
-                canvas.style.height = '250px';
+                canvas.style.height = '400px';
 
                 ctx.scale(devicePixelRatio, devicePixelRatio);
 
                 const width = containerWidth;
-                const height = 250;
+                const height = 400;
                 const padding = 40;
                 const barWidth = (width - padding * 2) / winRates.length;
 
@@ -1014,14 +1014,14 @@ export const prerender = true;
                 const devicePixelRatio = window.devicePixelRatio || 1;
 
                 canvas.width = containerWidth * devicePixelRatio;
-                canvas.height = 250 * devicePixelRatio;
+                canvas.height = 400 * devicePixelRatio;
                 canvas.style.width = containerWidth + 'px';
-                canvas.style.height = '250px';
+                canvas.style.height = '400px';
 
                 ctx.scale(devicePixelRatio, devicePixelRatio);
 
                 const width = containerWidth;
-                const height = 250;
+                const height = 400;
                 const padding = 40;
                 const barWidth = (width - padding * 2) / popularityData.length;
 
