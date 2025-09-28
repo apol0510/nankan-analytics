@@ -112,17 +112,17 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
 
             // 🛡️ JSONデータ最優先: hitRateとconfidenceを直接使用（動的計算防止）
             const progressBarA = {
-                progressConfidence: parseInt(raceStrategies.safe.confidence || raceStrategies.safe.hitRate) || 0,
+                progressConfidence: parseInt(raceStrategies.safe?.confidence || raceStrategies.safe?.hitRate) || 0,
                 baseScore: raceMainHorseScore,
                 reduction: 0 // JSONデータ使用時は減算なし
             };
             const progressBarB = {
-                progressConfidence: parseInt(raceStrategies.balance.confidence || raceStrategies.balance.hitRate) || 0,
+                progressConfidence: parseInt(raceStrategies.balance?.confidence || raceStrategies.balance?.hitRate) || 0,
                 baseScore: raceMainHorseScore,
                 reduction: 0 // JSONデータ使用時は減算なし
             };
             const progressBarC = {
-                progressConfidence: parseInt(raceStrategies.aggressive.confidence || raceStrategies.aggressive.hitRate) || 0,
+                progressConfidence: parseInt(raceStrategies.aggressive?.confidence || raceStrategies.aggressive?.hitRate) || 0,
                 baseScore: raceMainHorseScore,
                 reduction: 0 // JSONデータ使用時は減算なし
             };
