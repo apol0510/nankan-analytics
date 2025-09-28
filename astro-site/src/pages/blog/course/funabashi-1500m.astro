@@ -1,0 +1,1126 @@
+---
+export const prerender = true;
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="船橋競馬1500mレースの馬番別・人気別成績を徹底分析。中距離戦の特徴と攻略法をデータから解説します。">
+    <meta name="keywords" content="船橋競馬,1500m,中距離,馬番,人気,勝率,連対率,複勝率,データ分析,南関東,地方競馬,予想,攻略">
+    <meta property="og:title" content="船橋競馬1500m完全攻略ガイド｜中距離戦のデータ分析">
+    <meta property="og:description" content="船橋競馬場1500mレースの詳細データ分析。中距離戦の特徴を馬番別・人気別成績から解説。">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/course_data/funabashi_1500m.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://nankan-analytics.keiba.link/blog/course/funabashi-1500m">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="南関アナリティクス">
+    <title>船橋競馬1500m完全攻略ガイド - 中距離戦のデータ分析 | 南関アナリティクス</title>
+
+    <!-- 構造化データ（JSON-LD） -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "船橋競馬場1500m完全攻略ガイド【2025年最新版】",
+      "description": "船橋競馬1500m中距離レースの馬番別・人気別成績を徹底分析。スピードと持久力のバランスが問われる距離",
+      "author": {
+        "@type": "Organization",
+        "name": "南関アナリティクス"
+      },
+      "datePublished": "2025-09-28",
+      "dateModified": "2025-09-28",
+      "publisher": {
+        "@type": "Organization",
+        "name": "南関アナリティクス"
+      }
+    }
+    </script>
+
+    <style>
+        /* モバイルファースト設計 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        article {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #9b59b6;
+            padding-bottom: 10px;
+            font-size: 24px;
+            margin-bottom: 20px;
+            word-wrap: break-word;
+        }
+
+        h2 {
+            color: #34495e;
+            border-left: 4px solid #8e44ad;
+            padding-left: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .main-notice {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        /* グラフコンテナ - モバイル対応 */
+        .chart-container {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            min-height: 250px;
+        }
+
+        .chart-wrapper {
+            min-width: 300px;
+            position: relative;
+        }
+
+        .chart-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+            color: #95a5a6;
+        }
+
+        canvas {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        /* テーブル - 見やすさ重視 */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .data-table {
+            min-width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: bold;
+            white-space: nowrap;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ecf0f1;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .data-table td strong {
+            color: #8e44ad;
+            font-size: 15px;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f8f5ff;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        tr.highlight-best {
+            background: linear-gradient(90deg, #f3e5f5 0%, #ffffff 100%);
+        }
+
+        tr.highlight-good {
+            background-color: #f8f5ff;
+        }
+
+        tr.highlight-poor {
+            background-color: #fff5f5;
+        }
+
+        tr.no-data {
+            background-color: #f5f5f5;
+            opacity: 0.7;
+        }
+
+        .important {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .recommendation {
+            background-color: #d4edda;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        /* スタッツカード - モバイル最適化 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 2px solid #9b59b6;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #8e44ad;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .cta-button-primary {
+            background: white;
+            color: #9b59b6;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .cta-button-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .cta-button-secondary:hover {
+            background: white;
+            color: #9b59b6;
+        }
+
+        /* ページトップに戻るボタン */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        /* モバイル用テーブルスタイル強化 */
+        @media (max-width: 768px) {
+            .data-table th {
+                font-size: 12px;
+                padding: 10px 6px;
+            }
+
+            .data-table td {
+                font-size: 13px;
+                padding: 8px 6px;
+            }
+
+            .data-table td strong {
+                font-size: 14px;
+            }
+
+            .back-to-top {
+                bottom: 1rem;
+                right: 1rem;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        /* レスポンシブ対応 */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            article {
+                max-width: 800px;
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            .chart-wrapper {
+                min-width: 600px;
+            }
+
+            .cta-buttons {
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .cta-button {
+                padding: 15px 40px;
+            }
+        }
+
+        /* デスクトップ対応 */
+        @media (min-width: 1024px) {
+            .highlight-box {
+                padding: 20px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <!-- パンくずリスト -->
+        <nav aria-label="パンくずリスト" style="margin-bottom: 20px; font-size: 14px;">
+            <ol style="list-style: none; padding: 0; display: flex; flex-wrap: wrap;">
+                <li style="display: inline;"><a href="/" style="color: #9b59b6; text-decoration: none;">ホーム</a></li>
+                <li style="display: inline; margin: 0 8px;">›</li>
+                <li style="display: inline;"><a href="/course/funabashi" style="color: #9b59b6; text-decoration: none;">船橋競馬場</a></li>
+                <li style="display: inline; margin: 0 8px;">›</li>
+                <li style="display: inline;"><span style="color: #7f8c8d;">1500m攻略ガイド</span></li>
+            </ol>
+        </nav>
+
+        <h1>船橋競馬場1500m完全攻略ガイド 【2025年最新版】中距離戦</h1>
+
+        <!-- コース画像セクション -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin: 25px 0;">
+            <div style="text-align: center;">
+                <img src="/course_data/funabashi_course.png" alt="船橋競馬場コースレイアウト図" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+                <p style="color: #666; font-size: 13px; margin-top: 8px;">船橋競馬場コースレイアウト（左回り）</p>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin: 25px 0;">
+            <div style="text-align: center;">
+                <img src="/course_data/funabashi_1500m.png" alt="船橋競馬場1500m中距離戦分析データ" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+                <p style="color: #666; font-size: 13px; margin-top: 8px;">船橋1500m中距離戦詳細分析</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <strong>📊 船橋1500m中距離戦の詳細データ分析</strong><br>
+            船橋競馬場の1500m（中距離）レースにおける馬番別・人気別の詳細データを徹底分析。<br>
+            スピードと持久力のバランスが求められる中距離戦の攻略法をお伝えします。
+        </div>
+
+        <div class="main-notice">
+            🏇 船橋1500m - 実力が問われる中距離戦<br>
+            1番人気の複勝率75.8% - 安定した信頼度<br>
+            11番枠が勝率15.4%でトップ！中外枠にチャンス
+        </div>
+
+        <div class="warning-box">
+            <strong>⚠️ データに関する注意</strong><br>
+            13番・14番枠はサンプル数が極端に少ない（13番:7レース、14番:3レース）ため、<br>
+            これらの枠の成績は参考程度にご覧ください。
+        </div>
+
+        <!-- 目次 -->
+        <div style="background: #f8f9fa; border: 2px solid #9b59b6; border-radius: 8px; padding: 20px; margin: 25px 0;">
+            <h2 style="font-size: 18px; color: #2c3e50; margin: 0 0 15px 0; border: none; padding: 0;">📑 目次</h2>
+            <ol style="margin: 0; padding-left: 25px; line-height: 1.8;">
+                <li><a href="#distance-feature" style="color: #9b59b6; text-decoration: none;">1500m中距離戦の特徴</a></li>
+                <li><a href="#horse-number" style="color: #9b59b6; text-decoration: none;">馬番別成績から見る有利な枠順</a></li>
+                <li><a href="#popularity" style="color: #9b59b6; text-decoration: none;">人気別成績が示す実力重視</a></li>
+                <li><a href="#strategy" style="color: #9b59b6; text-decoration: none;">中距離戦攻略のポイント</a></li>
+                <li><a href="#conclusion" style="color: #9b59b6; text-decoration: none;">まとめ</a></li>
+            </ol>
+        </div>
+
+        <h2 id="distance-feature">1500m中距離戦の特徴</h2>
+
+        <p>船橋競馬場の1500mは、スプリント戦から中距離戦への転換点となる重要な距離です。スピードだけでなく、ペース配分と持久力が求められる、真の実力が問われる距離です。</p>
+
+        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <strong>【1500mレースの特性】</strong><br>
+            <strong>◆ バランスが重要</strong><br>
+            ・スピードと持久力の両立が必要<br>
+            ・ペース配分が勝敗を分ける<br>
+            ・騎手の判断力が重要<br><br>
+
+            <strong>◆ 展開の多様性</strong><br>
+            ・逃げから追い込みまで全脚質に可能性<br>
+            ・道中の位置取りが重要<br>
+            ・仕掛けのタイミングが鍵<br><br>
+
+            <strong>◆ 実力差が出やすい</strong><br>
+            ・ごまかしが効きにくい距離<br>
+            ・上位人気の信頼度が高い<br>
+            ・能力差が明確に現れる
+        </div>
+
+        <h2 id="horse-number">馬番別成績から見る有利な枠順</h2>
+
+        <p>1500mでは、11番枠の勝率15.4%が突出しています。9番枠（14.2%）も好成績で、中外枠に好走馬が集中する傾向が見られます。ただし、サンプル数に大きな差があることに注意が必要です。</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">15.4%</div>
+                <div class="stat-label">11番枠の勝率（最高）</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">14.2%</div>
+                <div class="stat-label">9番枠の勝率</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1396</div>
+                <div class="stat-label">総レース数</div>
+            </div>
+        </div>
+
+        <!-- 馬番別勝率グラフ -->
+        <div class="chart-container">
+            <h3 style="color: #34495e; font-size: 16px; margin-bottom: 15px;">馬番別勝率グラフ</h3>
+            <div class="chart-wrapper">
+                <canvas id="horseNumberChart" width="600" height="250"></canvas>
+                <div class="chart-loading" id="horseChartLoading">グラフを読み込み中...</div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>馬番</th>
+                        <th>勝率</th>
+                        <th>連対率</th>
+                        <th>複勝率</th>
+                        <th>出走数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1番</td>
+                        <td style="font-weight: 600;">8.7%</td>
+                        <td>15.9%</td>
+                        <td>24.6%</td>
+                        <td>138</td>
+                    </tr>
+                    <tr>
+                        <td>2番</td>
+                        <td style="font-weight: 600;">9.6%</td>
+                        <td>16.9%</td>
+                        <td>23.5%</td>
+                        <td>136</td>
+                    </tr>
+                    <tr class="highlight-poor">
+                        <td>3番</td>
+                        <td style="font-weight: 600;">7.9%</td>
+                        <td>16.5%</td>
+                        <td>28.8%</td>
+                        <td>139</td>
+                    </tr>
+                    <tr class="highlight-poor">
+                        <td>4番</td>
+                        <td style="font-weight: 600;">7.3%</td>
+                        <td>21.9%</td>
+                        <td style="font-weight: 600;">36.5%</td>
+                        <td>137</td>
+                    </tr>
+                    <tr class="highlight-good">
+                        <td>5番</td>
+                        <td style="font-weight: 600;">12.4%</td>
+                        <td>18.2%</td>
+                        <td style="font-weight: 600;">35.0%</td>
+                        <td>137</td>
+                    </tr>
+                    <tr>
+                        <td>6番</td>
+                        <td style="font-weight: 600;">8.3%</td>
+                        <td style="font-weight: 600;">24.8%</td>
+                        <td>32.3%</td>
+                        <td>133</td>
+                    </tr>
+                    <tr class="highlight-poor">
+                        <td>7番</td>
+                        <td style="font-weight: 600;">7.9%</td>
+                        <td>16.5%</td>
+                        <td>22.8%</td>
+                        <td>127</td>
+                    </tr>
+                    <tr>
+                        <td>8番</td>
+                        <td style="font-weight: 600;">10.8%</td>
+                        <td>19.2%</td>
+                        <td>25.8%</td>
+                        <td>120</td>
+                    </tr>
+                    <tr class="highlight-best">
+                        <td><strong>9番</strong></td>
+                        <td><strong>14.2%</strong></td>
+                        <td>21.2%</td>
+                        <td>31.0%</td>
+                        <td>113</td>
+                    </tr>
+                    <tr>
+                        <td>10番</td>
+                        <td style="font-weight: 600;">8.4%</td>
+                        <td style="font-weight: 600;">24.2%</td>
+                        <td style="font-weight: 600;">33.7%</td>
+                        <td>95</td>
+                    </tr>
+                    <tr class="highlight-best">
+                        <td><strong>11番</strong></td>
+                        <td><strong>15.4%</strong></td>
+                        <td style="font-weight: 600;">24.4%</td>
+                        <td style="font-weight: 600;">33.3%</td>
+                        <td>78</td>
+                    </tr>
+                    <tr>
+                        <td>12番</td>
+                        <td style="font-weight: 600;">9.7%</td>
+                        <td>14.5%</td>
+                        <td>22.6%</td>
+                        <td>62</td>
+                    </tr>
+                    <tr class="no-data">
+                        <td>13番</td>
+                        <td>0.0%</td>
+                        <td style="font-weight: 600;">42.9%</td>
+                        <td style="font-weight: 600;">42.9%</td>
+                        <td style="color: #e74c3c;">7</td>
+                    </tr>
+                    <tr class="no-data">
+                        <td>14番</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td style="color: #e74c3c;">3</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="important">
+            <strong>⚠️ 注目ポイント</strong><br>
+            船橋1500mでは、11番枠（勝率15.4%）と9番枠（勝率14.2%）が好成績です。4番枠は勝率7.3%と低いものの、複勝率36.5%は全枠中トップ。13番・14番枠はサンプル数が極端に少ないため、データの信頼性は低いです。中外枠の優位性が示唆されています。
+        </div>
+
+        <h2 id="popularity">人気別成績が示す実力重視</h2>
+
+        <p>1500mの1番人気は勝率38.6%、複勝率75.8%と堅実です。2番人気も勝率26.5%、複勝率64.4%と高水準で、上位人気の信頼度が高い距離です。</p>
+
+        <!-- 人気別勝率グラフ -->
+        <div class="chart-container">
+            <h3 style="color: #34495e; font-size: 16px; margin-bottom: 15px;">人気別成績グラフ</h3>
+            <div class="chart-wrapper">
+                <canvas id="popularityChart" width="600" height="250"></canvas>
+                <div class="chart-loading" id="popularityChartLoading">グラフを読み込み中...</div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>人気</th>
+                        <th>勝率</th>
+                        <th>連対率</th>
+                        <th>複勝率</th>
+                        <th>出走数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight-best">
+                        <td><strong>1番人気</strong></td>
+                        <td><strong>38.6%</strong></td>
+                        <td><strong>62.9%</strong></td>
+                        <td><strong>75.8%</strong></td>
+                        <td>132</td>
+                    </tr>
+                    <tr class="highlight-good">
+                        <td><strong>2番人気</strong></td>
+                        <td><strong>26.5%</strong></td>
+                        <td style="font-weight: 600;">48.5%</td>
+                        <td style="font-weight: 600;">64.4%</td>
+                        <td>132</td>
+                    </tr>
+                    <tr>
+                        <td>3番人気</td>
+                        <td style="font-weight: 600;">15.2%</td>
+                        <td>27.3%</td>
+                        <td style="font-weight: 600;">43.2%</td>
+                        <td>132</td>
+                    </tr>
+                    <tr>
+                        <td>4番人気</td>
+                        <td style="font-weight: 600;">5.3%</td>
+                        <td>18.2%</td>
+                        <td>35.6%</td>
+                        <td>132</td>
+                    </tr>
+                    <tr>
+                        <td>5番人気</td>
+                        <td style="font-weight: 600;">6.8%</td>
+                        <td>17.4%</td>
+                        <td>28.0%</td>
+                        <td>132</td>
+                    </tr>
+                    <tr class="highlight-poor">
+                        <td>6番人気以下</td>
+                        <td style="font-weight: 600;">1.4%</td>
+                        <td>4.9%</td>
+                        <td>10.0%</td>
+                        <td>699</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="recommendation">
+            <strong>✅ 推奨馬券戦略</strong><br>
+            1. <strong>1-2番人気の信頼度が高い</strong>：1番人気複勝率75.8%、2番人気複勝率64.4%<br>
+            2. <strong>9番・11番枠を重視</strong>：勝率14-15%台の好成績<br>
+            3. <strong>4番枠は複勝狙い</strong>：勝率は低いが複勝率36.5%<br>
+            4. <strong>3番人気も妙味あり</strong>：複勝率43.2%で穴馬候補<br>
+            5. <strong>6番人気以下は基本切り</strong>：複勝率10.0%では厳しい
+        </div>
+
+        <h2 id="strategy">中距離戦攻略のポイント</h2>
+
+        <p>1500m中距離戦を制するには、スピードと持久力のバランス、ペース判断、そして枠順の特性を理解することが重要です：</p>
+
+        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <strong>【1500m攻略の重要ポイント】</strong><br>
+
+            <strong>◆ 能力の見極め</strong><br>
+            ・1400m〜1600mの実績を重視<br>
+            ・スピードと持久力のバランス<br>
+            ・ペース対応力をチェック<br>
+            ・過去の中距離成績を確認<br><br>
+
+            <strong>◆ 枠順の特性</strong><br>
+            ・9番・11番枠が好成績<br>
+            ・中外枠にチャンスあり<br>
+            ・内枠は展開次第<br>
+            ・大外枠はサンプル少なく不明<br><br>
+
+            <strong>◆ 展開予想</strong><br>
+            ・ペースが重要な要素<br>
+            ・中団からの差しが決まりやすい<br>
+            ・仕掛けのタイミングが鍵<br>
+            ・騎手の経験値が影響
+        </div>
+
+        <h2>距離適性の判断基準</h2>
+
+        <div style="background: #fce4ec; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <strong>【1500m適性チェックリスト】</strong><br>
+
+            <strong>◆ 狙い目の馬</strong><br>
+            ・1400m〜1600mで好走歴<br>
+            ・スピード指数が安定<br>
+            ・中団から伸びる脚質<br>
+            ・ペース変化に対応できる<br><br>
+
+            <strong>◆ 注意が必要な馬</strong><br>
+            ・1200m以下専門のスプリンター<br>
+            ・1800m以上専門のステイヤー<br>
+            ・極端な逃げ・追い込み一辺倒<br>
+            ・ペース判断の甘い馬
+        </div>
+
+        <div class="important">
+            <strong>💡 最終結論</strong><br>
+            船橋1500mは「実力と枠順のバランス」が重要です。1-2番人気の信頼度が高く（1番人気複勝率75.8%）、9番・11番枠の好走率が目立ちます。中距離としての適性を重視し、上位人気馬を軸に中外枠の馬を組み合わせることで、安定した的中が期待できます。
+        </div>
+
+        <h2 id="conclusion">まとめ</h2>
+
+        <p>船橋競馬場1500mは、スピードと持久力のバランスが求められる中距離戦です。データ分析により、中外枠（特に9番・11番枠）の優位性と、上位人気馬の高い信頼度が明らかになりました。</p>
+
+        <p>1番人気の複勝率75.8%、2番人気の複勝率64.4%という高水準は、実力が素直に反映される距離であることを示しています。</p>
+
+        <p>距離適性、枠順、人気を総合的に判断し、データに基づいた合理的な予想で、1500m中距離戦を攻略しましょう。</p>
+
+        <!-- CTAセクション -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin: 30px 0;">
+            <h2 style="color: white; border: none; font-size: 20px; margin-top: 0;">📊 さらに詳しいデータ分析をチェック</h2>
+            <p style="font-size: 15px; margin: 15px 0;">
+                船橋競馬場の全距離別データ、騎手別成績、血統傾向など、<br>
+                より詳細な分析データをインタラクティブに確認できます。
+            </p>
+            <div style="margin-top: 20px;">
+                <a href="/course/funabashi" class="cta-button cta-button-primary" style="margin: 5px;">
+                    船橋競馬場データ分析ページへ →
+                </a>
+                <a href="/course" class="cta-button cta-button-secondary" style="margin: 5px;">
+                    全競馬場コース分析一覧
+                </a>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px 20px; border-radius: 12px; margin: 30px 0;">
+            <h2 style="color: white; border: none; font-size: 22px; margin-top: 0;">🚀 AI予想で的中率を最大化！</h2>
+            <p style="font-size: 16px; margin: 15px 0;">
+                NANKANアナリティクスのAI機械学習モデルが<br>
+                <span style="font-size: 26px; font-weight: bold;">的中率87%、回収率156%を実現</span>
+            </p>
+
+            <div class="stats-grid" style="margin: 25px 0;">
+                <div style="background: rgba(255,255,255,0.95); color: #333; padding: 15px; border-radius: 10px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #f5576c;">87.3%</div>
+                    <div style="color: #666; margin-top: 5px; font-weight: bold; font-size: 12px;">AIモデル精度</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.95); color: #333; padding: 15px; border-radius: 10px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #f5576c;">156.0%</div>
+                    <div style="color: #666; margin-top: 5px; font-weight: bold; font-size: 12px;">回収率</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.95); color: #333; padding: 15px; border-radius: 10px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #f5576c;">10,000+</div>
+                    <div style="color: #666; margin-top: 5px; font-weight: bold; font-size: 12px;">学習データ数</div>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="/free-prediction" class="cta-button cta-button-primary">
+                    まずは無料予想を試す
+                </a>
+                <a href="/pricing" class="cta-button cta-button-secondary">
+                    料金プランを見る
+                </a>
+            </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin: 20px auto; max-width: 800px;">
+            <h2 style="font-size: 20px; color: #2c3e50; border-left: 5px solid #9b59b6; padding-left: 15px;">📚 関連記事</h2>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px;">
+                <a href="/blog/course/funabashi-1000m" style="display: block; background: white; padding: 15px; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <h3 style="color: #9b59b6; margin: 0 0 8px 0; font-size: 16px;">船橋1000m攻略ガイド</h3>
+                    <p style="color: #666; font-size: 14px; margin: 0;">船橋競馬場1000mスプリント戦の詳細データと戦略を解説</p>
+                </a>
+
+                <a href="/blog/course/funabashi-1200m" style="display: block; background: white; padding: 15px; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <h3 style="color: #9b59b6; margin: 0 0 8px 0; font-size: 16px;">船橋1200m攻略ガイド</h3>
+                    <p style="color: #666; font-size: 14px; margin: 0;">船橋競馬場1200mハイペース戦のデータ分析と攻略法</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- フッター -->
+        <footer style="text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; margin-top: 40px; color: #666;">
+            <p>© 2025 南関アナリティクス - データで勝つ地方競馬予想</p>
+            <p style="font-size: 14px; margin-top: 10px;">
+                <a href="/privacy" style="color: #9b59b6; text-decoration: none; margin: 0 10px;">プライバシーポリシー</a> |
+                <a href="/terms" style="color: #9b59b6; text-decoration: none; margin: 0 10px;">利用規約</a> |
+                <a href="/contact" style="color: #9b59b6; text-decoration: none; margin: 0 10px;">お問い合わせ</a>
+            </p>
+        </footer>
+
+    </article>
+
+    <!-- ページトップに戻るボタン -->
+    <button class="back-to-top" id="backToTop" title="ページトップへ戻る">
+        ↑
+    </button>
+
+    <script>
+        // DOMContentLoadedまたは即時実行
+        function initCharts() {
+            console.log('チャート初期化開始');
+
+            // Back to Top ボタン機能
+            const backToTopButton = document.getElementById('backToTop');
+
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // ローディング表示を隠す
+            const hideLoading = (id) => {
+                const loading = document.getElementById(id);
+                if (loading) loading.style.display = 'none';
+            };
+
+            // 馬番別勝率グラフ
+            const drawHorseChart = () => {
+                const canvas = document.getElementById('horseNumberChart');
+                if (!canvas) {
+                    console.log('馬番チャートのcanvas要素が見つかりません');
+                    return;
+                }
+
+                console.log('馬番チャートを描画開始');
+                hideLoading('horseChartLoading');
+
+                const ctx = canvas.getContext('2d');
+                // 馬番別データ（1-14番）
+                const winRates = [8.7, 9.6, 7.9, 7.3, 12.4, 8.3, 7.9, 10.8, 14.2, 8.4, 15.4, 9.7, 0, 0];
+                const fukushoRates = [24.6, 23.5, 28.8, 36.5, 35.0, 32.3, 22.8, 25.8, 31.0, 33.7, 33.3, 22.6, 42.9, 0];
+                const samples = [138, 136, 139, 137, 137, 133, 127, 120, 113, 95, 78, 62, 7, 3];
+                const labels = ['1番', '2番', '3番', '4番', '5番', '6番', '7番', '8番', '9番', '10番', '11番', '12番', '13番', '14番'];
+
+                // レスポンシブ対応
+                const containerWidth = canvas.parentElement.offsetWidth;
+                const devicePixelRatio = window.devicePixelRatio || 1;
+
+                canvas.width = containerWidth * devicePixelRatio;
+                canvas.height = 250 * devicePixelRatio;
+                canvas.style.width = containerWidth + 'px';
+                canvas.style.height = '250px';
+
+                ctx.scale(devicePixelRatio, devicePixelRatio);
+
+                const width = containerWidth;
+                const height = 250;
+                const padding = 40;
+                const barWidth = (width - padding * 2) / winRates.length;
+
+                // 背景
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, width, height);
+
+                // グラフ描画
+                winRates.forEach((value, index) => {
+                    const barHeight = (value / 20) * (height - padding * 2);
+                    const x = padding + index * barWidth + barWidth * 0.1;
+                    const y = height - padding - barHeight;
+
+                    // バーの色分け
+                    if (samples[index] < 10) {
+                        // サンプル数が少ない
+                        ctx.fillStyle = '#e0e0e0';
+                    } else if (index === 10) {
+                        // 11番枠（最高勝率）
+                        ctx.fillStyle = '#8e44ad';
+                    } else if (index === 8) {
+                        // 9番枠（高勝率）
+                        ctx.fillStyle = '#9b59b6';
+                    } else if (index === 4) {
+                        // 5番枠
+                        ctx.fillStyle = '#ba68c8';
+                    } else if (value > 10) {
+                        // 10%以上
+                        ctx.fillStyle = '#ce93d8';
+                    } else if (value < 8) {
+                        // 8%未満（低勝率）
+                        ctx.fillStyle = '#f8bbd0';
+                    } else {
+                        // その他
+                        ctx.fillStyle = '#e1bee7';
+                    }
+
+                    // バー描画
+                    ctx.fillRect(x, y, barWidth * 0.8, barHeight || 2);
+
+                    // 値表示（主要な枠とサンプル数が十分な枠のみ）
+                    if ((index === 10 || index === 8 || index === 4 || index === 3) && samples[index] >= 10) {
+                        ctx.fillStyle = '#2c3e50';
+                        ctx.font = 'bold 10px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(value.toFixed(1) + '%', x + barWidth * 0.4, y - 5);
+                    }
+
+                    // サンプル数が少ない枠に注記
+                    if (samples[index] < 10) {
+                        ctx.fillStyle = '#e74c3c';
+                        ctx.font = '8px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('(' + samples[index] + ')', x + barWidth * 0.4, y + 15);
+                    }
+
+                    // ラベル表示
+                    ctx.fillStyle = '#34495e';
+                    ctx.font = '9px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.save();
+                    ctx.translate(x + barWidth * 0.4, height - 15);
+                    ctx.rotate(-Math.PI / 6);
+                    ctx.fillText(labels[index], 0, 0);
+                    ctx.restore();
+                });
+
+                // 軸線
+                ctx.strokeStyle = '#2c3e50';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(padding, height - padding);
+                ctx.lineTo(width - padding, height - padding);
+                ctx.stroke();
+
+                // タイトル
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('勝率(%)', 10, 20);
+
+                // 注記
+                ctx.fillStyle = '#8e44ad';
+                ctx.font = '10px sans-serif';
+                ctx.fillText('※13-14番枠はサンプル少', width - 160, 20);
+            };
+
+            // 人気別成績グラフ
+            const drawPopularityChart = () => {
+                const canvas = document.getElementById('popularityChart');
+                if (!canvas) {
+                    console.log('人気チャートのcanvas要素が見つかりません');
+                    return;
+                }
+
+                console.log('人気チャートを描画開始');
+                hideLoading('popularityChartLoading');
+
+                const ctx = canvas.getContext('2d');
+                const popularityData = [38.6, 26.5, 15.2, 5.3, 6.8, 1.4];
+                const fukushoData = [75.8, 64.4, 43.2, 35.6, 28.0, 10.0];
+                const popLabels = ['1番人気', '2番人気', '3番人気', '4番人気', '5番人気', '6番人気以下'];
+
+                // レスポンシブ対応
+                const containerWidth = canvas.parentElement.offsetWidth;
+                const devicePixelRatio = window.devicePixelRatio || 1;
+
+                canvas.width = containerWidth * devicePixelRatio;
+                canvas.height = 250 * devicePixelRatio;
+                canvas.style.width = containerWidth + 'px';
+                canvas.style.height = '250px';
+
+                ctx.scale(devicePixelRatio, devicePixelRatio);
+
+                const width = containerWidth;
+                const height = 250;
+                const padding = 40;
+                const barWidth = (width - padding * 2) / popularityData.length;
+
+                // 背景
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, width, height);
+
+                // グラフ描画
+                popularityData.forEach((value, index) => {
+                    const barHeight = (value / 40) * (height - padding * 2);
+                    const x = padding + index * barWidth + barWidth * 0.15;
+                    const y = height - padding - barHeight;
+
+                    // バーの色分け
+                    if (index === 0) {
+                        // 1番人気
+                        const gradient = ctx.createLinearGradient(0, y, 0, height - padding);
+                        gradient.addColorStop(0, '#8e44ad');
+                        gradient.addColorStop(1, '#9b59b6');
+                        ctx.fillStyle = gradient;
+                    } else if (index === 1) {
+                        // 2番人気
+                        ctx.fillStyle = '#ba68c8';
+                    } else if (index === 2) {
+                        // 3番人気
+                        ctx.fillStyle = '#ce93d8';
+                    } else if (index === 5) {
+                        // 6番人気以下
+                        ctx.fillStyle = '#e0e0e0';
+                    } else {
+                        // その他
+                        ctx.fillStyle = '#e1bee7';
+                    }
+
+                    // バー描画
+                    ctx.fillRect(x, y, barWidth * 0.7, barHeight || 2);
+
+                    // 値表示
+                    ctx.fillStyle = '#2c3e50';
+                    ctx.font = 'bold 11px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(value.toFixed(1) + '%', x + barWidth * 0.35, y - 5);
+
+                    // 複勝率表示（1-2番人気）
+                    if (index === 0) {
+                        ctx.fillStyle = '#8e44ad';
+                        ctx.font = 'bold 10px sans-serif';
+                        ctx.fillText('複勝75.8%', x + barWidth * 0.35, y - 20);
+                    } else if (index === 1) {
+                        ctx.fillStyle = '#9b59b6';
+                        ctx.font = 'bold 10px sans-serif';
+                        ctx.fillText('複勝64.4%', x + barWidth * 0.35, y - 20);
+                    }
+
+                    // ラベル表示
+                    ctx.fillStyle = '#34495e';
+                    ctx.font = '9px sans-serif';
+                    ctx.fillText(popLabels[index], x + barWidth * 0.35, height - 20);
+                });
+
+                // 軸線
+                ctx.strokeStyle = '#2c3e50';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(padding, height - padding);
+                ctx.lineTo(width - padding, height - padding);
+                ctx.stroke();
+
+                // タイトル
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('勝率(%)', 10, 20);
+            };
+
+            // グラフを描画
+            drawHorseChart();
+            drawPopularityChart();
+
+            // リサイズ対応
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    drawHorseChart();
+                    drawPopularityChart();
+                }, 250);
+            });
+        }
+
+        // 複数の実行タイミングに対応
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCharts);
+        } else {
+            initCharts();
+        }
+
+        // Astroのページ遷移対応
+        document.addEventListener('astro:page-load', initCharts);
+    </script>
+</body>
+</html>
