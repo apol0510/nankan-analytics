@@ -448,7 +448,7 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/kawasaki-900m
             text-align: center;
         }
 
-        .cta-section * {
+        .cta-section *:not(.cta-button-primary) {
             color: white !important;
         }
 
@@ -488,10 +488,26 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/kawasaki-900m
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
+        /* 白背景ボタンの文字色を確実に適用（最高優先度） */
+        .cta-button.cta-button-primary,
+        a.cta-button.cta-button-primary,
+        .cta-section a.cta-button-primary,
+        .ai-cta-section a.cta-button-primary {
+            color: #ff5722 !important;
+            background-color: white !important;
+        }
+
+        /* テキストを絶対に見えるようにする */
+        .cta-button-primary {
+            position: relative;
+            z-index: 1;
+        }
+
         .cta-button-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            color: #ff5722 !important;
+            color: #e64a19 !important;
+            background: white !important;
         }
 
         .cta-button-secondary {
@@ -515,7 +531,7 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/kawasaki-900m
             text-align: center;
         }
 
-        .ai-cta-section * {
+        .ai-cta-section *:not(.cta-button-primary):not(.ai-stat-card):not(.ai-stat-card *) {
             color: white !important;
         }
 
