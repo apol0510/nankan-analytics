@@ -61,6 +61,66 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             <span class="premium-status-text">プレミアム会員限定コンテンツ</span>
         </div>
 
+        <!-- 買い目モデルの選び方ガイド -->
+        <div class="betting-guide-card">
+            <h3 class="guide-title">📚 買い目モデルの選び方について</h3>
+            <div class="guide-content">
+                <p class="guide-intro">
+                    当サイトでは「<strong>少点数的中型</strong>」「<strong>バランス型</strong>」「<strong>高配当追求型</strong>」の3種類の買い目をご提示しています。
+                    ただし、すべてを購入する必要はありません。オッズ状況に応じて選択・組み合わせることが重要です。
+                </p>
+
+                <div class="guide-section">
+                    <h4 class="section-title">💡 オッズ確認の基準</h4>
+
+                    <div class="odds-case">
+                        <div class="case-header">
+                            <span class="case-condition">馬単オッズ一番人気が<span class="highlight">10倍以上</span>の場合</span>
+                        </div>
+                        <div class="case-content">
+                            少点数的中型は使用せず、<strong>バランス型＋高配当追求型</strong>の組み合わせがおすすめです。
+                        </div>
+                    </div>
+
+                    <div class="odds-case">
+                        <div class="case-header">
+                            <span class="case-condition">馬単オッズ一番人気が<span class="highlight">5倍以下</span>の場合</span>
+                        </div>
+                        <div class="case-content">
+                            <strong>少点数的中型＋バランス型</strong>の組み合わせがおすすめです。<br>
+                            この場合、オッズが低いため一部でトリガミ（配当＜投資額）となる可能性があります。
+                            しかし、<strong class="important">重要なのは一つひとつのレース結果ではなく「全体の収支」</strong>です。
+                            的中率を安定させつつ、長期的にトータルでプラスを狙う方が効率的で、結果として資金の増加につながります。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>馬単オッズ一番人気</th>
+                                <th>推奨モデル</th>
+                                <th>ポイント</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="odds-range">10倍以上</td>
+                                <td class="recommended-model">バランス型＋高配当追求型</td>
+                                <td class="point">高配当狙いを絡めて回収率アップ</td>
+                            </tr>
+                            <tr>
+                                <td class="odds-range">5倍以下</td>
+                                <td class="recommended-model">少点数的中型＋バランス型</td>
+                                <td class="point">トリガミもあるが、トータルで効率的にプラスを狙える</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- 全レースアコーディオン（データドリブン） -->
         {sortedRaces.map((raceData) => {
             const raceNum = raceData.raceNumber.replace('R', '');
@@ -1303,3 +1363,172 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         window[`toggleRace${i}R`] = createToggleFunction(i);
     }
 </script>
+
+<style>
+    /* 買い目モデルの選び方ガイドカード */
+    .betting-guide-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 24px;
+        margin: 24px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 40px rgba(59, 130, 246, 0.05);
+        backdrop-filter: blur(10px);
+    }
+
+    .guide-title {
+        color: #60a5fa;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .guide-content {
+        color: #e2e8f0;
+    }
+
+    .guide-intro {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #cbd5e1;
+    }
+
+    .guide-intro strong {
+        color: #60a5fa;
+        font-weight: 600;
+    }
+
+    .guide-section {
+        margin: 20px 0;
+    }
+
+    .section-title {
+        color: #fbbf24;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 20px 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .odds-case {
+        background: rgba(30, 41, 59, 0.5);
+        border-left: 3px solid #3b82f6;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .case-header {
+        margin-bottom: 8px;
+    }
+
+    .case-condition {
+        font-weight: 600;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+    }
+
+    .highlight {
+        color: #fbbf24;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    .case-content {
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .case-content strong {
+        color: #60a5fa;
+        font-weight: 600;
+    }
+
+    .important {
+        color: #f87171 !important;
+        font-weight: 700 !important;
+    }
+
+    .guide-table {
+        margin-top: 24px;
+        overflow-x: auto;
+    }
+
+    .guide-table table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .guide-table th {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+        font-weight: 600;
+        padding: 12px;
+        text-align: left;
+        font-size: 0.9rem;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .guide-table td {
+        padding: 12px;
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    }
+
+    .guide-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .odds-range {
+        font-weight: 600;
+        color: #fbbf24;
+    }
+
+    .recommended-model {
+        font-weight: 600;
+        color: #60a5fa;
+    }
+
+    .point {
+        color: #cbd5e1;
+        font-size: 0.85rem;
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+        .betting-guide-card {
+            padding: 20px;
+            margin: 20px 10px;
+        }
+
+        .guide-title {
+            font-size: 1.1rem;
+        }
+
+        .guide-table {
+            font-size: 0.85rem;
+        }
+
+        .guide-table th,
+        .guide-table td {
+            padding: 10px 8px;
+            font-size: 0.85rem;
+        }
+
+        .point {
+            font-size: 0.8rem;
+        }
+    }
+</style>
