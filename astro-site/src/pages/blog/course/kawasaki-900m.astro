@@ -631,6 +631,34 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/kawasaki-900m
             }
         }
 
+        /* 画像セクション */
+        .image-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            margin: 30px 0;
+        }
+
+        .course-image,
+        .course-detail-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .image-caption {
+            margin-top: 1rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
         /* モバイル用テーブル最適化 */
         @media (max-width: 768px) {
             .data-table th {
@@ -675,17 +703,19 @@ const canonical = "https://nankan-analytics.keiba.link/blog/course/kawasaki-900m
             4番枠が勝率14.1%でトップ！内枠有利の傾向
         </div>
 
-        <!-- コースレイアウト画像 -->
-        <div style="text-align: center; margin: 30px 0;">
+        <!-- 画像セクション -->
+        <div class="image-item">
             <img src="/course_data/kawasaki-course.png"
                  alt="川崎競馬場コースレイアウト図 左回り293m直線 ダートコース"
-                 style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                 class="course-image">
+            <div class="image-caption">川崎競馬場コースレイアウト図</div>
         </div>
 
-        <div style="text-align: center; margin: 30px 0;">
+        <div class="image-item">
             <img src="/course_data/kawasaki_900m.png"
                  alt="川崎競馬場900m超短距離スプリント戦データ分析グラフ 4番枠勝率14.1%最高 1番人気複勝率80.0%"
-                 style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                 class="course-detail-image">
+            <div class="image-caption">川崎競馬場900m詳細分析データ</div>
         </div>
 
         <!-- 目次 -->

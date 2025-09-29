@@ -204,12 +204,30 @@
         }
 
         /* 画像 */
-        .course-image {
+        .image-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .course-image,
+        .course-detail-image {
             width: 100%;
             height: auto;
             border-radius: 8px;
-            margin: 20px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .image-caption {
+            margin-top: 1rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-style: italic;
+            font-weight: 500;
         }
 
         /* 見出し */
@@ -642,7 +660,10 @@
             </ul>
         </nav>
 
-        <img src="/course_data/kawasaki-course.png" alt="川崎競馬場のコースレイアウト図（左回り・1400m短距離戦）" class="course-image">
+        <div class="image-item">
+            <img src="/course_data/kawasaki-course.png" alt="川崎競馬場のコースレイアウト図（左回り・1400m短距離戦）" class="course-image">
+            <div class="image-caption">川崎競馬場コースレイアウト図</div>
+        </div>
 
         <p>川崎競馬場1400mは、南関東競馬の中でも特徴的な左回り短距離戦です。スピードと位置取りが重要となるこの距離で、どのような傾向があるのか、3,000レース以上の実戦データから導き出した攻略法をお届けします。</p>
 
@@ -887,7 +908,10 @@
             ・直線での差し切りも可能
         </div>
 
-        <img src="/course_data/kawasaki_1400m.png" alt="川崎競馬場1400mコースの詳細分析データ" class="course-image">
+        <div class="image-item">
+            <img src="/course_data/kawasaki_1400m.png" alt="川崎競馬場1400mコースの詳細分析データ" class="course-detail-image">
+            <div class="image-caption">川崎競馬場1400m詳細分析データ</div>
+        </div>
 
         <h3 id="practical">実戦での活用法</h3>
 

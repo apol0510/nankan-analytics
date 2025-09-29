@@ -180,13 +180,58 @@ const description = "大井・川崎・船橋・浦和の南関4競馬場を完�
             </section>
 
             <section class="cta-section">
-                <div class="cta-content">
-                    <h2>⚡ 実戦で活用する攻略法</h2>
-                    <p>データに基づいた南関競馬攻略で、勝率を向上させましょう。各距離・各場の特性を理解することで、より精度の高い予想が可能になります。</p>
-                    
-                    <div class="action-buttons">
-                        <a href="/beginner/" class="cta-button primary">初心者講座を見る</a>
-                        <a href="/" class="cta-button secondary">ホームに戻る</a>
+                <div class="cta-container">
+                    <h2>🚀 南関競馬攻略をさらに極める！実戦データでAI予想</h2>
+                    <p>競馬場別の攻略法を理解したら、次はAI予想で的中率をさらに向上させませんか？各場の特性を活かした戦略的予想で収支アップを目指しましょう。</p>
+
+                    <div class="cta-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">🏁</span>
+                            <span class="feature-text">全競馬場対応AI分析</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📊</span>
+                            <span class="feature-text">場別特性データ活用</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <span class="feature-text">距離別戦略提案</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">💰</span>
+                            <span class="feature-text">回収率重視の予想</span>
+                        </div>
+                    </div>
+
+                    <div class="cta-buttons">
+                        <a href="/free-prediction" class="cta-button primary">
+                            <span class="button-text">無料予想を試す</span>
+                            <span class="button-subtitle">メインレース無料公開中</span>
+                        </a>
+                        <a href="/pricing" class="cta-button secondary">
+                            <span class="button-text">全場対応プラン</span>
+                            <span class="button-subtitle">大井・川崎・船橋・浦和完全攻略</span>
+                        </a>
+                    </div>
+
+                    <div class="trust-indicators">
+                        <div class="trust-item">
+                            <span class="trust-value">95%</span>
+                            <span class="trust-label">ユーザー満足度</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-value">120%</span>
+                            <span class="trust-label">平均回収率</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-value">4場</span>
+                            <span class="trust-label">完全対応</span>
+                        </div>
+                    </div>
+
+                    <div class="additional-links">
+                        <a href="/beginner/" class="link-button">初心者講座を見る</a>
+                        <a href="/blog/" class="link-button">攻略記事一覧</a>
                     </div>
                 </div>
             </section>
@@ -445,64 +490,198 @@ const description = "大井・川崎・船橋・浦和の南関4競馬場を完�
         }
 
         .cta-section {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
-            padding: 3rem 2rem;
-            border-radius: 16px;
+            margin: 4rem 0;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 50%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 20px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
             text-align: center;
-            margin: 3rem 0;
-            border: 2px solid rgba(16, 185, 129, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
-        .cta-content h2 {
-            font-size: 1.8rem;
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="g" cx="20" cy="20" r="20"><stop stop-color="%23ffffff" stop-opacity="0.03"/><stop offset="1" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><rect width="100" height="20" fill="url(%23g)"/></svg>');
+            pointer-events: none;
+        }
+
+        .cta-container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-section h2 {
+            color: #f1f5f9;
+            font-size: 2.2rem;
+            font-weight: 800;
             margin-bottom: 1rem;
-            color: var(--heading-color);
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .cta-content p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+        .cta-section p {
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            line-height: 1.6;
         }
 
-        .action-buttons {
+        .cta-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .feature-item {
             display: flex;
-            gap: 1rem;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-text {
+            color: #e2e8f0;
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
             justify-content: center;
+            margin: 3rem 0;
             flex-wrap: wrap;
         }
 
         .cta-button {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 2.5rem;
+            border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s;
+            min-width: 200px;
+            border: 2px solid;
         }
 
         .cta-button.primary {
-            background: var(--success-color);
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
             color: white;
+            border-color: #8b5cf6;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
         .cta-button.primary:hover {
-            background: #059669;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
         }
 
         .cta-button.secondary {
             background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
+            color: #3b82f6;
+            border-color: #3b82f6;
         }
 
         .cta-button.secondary:hover {
-            background: var(--primary-color);
+            background: #3b82f6;
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .button-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .button-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .trust-indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0 2rem;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .trust-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .trust-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10b981;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .trust-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .additional-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .link-button {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .link-button:hover {
+            color: #3b82f6;
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
         }
 
         @media (max-width: 768px) {
@@ -524,9 +703,42 @@ const description = "大井・川崎・船橋・浦和の南関4競馬場を完�
                 align-items: center;
             }
 
+            .cta-features,
+            .trust-indicators {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                padding: 3rem 1.5rem;
+            }
+
+            .cta-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
             .cta-button {
                 width: 100%;
                 max-width: 300px;
+            }
+
+            .feature-item {
+                padding: 1rem;
+            }
+
+            .additional-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .link-button {
+                width: 100%;
+                max-width: 200px;
+                text-align: center;
             }
         }
     </style>
