@@ -44,6 +44,38 @@ export async function sendEmail({ to, subject, html, replyTo, fromName = "NANKAN
             };
         }
 
+        // 🚨 重要：SendGridトラッキング完全無効化（復活防止対策 2025-09-29）
+        // 8912keibalink.keiba.link トラッキングURL問題解決
+        emailData.tracking_settings = {
+            click_tracking: {
+                enable: false,  // クリック追跡無効化
+                enable_text: false  // テキストメールでも無効化
+            },
+            open_tracking: {
+                enable: false,  // 開封追跡無効化
+                substitution_tag: null
+            },
+            subscription_tracking: {
+                enable: false  // 購読解除追跡無効化
+            },
+            ganalytics: {
+                enable: false  // Google Analytics追跡無効化
+            }
+        };
+
+        // mail_settingsも追加でセキュリティ強化
+        emailData.mail_settings = {
+            bypass_list_management: {
+                enable: false  // リスト管理をバイパスしない
+            },
+            footer: {
+                enable: false  // フッター追加しない
+            },
+            sandbox_mode: {
+                enable: false  // サンドボックスモード無効（本番送信）
+            }
+        };
+
         const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
             method: 'POST',
             headers: {

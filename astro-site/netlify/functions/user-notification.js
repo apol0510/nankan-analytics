@@ -148,12 +148,37 @@ export default async function handler(request, context) {
       ]
     };
 
-    // SendGridリンク追跡を無効化してダイレクトリンク保証
+    // 🚨 重要：SendGridリンク追跡を完全無効化（復活防止対策 2025-09-29）
+    // SendGrid V3 API仕様に準拠した正しい形式
+    // https://docs.sendgrid.com/api-reference/mail-send/mail-send
     emailData.tracking_settings = {
-      click_tracking: { enable: false },
-      open_tracking: { enable: false },
-      subscription_tracking: { enable: false },
-      ganalytics: { enable: false }
+      click_tracking: {
+        enable: false,  // クリック追跡無効化
+        enable_text: false  // テキストメールでも無効化
+      },
+      open_tracking: {
+        enable: false,  // 開封追跡無効化
+        substitution_tag: null
+      },
+      subscription_tracking: {
+        enable: false  // 購読解除追跡無効化
+      },
+      ganalytics: {
+        enable: false  // Google Analytics追跡無効化
+      }
+    };
+
+    // 🔒 復活防止：mail_settingsも追加でセキュリティ強化
+    emailData.mail_settings = {
+      bypass_list_management: {
+        enable: false  // リスト管理をバイパスしない
+      },
+      footer: {
+        enable: false  // フッター追加しない
+      },
+      sandbox_mode: {
+        enable: false  // サンドボックスモード無効（本番送信）
+      }
     };
 
     const sendgridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
@@ -205,9 +230,20 @@ export default async function handler(request, context) {
   }
 };
 
-// ✅ 新規実装の安全性確認
+// ✅ 新規実装の安全性確認（2025-09-29更新）
 // 1. 完全に新しいファイル名・関数名
 // 2. ハードコーディングされた安全ドメイン使用
 // 3. 環境変数SITE_URLに依存しない設計
 // 4. 削除されたsendWelcomeEmail機能の再利用なし
 // 5. 最小限で確実なHTMLテンプレート
+//
+// 🚨 復活防止対策（2025-09-29追加）
+// - SendGridトラッキング完全無効化実装済み
+// - click_tracking.enable_text: false 追加
+// - mail_settings セクション追加でセキュリティ強化
+// - 8912keibalink.keiba.link トラッキングURL問題解決
+//
+// ⚠️ 絶対に復活させてはいけない設定:
+// - tracking_settings.click_tracking.enable: true
+// - tracking_settings配下のenable: true設定
+// - SITE_URL環境変数の使用（8912ドメイン混入リスク）

@@ -104,7 +104,35 @@ export default async function handler(request, context) {
                   type: "text/html",
                   value: Content
                 }
-              ]
+              ],
+              // 🚨 重要：SendGridトラッキング完全無効化（復活防止対策 2025-09-29）
+              tracking_settings: {
+                click_tracking: {
+                  enable: false,
+                  enable_text: false
+                },
+                open_tracking: {
+                  enable: false,
+                  substitution_tag: null
+                },
+                subscription_tracking: {
+                  enable: false
+                },
+                ganalytics: {
+                  enable: false
+                }
+              },
+              mail_settings: {
+                bypass_list_management: {
+                  enable: false
+                },
+                footer: {
+                  enable: false
+                },
+                sandbox_mode: {
+                  enable: false
+                }
+              }
             };
 
             const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {

@@ -50,30 +50,31 @@ console.log('🔍 StandardRaces結果:', {
 });
 
 // 昨日・先週の的中結果データ（トップページに反映される）
-// 昨日の的中結果データ（9/26 浦和競馬）
+// 昨日の的中結果データ（9/29 船橋競馬）
 export const yesterdayResults = {
-    date: "9/26",
-    track: "浦和競馬",
-    hitRate: 58.3,
-    hitCount: 7,
+    date: "9/29",
+    track: "船橋競馬",
+    hitRate: 66.7,
+    hitCount: 8,
     totalCount: 12,
-    totalPayout: 25130,
-    recoveryRate: 209, // 🛡️ 復活防止: 回収率フィールド追加
+    totalPayout: 10110,
+    recoveryRate: 84, // 🛡️ 復活防止: 回収率フィールド追加
     results: [
-        { race: '1R', result: 'win', payout: 3860 },
-        { race: '2R', result: 'lose', payout: 0 },
-        { race: '3R', result: 'lose', payout: 0 },
-        { race: '4R', result: 'lose', payout: 0 },
-        { race: '5R', result: 'win', payout: 2270 },
-        { race: '6R', result: 'lose', payout: 0 },
-        { race: '7R', result: 'win', payout: 1500 },
-        { race: '8R', result: 'win', payout: 4270 },
-        { race: '9R', result: 'win', payout: 3300 },
-        { race: '10R', result: 'win', payout: 870 },
-        { race: '11R', result: 'lose', payout: 0 },
-        { race: '12R', result: 'win', payout: 9060 },
+        { race: '1R', result: 'win', payout: 960 },
+        { race: '2R', result: 'win', payout: 1180 },
+        { race: '3R', result: 'win', payout: 1380 },
+        { race: '4R', result: 'win', payout: 460 },
+        { race: '5R', result: 'lose', payout: 0 },
+        { race: '6R', result: 'win', payout: 1050 },
+        { race: '7R', result: 'lose', payout: 0 },
+        { race: '8R', result: 'lose', payout: 0 },
+        { race: '9R', result: 'lose', payout: 0 },
+        { race: '10R', result: 'win', payout: 720 },
+        { race: '11R', result: 'win', payout: 3330 },
+        { race: '12R', result: 'win', payout: 1030 },
     ]
 };
+
 
 
 // 週間の的中結果データ（9/22〜9/26 浦和競馬）
