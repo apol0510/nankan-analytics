@@ -3,14 +3,11 @@
 // Cloudinary統合: デプロイ不要で即座反映
 const CLOUDINARY_CLOUD_NAME = 'da1mkphuk';
 
-// 今日の日付を YYYYMMDD 形式で取得
-const today = new Date();
-const dateStr = today.getFullYear() +
-  String(today.getMonth() + 1).padStart(2, '0') +
-  String(today.getDate()).padStart(2, '0');
+// 画像Public ID（Cloudinaryで確認したIDを直接指定）
+// 更新方法: Cloudinaryで画像のPublic IDを確認し、以下を更新してデプロイ
+const imagePublicId = 'kaime0922_dqdlam'; // ← Cloudinaryで確認したPublic IDに変更
 
-// 日付付きファイル名で画像取得（例: kaime-20250930）
-const imagePath = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/v1/premium-predictions/kaime-${dateStr}?t=${Date.now()}`;
+const imagePath = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/v1/${imagePublicId}?t=${Date.now()}`;
 ---
 
 <!DOCTYPE html>
