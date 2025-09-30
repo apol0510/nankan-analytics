@@ -654,16 +654,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             detailsHtml += `</div>`;
 
-            // 登録情報変更リンクを追加
-            detailsHtml += `
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(59, 130, 246, 0.2);">
-                    <a href="/settings" style="display: inline-flex; align-items: center; gap: 8px; color: #60a5fa; text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all 0.3s ease;">
-                        <span>⚙️</span>
-                        <span>登録情報を変更する</span>
-                        <span style="margin-left: 5px;">→</span>
-                    </a>
-                </div>
-            `;
+            // 🛡️ 復活防止: 登録情報変更リンクを安全のため削除
 
             document.getElementById('membership-details').innerHTML = detailsHtml;
             
