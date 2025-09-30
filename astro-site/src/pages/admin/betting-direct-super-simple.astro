@@ -708,7 +708,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     if (scoreMatch) {
                         const lastHorse = raceData[currentRace].horses[raceData[currentRace].horses.length - 1];
                         lastHorse.score = scoreMatch[1];
-                        console.log(`📊 スコア更新: ${lastHorse.name} → ${lastHorse.score}pt`);
+
+                        // 星評価を累積スコアに基づいて更新（89pt以上で★★★★）
+                        if (lastHorse.type === '本命' || lastHorse.type === '対抗' || lastHorse.type === '単穴') {
+                            lastHorse.stars = parseInt(lastHorse.score) >= 89 ? '★★★★' : '★★★';
+                        }
+
+                        console.log(`📊 スコア更新: ${lastHorse.name} → ${lastHorse.score}pt ${lastHorse.stars}`);
                     }
                     continue;
                 }
