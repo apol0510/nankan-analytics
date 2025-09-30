@@ -648,8 +648,8 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
 
         <!-- 🏆 プレミアムプラス特別案内セクション -->
         <div class="premium-plus-upsell">
-            <h2 class="upsell-title">🎯 さらに上を目指すあなたへ</h2>
-            <p class="upsell-subtitle">AIが導く"最高確率の1鞍"を、あなたに。</p>
+            <h2 class="upsell-title">AIが導く"最高確率の1鞍"を、あなたに。</h2>
+            <p class="upsell-subtitle">数万通りから厳選された、たった1つの答え。</p>
 
             <div class="upsell-content">
                 <div class="upsell-image-section">
@@ -667,19 +667,12 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                         <strong style="font-size: 1.2rem; color: #fbbf24;">たった1鞍</strong>だけを厳選配信。
                     </p>
 
-                    <div class="upsell-stats">
-                        <div class="stat-item">
-                            <div class="stat-value">5日に3日</div>
-                            <div class="stat-label">的中実績</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">数万通り</div>
-                            <div class="stat-label">AIが分析</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">1鞍のみ</div>
-                            <div class="stat-label">厳選配信</div>
-                        </div>
+                    <div class="upsell-performance">
+                        <p style="font-size: 1.1rem; line-height: 1.9; color: #e2e8f0; margin: 1.5rem 0;">
+                            📊 <strong style="color: #60a5fa;">5日に3日</strong>の的中実績を記録<br>
+                            🔍 AIが<strong style="color: #60a5fa;">数万通り</strong>の組み合わせから最適解を導出<br>
+                            🎯 毎日<strong style="color: #60a5fa;">1鞍のみ</strong>の超厳選配信
+                        </p>
                     </div>
 
                     <div class="upsell-highlight">
@@ -1693,31 +1686,11 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         color: #cbd5e1;
     }
 
-    .upsell-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin: 1rem 0;
-    }
-
-    .stat-item {
+    .upsell-performance {
         background: rgba(59, 130, 246, 0.1);
         border: 1px solid rgba(59, 130, 246, 0.3);
         border-radius: 12px;
-        padding: 1rem;
-        text-align: center;
-    }
-
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #60a5fa;
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-        font-size: 0.85rem;
-        color: #94a3b8;
+        padding: 1.5rem;
     }
 
     .upsell-highlight {
@@ -1817,13 +1790,8 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
             font-size: 0.95rem;
         }
 
-        .upsell-stats {
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
+        .upsell-performance p {
+            font-size: 0.95rem;
         }
 
         .price-amount {
