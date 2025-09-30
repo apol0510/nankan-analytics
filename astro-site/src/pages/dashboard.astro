@@ -3139,4 +3139,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         console.log('💡 テスト用: setTestAuth("premium"), setTestAuth("standard"), setTestAuth("free") が利用可能です');
     </script>
+
+    <!-- 退会申請セクション（ダッシュボード下部） -->
+    <div id="withdrawal-section" style="display: none; margin-top: 3rem; padding: 2rem; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px;">
+        <h3 style="color: #f87171; margin-bottom: 1rem;">退会について</h3>
+        <p style="color: #94a3b8; margin-bottom: 1.5rem;">
+            退会をご希望の場合は、下記ボタンからお手続きください。
+        </p>
+        <a href="/withdrawal-upsell" style="display: inline-block; padding: 0.75rem 1.5rem; background: #64748b; color: #fff; text-decoration: none; border-radius: 8px; transition: all 0.3s;">
+            退会申請
+        </a>
+    </div>
+
+    <script is:inline>
+        // 退会セクション表示（ログイン後に表示）
+        document.addEventListener('userDataLoaded', function() {
+            const withdrawalSection = document.getElementById('withdrawal-section');
+            if (withdrawalSection) {
+                withdrawalSection.style.display = 'block';
+            }
+        });
+    </script>
 </BaseLayout>
