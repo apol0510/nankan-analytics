@@ -1,6 +1,10 @@
 ---
 // 退会前アップセル専用ページ
-const imagePath = `/premium-predictions/today-hit.png?t=${Date.now()}`;
+// Cloudinary固定URL方式: デプロイ完全不要
+
+// 固定のPublic IDを使用（Cloudinaryで上書きアップロード）
+// 更新方法: Cloudinaryで "upsell-today" という名前で画像をReplaceするだけ
+const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-today?t=${Date.now()}`;
 ---
 
 <!DOCTYPE html>
