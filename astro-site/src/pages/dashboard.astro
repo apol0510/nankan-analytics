@@ -3152,12 +3152,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 
     <script is:inline>
-        // 退会セクション表示（ログイン後に表示）
-        document.addEventListener('userDataLoaded', function() {
+        // 退会セクション表示（ダッシュボード表示時に自動表示）
+        const observer = new MutationObserver(function() {
+            const dashboardSection = document.getElementById('dashboard-section');
             const withdrawalSection = document.getElementById('withdrawal-section');
-            if (withdrawalSection) {
-                withdrawalSection.style.display = 'block';
+
+            if (dashboardSection && withdrawalSection) {
+                const dashboardVisible = dashboardSection.style.display !== 'none';
+                if (dashboardVisible) {
+                    withdrawalSection.style.display = 'block';
+                }
             }
         });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        // 初回チェック
+        setTimeout(function() {
+            const dashboardSection = document.getElementById('dashboard-section');
+            const withdrawalSection = document.getElementById('withdrawal-section');
+            if (dashboardSection && withdrawalSection && dashboardSection.style.display !== 'none') {
+                withdrawalSection.style.display = 'block';
+            }
+        }, 500);
     </script>
 </BaseLayout>
