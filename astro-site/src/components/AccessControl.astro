@@ -275,15 +275,15 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         
         // 無料プランが必要な場合 - 登録ユーザーのみアクセス可能
         if (requiredPlan === 'free') {
-            const hasValidFreeUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
+            const hasValidFreeUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
             console.log(`🆓 無料会員限定コンテンツ - 登録チェック:`, hasValidFreeUser, { user, plan });
             return hasValidFreeUser; // 登録済みユーザーのみアクセス許可
         }
         
         // 有料プランの場合は従来通りの階層チェック + 登録チェック
-        const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp);
+        const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
         const hasAccess = userLevel >= requiredLevel && hasValidUser;
-        console.log(`💎 有料アクセスチェック:`, hasAccess, { userLevel, requiredLevel, hasValidUser });
+        console.log(`💎 有料アクセスチェック:`, hasAccess, { userLevel, requiredLevel, hasValidUser, userPlan, requiredPlan });
         return hasAccess;
     }
 
@@ -316,6 +316,18 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             // 開発モードでの優先表示（デバッグ用）
             if (isDevelopmentMode()) {
                 console.log('🔧 開発モード: 認証情報を優先表示');
+                // 開発モードでは10秒以内に認証が完了しない場合は強制表示
+                setTimeout(() => {
+                    if (loadingState && !loadingState.classList.contains('hidden')) {
+                        console.log('⚠️ 開発モード: 認証タイムアウト - 強制表示実行');
+                        loadingState.style.display = 'none';
+                        loadingState.classList.add('hidden');
+                        if (contentArea) {
+                            contentArea.style.display = 'block';
+                            contentArea.classList.remove('hidden');
+                        }
+                    }
+                }, 10000);
             }
             
             // アクセス権限チェック
@@ -407,9 +419,33 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
 
     document.addEventListener('DOMContentLoaded', () => {
         console.log('📋 DOMContentLoaded - AccessControl初期化開始');
+
+        // DOM要素が確実に存在することを確認
+        const accessControl = document.getElementById('access-control');
+        const loadingState = document.getElementById('loading-state');
+        const contentArea = document.getElementById('content-area');
+        const accessDenied = document.getElementById('access-denied');
+
+        if (!accessControl || !loadingState || !contentArea || !accessDenied) {
+            console.error('❌ 必要なDOM要素が見つかりません:', {
+                accessControl: !!accessControl,
+                loadingState: !!loadingState,
+                contentArea: !!contentArea,
+                accessDenied: !!accessDenied
+            });
+            // DOM要素が不足している場合でも最低限の表示を行う
+            if (contentArea) {
+                contentArea.style.display = 'block';
+                contentArea.classList.remove('hidden');
+            }
+            return;
+        }
+
+        console.log('✅ 全DOM要素確認完了 - AccessControl実行開始');
+
         // DOM要素の完全な準備を待つため少し遅延
         setTimeout(() => {
             checkAccess();
-        }, 100);
+        }, 50);
     });
 </script>
