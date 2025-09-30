@@ -1135,6 +1135,41 @@ function switchTab(tabIndex) {
         selectedBtn.style.borderColor = '#3b82f6';
     }
 }
+
+// テスト認証機能（開発環境用）
+window.setTestAuth = function(plan) {
+    if (!['premium', 'standard', 'free'].includes(plan.toLowerCase())) {
+        console.error('❌ 無効なプラン:', plan);
+        console.log('📋 有効なプラン: premium, standard, free');
+        return;
+    }
+
+    const testUser = {
+        email: `test-${plan}@example.com`,
+        name: `テスト${plan.charAt(0).toUpperCase() + plan.slice(1)}ユーザー`,
+        plan: plan.toLowerCase(),
+        isTest: true,
+        points: plan === 'premium' ? 1000 : plan === 'standard' ? 500 : 100,
+        registrationDate: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
+    };
+
+    // LocalStorageに保存
+    localStorage.setItem('nankan_user', JSON.stringify(testUser));
+    localStorage.setItem('nankan_test_auth', 'true');
+
+    console.log(`✅ テスト認証設定完了: ${plan}プラン`, testUser);
+    console.log('🔄 ページを更新して認証を適用してください');
+
+    // 1秒後に自動リロード
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+};
+
+// コンソールにヘルプメッセージ表示
+console.log('%c🔑 テスト認証機能が利用可能です', 'color: #60a5fa; font-weight: bold;');
+console.log('%c使用方法: setTestAuth("standard") または setTestAuth("premium")', 'color: #94a3b8;');
 </script>
 
 <style>

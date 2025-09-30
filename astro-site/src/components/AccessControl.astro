@@ -203,18 +203,33 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             };
         }
 
-        // 4. ローカルストレージから認証情報を取得
+        // 4. nankan_user認証情報を取得（新テスト認証用）
+        const nankanUser = localStorage.getItem('nankan_user');
+        if (nankanUser) {
+            try {
+                const userData = JSON.parse(nankanUser);
+                console.log('✅ nankan_user認証:', userData);
+                return {
+                    user: { email: userData.email, name: userData.name },
+                    plan: userData.plan || 'free'
+                };
+            } catch (error) {
+                console.error('Nankan user parsing error:', error);
+            }
+        }
+
+        // 5. ローカルストレージから認証情報を取得
         const authData = localStorage.getItem('auth_data');
         if (authData) {
             try {
                 const { user, plan, expiresAt } = JSON.parse(authData);
-                
+
                 // 有効期限チェック
                 if (new Date() > new Date(expiresAt)) {
                     localStorage.removeItem('auth_data');
                     return { user: null, plan: 'free' };
                 }
-                
+
                 return { user, plan: plan || 'free' };
             } catch (error) {
                 console.error('Auth data parsing error:', error);
@@ -222,7 +237,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 5. セッションストレージチェック
+        // 6. セッションストレージチェック
         const sessionAuth = sessionStorage.getItem('temp_auth');
         if (sessionAuth) {
             try {
@@ -233,7 +248,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             }
         }
 
-        // 6. デフォルトは未登録
+        // 7. デフォルトは未登録
         console.log('❌ 認証データなし - 未登録状態');
         return { user: null, plan: null };
     }

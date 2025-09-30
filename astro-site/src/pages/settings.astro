@@ -1,0 +1,625 @@
+---
+export const prerender = false;
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = '登録情報変更 | NANKANアナリティクス';
+const description = '会員登録情報の確認・変更ページ';
+---
+
+<BaseLayout title={title} description={description}>
+    <div class="settings-container">
+        <!-- ヘッダー -->
+        <div class="settings-header">
+            <div class="header-content">
+                <a href="/dashboard" class="back-button">← ダッシュボードへ戻る</a>
+                <h1 class="page-title">⚙️ 登録情報変更</h1>
+                <p class="page-description">会員登録情報の確認・変更ができます</p>
+            </div>
+        </div>
+
+        <!-- 認証チェック -->
+        <div id="auth-required" class="auth-warning" style="display: none;">
+            <div class="warning-content">
+                <span class="warning-icon">🔒</span>
+                <h3>ログインが必要です</h3>
+                <p>登録情報を変更するには、まずログインしてください</p>
+                <a href="/dashboard" class="login-button">ログインページへ</a>
+            </div>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div id="settings-content" class="settings-content" style="display: none;">
+            <!-- 現在の登録情報 -->
+            <section class="info-section">
+                <h2 class="section-title">📋 現在の登録情報</h2>
+                <div class="current-info-card">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">メールアドレス</span>
+                            <span id="current-email" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">お名前</span>
+                            <span id="current-name" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">プラン</span>
+                            <span id="current-plan" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">登録日</span>
+                            <span id="registration-date" class="info-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 変更フォーム -->
+            <section class="edit-section">
+                <h2 class="section-title">✏️ 情報を変更する</h2>
+                <div class="edit-card">
+                    <form id="update-form" class="update-form">
+                        <!-- 名前変更 -->
+                        <div class="form-group">
+                            <label for="new-name" class="form-label">
+                                <span class="label-icon">👤</span> お名前
+                            </label>
+                            <input
+                                type="text"
+                                id="new-name"
+                                class="form-input"
+                                placeholder="山田 太郎"
+                                maxlength="50"
+                            />
+                            <small class="form-hint">※ 全角・半角50文字まで</small>
+                        </div>
+
+                        <!-- メールアドレス変更 -->
+                        <div class="form-group">
+                            <label for="new-email" class="form-label">
+                                <span class="label-icon">📧</span> メールアドレス
+                            </label>
+                            <input
+                                type="email"
+                                id="new-email"
+                                class="form-input"
+                                placeholder="example@email.com"
+                                maxlength="100"
+                            />
+                            <small class="form-hint">※ 変更後は新しいメールアドレスでログインしてください</small>
+                        </div>
+
+                        <!-- 更新ボタン -->
+                        <div class="button-group">
+                            <button type="submit" id="update-button" class="update-button">
+                                <span id="button-text">変更を保存する</span>
+                                <span id="loading-spinner" class="spinner" style="display: none;">⏳</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- メッセージ表示エリア -->
+                    <div id="message-area" class="message-area" style="display: none;">
+                        <div id="message-content" class="message-content"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 注意事項 -->
+            <section class="notice-section">
+                <h3 class="notice-title">⚠️ ご注意事項</h3>
+                <ul class="notice-list">
+                    <li>メールアドレスを変更した場合、次回から新しいメールアドレスでログインしてください</li>
+                    <li>プランの変更は決済ページから行ってください</li>
+                    <li>変更内容は即座に反映されます</li>
+                    <li>不正な変更を防ぐため、一定回数以上の変更はできない場合があります</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .settings-container {
+        min-height: 100vh;
+        padding: 20px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    /* ヘッダー */
+    .settings-header {
+        max-width: 1000px;
+        margin: 0 auto 40px;
+    }
+
+    .header-content {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 30px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        color: #60a5fa;
+        text-decoration: none;
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+        color: #93c5fd;
+        transform: translateX(-3px);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #60a5fa, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 10px 0;
+    }
+
+    .page-description {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* 認証警告 */
+    .auth-warning {
+        max-width: 600px;
+        margin: 100px auto;
+    }
+
+    .warning-content {
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid rgba(239, 68, 68, 0.5);
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .warning-icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .warning-content h3 {
+        color: #f87171;
+        font-size: 1.5rem;
+        margin: 0 0 10px 0;
+    }
+
+    .warning-content p {
+        color: #fca5a5;
+        margin: 0 0 20px 0;
+    }
+
+    .login-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    /* メインコンテンツ */
+    .settings-content {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    /* セクション共通 */
+    .info-section, .edit-section, .notice-section {
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        color: #60a5fa;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 20px 0;
+    }
+
+    /* 現在の情報カード */
+    .current-info-card {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 12px;
+        padding: 25px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .info-label {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .info-value {
+        color: #e2e8f0;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* 編集カード */
+    .edit-card {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 12px;
+        padding: 30px;
+    }
+
+    .update-form {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-label {
+        color: #cbd5e1;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .label-icon {
+        font-size: 1.2rem;
+    }
+
+    .form-input {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        padding: 12px 15px;
+        color: #e2e8f0;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    }
+
+    .form-input::placeholder {
+        color: #64748b;
+    }
+
+    .form-hint {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        margin-top: -5px;
+    }
+
+    /* ボタン */
+    .button-group {
+        margin-top: 10px;
+    }
+
+    .update-button {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .update-button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+
+    .update-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* メッセージエリア */
+    .message-area {
+        margin-top: 20px;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .message-content {
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .message-content.success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.5);
+        color: #34d399;
+    }
+
+    .message-content.error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.5);
+        color: #f87171;
+    }
+
+    /* 注意事項 */
+    .notice-section {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 40px;
+    }
+
+    .notice-title {
+        color: #fbbf24;
+        font-size: 1.1rem;
+        margin: 0 0 15px 0;
+    }
+
+    .notice-list {
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .notice-list li {
+        margin-bottom: 8px;
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+        .settings-container {
+            padding: 15px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-content, .current-info-card, .edit-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 要素取得
+        const authRequired = document.getElementById('auth-required');
+        const settingsContent = document.getElementById('settings-content');
+        const updateForm = document.getElementById('update-form');
+        const updateButton = document.getElementById('update-button');
+        const buttonText = document.getElementById('button-text');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const messageArea = document.getElementById('message-area');
+        const messageContent = document.getElementById('message-content');
+
+        // 現在の情報表示要素
+        const currentEmail = document.getElementById('current-email');
+        const currentName = document.getElementById('current-name');
+        const currentPlan = document.getElementById('current-plan');
+        const registrationDate = document.getElementById('registration-date');
+
+        // フォーム要素
+        const newNameInput = document.getElementById('new-name');
+        const newEmailInput = document.getElementById('new-email');
+
+        // 認証情報取得
+        let userInfo = null;
+        const storedUserJson = localStorage.getItem('nankan_user');
+
+        if (storedUserJson) {
+            try {
+                userInfo = JSON.parse(storedUserJson);
+            } catch (e) {
+                console.error('ユーザー情報パースエラー:', e);
+            }
+        }
+
+        // 認証チェックと表示切り替え
+        if (!userInfo || !userInfo.email) {
+            authRequired.style.display = 'block';
+            settingsContent.style.display = 'none';
+            return;
+        }
+
+        // 認証済みの場合
+        authRequired.style.display = 'none';
+        settingsContent.style.display = 'block';
+
+        // 現在の情報を表示
+        displayCurrentInfo(userInfo);
+
+        // 現在の値をフォームに設定
+        newNameInput.value = userInfo.name || '';
+        newEmailInput.value = userInfo.email || '';
+
+        // フォーム送信処理
+        updateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleUpdate();
+        });
+
+        // 現在の情報表示関数
+        function displayCurrentInfo(info) {
+            currentEmail.textContent = info.email || '-';
+            currentName.textContent = info.name || 'お客様';
+
+            // プラン表示
+            const planNames = {
+                'premium': 'プレミアム会員',
+                'standard': 'スタンダード会員',
+                'free': '無料会員'
+            };
+            currentPlan.textContent = planNames[info.plan] || '無料会員';
+
+            // 登録日表示
+            if (info.registrationDate) {
+                const date = new Date(info.registrationDate);
+                registrationDate.textContent = date.toLocaleDateString('ja-JP');
+            } else {
+                registrationDate.textContent = '-';
+            }
+        }
+
+        // メッセージ表示関数
+        function showMessage(message, type = 'success') {
+            messageContent.textContent = message;
+            messageContent.className = `message-content ${type}`;
+            messageArea.style.display = 'block';
+
+            // 5秒後に自動で非表示
+            setTimeout(() => {
+                messageArea.style.display = 'none';
+            }, 5000);
+        }
+
+        // 更新処理
+        async function handleUpdate() {
+            const newName = newNameInput.value.trim();
+            const newEmail = newEmailInput.value.trim();
+
+            // 変更チェック
+            if (newName === (userInfo.name || '') && newEmail === userInfo.email) {
+                showMessage('変更する項目がありません', 'error');
+                return;
+            }
+
+            // バリデーション
+            if (!newEmail) {
+                showMessage('メールアドレスは必須です', 'error');
+                return;
+            }
+
+            // メールアドレス形式チェック
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(newEmail)) {
+                showMessage('正しいメールアドレス形式で入力してください', 'error');
+                return;
+            }
+
+            // ボタン無効化
+            updateButton.disabled = true;
+            buttonText.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
+
+            try {
+                // Netlify Functions経由でAirtable更新
+                const response = await fetch('/.netlify/functions/update-customer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        currentEmail: userInfo.email,
+                        newEmail: newEmail,
+                        newName: newName
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // 成功時はローカルストレージも更新
+                    const updatedInfo = {
+                        ...userInfo,
+                        email: newEmail,
+                        name: newName
+                    };
+                    localStorage.setItem('nankan_user', JSON.stringify(updatedInfo));
+                    userInfo = updatedInfo;
+
+                    // 表示更新
+                    displayCurrentInfo(updatedInfo);
+
+                    showMessage('登録情報を更新しました', 'success');
+
+                    // メールアドレスが変更された場合の注意
+                    if (newEmail !== userInfo.email) {
+                        setTimeout(() => {
+                            showMessage('次回から新しいメールアドレスでログインしてください', 'success');
+                        }, 2000);
+                    }
+                } else {
+                    showMessage(result.message || '更新に失敗しました', 'error');
+                }
+            } catch (error) {
+                console.error('更新エラー:', error);
+                showMessage('通信エラーが発生しました。しばらくしてからお試しください', 'error');
+            } finally {
+                // ボタン有効化
+                updateButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loadingSpinner.style.display = 'none';
+            }
+        }
+    });
+</script>
