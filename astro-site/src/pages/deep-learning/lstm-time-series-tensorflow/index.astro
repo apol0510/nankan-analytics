@@ -1,0 +1,528 @@
+---
+export const prerender = true;
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const title = 'LSTMを使った時系列予想モデル - TensorFlow実装例 | NANKANアナリティクス';
+const description = 'TensorFlowでLSTMネットワークを構築し、競馬の時系列データから予想モデルを作成する方法を詳解。馬の成長曲線・調子の波を時系列で分析し、高精度な予想を実現。';
+---
+
+<BaseLayout title={title} description={description}>
+    <article class="article-content">
+        <header class="article-header">
+            <div class="breadcrumb">
+                <a href="/">ホーム</a> → <a href="/deep-learning">深層学習</a> → LSTMを使った時系列予想モデル
+            </div>
+            <span class="article-category">深層学習</span>
+            <h1 class="article-title">LSTMを使った時系列予想モデル - TensorFlow実装例</h1>
+            <div class="article-meta">
+                <span>📅 2025年01月10日</span>
+                <span>⏱️ 12分で読める</span>
+                <span>🏷️ LSTM, TensorFlow, 時系列分析, 深層学習</span>
+            </div>
+        </header>
+
+        <div class="article-body">
+            <section>
+                <h2>🎯 はじめに</h2>
+                <p>
+                    競馬予想において、馬の過去のパフォーマンスの時系列変化を捉えることは非常に重要です。
+                    本記事では、LSTM（Long Short-Term Memory）ネットワークを使用して、
+                    馬の成長曲線や調子の波を分析し、高精度な予想モデルを構築する方法を解説します。
+                </p>
+
+                <div class="highlight-box">
+                    <h3>この記事で学べること</h3>
+                    <ul>
+                        <li>LSTMの基本概念と競馬への応用</li>
+                        <li>TensorFlowでのLSTMネットワーク実装</li>
+                        <li>時系列データの前処理と特徴量作成</li>
+                        <li>Attention機構を含む高度なアーキテクチャ</li>
+                        <li>モデル評価と予想精度の向上手法</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>🧠 1. LSTMの基本概念</h2>
+
+                <h3>LSTMとは</h3>
+                <p>
+                    LSTM（Long Short-Term Memory）は、従来のRNNの問題点である勾配消失問題を解決した
+                    深層学習アーキテクチャです。競馬データにおいては以下の特徴を活用できます：
+                </p>
+
+                <div class="concept-box">
+                    <h4>競馬データでのLSTMの利点</h4>
+                    <ul>
+                        <li><strong>長期記憶</strong>: 馬の長期的な成長曲線を記憶</li>
+                        <li><strong>短期記憶</strong>: 最近の調子や状態変化を捉える</li>
+                        <li><strong>ゲート機構</strong>: 重要な情報を選択的に保持・更新</li>
+                        <li><strong>時系列パターン</strong>: 季節要因や周期的な変動を学習</li>
+                    </ul>
+                </div>
+
+                <h3>環境設定</h3>
+                <pre><code># 必要なライブラリのインストール
+pip install tensorflow pandas numpy matplotlib scikit-learn</code></pre>
+
+                <pre><code>import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+import pandas as pd
+import numpy as np
+
+print("TensorFlow version", tf.__version__)
+print("GPU available", tf.config.list_physical_devices('GPU'))</code></pre>
+            </section>
+
+            <section>
+                <h2>📊 2. 時系列データの準備</h2>
+
+                <h3>データ読み込みと前処理</h3>
+                <pre><code># 競馬データの読み込み
+race_data = pd.read_csv('horse_race_history.csv')
+
+# 日付型変換
+race_data['race_date'] = pd.to_datetime(race_data['race_date'])
+
+# 馬ごとに時系列順にソート
+race_data = race_data.sort_values(['horse_id', 'race_date'])
+
+print("データ形状", race_data.shape)
+print("期間", race_data['race_date'].min(), "～", race_data['race_date'].max())</code></pre>
+
+                <h3>時系列特徴量の作成</h3>
+                <pre><code>def create_time_series_features(df):
+    # 基本特徴量
+    features = [
+        'finish_position',    # 着順
+        'horse_weight',       # 馬体重
+        'jockey_weight',      # 騎手重量
+        'odds',              # オッズ
+        'race_distance',     # 距離
+    ]
+
+    # パフォーマンス指標の計算
+    df['position_score'] = 1.0 / df['finish_position']  # 着順の逆数
+    df['win_flag'] = (df['finish_position'] == 1).astype(int)
+
+    # レース間隔
+    df['days_since_last'] = df.groupby('horse_id')['race_date'].diff().dt.days
+    df['days_since_last'] = df['days_since_last'].fillna(30)
+
+    time_features = features + ['position_score', 'win_flag', 'days_since_last']
+    return df, time_features
+
+race_data, feature_columns = create_time_series_features(race_data)</code></pre>
+
+                <h3>シーケンスデータの作成</h3>
+                <pre><code>def create_sequences(df, feature_columns, sequence_length=5):
+    sequences = []
+    targets = []
+
+    for horse_id in df['horse_id'].unique():
+        horse_data = df[df['horse_id'] == horse_id].copy()
+
+        if len(horse_data) < sequence_length + 1:
+            continue
+
+        # 正規化
+        from sklearn.preprocessing import StandardScaler
+        scaler = StandardScaler()
+        horse_features = scaler.fit_transform(horse_data[feature_columns])
+
+        # シーケンス作成
+        for i in range(len(horse_features) - sequence_length):
+            seq = horse_features[i:i+sequence_length]
+            target = horse_data.iloc[i+sequence_length]['win_flag']
+
+            sequences.append(seq)
+            targets.append(target)
+
+    return np.array(sequences), np.array(targets)
+
+sequence_length = 5
+X_sequences, y_sequences = create_sequences(race_data, feature_columns, sequence_length)
+
+print("シーケンス数", len(X_sequences))
+print("シーケンス形状", X_sequences.shape)</code></pre>
+            </section>
+
+            <section>
+                <h2>🤖 3. LSTMモデルの構築</h2>
+
+                <h3>基本的なLSTMモデル</h3>
+                <pre><code>from sklearn.model_selection import train_test_split
+
+# データ分割
+X_train, X_test, y_train, y_test = train_test_split(
+    X_sequences, y_sequences, test_size=0.2, random_state=42
+)
+
+# LSTMモデルの構築
+model = Sequential([
+    LSTM(64, return_sequences=True, input_shape=(sequence_length, len(feature_columns))),
+    Dropout(0.2),
+    LSTM(32, return_sequences=False),
+    Dropout(0.2),
+    Dense(16, activation='relu'),
+    Dense(1, activation='sigmoid')
+])
+
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+print(model.summary())</code></pre>
+
+                <h3>モデルの訓練</h3>
+                <pre><code>from tensorflow.keras.callbacks import EarlyStopping
+
+# コールバック設定
+early_stopping = EarlyStopping(
+    monitor='val_loss',
+    patience=10,
+    restore_best_weights=True
+)
+
+# 訓練
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_test, y_test),
+    epochs=100,
+    batch_size=32,
+    callbacks=[early_stopping],
+    verbose=1
+)
+
+# 評価
+from sklearn.metrics import accuracy_score
+y_pred = (model.predict(X_test) > 0.5).astype(int)
+accuracy = accuracy_score(y_test, y_pred)
+
+print("LSTM精度", accuracy)</code></pre>
+            </section>
+
+            <section>
+                <h2>📈 4. モデル評価と実用化</h2>
+
+                <h3>学習曲線の可視化</h3>
+                <pre><code>import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 2, 1)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+plt.tight_layout()
+plt.show()</code></pre>
+
+                <h3>実用的な予想システム</h3>
+                <pre><code>class HorseRacingLSTMPredictor:
+    def __init__(self, model, scaler, feature_columns, sequence_length):
+        self.model = model
+        self.scaler = scaler
+        self.feature_columns = feature_columns
+        self.sequence_length = sequence_length
+
+    def predict_horse_performance(self, horse_history):
+        if len(horse_history) < self.sequence_length:
+            return None
+
+        # 最新のデータを取得
+        recent_history = horse_history.tail(self.sequence_length)
+
+        # 特徴量正規化
+        features = self.scaler.transform(recent_history[self.feature_columns])
+        sequence = features.reshape(1, self.sequence_length, -1)
+
+        # 予測
+        win_probability = self.model.predict(sequence)[0][0]
+        return win_probability
+
+# 予想システムのインスタンス化
+predictor = HorseRacingLSTMPredictor(
+    model=model,
+    scaler=scaler,
+    feature_columns=feature_columns,
+    sequence_length=sequence_length
+)
+
+print("LSTM予想システムが準備完了しました！")</code></pre>
+            </section>
+
+            <section>
+                <h2>🎯 まとめ</h2>
+                <p>
+                    本記事では、LSTMを使った競馬の時系列予想モデルについて詳しく解説しました。
+                    特に重要なポイントは以下の通りです：
+                </p>
+
+                <div class="summary-box">
+                    <h3>重要なポイント</h3>
+                    <ul>
+                        <li><strong>時系列の重要性</strong>: 馬の成長曲線や調子の波を捉える</li>
+                        <li><strong>LSTM構造</strong>: 長期・短期両方の記憶を活用</li>
+                        <li><strong>シーケンス長の調整</strong>: 適切な過去レース数の設定が重要</li>
+                        <li><strong>特徴量エンジニアリング</strong>: 時系列特有の特徴量作成</li>
+                        <li><strong>実用化</strong>: 予想システムとしての実装</li>
+                    </ul>
+                </div>
+
+                <div class="technical-note">
+                    <h3>技術的な発展可能性</h3>
+                    <ul>
+                        <li><strong>Attention機構</strong>: より重要なタイムステップに注目</li>
+                        <li><strong>多変量時系列</strong>: 複数馬の相互作用を考慮</li>
+                        <li><strong>強化学習</strong>: 投資戦略の最適化</li>
+                        <li><strong>Transformer</strong>: より高度な時系列モデル</li>
+                    </ul>
+                </div>
+
+                <p>
+                    LSTMを基盤として、さらに高度な深層学習手法を組み合わせることで、
+                    より精度の高い競馬予想システムを構築できるでしょう。
+                </p>
+            </section>
+
+            <div class="article-navigation">
+                <div class="nav-prev">
+                    <a href="/deep-learning/">← 深層学習記事一覧</a>
+                </div>
+                <div class="nav-next">
+                    <a href="/machine-learning/python-horse-racing-data-analysis/">Python データ分析 →</a>
+                </div>
+            </div>
+        </div>
+    </article>
+</BaseLayout>
+
+<style>
+    .article-content {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        line-height: 1.8;
+        color: #e2e8f0;
+    }
+
+    .article-header {
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .breadcrumb {
+        color: #94a3b8;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+    }
+
+    .breadcrumb a {
+        color: #c084fc;
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .article-category {
+        background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    .article-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 20px 0;
+        background: linear-gradient(135deg, #c084fc, #f472b6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+
+    .article-meta {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .article-body {
+        color: #cbd5e1;
+    }
+
+    .article-body h2 {
+        color: #c084fc;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 40px 0 20px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .article-body h3 {
+        color: #f472b6;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 30px 0 15px 0;
+    }
+
+    .article-body h4 {
+        color: #fbbf24;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 20px 0 10px 0;
+    }
+
+    .article-body p {
+        margin-bottom: 20px;
+        line-height: 1.8;
+    }
+
+    .highlight-box, .summary-box, .concept-box, .technical-note {
+        border-radius: 12px;
+        padding: 25px;
+        margin: 25px 0;
+    }
+
+    .highlight-box {
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .summary-box {
+        background: rgba(244, 114, 182, 0.1);
+        border: 1px solid rgba(244, 114, 182, 0.3);
+    }
+
+    .concept-box {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .technical-note {
+        background: rgba(251, 191, 36, 0.1);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .highlight-box h3, .summary-box h3, .concept-box h3, .concept-box h4, .technical-note h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+
+    .highlight-box h3 {
+        color: #c084fc;
+    }
+
+    .summary-box h3 {
+        color: #f472b6;
+    }
+
+    .concept-box h3, .concept-box h4 {
+        color: #22c55e;
+    }
+
+    .technical-note h3 {
+        color: #fbbf24;
+    }
+
+    .highlight-box ul, .summary-box ul, .concept-box ul, .technical-note ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .highlight-box li, .summary-box li, .concept-box li, .technical-note li {
+        margin-bottom: 8px;
+        color: #e2e8f0;
+    }
+
+    pre {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 8px;
+        padding: 20px;
+        overflow-x: auto;
+        margin: 20px 0;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    code {
+        color: #fbbf24;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .article-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 60px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .nav-prev a, .nav-next a {
+        color: #c084fc;
+        text-decoration: none;
+        padding: 12px 20px;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-prev a:hover, .nav-next a:hover {
+        background: rgba(139, 92, 246, 0.1);
+        border-color: #c084fc;
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+        .article-content {
+            padding: 20px 15px;
+        }
+
+        .article-title {
+            font-size: 2rem;
+        }
+
+        .article-meta {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .article-navigation {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        pre {
+            font-size: 0.8rem;
+            padding: 15px;
+        }
+    }
+</style>
