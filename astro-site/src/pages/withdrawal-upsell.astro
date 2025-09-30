@@ -1,13 +1,22 @@
 ---
 // 退会前アップセル専用ページ
-// Cloudinary統合: デプロイ不要で即座反映
-const CLOUDINARY_CLOUD_NAME = 'da1mkphuk';
+// Airtable統合: デプロイ不要で即座反映
 
-// 画像Public ID（Cloudinaryで確認したIDを直接指定）
-// 更新方法: Cloudinaryで画像のPublic IDを確認し、以下を更新してデプロイ
-const imagePublicId = 'kaime0922_dqdlam'; // ← Cloudinaryで確認したPublic IDに変更
+// AirtableからリアルタイムでCloudinary画像URLを取得
+let imagePath = 'https://res.cloudinary.com/da1mkphuk/image/upload/v1/kaime0922_dqdlam'; // デフォルト画像
 
-const imagePath = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/v1/${imagePublicId}?t=${Date.now()}`;
+try {
+  const response = await fetch('/.netlify/functions/get-upsell-image');
+  if (response.ok) {
+    const data = await response.json();
+    if (data.imageUrl) {
+      imagePath = data.imageUrl;
+    }
+  }
+} catch (error) {
+  console.error('画像URL取得エラー:', error);
+  // デフォルト画像を使用
+}
 ---
 
 <!DOCTYPE html>
