@@ -358,7 +358,7 @@ const title = "特徴量重要度完成形変換ツール";
         </div>
     </div>
 
-    <script>
+    <script is:inline>
         let processedData = null;
 
         function processData() {
@@ -516,7 +516,7 @@ const title = "特徴量重要度完成形変換ツール";
 
                 strategies.type2 = {
                     name: "バランス型モデル",
-                    pattern: `馬単 ${baseNumbers.join(',')} → ${data.honmei.number}　${baseNumbers.length}点\n馬単 ${data.honmei.number} ⇔ ${renkaNumbers.join(',')}　${renkaNumbers.length * 2}点\n馬単 ${data.taikou.number} → ${data.tanana.slice(0, 2).map(h => h.number).join(',')}　${data.tanana.slice(0, 2).length}点`,
+                    pattern: `馬単 ${baseNumbers.join(',')} → ${data.honmei.number}　${baseNumbers.length}点\n馬単 ${data.honmei.number} ⇔ ${renkaNumbers.join(',')}　${renkaNumbers.length * 2}点\n馬単 ${data.taikou.number} ⇔ ${data.tanana.slice(0, 2).map(h => h.number).join(',')}　${data.tanana.slice(0, 2).length * 2}点`,
                     aiPrediction: `${aiScore}%`
                 };
             }
