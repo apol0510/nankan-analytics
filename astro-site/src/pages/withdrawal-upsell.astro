@@ -2,7 +2,15 @@
 // 退会前アップセル専用ページ
 // Cloudinary統合: デプロイ不要で即座反映
 const CLOUDINARY_CLOUD_NAME = 'apolone_bkm';
-const imagePath = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/v1/premium-predictions/today-hit?t=${Date.now()}`; // キャッシュ回避
+
+// 今日の日付を YYYYMMDD 形式で取得
+const today = new Date();
+const dateStr = today.getFullYear() +
+  String(today.getMonth() + 1).padStart(2, '0') +
+  String(today.getDate()).padStart(2, '0');
+
+// 日付付きファイル名で画像取得（例: kaime-20250930）
+const imagePath = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/v1/premium-predictions/kaime-${dateStr}?t=${Date.now()}`;
 ---
 
 <!DOCTYPE html>
