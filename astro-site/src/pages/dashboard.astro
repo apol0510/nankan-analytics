@@ -654,7 +654,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             detailsHtml += `</div>`;
 
-            // 🛡️ 復活防止: 登録情報変更リンクを安全のため削除
+            // 🛡️ 安全な登録情報変更機能（インライン編集）
+            detailsHtml += `
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(59, 130, 246, 0.2);">
+                    <button id="edit-info-btn" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px; padding: 8px 16px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease;">
+                        <span>✏️</span>
+                        <span>登録情報を編集</span>
+                    </button>
+                    <div id="edit-form" style="display: none; margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">
+                        <div style="margin-bottom: 12px;">
+                            <label style="display: block; color: #cbd5e1; margin-bottom: 5px; font-size: 0.9rem;">お名前</label>
+                            <input id="edit-name" type="text" style="width: 100%; padding: 8px 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 4px; color: #e2e8f0; font-size: 0.9rem;" />
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <label style="display: block; color: #cbd5e1; margin-bottom: 5px; font-size: 0.9rem;">メールアドレス</label>
+                            <input id="edit-email" type="email" style="width: 100%; padding: 8px 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 4px; color: #e2e8f0; font-size: 0.9rem;" />
+                        </div>
+                        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                            <button id="cancel-edit-btn" style="padding: 6px 12px; background: transparent; color: #94a3b8; border: 1px solid #475569; border-radius: 4px; font-size: 0.85rem; cursor: pointer;">キャンセル</button>
+                            <button id="save-edit-btn" style="padding: 6px 12px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 4px; font-size: 0.85rem; cursor: pointer;">保存</button>
+                        </div>
+                    </div>
+                </div>
+            `;
 
             document.getElementById('membership-details').innerHTML = detailsHtml;
             
@@ -1350,6 +1372,111 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 console.log('❌ 未認証');
             }
         });
+
+        // 🛡️ 安全な登録情報編集機能（復活防止対策）
+        function setupEditFunctionality() {
+            // DOM要素が存在することを確認してからイベントリスナーを追加
+            setTimeout(() => {
+                const editBtn = document.getElementById('edit-info-btn');
+                const editForm = document.getElementById('edit-form');
+                const cancelBtn = document.getElementById('cancel-edit-btn');
+                const saveBtn = document.getElementById('save-edit-btn');
+                const editName = document.getElementById('edit-name');
+                const editEmail = document.getElementById('edit-email');
+
+                if (!editBtn || !editForm) return; // 要素がない場合は何もしない
+
+                editBtn.addEventListener('click', () => {
+                    // 現在の情報をフォームに設定
+                    const currentData = getCurrentUserData();
+                    if (currentData) {
+                        editName.value = currentData.name || '';
+                        editEmail.value = currentData.email || '';
+                    }
+                    editForm.style.display = 'block';
+                    editBtn.style.display = 'none';
+                });
+
+                cancelBtn?.addEventListener('click', () => {
+                    editForm.style.display = 'none';
+                    editBtn.style.display = 'inline-flex';
+                });
+
+                saveBtn?.addEventListener('click', () => {
+                    const newName = editName.value.trim();
+                    const newEmail = editEmail.value.trim();
+
+                    if (!newName || !newEmail) {
+                        alert('お名前とメールアドレスを入力してください');
+                        return;
+                    }
+
+                    // LocalStorageのデータを更新
+                    updateUserData(newName, newEmail);
+
+                    editForm.style.display = 'none';
+                    editBtn.style.display = 'inline-flex';
+
+                    // ページを再読み込みして変更を反映
+                    location.reload();
+                });
+            }, 1000); // showDashboard実行後に設定
+        }
+
+        function getCurrentUserData() {
+            // 複数の認証データソースから現在のユーザー情報を取得
+            const nankanUser = localStorage.getItem('nankan_user');
+            if (nankanUser) {
+                try {
+                    return JSON.parse(nankanUser);
+                } catch (e) {
+                    console.error('nankan_user parse error:', e);
+                }
+            }
+
+            const userPlan = localStorage.getItem('user-plan');
+            if (userPlan) {
+                try {
+                    return JSON.parse(userPlan);
+                } catch (e) {
+                    console.error('user-plan parse error:', e);
+                }
+            }
+
+            return null;
+        }
+
+        function updateUserData(newName, newEmail) {
+            // 複数の認証データソースを更新
+            const nankanUser = localStorage.getItem('nankan_user');
+            if (nankanUser) {
+                try {
+                    const userData = JSON.parse(nankanUser);
+                    userData.name = newName;
+                    userData.email = newEmail;
+                    localStorage.setItem('nankan_user', JSON.stringify(userData));
+                    console.log('✅ nankan_user更新完了');
+                } catch (e) {
+                    console.error('nankan_user update error:', e);
+                }
+            }
+
+            const userPlan = localStorage.getItem('user-plan');
+            if (userPlan) {
+                try {
+                    const userData = JSON.parse(userPlan);
+                    userData.name = newName;
+                    userData.email = newEmail;
+                    localStorage.setItem('user-plan', JSON.stringify(userData));
+                    console.log('✅ user-plan更新完了');
+                } catch (e) {
+                    console.error('user-plan update error:', e);
+                }
+            }
+        }
+
+        // DOMContentLoaded後に編集機能を設定
+        document.addEventListener('DOMContentLoaded', setupEditFunctionality);
     </script>
 
     <style>
