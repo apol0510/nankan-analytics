@@ -472,17 +472,55 @@ const description = '会員登録情報の確認・変更ページ';
         const newNameInput = document.getElementById('new-name');
         const newEmailInput = document.getElementById('new-email');
 
-        // 認証情報取得
-        let userInfo = null;
-        const storedUserJson = localStorage.getItem('nankan_user');
+        // 認証情報取得（AccessControlと同様のロジック）
+        function getCurrentUserInfo() {
+            console.log('🔍 設定ページ認証チェック開始');
 
-        if (storedUserJson) {
-            try {
-                userInfo = JSON.parse(storedUserJson);
-            } catch (e) {
-                console.error('ユーザー情報パースエラー:', e);
+            // 1. nankan_user認証情報を取得（優先）
+            const nankanUser = localStorage.getItem('nankan_user');
+            if (nankanUser) {
+                try {
+                    const userData = JSON.parse(nankanUser);
+                    console.log('✅ nankan_user認証:', userData);
+                    return userData;
+                } catch (error) {
+                    console.error('Nankan user parsing error:', error);
+                }
             }
+
+            // 2. 旧形式のtest_subscription_データをチェック
+            const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
+            if (testSubscriptionKeys.length > 0) {
+                try {
+                    const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
+                    console.log('📦 旧形式認証データ:', testData);
+                    return {
+                        email: `test-${testData.planType}@example.com`,
+                        name: `テスト${testData.planType}ユーザー`,
+                        plan: testData.planType.toLowerCase()
+                    };
+                } catch (error) {
+                    console.error('Test subscription parsing error:', error);
+                }
+            }
+
+            // 3. auth_data認証情報を取得
+            const authData = localStorage.getItem('auth_data');
+            if (authData) {
+                try {
+                    const { user } = JSON.parse(authData);
+                    console.log('✅ auth_data認証:', user);
+                    return user;
+                } catch (error) {
+                    console.error('Auth data parsing error:', error);
+                }
+            }
+
+            console.log('❌ 認証データなし');
+            return null;
         }
+
+        let userInfo = getCurrentUserInfo();
 
         // 認証チェックと表示切り替え
         if (!userInfo || !userInfo.email) {
@@ -621,5 +659,39 @@ const description = '会員登録情報の確認・変更ページ';
                 loadingSpinner.style.display = 'none';
             }
         }
+
+        // テスト認証機能（開発環境用）
+        window.setTestAuth = function(plan) {
+            if (!['premium', 'standard', 'free'].includes(plan.toLowerCase())) {
+                console.error('❌ 無効なプラン:', plan);
+                console.log('📋 有効なプラン: premium, standard, free');
+                return;
+            }
+            const testUser = {
+                email: `test-${plan}@example.com`,
+                name: `テスト${plan.charAt(0).toUpperCase() + plan.slice(1)}ユーザー`,
+                plan: plan.toLowerCase(),
+                isTest: true,
+                points: plan === 'premium' ? 1000 : plan === 'standard' ? 500 : 100,
+                registrationDate: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+            localStorage.setItem('nankan_user', JSON.stringify(testUser));
+            localStorage.setItem('nankan_test_auth', 'true');
+            console.log(`✅ テスト認証設定完了: ${plan}プラン`, testUser);
+            console.log('🔄 ページを更新して認証を適用してください');
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        };
+
+        window.clearTestAuth = function() {
+            localStorage.removeItem('nankan_user');
+            localStorage.removeItem('nankan_test_auth');
+            localStorage.removeItem('auth_data');
+            sessionStorage.removeItem('temp_auth');
+            console.log('🧹 テスト認証をクリアしました');
+            location.reload();
+        };
     });
 </script>
