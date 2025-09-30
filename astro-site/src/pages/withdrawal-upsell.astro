@@ -273,14 +273,63 @@ const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-toda
         🏆 今すぐ50%OFFで申し込む
       </a>
 
-      <a href="/contact?subject=退会申請&body=プレミアムプラスは不要です" class="secondary-button">
+      <button id="proceedWithdrawal" class="secondary-button">
         いいえ、退会手続きに進む
-      </a>
+      </button>
     </div>
 
-    <p style="text-align: center; margin-top: 2rem; font-size: 0.9rem; color: #64748b;">
-      ※退会手続きは、お問い合わせ受付後24時間以内に対応いたします
-    </p>
+    <!-- 退会確認モーダル -->
+    <div id="withdrawalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+      <div style="background: #1e293b; padding: 3rem; border-radius: 16px; max-width: 500px; margin: 2rem;">
+        <h3 style="color: #f87171; font-size: 1.5rem; margin-bottom: 1rem;">本当に退会しますか？</h3>
+        <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 2rem;">
+          退会後は全てのプレミアムコンテンツにアクセスできなくなります。<br>
+          よろしければ、退会理由を教えてください。
+        </p>
+
+        <textarea id="withdrawalReason" placeholder="退会理由（任意）" style="width: 100%; padding: 1rem; border-radius: 8px; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; margin-bottom: 1.5rem; min-height: 100px; font-family: inherit;"></textarea>
+
+        <div style="display: flex; gap: 1rem;">
+          <button id="confirmWithdrawal" style="flex: 1; padding: 1rem; background: #ef4444; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            退会する
+          </button>
+          <button id="cancelWithdrawal" style="flex: 1; padding: 1rem; background: #334155; color: #e2e8f0; border: none; border-radius: 8px; cursor: pointer;">
+            キャンセル
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const modal = document.getElementById('withdrawalModal');
+      const proceedBtn = document.getElementById('proceedWithdrawal');
+      const confirmBtn = document.getElementById('confirmWithdrawal');
+      const cancelBtn = document.getElementById('cancelWithdrawal');
+      const reasonTextarea = document.getElementById('withdrawalReason');
+
+      proceedBtn.addEventListener('click', function() {
+        modal.style.display = 'flex';
+      });
+
+      cancelBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+
+      confirmBtn.addEventListener('click', function() {
+        const reason = reasonTextarea.value || '理由未記入';
+        const email = localStorage.getItem('userEmail') || '不明';
+
+        // お問い合わせフォームに退会申請を送信
+        window.location.href = `/contact?subject=退会申請&body=退会理由: ${encodeURIComponent(reason)}%0A%0Aメールアドレス: ${encodeURIComponent(email)}`;
+      });
+
+      // モーダル外クリックで閉じる
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    </script>
   </div>
 </body>
 </html>
