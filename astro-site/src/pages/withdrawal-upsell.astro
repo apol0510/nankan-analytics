@@ -1,6 +1,8 @@
 ---
 // 退会前アップセル専用ページ
-const imagePath = `/premium-predictions/today-hit.png?t=${Date.now()}`; // キャッシュ回避
+// Cloudinary統合: デプロイ不要で即座反映
+const CLOUDINARY_CLOUD_NAME = 'apolone_bkm';
+const imagePath = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/v1/premium-predictions/today-hit?t=${Date.now()}`; // キャッシュ回避
 ---
 
 <!DOCTYPE html>
