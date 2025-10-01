@@ -265,8 +265,8 @@ const yearHitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 1
         <a href={`/archive/2025/${summary.month}/`} class="month-card">
           <div class="month-header">
             <h2 class="month-title">{summary.month}月</h2>
-            {summary.perfectDays > 0 && (
-              <div class="perfect-count">🏆 {summary.perfectDays}日完全的中</div>
+            {summary.hitRate === 100 && (
+              <div class="perfect-count">🏆 {summary.hitRaces}/{summary.totalRaces}的中</div>
             )}
           </div>
 
