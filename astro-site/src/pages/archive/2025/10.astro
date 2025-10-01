@@ -299,6 +299,9 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
     <!-- 日別アーカイブ -->
     {days.map(day => {
       const dayData = monthData[day];
+      const hitRate = dayData.totalRaces > 0 ? Math.round((dayData.hitRaces / dayData.totalRaces) * 100) : 0;
+      const totalBetPoints = dayData.races.reduce((sum, race) => sum + (race.betPoints || 0), 0);
+      const recoveryRate = totalBetPoints > 0 ? Math.round((dayData.totalPayout / totalBetPoints) * 100) : 0;
       return (
         <div class="day-section">
           <div class="day-header">
@@ -310,7 +313,10 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
 
           <div class="day-summary">
             <div class="summary-item">
-              📊 的中率: <span class="summary-value">{dayData.hitRaces}/{dayData.totalRaces}</span>
+              📊 的中率: <span class="summary-value">{hitRate}%</span>
+            </div>
+            <div class="summary-item">
+              📈 回収率: <span class="summary-value">{recoveryRate}%</span>
             </div>
             <div class="summary-item">
               💰 合計配当: <span class="summary-value">¥{dayData.totalPayout.toLocaleString()}</span>
