@@ -258,13 +258,14 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                                     <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 3rem;">
                                         {race.raceNumber}
                                     </div>
-                                    <div style="flex: 1;">
-                                        <div style="color: #e2e8f0; font-size: 1rem; font-weight: 500; margin-bottom: 4px;">
-                                            {race.raceName}
-                                        </div>
-                                        <div style="color: #94a3b8; font-size: 0.9rem;">
-                                            {race.betType} {race.strategy} {race.betPoints}点
-                                        </div>
+                                    <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 400; opacity: 0.8;">
+                                        {race.raceName}
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; padding: 0.3rem 0.8rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; white-space: nowrap;">
+                                        {race.strategy}モデル
+                                    </div>
+                                    <div style="color: #8b5cf6; font-size: 0.9rem; font-weight: 600;">
+                                        {race.betType}{race.betPoints}点
                                     </div>
                                 </div>
                                 <div style="display: flex; gap: 15px; align-items: center;">
