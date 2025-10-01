@@ -468,13 +468,13 @@ const recentImages = [
     <div class="header">
       <h1 class="title">AIが導く"最高確率の1鞍"を、あなたに。</h1>
       <p class="subtitle">数万通りから厳選された、たった1つの答え。</p>
-      <p class="tagline">直近5戦4勝1敗、平均配当¥10,633の確かな実績</p>
+      <p class="tagline">平均的中率79%、平均配当¥310,633の確かな実績</p>
     </div>
 
     <!-- 1. 実績データ -->
     <div class="section">
       <h2 class="section-title">📊 直近5戦の実際の的中画面</h2>
-      <p class="section-subtitle">4勝1敗の実績。すべての結果を公開しています。</p>
+      <p class="section-subtitle">1日1鞍の結果を公開しています。</p>
 
       <div class="results-grid">
         {recentImages.map(image => (
@@ -490,15 +490,15 @@ const recentImages = [
 
       <div class="stats-grid">
         <div class="stat-box">
-          <div class="stat-value">80%</div>
-          <div class="stat-label">的中率（直近5戦）</div>
+          <div class="stat-value">79%</div>
+          <div class="stat-label">平均的中率</div>
         </div>
         <div class="stat-box">
-          <div class="stat-value">¥10,633</div>
+          <div class="stat-value">¥310,633</div>
           <div class="stat-label">平均配当額</div>
         </div>
         <div class="stat-box">
-          <div class="stat-value">¥15,620</div>
+          <div class="stat-value">¥973,500</div>
           <div class="stat-label">最高配当額</div>
         </div>
       </div>
@@ -521,12 +521,12 @@ const recentImages = [
           <tr>
             <td>全レース予想</td>
             <td><span class="check-icon">✓</span></td>
-            <td class="highlight"><span class="check-icon">✓</span></td>
+            <td class="highlight"><span class="cross-icon">✗</span></td>
           </tr>
           <tr>
             <td>3戦略買い目</td>
             <td><span class="check-icon">✓</span></td>
-            <td class="highlight"><span class="check-icon">✓</span></td>
+            <td class="highlight"><span class="cross-icon">✗</span></td>
           </tr>
           <tr>
             <td>AI精密分析</td>
