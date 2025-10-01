@@ -7,7 +7,7 @@ const years = Object.keys(archiveData).sort().reverse(); // 新しい順
 // 年別統計計算
 const yearSummaries = years.map(year => {
   const yearData = archiveData[year];
-  const months = Object.keys(yearData);
+  const months = Object.keys(yearData).sort().reverse(); // 新しい順
 
   let perfectDays = 0;
   let totalPayout = 0;
@@ -31,8 +31,12 @@ const yearSummaries = years.map(year => {
 
   const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) : 0;
 
+  // 最新の月を取得（直接遷移用）
+  const latestMonth = months[0];
+
   return {
     year,
+    latestMonth,
     perfectDays,
     payout: totalPayout,
     hitRaces: totalHitRaces,
@@ -269,7 +273,7 @@ const yearSummaries = years.map(year => {
     <!-- 年別アーカイブ -->
     <div class="years-grid">
       {yearSummaries.map(summary => (
-        <a href={`/archive/${summary.year}/`} class="year-card">
+        <a href={`/archive/${summary.year}/${summary.latestMonth}/`} class="year-card">
           <div class="year-header">
             <h2 class="year-title">{summary.year}年</h2>
             {summary.hitRate === 100 && (
