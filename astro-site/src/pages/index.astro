@@ -2,18 +2,55 @@
 // 静的ビルドのためprerender削除
 import BaseLayout from '../layouts/BaseLayout.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import { yesterdayResults, weeklyResults, dailyTabs, dailyResultsData } from './standard-predictions.astro';
+import archiveResults from '../data/archiveResults.json';
+import { weeklyResults, dailyTabs, dailyResultsData } from './standard-predictions.astro';
 
-// 🚨🔒 復活防止対策: raceResults.json使用は絶対禁止 🔒🚨
-// ❌ NEVER DO: import raceResults from '../data/raceResults.json';
-// ❌ NEVER DO: const currentResults = raceResults;
-// ✅ ALWAYS USE: yesterdayResults from standard-predictions.astro
-const currentResults = yesterdayResults;
+// archiveResults.jsonから最新日のデータを取得
+function getLatestDayData() {
+    const years = Object.keys(archiveResults).sort().reverse();
+    if (years.length === 0) return null;
 
-// 🛡️ 復活防止チェック: currentResultsがyesterdayResultsと同じオブジェクトか確認
-if (currentResults !== yesterdayResults) {
-    throw new Error('🚨 復活防止エラー: currentResultsはyesterdayResultsと同じでなければなりません');
+    const latestYear = years[0];
+    const months = Object.keys(archiveResults[latestYear]).sort().reverse();
+    if (months.length === 0) return null;
+
+    const latestMonth = months[0];
+    const days = Object.keys(archiveResults[latestYear][latestMonth]).sort().reverse();
+    if (days.length === 0) return null;
+
+    const latestDay = days[0];
+    const dayData = archiveResults[latestYear][latestMonth][latestDay];
+
+    return {
+        year: latestYear,
+        month: latestMonth,
+        day: latestDay,
+        ...dayData
+    };
 }
+
+const latestResult = getLatestDayData();
+
+// 昨日の結果データを作成
+const yesterdayResults = latestResult ? {
+    date: `${latestResult.month}月${latestResult.day}日`,
+    track: latestResult.venue,
+    hitCount: latestResult.hitRaces,
+    totalCount: latestResult.totalRaces,
+    hitRate: latestResult.totalRaces > 0 ? Math.round((latestResult.hitRaces / latestResult.totalRaces) * 100) : 0,
+    totalPayout: latestResult.totalPayout,
+    totalBetPoints: latestResult.races.reduce((sum, race) => sum + (race.betPoints || 0), 0),
+    recoveryRate: (() => {
+        const totalPoints = latestResult.races.reduce((sum, race) => sum + (race.betPoints || 0), 0);
+        const investment = totalPoints * 100; // 1点=100円
+        return investment > 0 ? Math.round((latestResult.totalPayout / investment) * 100) : 0;
+    })(),
+    results: latestResult.races.map(race => ({
+        raceNumber: race.raceNumber,
+        result: race.hit ? 'win' : 'lose',
+        payout: race.payout
+    }))
+} : null;
 // メインレース（11R）のデータを取得 - 防御的プログラミング実装
 const mainRace = (allRacesData && Array.isArray(allRacesData.races))
     ? allRacesData.races.find(race => race.isMainRace === true)
@@ -214,7 +251,7 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                         
                         <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 25px; text-align: center;">
                             <div style="font-size: 3rem; font-weight: 800; color: #8b5cf6; margin-bottom: 10px;">
-                                {Math.round((yesterdayResults?.totalPayout || 0) / ((yesterdayResults?.totalCount || 12) * 1000) * 100) || 0}%
+                                {yesterdayResults?.recoveryRate || 0}%
                             </div>
                             <div style="color: var(--body-text-color); font-weight: 600;">
                                 回収率
