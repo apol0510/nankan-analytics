@@ -4,13 +4,13 @@ export const prerender = true;
 // 納得感・信頼性・安心感を最大化
 
 // 直近5戦の的中実績画像（6枚ローテーション方式）
-// Cloudinaryに upsell-1.jpg 〜 upsell-6.jpg をアップロード
+// Cloudinaryに upsell-1.png 〜 upsell-6.png をアップロード
 // 毎日、最も古い1枚をReplaceするだけで自動的に最新5枚が表示される
 const allImages = [1, 2, 3, 4, 5, 6];
 const recentImages = allImages.map(id => ({
   id,
   alt: `プレミアムプラス的中実績 ${id}`,
-  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${id}.jpg`
+  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${id}.png`
 }));
 ---
 
@@ -629,7 +629,7 @@ const recentImages = allImages.map(id => ({
           <p class="testimonial-text">
             「Premium会員でも満足していましたが、プレミアムプラスは別次元。
             1日1鞍の超精密分析は圧倒的な的中精度。
-            初回の1鞍で投資額を回収できました。」
+            たったの1鞍で私の安月給を簡単に上回ってしまいました。」
           </p>
           <p class="testimonial-author">— 40代男性・会社員</p>
         </div>

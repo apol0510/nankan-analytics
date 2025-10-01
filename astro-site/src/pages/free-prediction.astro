@@ -347,6 +347,15 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
             </div>
         </section>
 
+        <!-- アーカイブリンク -->
+        <div class="archive-link-section">
+            <a href="/archive/" class="archive-link">
+                <span class="archive-icon">📚</span>
+                <span class="archive-text">過去の的中実績アーカイブを見る</span>
+                <span class="archive-arrow">→</span>
+            </a>
+        </div>
+
         <!-- AI分析サマリー -->
         <div class="analysis-summary">
             <h4 style="color: #3b82f6; margin-bottom: 20px; margin-top: 30px; font-size: 1.2rem;">📊 重要指標</h4>
@@ -988,6 +997,51 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         filter: brightness(1.1);
+    }
+
+    /* アーカイブリンク */
+    .archive-link-section {
+        margin: 30px auto;
+        max-width: 600px;
+        text-align: center;
+    }
+
+    .archive-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60a5fa;
+        padding: 15px 25px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .archive-link:hover {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .archive-icon {
+        font-size: 1.3rem;
+    }
+
+    .archive-text {
+        font-size: 0.95rem;
+    }
+
+    .archive-arrow {
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .archive-link:hover .archive-arrow {
+        transform: translateX(4px);
     }
 
     /* モバイル対応 */

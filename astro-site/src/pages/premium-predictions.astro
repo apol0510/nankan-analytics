@@ -1646,6 +1646,51 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         color: #3b82f6;
     }
 
+    /* アーカイブリンク */
+    .archive-link-section {
+        margin: 30px auto;
+        max-width: 600px;
+        text-align: center;
+    }
+
+    .archive-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60a5fa;
+        padding: 15px 25px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .archive-link:hover {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .archive-icon {
+        font-size: 1.3rem;
+    }
+
+    .archive-text {
+        font-size: 0.95rem;
+    }
+
+    .archive-arrow {
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .archive-link:hover .archive-arrow {
+        transform: translateX(4px);
+    }
+
     @media (max-width: 768px) {
         .premium-plus-notice {
             padding: 15px;

@@ -890,6 +890,36 @@ open http://localhost:4321/admin/predictions
 
 ## 🎊 **本日完了タスク（2025-10-01）**
 
+### ✅ **premium-plus画像形式修正完了**
+
+#### **1. Cloudinary画像形式統一**
+- **問題**: コードが`.jpg`を参照しているが、Cloudinaryには`.png`でアップロード
+- **修正内容**: `upsell-${id}.jpg` → `upsell-${id}.png`に変更
+- **実装**: premium-plus.astro 画像URL修正
+- **Public ID設定**: Cloudinaryで`upsell-1`〜`upsell-6`（拡張子なし）でアップロード
+
+#### **2. 6枚ローテーション画像システム**
+- **画像形式**: PNG形式（.png）
+- **命名規則**: `upsell-1.png` 〜 `upsell-6.png`
+- **表示枚数**: 最新5枚（upsell-1〜5）を自動表示
+- **運用方法**: 毎日最も古い1枚をCloudinaryでReplaceするだけ
+
+#### **3. 技術的成果**
+- **画像形式統一**: コードとCloudinaryアップロード形式の完全一致
+- **デプロイ不要運用**: Cloudinary Replace機能のみで画像更新可能
+- **両ページ統合管理**: premium-plus（5枚）・withdrawal-upsell（1枚）統一システム
+
+### 📋 **実装ファイル**
+- `src/pages/premium-plus.astro`: 画像URL `.jpg` → `.png` 修正完了
+
+### 🎯 **運用ガイド**
+- **Cloudinary設定**: Public ID `upsell-1`〜`upsell-6`（拡張子なし）
+- **URL形式**: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-{番号}.png`
+- **更新手順**: Cloudinary管理画面で最も古い画像をReplace
+- **反映**: キャッシュバスター（`?t=${Date.now()}`）で即座反映
+
+---
+
 ### ✅ **prediction-converter改善・バランス型買い目双方向化完了**
 
 #### **1. バランス型モデル買い目ロジック改善**
@@ -921,9 +951,9 @@ open http://localhost:4321/admin/predictions
 ---
 
 **📅 最終更新日**: 2025-10-01
-**🏁 Project Phase**: prediction-converter改善・バランス型買い目双方向化完了 ★★★★★
-**🎯 Next Priority**: 本番運用・マーケティング強化・予想システム活用
-**✨ 本日の成果**: prediction-converter双方向買い目対応・JavaScriptエラー完全修正・変換ツール安定化完了！
+**🏁 Project Phase**: premium-plus画像形式修正・6枚ローテーションシステムPNG対応完了 ★★★★★
+**🎯 Next Priority**: 本番運用・マーケティング強化・高額プラン販売促進
+**✨ 本日の成果**: premium-plus画像PNG形式対応・Cloudinary統合完了・デプロイ不要運用実現！
 
 ---
 

@@ -75,6 +75,61 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 <button onclick="copyToClipboard()" class="copy-btn">📋 コピー</button>
             </div>
         </div>
+
+        <!-- アーカイブJSON生成セクション（新規追加） -->
+        <div class="output-section" style="margin-top: 30px;">
+            <h2>🏆 アーカイブJSON生成</h2>
+            <p>昨日の結果から <code>archiveResults.json</code> 用のデータを生成します</p>
+
+            <!-- 追加情報入力フォーム -->
+            <div class="archive-input-section">
+                <h3 style="color: var(--primary-color); margin-bottom: 15px;">📝 レース詳細情報を入力</h3>
+
+                <!-- 一括入力セクション -->
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                    <h4 style="color: #10b981; margin-bottom: 10px; font-size: 1rem;">⚡ 一括入力（推奨）</h4>
+                    <p style="color: var(--accent-text-color); font-size: 0.9rem; margin-bottom: 15px;">
+                        premium-predictionsページから全レース名をコピーして貼り付けてください
+                    </p>
+                    <textarea
+                        id="bulkRaceNames"
+                        placeholder="premium-predictionsページから全レース名をコピーしてそのまま貼り付けてください
+
+例：
+1R
+２歳(六) 未受賞
+第1レース
+▼
+2R
+２歳(五)
+第2レース
+..."
+                        rows="8"
+                        style="width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 6px; padding: 12px; color: var(--body-text-color); font-family: monospace; font-size: 0.9rem;"
+                    ></textarea>
+                    <button onclick="applyBulkRaceNames()" class="parse-btn" style="margin-top: 10px; background: linear-gradient(135deg, #10b981, #059669);">
+                        ⚡ 一括適用
+                    </button>
+                </div>
+
+                <p style="color: var(--accent-text-color); margin-bottom: 20px; font-size: 0.9rem;">
+                    各レースの詳細情報（券種は馬単固定、戦略・点数を選択）
+                </p>
+
+                <div id="raceDetailsForm" class="race-details-grid">
+                    <!-- JavaScriptで動的生成 -->
+                </div>
+
+                <button onclick="generateArchiveJSON()" class="parse-btn" style="margin-top: 20px;">
+                    🏆 アーカイブJSON生成
+                </button>
+            </div>
+
+            <div class="code-output" style="margin-top: 20px;">
+                <pre id="archiveCode">// 昨日の結果を解析後、レース情報を入力してアーカイブJSON生成ボタンを押してください</pre>
+                <button onclick="copyArchiveToClipboard()" class="copy-btn">📋 コピー</button>
+            </div>
+        </div>
     </div>
 
     <style>
@@ -318,6 +373,75 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             font-family: 'Courier New', monospace;
         }
 
+        /* アーカイブセクション追加スタイル */
+        .archive-input-section {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .race-details-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .race-detail-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .race-detail-item.hit {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .race-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--body-text-color);
+        }
+
+        .race-detail-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-field label {
+            font-size: 0.85rem;
+            color: var(--accent-text-color);
+            font-weight: 500;
+        }
+
+        .input-field input,
+        .input-field select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--body-text-color);
+            font-size: 0.9rem;
+        }
+
+        .input-field input:focus,
+        .input-field select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
         @media (max-width: 768px) {
             .admin-container {
                 padding: 15px;
@@ -333,6 +457,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
             .results-display {
                 grid-template-columns: repeat(4, 1fr);
+            }
+
+            .race-detail-inputs {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -641,6 +769,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
             document.getElementById('daily-stats').innerHTML = statsHtml;
             document.getElementById('daily-results').innerHTML = resultsHtml;
+
+            // アーカイブ用のレース詳細フォームを生成（新規追加）
+            generateRaceDetailsForm();
         }
 
         // 週間プレビュー表示
@@ -760,5 +891,234 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 alert('生成されたコードがありません。まず解析を実行してください。');
             }
         }
+
+        // ========== アーカイブJSON生成機能（新規追加） ==========
+
+        // レース詳細入力フォームの生成
+        function generateRaceDetailsForm() {
+            if (!dailyData) return;
+
+            const formHTML = dailyData.results.map((r, index) => {
+                const raceNum = index + 1;
+                const isHit = r.result === 'win';
+
+                return `
+                    <div class="race-detail-item ${isHit ? 'hit' : ''}">
+                        <div class="race-detail-header">
+                            <span>${isHit ? '✅' : '❌'}</span>
+                            <span>${raceNum}R</span>
+                            ${isHit ? `<span style="color: #10b981;">的中 ¥${r.payout.toLocaleString()}</span>` : '<span style="color: #64748b;">不的中</span>'}
+                        </div>
+                        ${isHit ? `
+                            <div class="race-detail-inputs">
+                                <div class="input-field">
+                                    <label>レース名 *</label>
+                                    <input type="text" id="raceName_${raceNum}" placeholder="例：2歳新馬" style="width: 100%;" />
+                                </div>
+                                <div class="input-field">
+                                    <label>戦略 *</label>
+                                    <select id="strategy_${raceNum}" onchange="autoFillBetPoints(${raceNum})">
+                                        <option value="">選択してください</option>
+                                        <option value="少点数的中型" data-points="3">少点数的中型（3点）</option>
+                                        <option value="バランス型" data-points="11">バランス型（8-11点）</option>
+                                        <option value="高配当追求型" data-points="17">高配当追求型（14-17点）</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <label>買い目点数 *</label>
+                                    <input type="number" id="betPoints_${raceNum}" placeholder="自動入力 or 手動" min="1" />
+                                </div>
+                            </div>
+                        ` : '<p style="color: #64748b; text-align: center; padding: 10px;">不的中のため詳細入力不要</p>'}
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('raceDetailsForm').innerHTML = formHTML;
+        }
+
+        // 戦略選択時に自動で点数入力
+        function autoFillBetPoints(raceNum) {
+            const strategySelect = document.getElementById(`strategy_${raceNum}`);
+            const betPointsInput = document.getElementById(`betPoints_${raceNum}`);
+            const selectedOption = strategySelect.options[strategySelect.selectedIndex];
+            const points = selectedOption.getAttribute('data-points');
+
+            if (points) {
+                betPointsInput.value = points;
+            }
+        }
+
+        // 一括レース名適用
+        function applyBulkRaceNames() {
+            const bulkInput = document.getElementById('bulkRaceNames').value;
+            if (!bulkInput.trim()) {
+                alert('レース名を入力してください');
+                return;
+            }
+
+            const lines = bulkInput.split('\n').map(line => line.trim()).filter(line => line);
+            let appliedCount = 0;
+            let currentRaceNum = null;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+
+                // レース番号を検出（1R, 2R, ...）
+                const raceNumMatch = line.match(/^(\d+)R$/);
+                if (raceNumMatch) {
+                    currentRaceNum = parseInt(raceNumMatch[1]);
+                    continue;
+                }
+
+                // 「第Xレース」「メインレース」「▼」などをスキップ
+                if (line.match(/^第\d+レース$/) ||
+                    line === 'メインレース' ||
+                    line === '▼' ||
+                    line.includes('▼')) {
+                    continue;
+                }
+
+                // レース名として認識（レース番号の直後の有効な行）
+                if (currentRaceNum && line) {
+                    const input = document.getElementById(`raceName_${currentRaceNum}`);
+                    if (input) {
+                        // 全角数字・記号をそのまま保持
+                        input.value = line;
+                        appliedCount++;
+                        console.log(`✅ ${currentRaceNum}R: ${line}`);
+                    }
+                    currentRaceNum = null; // 次のレースへ
+                }
+            }
+
+            if (appliedCount > 0) {
+                alert(`✅ ${appliedCount}レースのレース名を適用しました`);
+            } else {
+                alert('⚠️ レース名を適用できませんでした。\n\npremium-predictionsページからレース名をそのままコピーしてください。');
+            }
+        }
+
+        // アーカイブJSON生成
+        function generateArchiveJSON() {
+            if (!dailyData) {
+                alert('まず昨日の結果を解析してください');
+                return;
+            }
+
+            // 日付を年/月/日に分解
+            const dateParts = dailyData.date.split('/');
+            const year = '2025';  // 固定（必要に応じて変更）
+            const month = dateParts[0].padStart(2, '0');
+            const day = dateParts[1].padStart(2, '0');
+
+            // 競馬場名から「競馬」を削除
+            const venue = dailyData.track.replace('競馬', '');
+
+            // レース配列を生成
+            const races = [];
+            let hasError = false;
+
+            for (let i = 0; i < dailyData.results.length; i++) {
+                const raceNum = i + 1;
+                const result = dailyData.results[i];
+
+                if (result.result === 'win') {
+                    // 的中レースは詳細情報必須
+                    const raceName = document.getElementById(`raceName_${raceNum}`)?.value;
+                    const strategy = document.getElementById(`strategy_${raceNum}`)?.value;
+                    const betPoints = document.getElementById(`betPoints_${raceNum}`)?.value;
+
+                    if (!raceName || !strategy || !betPoints) {
+                        alert(`${raceNum}Rの詳細情報を入力してください（レース名・戦略・点数）`);
+                        hasError = true;
+                        break;
+                    }
+
+                    races.push({
+                        raceNumber: `${raceNum}R`,
+                        raceName: raceName,
+                        betType: "馬単",
+                        strategy: strategy,
+                        betPoints: parseInt(betPoints),
+                        hit: true,
+                        payout: result.payout
+                    });
+                } else {
+                    // 不的中レースはシンプルに
+                    races.push({
+                        raceNumber: `${raceNum}R`,
+                        raceName: "-",
+                        betType: "馬単",
+                        strategy: "-",
+                        betPoints: 0,
+                        hit: false,
+                        payout: 0
+                    });
+                }
+            }
+
+            if (hasError) return;
+
+            // パーフェクト的中判定
+            const perfectHit = dailyData.hitCount === dailyData.totalCount;
+
+            // JSON構造生成
+            const archiveJSON = {
+                [day]: {
+                    venue: venue,
+                    totalRaces: dailyData.totalCount,
+                    hitRaces: dailyData.hitCount,
+                    perfectHit: perfectHit,
+                    totalPayout: dailyData.totalPayout,
+                    races: races
+                }
+            };
+
+            // 整形して表示
+            const jsonString = JSON.stringify(archiveJSON, null, 2);
+            const output = `// ${year}年${parseInt(month)}月分のarchiveResults.jsonに追加してください
+// 以下を "2025" > "${month}" の中に追加：
+
+${jsonString}
+
+// 使用方法：
+// 1. src/data/archiveResults.json を開く
+// 2. "2025" > "${month}" セクションを探す
+// 3. 上記のJSONを該当月の中に追加
+// 4. 既存のカンマ区切りに注意してください`;
+
+            document.getElementById('archiveCode').textContent = output;
+        }
+
+        // アーカイブJSONコピー
+        async function copyArchiveToClipboard() {
+            const code = document.getElementById('archiveCode').textContent;
+            if (code && !code.includes('昨日の結果を解析後')) {
+                try {
+                    await navigator.clipboard.writeText(code);
+                    alert('アーカイブJSONをクリップボードにコピーしました！');
+                } catch (err) {
+                    console.error('コピーに失敗しました:', err);
+                    alert('コピーに失敗しました。手動でコピーしてください。');
+                }
+            } else {
+                alert('生成されたJSONがありません。まずアーカイブJSON生成を実行してください。');
+            }
+        }
+
+        // タブ切り替え時の処理（既存関数を上書きしないよう注意）
+        const originalShowPreview = window.showPreview;
+        window.showPreview = function(type) {
+            if (originalShowPreview) {
+                originalShowPreview(type);
+            } else {
+                // フォールバック実装
+                document.getElementById('daily-preview').style.display = type === 'daily' ? 'block' : 'none';
+                document.getElementById('weekly-preview').style.display = type === 'weekly' ? 'block' : 'none';
+                document.getElementById('daily-tab').classList.toggle('active', type === 'daily');
+                document.getElementById('weekly-tab').classList.toggle('active', type === 'weekly');
+            }
+        };
     </script>
 </BaseLayout>
