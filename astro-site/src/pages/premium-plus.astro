@@ -1,0 +1,335 @@
+---
+export const prerender = true;
+// プレミアムプラス専用ページ
+// AIが導く"最高確率の1鞍"専用販売ページ
+
+const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-today?t=${Date.now()}`;
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プレミアムプラス - AIが導く最高確率の1鞍 | NANKANアナリティクス</title>
+  <meta name="description" content="数万通りの買い目から厳選された、たった1つの答え。AIが導く最高確率の1鞍を、あなたに。">
+  <meta name="robots" content="index, follow">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 24px;
+      padding: 3rem;
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #f59e0b;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: #10b981;
+      font-weight: 500;
+      margin-bottom: 2rem;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+      margin-bottom: 3rem;
+    }
+
+    .image-section {
+      width: 100%;
+    }
+
+    .hit-image {
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      border: 2px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .text-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .heading {
+      font-size: 1.5rem;
+      color: #fbbf24;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+
+    .description {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #cbd5e1;
+    }
+
+    .description strong {
+      color: #fbbf24;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .stat-item {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .highlight {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .highlight p {
+      font-size: 1rem;
+      color: #e2e8f0;
+      line-height: 1.9;
+      margin: 0;
+    }
+
+    .highlight strong {
+      color: #fbbf24;
+    }
+
+    .price-box {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+      margin: 2rem 0;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .price-amount {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .price-note {
+      color: #fff;
+      font-size: 0.95rem;
+      margin-top: 1rem;
+      opacity: 0.95;
+    }
+
+    .cta-button {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      padding: 1.5rem 3rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: all 0.3s;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6);
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(100, 116, 139, 0.3);
+    }
+
+    .back-link a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s;
+    }
+
+    .back-link a:hover {
+      color: #3b82f6;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+
+      .container {
+        padding: 2rem 1.5rem;
+      }
+
+      .title {
+        font-size: 1.8rem;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .heading {
+        font-size: 1.2rem;
+      }
+
+      .description {
+        font-size: 0.95rem;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .stat-value {
+        font-size: 1rem;
+      }
+
+      .price-amount {
+        font-size: 2.5rem;
+      }
+
+      .cta-button {
+        font-size: 1.1rem;
+        padding: 1.2rem 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">AIが導く"最高確率の1鞍"を、あなたに。</h1>
+      <p class="subtitle">数万通りから厳選された、たった1つの答え。</p>
+    </div>
+
+    <div class="content">
+      <div class="image-section">
+        <img src={imagePath}
+             alt="プレミアムプラス的中実績"
+             class="hit-image"
+             onerror="this.src='/premium-predictions/today-hit.png'" />
+      </div>
+
+      <div class="text-section">
+        <h2 class="heading">📊 1日1鞍限定・AI超精密買い目</h2>
+        <p class="description">
+          AIが1Rから12Rまでの<strong>数万通りの買い目</strong>を全て分析。<br>
+          その中から<strong>高配当になる可能性が最も高い</strong>と判断した<br>
+          <strong style="font-size: 1.2rem; color: #fbbf24;">たった1鞍</strong>だけを厳選配信。
+        </p>
+
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-value">直近12戦9鞍的中</div>
+            <div class="stat-label">的中実績</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">数万通りの中から</div>
+            <div class="stat-label">AIが分析</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">1日1鞍のみ</div>
+            <div class="stat-label">厳選配信</div>
+          </div>
+        </div>
+
+        <div class="highlight">
+          <p>
+            💎 <strong>人間では実現不可能</strong>な膨大なデータ処理<br>
+            🎯 AIが導く<strong>最高アベレージ</strong>の超精密買い目<br>
+            ⚡ <strong>フライング参加可能</strong>　限定の特別価格で
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-box">
+      <div class="price">
+        <span class="price-amount">¥98,000</span>
+      </div>
+      <p class="price-note">※本日の超勝負レース AI精密買い目提供</p>
+    </div>
+
+    <a href="https://buy.stripe.com/9B628rdh7gR22pJdJ9dby0O" class="cta-button">
+      🚀 今すぐプレミアムプラスに参加する
+    </a>
+
+    <div class="back-link">
+      <a href="/premium-predictions/">← プレミアム予想に戻る</a>
+    </div>
+  </div>
+</body>
+</html>
