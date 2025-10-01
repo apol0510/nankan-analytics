@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
+import archiveResults from '../data/archiveResults.json';
 import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
 
 // 🛡️ 復活防止対策: processRaceDataのエラーハンドリング強化
@@ -42,15 +43,8 @@ const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(rac
     race?.raceNumber === '10R' || race?.raceNumber === '11R' || race?.raceNumber === '12R'
 );
 
-console.log('🔍 StandardRaces結果:', {
-    sortedRacesIsArray: Array.isArray(sortedRaces),
-    sortedRacesLength: sortedRaces?.length || 0,
-    standardRacesLength: standardRaces?.length || 0,
-    standardRaceNumbers: standardRaces.map(r => r?.raceNumber).join(', ')
-});
-
-// 昨日・先週の的中結果データ（トップページに反映される）
-// 昨日の的中結果データ（10/1 船橋競馬）
+// 🛡️ 復活防止対策: archiveResults.jsonからyesterdayResultsを生成（一時的に無効化）
+// FIXME: 現在は手動更新。将来的にarchiveResults.jsonから自動取得する
 export const yesterdayResults = {
     date: "10/1",
     track: "船橋競馬",
@@ -58,7 +52,7 @@ export const yesterdayResults = {
     hitCount: 12,
     totalCount: 12,
     totalPayout: 21870,
-    recoveryRate: 182, // 🛡️ 復活防止: 回収率フィールド追加
+    recoveryRate: 212,
     results: [
         { race: '1R', result: 'win', payout: 2430 },
         { race: '2R', result: 'win', payout: 870 },
