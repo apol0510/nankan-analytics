@@ -4,8 +4,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
-import archiveResults from '../data/archiveResults.json';
 import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
+import { convertToYesterdayResults } from '../lib/archive-utils.js';
 
 // 🛡️ 復活防止対策: processRaceDataのエラーハンドリング強化
 let mainRace, race12R, sortedRaces;
@@ -43,31 +43,8 @@ const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(rac
     race?.raceNumber === '10R' || race?.raceNumber === '11R' || race?.raceNumber === '12R'
 );
 
-// 🛡️ 復活防止対策: archiveResults.jsonからyesterdayResultsを生成（一時的に無効化）
-// FIXME: 現在は手動更新。将来的にarchiveResults.jsonから自動取得する
-export const yesterdayResults = {
-    date: "10/1",
-    track: "船橋競馬",
-    hitRate: 100,
-    hitCount: 12,
-    totalCount: 12,
-    totalPayout: 21870,
-    recoveryRate: 212,
-    results: [
-        { race: '1R', result: 'win', payout: 2430 },
-        { race: '2R', result: 'win', payout: 870 },
-        { race: '3R', result: 'win', payout: 2160 },
-        { race: '4R', result: 'win', payout: 1040 },
-        { race: '5R', result: 'win', payout: 870 },
-        { race: '6R', result: 'win', payout: 580 },
-        { race: '7R', result: 'win', payout: 4500 },
-        { race: '8R', result: 'win', payout: 3330 },
-        { race: '9R', result: 'win', payout: 2800 },
-        { race: '10R', result: 'win', payout: 1270 },
-        { race: '11R', result: 'win', payout: 230 },
-        { race: '12R', result: 'win', payout: 1790 },
-    ]
-};
+// ✅ archiveResults.jsonから自動取得するyesterdayResults
+export const yesterdayResults = convertToYesterdayResults();
 
 
 
