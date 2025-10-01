@@ -2,9 +2,10 @@
 // 退会前アップセル専用ページ
 // Cloudinary固定URL方式: デプロイ完全不要
 
-// 固定のPublic IDを使用（Cloudinaryで上書きアップロード）
-// 更新方法: Cloudinaryで "upsell-today" という名前で画像をReplaceするだけ
-const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-today?t=${Date.now()}`;
+// 6枚ローテーション方式の最新画像（upsell-1.jpg）を使用
+// premium-plus.astroと統一した命名規則
+// 更新方法: Cloudinaryで最も古い upsell-X.jpg を最新画像にReplaceするだけ
+const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.jpg?t=${Date.now()}`;
 ---
 
 <!DOCTYPE html>

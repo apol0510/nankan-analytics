@@ -3,14 +3,15 @@ export const prerender = true;
 // プレミアムプラス専用ページ - 完全リニューアル版
 // 納得感・信頼性・安心感を最大化
 
-// 直近5戦の的中実績画像
-const recentImages = [
-  { id: 1, alt: '最新の的中実績' },
-  { id: 2, alt: '2戦前の的中実績' },
-  { id: 3, alt: '3戦前の的中実績' },
-  { id: 4, alt: '4戦前の的中実績' },
-  { id: 5, alt: '5戦前の実績' },
-];
+// 直近5戦の的中実績画像（6枚ローテーション方式）
+// Cloudinaryに upsell-1.jpg 〜 upsell-6.jpg をアップロード
+// 毎日、最も古い1枚をReplaceするだけで自動的に最新5枚が表示される
+const allImages = [1, 2, 3, 4, 5, 6];
+const recentImages = allImages.map(id => ({
+  id,
+  alt: `プレミアムプラス的中実績 ${id}`,
+  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${id}.jpg`
+}));
 ---
 
 <!DOCTYPE html>
@@ -477,10 +478,10 @@ const recentImages = [
       <p class="section-subtitle">1日1鞍の結果を公開しています。</p>
 
       <div class="results-grid">
-        {recentImages.map(image => (
+        {recentImages.slice(0, 5).map(image => (
           <div class="result-image-card">
             <img
-              src={`https://res.cloudinary.com/da1mkphuk/image/upload/premium-plus-${image.id}?t=${Date.now()}`}
+              src={`${image.url}?t=${Date.now()}`}
               alt={image.alt}
               onerror={`this.src='/premium-predictions/kaime0929.png'`}
             />
