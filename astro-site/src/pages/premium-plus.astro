@@ -3,22 +3,13 @@ export const prerender = true;
 // プレミアムプラス専用ページ - 完全リニューアル版
 // 納得感・信頼性・安心感を最大化
 
-const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-today?t=${Date.now()}`;
-
-// 実績データ（直近12戦）
-const recentResults = [
-  { date: '9/29', track: '船橋', race: '11R', result: '的中', payout: '¥8,420' },
-  { date: '9/28', track: '大井', race: '10R', result: '的中', payout: '¥12,340' },
-  { date: '9/27', track: '川崎', race: '9R', result: '不的中', payout: '-' },
-  { date: '9/26', track: '浦和', race: '11R', result: '的中', payout: '¥6,780' },
-  { date: '9/25', track: '船橋', race: '10R', result: '的中', payout: '¥15,620' },
-  { date: '9/24', track: '大井', race: '12R', result: '的中', payout: '¥9,240' },
-  { date: '9/23', track: '川崎', race: '11R', result: '不的中', payout: '-' },
-  { date: '9/22', track: '浦和', race: '10R', result: '的中', payout: '¥11,580' },
-  { date: '9/21', track: '船橋', race: '9R', result: '的中', payout: '¥7,920' },
-  { date: '9/20', track: '大井', race: '11R', result: '的中', payout: '¥13,460' },
-  { date: '9/19', track: '川崎', race: '10R', result: '不的中', payout: '-' },
-  { date: '9/18', track: '浦和', race: '12R', result: '的中', payout: '¥10,340' },
+// 直近5戦の的中実績画像
+const recentImages = [
+  { id: 1, alt: '最新の的中実績' },
+  { id: 2, alt: '2戦前の的中実績' },
+  { id: 3, alt: '3戦前の的中実績' },
+  { id: 4, alt: '4戦前の的中実績' },
+  { id: 5, alt: '5戦前の実績' },
 ];
 ---
 
@@ -105,70 +96,33 @@ const recentResults = [
       margin-bottom: 2rem;
     }
 
-    /* 実績データ */
+    /* 実績画像グリッド */
     .results-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1rem;
       margin-bottom: 2rem;
     }
 
-    .result-card {
+    .result-image-card {
       background: rgba(15, 23, 42, 0.6);
       border-radius: 12px;
-      padding: 1.2rem;
-      border: 1px solid rgba(100, 116, 139, 0.3);
+      padding: 0.8rem;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      transition: all 0.3s ease;
     }
 
-    .result-card.hit {
-      border-color: rgba(16, 185, 129, 0.5);
-      background: rgba(16, 185, 129, 0.05);
+    .result-image-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(245, 158, 11, 0.5);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
     }
 
-    .result-card.miss {
-      border-color: rgba(239, 68, 68, 0.5);
-      background: rgba(239, 68, 68, 0.05);
-    }
-
-    .result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.8rem;
-    }
-
-    .result-date {
-      font-size: 0.9rem;
-      color: #94a3b8;
-    }
-
-    .result-status {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .result-status.hit {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-    }
-
-    .result-status.miss {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-    }
-
-    .result-info {
-      font-size: 0.95rem;
-      color: #cbd5e1;
-      margin-bottom: 0.5rem;
-    }
-
-    .result-payout {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #fbbf24;
+    .result-image-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
     }
 
     .stats-grid {
@@ -514,37 +468,30 @@ const recentResults = [
     <div class="header">
       <h1 class="title">AIが導く"最高確率の1鞍"を、あなたに。</h1>
       <p class="subtitle">数万通りから厳選された、たった1つの答え。</p>
-      <p class="tagline">直近12戦9鞍的中、平均配当¥10,633の確かな実績</p>
+      <p class="tagline">直近5戦4勝1敗、平均配当¥10,633の確かな実績</p>
     </div>
 
     <!-- 1. 実績データ -->
     <div class="section">
-      <h2 class="section-title">📊 直近12戦の詳細実績</h2>
-      <p class="section-subtitle">すべての結果を公開。透明性が信頼の証です。</p>
+      <h2 class="section-title">📊 直近5戦の実際の的中画面</h2>
+      <p class="section-subtitle">4勝1敗の実績。すべての結果を公開しています。</p>
 
       <div class="results-grid">
-        {recentResults.map(result => (
-          <div class={`result-card ${result.result === '的中' ? 'hit' : 'miss'}`}>
-            <div class="result-header">
-              <span class="result-date">{result.date}</span>
-              <span class={`result-status ${result.result === '的中' ? 'hit' : 'miss'}`}>
-                {result.result}
-              </span>
-            </div>
-            <div class="result-info">
-              {result.track}競馬 {result.race}
-            </div>
-            <div class="result-payout">
-              {result.result === '的中' ? result.payout : '不的中'}
-            </div>
+        {recentImages.map(image => (
+          <div class="result-image-card">
+            <img
+              src={`https://res.cloudinary.com/da1mkphuk/image/upload/premium-plus-${image.id}?t=${Date.now()}`}
+              alt={image.alt}
+              onerror={`this.src='/premium-predictions/kaime0929.png'`}
+            />
           </div>
         ))}
       </div>
 
       <div class="stats-grid">
         <div class="stat-box">
-          <div class="stat-value">75%</div>
-          <div class="stat-label">的中率（9/12鞍）</div>
+          <div class="stat-value">80%</div>
+          <div class="stat-label">的中率（直近5戦）</div>
         </div>
         <div class="stat-box">
           <div class="stat-value">¥10,633</div>
@@ -669,15 +616,6 @@ const recentResults = [
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- 的中実績画像（カード表示） -->
-    <div class="image-card">
-      <h2 class="image-card-title">📸 実際の的中実績</h2>
-      <img src={imagePath}
-           alt="プレミアムプラス的中実績"
-           class="hit-image"
-           onerror="this.src='/premium-predictions/today-hit.png'" />
     </div>
 
     <!-- 5. 社会的証明 -->
