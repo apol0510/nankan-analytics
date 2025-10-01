@@ -7,7 +7,7 @@ const yearData = archiveData[year] || {};
 const months = Object.keys(yearData).sort().reverse(); // 新しい順
 
 // 年間統計計算
-let totalPerfectDays = 0;
+let totalDays = 0;
 let totalPayoutYear = 0;
 let totalHitRaces = 0;
 let totalRaces = 0;
@@ -29,7 +29,7 @@ const monthSummaries = months.map(month => {
     monthTotalRaces += dayData.totalRaces || 0;
   });
 
-  totalPerfectDays += perfectDays;
+  totalDays += days.length;
   totalPayoutYear += monthPayout;
   totalHitRaces += monthHitRaces;
   totalRaces += monthTotalRaces;
@@ -242,8 +242,8 @@ const yearHitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 1
     <!-- 年間統計 -->
     <div class="year-stats">
       <div class="stat-card">
-        <div class="stat-value">{totalPerfectDays}日</div>
-        <div class="stat-label">年間パーフェクト的中</div>
+        <div class="stat-value">{totalDays}日</div>
+        <div class="stat-label">年間開催日数</div>
       </div>
       <div class="stat-card">
         <div class="stat-value">{yearHitRate}%</div>
