@@ -255,8 +255,8 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                     <!-- レース一覧 -->
                     <div style="display: grid; gap: 12px;">
                         {latestResult?.races?.map(race => (
-                            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s;">
-                                <div style="display: flex; gap: 20px; align-items: center; flex: 1;">
+                            <div class="yesterday-race-card">
+                                <div class="yesterday-race-info">
                                     <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 3rem;">
                                         {race.raceNumber}
                                     </div>
@@ -270,7 +270,7 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                                         {race.betType}{race.betPoints}点
                                     </div>
                                 </div>
-                                <div style="display: flex; gap: 15px; align-items: center;">
+                                <div class="yesterday-race-result">
                                     {race.hit && (
                                         <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; border: 1px solid rgba(16, 185, 129, 0.3);">
                                             ✅ 的中
@@ -901,7 +901,50 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
             line-height: 1.6;
         }
 
+        /* 昨日の的中結果レースカード用スタイル */
+        .yesterday-race-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .yesterday-race-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .yesterday-race-result {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
         @media (max-width: 768px) {
+            .yesterday-race-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 12px 15px;
+            }
+
+            .yesterday-race-info {
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .yesterday-race-result {
+                width: 100%;
+                justify-content: space-between;
+            }
+
             .footer-content {
                 grid-template-columns: 1fr;
                 gap: 30px;
