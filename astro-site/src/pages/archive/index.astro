@@ -272,8 +272,8 @@ const yearSummaries = years.map(year => {
         <a href={`/archive/${summary.year}/`} class="year-card">
           <div class="year-header">
             <h2 class="year-title">{summary.year}年</h2>
-            {summary.perfectDays > 0 && (
-              <div class="perfect-highlight">🏆 {summary.perfectDays}日 完全的中</div>
+            {summary.hitRate === 100 && (
+              <div class="perfect-highlight">🏆 {summary.hitRaces}/{summary.totalRaces}的中</div>
             )}
           </div>
 
