@@ -178,8 +178,9 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
 
     .race-info {
       display: flex;
-      gap: 1.5rem;
+      gap: 1rem;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .race-number {
@@ -190,14 +191,26 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
     }
 
     .race-name {
-      color: #e2e8f0;
-      font-size: 1rem;
-      font-weight: 500;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 400;
+      opacity: 0.8;
     }
 
-    .race-strategy {
-      color: #94a3b8;
+    .strategy-badge {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .bet-info {
+      color: #cbd5e1;
       font-size: 0.9rem;
+      font-weight: 500;
     }
 
     .race-result {
@@ -330,7 +343,8 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
                 <div class="race-info">
                   <div class="race-number">{race.raceNumber}</div>
                   <div class="race-name">{race.raceName}</div>
-                  <div class="race-strategy">{race.betType} {race.strategy} {race.betPoints}点</div>
+                  <div class="strategy-badge">{race.strategy}モデル</div>
+                  <div class="bet-info">{race.betType}{race.betPoints}点</div>
                 </div>
                 <div class="race-result">
                   {race.hit && <div class="hit-badge">✅ 的中</div>}
