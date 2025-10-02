@@ -27,43 +27,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             </div>
         </div>
 
-        <!-- 週間結果入力 -->
-        <div class="input-section">
-            <h2>📅 週間結果入力（5日分）</h2>
-            <div class="input-group">
-                <label for="weeklyData">5日分の結果データを貼り付けてください：</label>
-                <textarea
-                    id="weeklyData"
-                    placeholder="９/８川崎競馬予想 有料版　結果
-１Ｒ ４-６馬単　1.900円 的中！
-...
-
-９/９川崎競馬予想 有料版　結果
-２Ｒ ７-12馬単　1.990円 的中！
-..."
-                    rows="20"
-                ></textarea>
-                <button onclick="parseWeeklyData()" class="parse-btn">📊 週間解析実行</button>
-            </div>
-        </div>
-
         <!-- プレビューセクション -->
         <div class="preview-section">
             <h2>👀 プレビュー</h2>
-            <div class="preview-tabs">
-                <button onclick="showPreview('daily')" class="tab-btn active" id="daily-tab">昨日の結果</button>
-                <button onclick="showPreview('weekly')" class="tab-btn" id="weekly-tab">週間結果</button>
-            </div>
-
-            <div id="daily-preview" class="preview-content">
-                <div id="daily-stats" class="stats-display"></div>
-                <div id="daily-results" class="results-display"></div>
-            </div>
-
-            <div id="weekly-preview" class="preview-content" style="display: none;">
-                <div id="weekly-stats" class="stats-display"></div>
-                <div id="weekly-results" class="results-display"></div>
-            </div>
+            <div id="daily-stats" class="stats-display"></div>
+            <div id="daily-results" class="results-display"></div>
         </div>
 
         <!-- JSONコード生成 -->
@@ -467,7 +435,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     <script is:inline>
         let dailyData = null;
-        let weeklyData = null;
 
         // 全角・半角数字の正規化
         function normalizeText(text) {
@@ -576,169 +543,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             generateCode();
         }
 
-        // 週間データ解析
-        function parseWeeklyData() {
-            const input = document.getElementById('weeklyData').value;
-            if (!input.trim()) {
-                alert('週間データを入力してください');
-                return;
-            }
-
-            // より確実な方法: 改行で全行を分割してから処理
-            const lines = input.split('\n');
-            const sections = [];
-            let currentSection = [];
-
-            for (const line of lines) {
-                const normalizedLine = normalizeText(line);
-                // 日付パターンを含む行が新しいセクションの開始
-                if (normalizedLine.match(/^\d+\/\d+.*競馬/)) {
-                    // 前のセクションを保存
-                    if (currentSection.length > 0) {
-                        sections.push(currentSection.join('\n'));
-                    }
-                    // 新しいセクション開始
-                    currentSection = [line];
-                } else if (currentSection.length > 0) {
-                    // 既存セクションに追加
-                    currentSection.push(line);
-                }
-            }
-
-            // 最後のセクションを保存
-            if (currentSection.length > 0) {
-                sections.push(currentSection.join('\n'));
-            }
-
-            console.log(`検出されたセクション数: ${sections.length}`);
-
-            // 各セクションから日付を抽出して表示
-            sections.forEach((section, index) => {
-                const firstLine = section.split('\n')[0];
-                const date = extractDate(firstLine);
-                console.log(`セクション${index + 1}: 日付=${date}, 最初の行=${firstLine.substring(0, 30)}...`);
-            });
-
-            const dailyResults = [];
-            let totalHits = 0;
-            let totalRaces = 0;
-            let totalPayout = 0;
-            let startDate = null;
-            let endDate = null;
-            let startDateValue = null;
-            let endDateValue = null;
-            let track = '川崎競馬';
-
-            for (const section of sections) {
-                if (!section.trim()) continue;
-                console.log(`処理中のセクション: ${section.substring(0, 50)}...`);
-
-                const lines = section.split('\n').filter(line => line.trim());
-                const headerLine = lines[0];
-
-                const date = extractDate(headerLine);
-                track = extractTrack(headerLine);
-
-                console.log(`抽出された日付: ${date}, トラック: ${track}`);
-
-                if (!date) {
-                    console.log(`日付が抽出できませんでした: ${headerLine}`);
-                    continue;
-                }
-
-                // 日付の順序を正しく保持（数値で比較）
-                const dateParts = date.split('/');
-                const dateValue = parseInt(dateParts[0]) * 100 + parseInt(dateParts[1]); // 9/8 → 908, 9/12 → 912
-
-                if (!startDate) {
-                    startDate = date;
-                    startDateValue = dateValue;
-                } else {
-                    const startParts = startDate.split('/');
-                    const startValue = parseInt(startParts[0]) * 100 + parseInt(startParts[1]);
-                    if (dateValue < startValue) {
-                        startDate = date;
-                        startDateValue = dateValue;
-                    }
-                }
-
-                if (!endDate) {
-                    endDate = date;
-                    endDateValue = dateValue;
-                } else {
-                    const endParts = endDate.split('/');
-                    const endValue = parseInt(endParts[0]) * 100 + parseInt(endParts[1]);
-                    if (dateValue > endValue) {
-                        endDate = date;
-                        endDateValue = dateValue;
-                    }
-                }
-
-                // その日の結果を解析
-                const dayResults = [];
-                for (let i = 1; i <= 12; i++) {
-                    dayResults.push({ race: `${i}R`, result: 'lose', payout: 0 });
-                }
-
-                let dayHits = 0;
-                let dayPayout = 0;
-
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i];
-                    const raceNum = extractRaceNumber(line);
-                    const payout = extractPayout(line);
-
-                    if (raceNum && raceNum >= 1 && raceNum <= 12 && line.includes('的中')) {
-                        dayResults[raceNum - 1] = {
-                            race: `${raceNum}R`,
-                            result: 'win',
-                            payout: payout
-                        };
-                        dayPayout += payout;
-                        dayHits++;
-                    }
-                }
-
-                const dayHitRate = Math.round((dayHits / 12) * 100);
-                dailyResults.push({
-                    date: date.replace('/', ''),
-                    hitRate: dayHitRate,
-                    label: `${date} (${dayHitRate}%)`,
-                    results: dayResults
-                });
-
-                totalHits += dayHits;
-                totalRaces += 12;
-                totalPayout += dayPayout;
-            }
-
-            // 正確な計算：totalRacesは総レース数(12×日数)、購入額は1レース10点×100円
-            const overallHitRate = ((totalHits / totalRaces) * 100).toFixed(1);
-            const purchaseAmount = totalRaces * 10 * 100;  // 総レース数 × 10点 × 100円
-            const recoveryRate = Math.round((totalPayout / purchaseAmount) * 100);
-
-            weeklyData = {
-                period: `${startDate}〜${endDate}`,
-                track: track,
-                hitRate: parseFloat(overallHitRate),
-                hitCount: totalHits,
-                totalCount: totalRaces,
-                totalPayout: totalPayout,
-                recoveryRate: recoveryRate,
-                dailyTabs: dailyResults.map(day => ({
-                    date: day.date,
-                    hitRate: day.hitRate,
-                    label: day.label
-                })),
-                dailyResultsData: dailyResults.reduce((acc, day) => {
-                    acc[day.date] = day.results;
-                    return acc;
-                }, {})
-            };
-
-            displayWeeklyPreview();
-            generateCode();
-        }
 
         // 昨日プレビュー表示
         function displayDailyPreview() {
@@ -774,49 +578,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             generateRaceDetailsForm();
         }
 
-        // 週間プレビュー表示
-        function displayWeeklyPreview() {
-            if (!weeklyData) return;
-
-            const statsHtml = `
-                <div class="stat-card">
-                    <div class="stat-value">${weeklyData.hitRate}%</div>
-                    <div class="stat-label">的中率 (${weeklyData.hitCount}/${weeklyData.totalCount})</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">¥${weeklyData.totalPayout.toLocaleString()}</div>
-                    <div class="stat-label">週間配当</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${weeklyData.recoveryRate}%</div>
-                    <div class="stat-label">回収率</div>
-                </div>
-            `;
-
-            // 最初の日の結果を表示
-            const firstDay = Object.keys(weeklyData.dailyResultsData)[0];
-            const firstDayResults = weeklyData.dailyResultsData[firstDay] || [];
-
-            const resultsHtml = firstDayResults.map(result => `
-                <div class="race-result ${result.result}">
-                    <div class="race-number">${result.race}</div>
-                    <div class="race-icon">${result.result === 'win' ? '⭕' : '❌'}</div>
-                    ${result.result === 'win' ? `<div class="race-payout">¥${result.payout.toLocaleString()}</div>` : ''}
-                </div>
-            `).join('');
-
-            document.getElementById('weekly-stats').innerHTML = statsHtml;
-            document.getElementById('weekly-results').innerHTML = resultsHtml;
-        }
-
-        // タブ切り替え
-        function showPreview(type) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.preview-content').forEach(content => content.style.display = 'none');
-
-            document.getElementById(`${type}-tab`).classList.add('active');
-            document.getElementById(`${type}-preview`).style.display = 'block';
-        }
 
         // JSONコード生成
         function generateCode() {
@@ -824,6 +585,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
             if (dailyData) {
                 code += `// 昨日の的中結果データ（${dailyData.date} ${dailyData.track}）\n`;
+                code += `// ⚠️ 注意: このデータは現在使用されていません\n`;
+                code += `// アーカイブシステムに統合されたため、archiveResults.jsonに直接反映してください\n\n`;
                 code += `export const yesterdayResults = {\n`;
                 code += `    date: "${dailyData.date}",\n`;
                 code += `    track: "${dailyData.track}",\n`;
@@ -831,41 +594,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 code += `    hitCount: ${dailyData.hitCount},\n`;
                 code += `    totalCount: ${dailyData.totalCount},\n`;
                 code += `    totalPayout: ${dailyData.totalPayout},\n`;
-                code += `    recoveryRate: ${dailyData.recoveryRate}, // 🛡️ 復活防止: 回収率フィールド追加\n`;
+                code += `    recoveryRate: ${dailyData.recoveryRate},\n`;
                 code += `    results: [\n`;
                 dailyData.results.forEach(result => {
                     code += `        { race: '${result.race}', result: '${result.result}', payout: ${result.payout} },\n`;
                 });
                 code += `    ]\n`;
-                code += `};\n\n`;
-            }
-
-            if (weeklyData) {
-                code += `// 週間の的中結果データ（${weeklyData.period} ${weeklyData.track}）\n`;
-                code += `export const weeklyResults = {\n`;
-                code += `    period: "${weeklyData.period}",\n`;
-                code += `    track: "${weeklyData.track}",\n`;
-                code += `    hitRate: ${weeklyData.hitRate},\n`;
-                code += `    hitCount: ${weeklyData.hitCount},\n`;
-                code += `    totalCount: ${weeklyData.totalCount},\n`;
-                code += `    totalPayout: ${weeklyData.totalPayout},\n`;
-                code += `    recoveryRate: ${weeklyData.recoveryRate}\n`;
-                code += `};\n\n`;
-
-                code += `export const dailyTabs = [\n`;
-                weeklyData.dailyTabs.forEach(tab => {
-                    code += `    { date: '${tab.date}', hitRate: ${tab.hitRate}, label: '${tab.label}' },\n`;
-                });
-                code += `];\n\n`;
-
-                code += `export const dailyResultsData = {\n`;
-                Object.entries(weeklyData.dailyResultsData).forEach(([date, results]) => {
-                    code += `    '${date}': [\n`;
-                    results.forEach(result => {
-                        code += `        { race: '${result.race}', result: '${result.result}', payout: ${result.payout} },\n`;
-                    });
-                    code += `    ],\n`;
-                });
                 code += `};\n`;
             }
 
@@ -1107,18 +841,5 @@ ${jsonString}
             }
         }
 
-        // タブ切り替え時の処理（既存関数を上書きしないよう注意）
-        const originalShowPreview = window.showPreview;
-        window.showPreview = function(type) {
-            if (originalShowPreview) {
-                originalShowPreview(type);
-            } else {
-                // フォールバック実装
-                document.getElementById('daily-preview').style.display = type === 'daily' ? 'block' : 'none';
-                document.getElementById('weekly-preview').style.display = type === 'weekly' ? 'block' : 'none';
-                document.getElementById('daily-tab').classList.toggle('active', type === 'daily');
-                document.getElementById('weekly-tab').classList.toggle('active', type === 'weekly');
-            }
-        };
     </script>
 </BaseLayout>
