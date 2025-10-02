@@ -165,9 +165,8 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       border: 1px solid rgba(100, 116, 139, 0.3);
       border-radius: 8px;
       padding: 1rem 1.5rem;
-      display: grid;
-      grid-template-columns: 3rem minmax(150px, 1fr) auto auto auto auto;
-      gap: 1rem;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
       transition: all 0.3s;
     }
@@ -178,13 +177,17 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
     }
 
     .race-info {
-      display: contents;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     .race-number {
       font-size: 1.2rem;
       font-weight: bold;
       color: #fbbf24;
+      min-width: 3rem;
     }
 
     .race-name {
@@ -192,9 +195,6 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       font-size: 0.85rem;
       font-weight: 400;
       opacity: 0.8;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .strategy-badge {
@@ -211,11 +211,12 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       color: #8b5cf6;
       font-size: 0.9rem;
       font-weight: 600;
-      white-space: nowrap;
     }
 
     .race-result {
-      display: contents;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
     }
 
     .hit-badge {
@@ -226,14 +227,12 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       font-weight: bold;
       font-size: 0.9rem;
       border: 1px solid rgba(16, 185, 129, 0.3);
-      white-space: nowrap;
     }
 
     .payout {
       font-size: 1.2rem;
       font-weight: bold;
       color: #fbbf24;
-      white-space: nowrap;
     }
 
     .back-link {
@@ -345,6 +344,7 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       }
 
       .race-card {
+        display: grid;
         grid-template-columns: 1fr;
         gap: 0.75rem;
       }
