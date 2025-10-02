@@ -2,12 +2,15 @@
 // 退会前アップセル専用ページ
 // Cloudinary固定URL方式: デプロイ完全不要
 
-// 6枚ローテーション方式の最新画像（upsell-6.png）を使用
-// premium-plus.astroと統一した命名規則
-// upsell-1が最古、upsell-6が最新なので、最新1枚はupsell-6を表示
-// 更新方法: Cloudinaryで最も古い upsell-1.png を新しい画像にReplaceするだけ
+// 日付ベース方式の最新画像を使用
+// 毎日の運用: upsell-YYYYMMDD.png 形式で新しい画像をアップロードするだけ
+// 例: upsell-20251002.png
+// 自動的に今日の画像が表示される（デプロイ不要）
+
+const today = new Date();
+const dateStr = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD形式
 const timestamp = Date.now();
-const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-6.png?v=${timestamp}`;
+const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}.png?v=${timestamp}`;
 ---
 
 <!DOCTYPE html>

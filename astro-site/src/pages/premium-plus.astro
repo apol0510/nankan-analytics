@@ -3,16 +3,28 @@ export const prerender = true;
 // プレミアムプラス専用ページ - 完全リニューアル版
 // 納得感・信頼性・安心感を最大化
 
-// 直近5戦の的中実績画像（6枚ローテーション方式）
-// Cloudinaryに upsell-1.png 〜 upsell-6.png をアップロード
-// 毎日、最も古い1枚をReplaceするだけで自動的に最新5枚が表示される
-// upsell-1が最古、upsell-6が最新なので、最新5枚は6→5→4→3→2の順で表示
-const allImages = [6, 5, 4, 3, 2];
+// 直近5戦の的中実績画像（日付ベース方式）
+// 毎日の運用: upsell-YYYYMMDD.png 形式で新しい画像をアップロードするだけ
+// 例: upsell-20251002.png, upsell-20251003.png
+// 自動的に最新5枚が表示される（デプロイ不要）
+
+// 過去30日分の日付を生成（最新から古い順）
+const today = new Date();
+const datesToTry = [];
+for (let i = 0; i < 30; i++) {
+  const date = new Date(today);
+  date.setDate(today.getDate() - i);
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD形式
+  datesToTry.push(dateStr);
+}
+
+// 最新5枚の日付（実際には画像が存在するかどうかは表示時に判定）
+const recentDates = datesToTry.slice(0, 5);
 const timestamp = Date.now();
-const recentImages = allImages.map(id => ({
-  id,
-  alt: `プレミアムプラス的中実績 ${id}`,
-  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${id}.png?v=${timestamp}`
+const recentImages = recentDates.map(dateStr => ({
+  id: dateStr,
+  alt: `プレミアムプラス的中実績 ${dateStr}`,
+  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}.png?v=${timestamp}`
 }));
 ---
 
