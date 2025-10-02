@@ -228,6 +228,25 @@ const yearSummaries = years.map(year => {
       box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
     }
 
+    .view-details-button {
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 1.5rem;
+      transition: all 0.3s;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .view-details-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+    }
+
     @media (max-width: 768px) {
       .title {
         font-size: 1.8rem;
@@ -302,6 +321,10 @@ const yearSummaries = years.map(year => {
               <div class="year-stat-value">¥{(summary.payout / 1000).toFixed(0)}K</div>
               <div class="year-stat-label">合計配当</div>
             </div>
+          </div>
+
+          <div class="view-details-button">
+            📊 詳細を見る →
           </div>
         </a>
       ))}
