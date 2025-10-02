@@ -1756,20 +1756,27 @@ console.log('%c使用方法: setTestAuth("standard") または setTestAuth("prem
     /* モバイル対応 */
     @media (max-width: 768px) {
         .yesterday-race-card {
-            flex-direction: column;
-            align-items: flex-start;
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 12px;
             padding: 12px 15px;
         }
 
         .yesterday-race-info {
-            width: 100%;
+            display: grid;
+            grid-template-columns: auto 1fr;
             gap: 8px;
+            align-items: center;
+        }
+
+        .yesterday-race-name {
+            grid-column: 1 / -1;
         }
 
         .yesterday-race-result {
-            width: 100%;
+            display: flex;
             justify-content: space-between;
+            align-items: center;
         }
     }
 </style>
