@@ -228,11 +228,9 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                             <p style="color: #fbbf24; font-size: 1.5rem; font-weight: 600; margin: 0;">
                                 {yesterdayResults.date} {yesterdayResults.track}競馬
                             </p>
-                            {yesterdayResults.hitRate === 100 && (
-                                <div style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">
-                                    🏆 {yesterdayResults.hitCount}/{yesterdayResults.totalCount}的中
-                                </div>
-                            )}
+                            <div style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">
+                                🏆 {yesterdayResults.hitCount}/{yesterdayResults.totalCount}的中
+                            </div>
                         </div>
                     </div>
 
