@@ -66,11 +66,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
                     <div style="display: flex; gap: 15px; align-items: flex-start;">
                         <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">6</div>
-                        <div>
-                            <strong style="color: #10b981; font-size: 1rem;">archiveResults.jsonに貼り付け → Claudeに「結果更新」依頼</strong>
-                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
-                                <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">src/data/archiveResults.json</code> を開き、該当月のデータ内に貼り付け → Claudeに「結果更新」と依頼すればコミット・プッシュして本番反映完了！
+                        <div style="flex: 1;">
+                            <strong style="color: #10b981; font-size: 1rem;">GitHubで編集して本番反映</strong>
+                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem; margin-bottom: 10px;">
+                                下の「🌐 GitHubで編集（本番反映）」ボタンをクリック → archiveResults.jsonが開きます → 該当月のデータ内に貼り付け → 下部の「Commit changes」で本番反映完了！
                             </p>
+                            <a href="https://github.com/apol0510/nankan-analytics/edit/main/astro-site/src/data/archiveResults.json"
+                               target="_blank"
+                               style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; margin-top: 5px;">
+                                🌐 GitHubで編集（本番反映）
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -78,8 +83,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 <div style="margin-top: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px;">
                     <strong style="color: #f59e0b;">💡 重要ポイント</strong>
                     <ul style="margin-top: 10px; padding-left: 20px; color: var(--accent-text-color); font-size: 0.9rem;">
-                        <li style="margin-bottom: 5px;">archiveResults.jsonへの貼り付けは、既存の月データ内の適切な日付に追加してください</li>
-                        <li style="margin-bottom: 5px;">「結果更新」とClaudeに依頼すれば、自動でgit commit & pushして本番反映されます</li>
+                        <li style="margin-bottom: 5px;">GitHubエディタで archiveResults.json を開いたら、既存の月データ内の適切な日付に追加してください</li>
+                        <li style="margin-bottom: 5px;">編集後、ページ下部の「Commit changes」ボタンをクリックすると本番反映されます（1-2分後）</li>
                         <li style="margin-bottom: 5px;">トップページ・standard-predictions・archive各ページに自動反映されます</li>
                     </ul>
                 </div>
