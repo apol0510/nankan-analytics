@@ -134,7 +134,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         id="bulkRaceNames"
                         placeholder="premium-predictionsページから全レース名をコピーしてそのまま貼り付けてください
 
-例：
+【対応形式1】複数行形式:
 1R
 ２歳(六) 未受賞
 第1レース
@@ -142,6 +142,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 2R
 ２歳(五)
 第2レース
+...
+
+【対応形式2】1行形式:
+1R ３歳(六)
+2R ローズデビュー
+3R ローズデビュー
+4R Ｃ２(四)(五)
 ..."
                         rows="8"
                         style="width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 6px; padding: 12px; color: var(--body-text-color); font-family: monospace; font-size: 0.9rem;"
@@ -721,7 +728,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
 
-                // レース番号を検出（1R, 2R, ...）
+                // 🆕 新形式対応: 1行形式（例: "1R ３歳(六)"）
+                const oneLineMatch = line.match(/^(\d+)R\s+(.+)$/);
+                if (oneLineMatch) {
+                    const raceNum = parseInt(oneLineMatch[1]);
+                    const raceName = oneLineMatch[2].trim();
+                    const input = document.getElementById(`raceName_${raceNum}`);
+                    if (input && raceName) {
+                        input.value = raceName;
+                        appliedCount++;
+                        console.log(`✅ ${raceNum}R: ${raceName}`);
+                    }
+                    continue;
+                }
+
+                // 既存形式対応: 複数行形式（1R改行、レース名改行...）
                 const raceNumMatch = line.match(/^(\d+)R$/);
                 if (raceNumMatch) {
                     currentRaceNum = parseInt(raceNumMatch[1]);
