@@ -252,9 +252,9 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                         </div>
                     </div>
 
-                    <!-- レース一覧 -->
+                    <!-- レース一覧（的中レースのみ表示） -->
                     <div style="display: grid; gap: 12px;">
-                        {latestResult?.races?.map(race => (
+                        {latestResult?.races?.filter(race => race.hit).map(race => (
                             <div class="yesterday-race-card">
                                 <div class="yesterday-race-info">
                                     <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 3rem;">
@@ -271,11 +271,9 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                                     </div>
                                 </div>
                                 <div class="yesterday-race-result">
-                                    {race.hit && (
-                                        <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; border: 1px solid rgba(16, 185, 129, 0.3);">
-                                            ✅ 的中
-                                        </div>
-                                    )}
+                                    <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                        ✅ 的中
+                                    </div>
                                     <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 100px; text-align: right;">
                                         ¥{race.payout.toLocaleString()}
                                     </div>
