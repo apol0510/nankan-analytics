@@ -6,8 +6,8 @@ export const prerender = true;
 // 直近5戦の的中実績画像（6枚ローテーション方式）
 // Cloudinaryに upsell-1.png 〜 upsell-6.png をアップロード
 // 毎日、最も古い1枚をReplaceするだけで自動的に最新5枚が表示される
-// upsell-1が最古、upsell-6が最新なので、最新5枚は2-6を表示
-const allImages = [2, 3, 4, 5, 6];
+// upsell-1が最古、upsell-6が最新なので、最新5枚は6→5→4→3→2の順で表示
+const allImages = [6, 5, 4, 3, 2];
 const timestamp = Date.now();
 const recentImages = allImages.map(id => ({
   id,
