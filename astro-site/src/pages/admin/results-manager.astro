@@ -110,17 +110,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <div id="daily-results" class="results-display"></div>
         </div>
 
-        <!-- JSONコード生成 -->
-        <div class="output-section">
-            <h2>💾 生成されたJSONコード</h2>
-            <p>以下のコードを <code>standard-predictions.astro</code> の該当箇所にコピーしてください：</p>
-            <div class="code-output">
-                <pre id="generatedCode">// 解析実行後にコードが表示されます</pre>
-                <button onclick="copyToClipboard()" class="copy-btn">📋 コピー</button>
-            </div>
-        </div>
-
-        <!-- アーカイブJSON生成セクション（新規追加） -->
+        <!-- アーカイブJSON生成セクション -->
         <div class="output-section" style="margin-top: 30px;">
             <h2>🏆 アーカイブJSON生成</h2>
             <p>昨日の結果から <code>archiveResults.json</code> 用のデータを生成します</p>
@@ -650,59 +640,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             document.getElementById('daily-stats').innerHTML = statsHtml;
             document.getElementById('daily-results').innerHTML = resultsHtml;
 
-            // アーカイブ用のレース詳細フォームを生成（新規追加）
+            // アーカイブ用のレース詳細フォームを生成
             generateRaceDetailsForm();
         }
 
-
-        // JSONコード生成
-        function generateCode() {
-            let code = '';
-
-            if (dailyData) {
-                code += `// 昨日の的中結果データ（${dailyData.date} ${dailyData.track}）\n`;
-                code += `// ⚠️ 注意: このデータは現在使用されていません\n`;
-                code += `// アーカイブシステムに統合されたため、archiveResults.jsonに直接反映してください\n\n`;
-                code += `export const yesterdayResults = {\n`;
-                code += `    date: "${dailyData.date}",\n`;
-                code += `    track: "${dailyData.track}",\n`;
-                code += `    hitRate: ${dailyData.hitRate},\n`;
-                code += `    hitCount: ${dailyData.hitCount},\n`;
-                code += `    totalCount: ${dailyData.totalCount},\n`;
-                code += `    totalPayout: ${dailyData.totalPayout},\n`;
-                code += `    recoveryRate: ${dailyData.recoveryRate},\n`;
-                code += `    results: [\n`;
-                dailyData.results.forEach(result => {
-                    code += `        { race: '${result.race}', result: '${result.result}', payout: ${result.payout} },\n`;
-                });
-                code += `    ]\n`;
-                code += `};\n`;
-            }
-
-            if (!code) {
-                code = '// 解析実行後にコードが表示されます';
-            }
-
-            document.getElementById('generatedCode').textContent = code;
-        }
-
-        // クリップボードにコピー
-        async function copyToClipboard() {
-            const code = document.getElementById('generatedCode').textContent;
-            if (code && code !== '// 解析実行後にコードが表示されます') {
-                try {
-                    await navigator.clipboard.writeText(code);
-                    alert('コードをクリップボードにコピーしました！');
-                } catch (err) {
-                    console.error('コピーに失敗しました:', err);
-                    alert('コピーに失敗しました。手動でコピーしてください。');
-                }
-            } else {
-                alert('生成されたコードがありません。まず解析を実行してください。');
-            }
-        }
-
-        // ========== アーカイブJSON生成機能（新規追加） ==========
+        // ========== アーカイブJSON生成機能 ==========
 
         // レース詳細入力フォームの生成
         function generateRaceDetailsForm() {
