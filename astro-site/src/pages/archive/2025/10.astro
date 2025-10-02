@@ -253,6 +253,85 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       color: #3b82f6;
     }
 
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
+      border-top: 2px solid rgba(59, 130, 246, 0.5);
+      padding: 1rem;
+      z-index: 1000;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .sticky-cta-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .sticky-cta-text {
+      flex: 1;
+    }
+
+    .sticky-cta-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fbbf24;
+      margin-bottom: 0.25rem;
+    }
+
+    .sticky-cta-description {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .sticky-cta-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .sticky-cta-button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .sticky-cta-button-primary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+    }
+
+    .sticky-cta-button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .sticky-cta-button-secondary {
+      background: rgba(100, 116, 139, 0.3);
+      color: #cbd5e1;
+      border: 1px solid rgba(100, 116, 139, 0.5);
+    }
+
+    .sticky-cta-button-secondary:hover {
+      background: rgba(100, 116, 139, 0.5);
+    }
+
+    /* ページ下部の余白を確保（スティッキーCTAの高さ分） */
+    body {
+      padding-bottom: 100px;
+    }
+
     @media (max-width: 768px) {
       .title {
         font-size: 1.8rem;
@@ -278,6 +357,41 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       .race-result {
         width: 100%;
         justify-content: space-between;
+      }
+
+      /* Sticky CTA モバイル対応 */
+      .sticky-cta {
+        padding: 0.75rem;
+      }
+
+      .sticky-cta-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+
+      .sticky-cta-title {
+        font-size: 1rem;
+        margin-bottom: 0.15rem;
+      }
+
+      .sticky-cta-description {
+        font-size: 0.85rem;
+      }
+
+      .sticky-cta-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .sticky-cta-button {
+        width: 100%;
+        padding: 0.65rem 1rem;
+        font-size: 0.95rem;
+      }
+
+      body {
+        padding-bottom: 180px;
       }
     }
   </style>
@@ -360,6 +474,24 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
     <div class="back-link">
       <a href="/archive/">← アーカイブトップ</a> |
       <a href="/pricing/">プレミアム予想</a>
+    </div>
+  </div>
+
+  <!-- Sticky CTA（画面下部固定） -->
+  <div class="sticky-cta">
+    <div class="sticky-cta-content">
+      <div class="sticky-cta-text">
+        <div class="sticky-cta-title">🎯 高精度な予想をお求めの方へ</div>
+        <div class="sticky-cta-description">AI分析による全レースの詳細な買い目を提供</div>
+      </div>
+      <div class="sticky-cta-buttons">
+        <a href="/pricing/" class="sticky-cta-button sticky-cta-button-primary">
+          💎 有料プランを見る
+        </a>
+        <a href="/free-prediction/" class="sticky-cta-button sticky-cta-button-secondary">
+          🆓 無料予想を試す
+        </a>
+      </div>
     </div>
   </div>
 </body>
