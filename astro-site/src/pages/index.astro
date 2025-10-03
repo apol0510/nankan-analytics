@@ -307,15 +307,12 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                             <span class="race-title">{raceTitle}</span>
                             <span class="confidence-score">信頼度 {Math.floor(parseFloat(enhancedRaceInfo?.confidence || '0'))}%</span>
                         </div>
-                        <div class="prediction-summary" data-initial-message="AIから最新の情報を取得しました！" data-actual-summary="{preview?.summary}" data-actual-features="{preview?.features}" data-actual-risk="{preview?.riskAnalysis || '分析中'}">
-                            <span class="initial-message">AIから最新の情報を取得しました！</span>
-                            <div class="actual-content" style="display: none;">
-                                {preview?.summary || 'AIから最新の情報を取得しました！'}
-                                <br><br>
-                                {preview?.features || ''}
-                                <br><br>
-                                リスク分析: {preview?.riskAnalysis || '分析中'}
-                            </div>
+                        <div class="prediction-summary">
+                            船橋競馬 11R AI予想完了！
+                            <br><br>
+                            本命アランバローズ・対抗ナンセイホワイト 信頼度89% | 🎯 少点数的中型モデル・⚖️ バランス型モデル・🚀 高配当追求型モデルで的中と配当のバランスを最適化。
+                            <br><br>
+                            リスク分析: 分析中
                         </div>
                         <div class="blur-overlay">
                             <span class="premium-badge"><a href="/free-prediction/" style="color: inherit; text-decoration: underline;">無料予想はこちら</a></span>
@@ -495,12 +492,12 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
 
         /* Live Prediction Section - オレンジ系明るいデザイン */
         .live-prediction-section {
-            background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(249, 115, 22, 0.1) 50%, rgba(234, 88, 12, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.05) 0%, rgba(249, 115, 22, 0.03) 50%, rgba(234, 88, 12, 0.05) 100%);
             padding: 40px;
             border-radius: var(--card-border-radius);
             margin: 40px 0;
             border: 1px solid rgba(251, 146, 60, 0.3);
-            box-shadow: 0 8px 32px rgba(251, 146, 60, 0.1);
+            box-shadow: 0 8px 32px rgba(251, 146, 60, 0.05);
         }
 
         .section-title {
@@ -526,7 +523,7 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
         }
 
         .live-prediction-section .section-subtitle {
-            color: #fcd34d;
+            color: var(--accent-text-color);
             font-weight: 500;
         }
 
@@ -572,7 +569,9 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
         .prediction-summary {
             color: var(--body-text-color);
             margin-bottom: 15px;
-            line-height: 1.5;
+            line-height: 1.6;
+            min-height: 100px;
+            padding: 10px 0;
         }
 
         .blur-overlay {
@@ -581,7 +580,7 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
             left: 0;
             right: 0;
             height: 60%;
-            background: linear-gradient(transparent 20%, rgba(15, 23, 42, 0.7) 40%, rgba(15, 23, 42, 0.95) 100%);
+            background: linear-gradient(transparent 0%, rgba(15, 23, 42, 0.3) 15%, rgba(15, 23, 42, 0.6) 40%, rgba(15, 23, 42, 0.95) 100%);
             border-radius: 0 0 8px 8px;
             display: flex;
             align-items: center;
