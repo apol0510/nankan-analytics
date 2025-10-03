@@ -243,11 +243,10 @@ export const dailyResultsData = {
                                 <div class="yesterday-race-info">
                                     <div class="yesterday-race-number">{raceDetail.raceNumber}</div>
                                     <div class="yesterday-race-name">{raceDetail.raceName}</div>
-                                    <div class="yesterday-strategy-badge">{raceDetail.strategy}モデル</div>
-                                    <div class="yesterday-bet-info">{raceDetail.betType}{raceDetail.betPoints}点</div>
                                 </div>
                                 <div class="yesterday-race-result">
                                     <div class="yesterday-hit-badge">✅ 的中</div>
+                                    <div class="yesterday-bet-info">{raceDetail.betType}{raceDetail.betPoints}点</div>
                                     <div class="yesterday-payout">¥{raceDetail.payout.toLocaleString()}</div>
                                 </div>
                             </div>
@@ -1713,16 +1712,6 @@ console.log('%c使用方法: setTestAuth("standard") または setTestAuth("prem
         font-size: 0.85rem;
         font-weight: 400;
         opacity: 0.8;
-    }
-
-    .yesterday-strategy-badge {
-        background: linear-gradient(135deg, #f59e0b, #ea580c);
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        white-space: nowrap;
     }
 
     .yesterday-bet-info {
