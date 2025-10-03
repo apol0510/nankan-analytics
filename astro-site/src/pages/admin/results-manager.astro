@@ -47,9 +47,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     <div style="display: flex; gap: 15px; align-items: flex-start;">
                         <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">4</div>
                         <div>
-                            <strong style="color: #60a5fa; font-size: 1rem;">戦略・点数を選択</strong>
+                            <strong style="color: #60a5fa; font-size: 1rem;">点数を入力</strong>
                             <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
-                                各レースの戦略（少点数/バランス/高配当）と点数を選択
+                                各レースの馬単点数を入力
                             </p>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 </div>
 
                 <p style="color: var(--accent-text-color); margin-bottom: 20px; font-size: 0.9rem;">
-                    各レースの詳細情報（券種は馬単固定、戦略・点数を選択）
+                    各レースの詳細情報（券種は馬単固定、点数を入力）
                 </p>
 
                 <div id="raceDetailsForm" class="race-details-grid">
@@ -680,17 +680,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                                     <input type="text" id="raceName_${raceNum}" placeholder="例：2歳新馬" style="width: 100%;" />
                                 </div>
                                 <div class="input-field">
-                                    <label>戦略 *</label>
-                                    <select id="strategy_${raceNum}" onchange="autoFillBetPoints(${raceNum})">
-                                        <option value="">選択してください</option>
-                                        <option value="少点数的中型" data-points="3">少点数的中型（3点）</option>
-                                        <option value="バランス型" data-points="11">バランス型（8-11点）</option>
-                                        <option value="高配当追求型" data-points="17">高配当追求型（14-17点）</option>
-                                    </select>
-                                </div>
-                                <div class="input-field">
                                     <label>買い目点数 *</label>
-                                    <input type="number" id="betPoints_${raceNum}" placeholder="自動入力 or 手動" min="1" />
+                                    <input type="number" id="betPoints_${raceNum}" placeholder="例：3, 11, 17" min="1" />
                                 </div>
                             </div>
                         ` : '<p style="color: #64748b; text-align: center; padding: 10px;">不的中のため詳細入力不要</p>'}
@@ -699,18 +690,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             }).join('');
 
             document.getElementById('raceDetailsForm').innerHTML = formHTML;
-        }
-
-        // 戦略選択時に自動で点数入力
-        function autoFillBetPoints(raceNum) {
-            const strategySelect = document.getElementById(`strategy_${raceNum}`);
-            const betPointsInput = document.getElementById(`betPoints_${raceNum}`);
-            const selectedOption = strategySelect.options[strategySelect.selectedIndex];
-            const points = selectedOption.getAttribute('data-points');
-
-            if (points) {
-                betPointsInput.value = points;
-            }
         }
 
         // 一括レース名適用
@@ -804,11 +783,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 if (result.result === 'win') {
                     // 的中レースは詳細情報必須
                     const raceName = document.getElementById(`raceName_${raceNum}`)?.value;
-                    const strategy = document.getElementById(`strategy_${raceNum}`)?.value;
                     const betPoints = document.getElementById(`betPoints_${raceNum}`)?.value;
 
-                    if (!raceName || !strategy || !betPoints) {
-                        alert(`${raceNum}Rの詳細情報を入力してください（レース名・戦略・点数）`);
+                    if (!raceName || !betPoints) {
+                        alert(`${raceNum}Rの詳細情報を入力してください（レース名・点数）`);
                         hasError = true;
                         break;
                     }
@@ -817,7 +795,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         raceNumber: `${raceNum}R`,
                         raceName: raceName,
                         betType: "馬単",
-                        strategy: strategy,
                         betPoints: parseInt(betPoints),
                         hit: true,
                         payout: result.payout
@@ -828,7 +805,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         raceNumber: `${raceNum}R`,
                         raceName: "-",
                         betType: "馬単",
-                        strategy: "-",
                         betPoints: 0,
                         hit: false,
                         payout: 0
