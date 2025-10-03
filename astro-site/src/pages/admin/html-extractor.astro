@@ -253,14 +253,20 @@ const title = "HTML予想印抽出ツール";
             <ul>
                 <li><strong>HTMLデータ入力：</strong>競馬新聞のHTMLコードを上部のテキストエリアに貼り付け</li>
                 <li><strong>印の抽出：</strong>「印を抽出」ボタンをクリックして処理実行</li>
+                <li><strong>自動判定：</strong>標準形式と競馬ブック形式を自動判別して処理</li>
                 <li><strong>SVG変換：</strong>SVGタグの三角形は自動的に「▲」に変換</li>
                 <li><strong>順序保持：</strong>HTMLに出現した順番で印を出力</li>
                 <li><strong>品質確認：</strong>印の総数と各馬の印数を自動チェック</li>
             </ul>
+            <h3 style="margin-top: 20px;">✅ 対応形式</h3>
+            <ul>
+                <li><strong>標準形式：</strong>従来の競馬新聞HTML形式（レース番号付き・なし両対応）</li>
+                <li><strong>競馬ブック形式：</strong>テーブル形式の予想印データ（最大18頭対応）</li>
+            </ul>
         </div>
     </div>
 
-    <script>
+    <script is:inline>
         let extractionStats = {
             totalHorses: 0,
             totalMarks: 0,
@@ -290,6 +296,32 @@ const title = "HTML予想印抽出ツール";
             extractionStats = { totalHorses: 0, totalMarks: 0, processedRaces: 0 };
 
             console.log('🔍 HTML処理開始:', html.length, '文字');
+            console.log('📄 HTMLプレビュー（最初の1000文字）:');
+            console.log(html.substring(0, 1000));
+            console.log('📄 HTMLプレビュー（5000-6000文字）:');
+            console.log(html.substring(5000, 6000));
+
+            // ✅ 競馬ブック形式の判定（実際のHTML構造に基づく）
+            const isKeibaBookFormat = html.includes('class="sirusi"') ||
+                                      html.includes('js-yoso-input') ||
+                                      html.includes('mysirusi-input') ||
+                                      html.includes('racekey=');
+
+            console.log('🔍 形式判定:', {
+                'sirusiクラス': html.includes('class="sirusi"'),
+                'yoso-input': html.includes('js-yoso-input'),
+                'mysirusi': html.includes('mysirusi-input'),
+                'racekey': html.includes('racekey='),
+                '最終判定': isKeibaBookFormat ? '競馬ブック形式' : '標準形式'
+            });
+
+            if (isKeibaBookFormat) {
+                console.log('📖 競馬ブック形式を検出しました');
+                return processKeibaBookFormat(html);
+            }
+
+            // ✅ 既存形式の処理（従来通り）
+            console.log('📰 標準形式で処理します');
 
             // レース番号を検出（より柔軟なパターン）
             const raceMatches = html.match(/[大井川崎船橋浦和](\d{1,2})[rRレース]/g) || [];
@@ -346,6 +378,109 @@ const title = "HTML予想印抽出ツール";
 
             console.log('📊 最終統計:', extractionStats);
             return output;
+        }
+
+        // ✅ 競馬ブック形式専用抽出関数（新規追加）
+        function processKeibaBookFormat(html) {
+            let output = '';
+            console.log('📖 競馬ブック形式で処理開始');
+
+            // テーブル行を抽出（最大18頭）
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // 複数の可能なセレクタを試す
+            let rows = doc.querySelectorAll('tr.um-box');
+            if (rows.length === 0) {
+                rows = doc.querySelectorAll('tr');
+                console.log('📊 標準<tr>で検索:', rows.length, '行');
+            } else {
+                console.log('📊 tr.um-boxで検出:', rows.length, '行');
+            }
+
+            let horseCount = 0;
+            for (let i = 0; i < rows.length && horseCount < 18; i++) {
+                const row = rows[i];
+                const horse = extractKeibaBookHorse(row);
+
+                if (horse) {
+                    output += `${horse.number}\t${horse.marks}\t${horse.name}\n`;
+                    extractionStats.totalHorses++;
+                    extractionStats.totalMarks += horse.marks.length;
+                    horseCount++;
+                    console.log(`✅ 馬データ: ${horse.number} ${horse.marks} ${horse.name}`);
+                }
+            }
+
+            if (horseCount > 0) {
+                output += '\n';
+                extractionStats.processedRaces = 1;
+            }
+
+            console.log(`📊 抽出完了: ${horseCount}頭`);
+            return output;
+        }
+
+        // ✅ 競馬ブック形式から1頭分のデータを抽出
+        function extractKeibaBookHorse(row) {
+            try {
+                // テーブル行のHTML全体をチェック
+                const rowHTML = row.innerHTML;
+                if (!rowHTML) return null;
+
+                // 馬番を抽出（複数のパターンを試す）
+                let number = null;
+                const tdCells = row.querySelectorAll('td');
+
+                // 最初のtdセルが馬番の可能性が高い
+                if (tdCells.length > 0) {
+                    const firstCell = tdCells[0].textContent.trim();
+                    if (/^\d+$/.test(firstCell)) {
+                        number = firstCell;
+                    }
+                }
+
+                if (!number) return null;
+                console.log(`🔍 馬番: ${number}`);
+
+                // 馬名を抽出（<a>タグまたはテキストから）
+                let name = null;
+                const links = row.querySelectorAll('a[href*="/db/uma/"]');
+                if (links.length > 0) {
+                    name = links[0].textContent.trim();
+                }
+
+                if (!name) return null;
+                console.log(`🔍 馬名: ${name}`);
+
+                // 印を抽出（◎○▲と△SVG）
+                let marks = '';
+
+                // テキストの印を抽出
+                const textMarks = rowHTML.match(/[◎○▲△]/g) || [];
+                marks = textMarks.join('');
+
+                // SVG三角形（△）をカウント
+                const svgTriangles = (rowHTML.match(/<polygon/g) || []).length;
+                if (svgTriangles > 0) {
+                    // テキストの△以外のSVG△を追加
+                    const textDelta = (rowHTML.match(/△/g) || []).length;
+                    const svgDelta = Math.max(0, svgTriangles - textDelta);
+                    marks += '△'.repeat(svgDelta);
+                }
+
+                console.log(`🔍 印: ${marks || '（なし）'}`);
+
+                return {
+                    number: number,
+                    marks: marks,
+                    name: name
+                };
+
+            } catch (error) {
+                console.error('❌ 抽出エラー:', error);
+                return null;
+            }
         }
 
         function extractHorsesFromSection(html) {
