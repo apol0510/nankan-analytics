@@ -220,68 +220,71 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
             <!-- 的中実績セクション -->
             <section style="padding: 60px 20px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
                 <div class="container" style="max-width: 1200px; margin: 0 auto;">
-                    <div style="text-align: center; margin-bottom: 40px;">
-                        <h2 style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px;">
-                            🏆 昨日の的中結果
-                        </h2>
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                            <p style="color: #fbbf24; font-size: 1.5rem; font-weight: 600; margin: 0;">
-                                {yesterdayResults.date} {yesterdayResults.track}競馬
-                            </p>
-                            <div style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">
-                                🏆 {yesterdayResults.hitCount}/{yesterdayResults.totalCount}的中
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 的中サマリー -->
-                    <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 30px;">
-                        <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 15px 25px;">
-                            <span style="color: #94a3b8; font-size: 0.9rem;">📊 的中率:</span>
-                            <span style="color: #60a5fa; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">{yesterdayResults.hitRate}%</span>
-                        </div>
-                        <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 15px 25px;">
-                            <span style="color: #94a3b8; font-size: 0.9rem;">📈 回収率:</span>
-                            <span style="color: #a78bfa; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">{yesterdayResults.recoveryRate}%</span>
-                        </div>
-                        <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 15px 25px;">
-                            <span style="color: #94a3b8; font-size: 0.9rem;">💰 合計配当:</span>
-                            <span style="color: #fbbf24; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">¥{yesterdayResults.totalPayout.toLocaleString()}</span>
-                        </div>
-                    </div>
-
-                    <!-- レース一覧（的中レースのみ表示） -->
-                    <div style="display: grid; gap: 12px;">
-                        {latestResult?.races?.filter(race => race.hit).map(race => (
-                            <div class="yesterday-race-card">
-                                <div class="yesterday-race-info">
-                                    <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 3rem;">
-                                        {race.raceNumber}
-                                    </div>
-                                    <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 400; opacity: 0.8;">
-                                        {race.raceName}
-                                    </div>
-                                </div>
-                                <div class="yesterday-race-result">
-                                    <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; border: 1px solid rgba(16, 185, 129, 0.3);">
-                                        ✅ 的中
-                                    </div>
-                                    <div style="color: #8b5cf6; font-size: 0.9rem; font-weight: 600;">
-                                        {race.betType}{race.betPoints}点
-                                    </div>
-                                    <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 100px; text-align: right;">
-                                        ¥{race.payout.toLocaleString()}
-                                    </div>
+                    <!-- 大カード -->
+                    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 40px; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15);">
+                        <div style="text-align: center; margin-bottom: 40px;">
+                            <h2 style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px;">
+                                🏆 昨日の的中結果
+                            </h2>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                                <p style="color: #fbbf24; font-size: 1.5rem; font-weight: 600; margin: 0;">
+                                    {yesterdayResults.date} {yesterdayResults.track}競馬
+                                </p>
+                                <div style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">
+                                    🏆 {yesterdayResults.hitCount}/{yesterdayResults.totalCount}的中
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
 
-                    <!-- アーカイブリンク -->
-                    <div style="text-align: center; margin-top: 30px;">
-                        <a href="/archive/" style="display: inline-block; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.3s;">
-                            過去の的中実績を見る →
-                        </a>
+                        <!-- 的中サマリー -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 30px;">
+                            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 15px 25px;">
+                                <span style="color: #94a3b8; font-size: 0.9rem;">📊 的中率:</span>
+                                <span style="color: #60a5fa; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">{yesterdayResults.hitRate}%</span>
+                            </div>
+                            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 15px 25px;">
+                                <span style="color: #94a3b8; font-size: 0.9rem;">📈 回収率:</span>
+                                <span style="color: #a78bfa; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">{yesterdayResults.recoveryRate}%</span>
+                            </div>
+                            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 15px 25px;">
+                                <span style="color: #94a3b8; font-size: 0.9rem;">💰 合計配当:</span>
+                                <span style="color: #fbbf24; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">¥{yesterdayResults.totalPayout.toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        <!-- レース一覧（的中レースのみ表示） -->
+                        <div style="display: grid; gap: 12px;">
+                            {latestResult?.races?.filter(race => race.hit).map(race => (
+                                <div class="yesterday-race-card">
+                                    <div class="yesterday-race-info">
+                                        <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 3rem;">
+                                            {race.raceNumber}
+                                        </div>
+                                        <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 400; opacity: 0.8;">
+                                            {race.raceName}
+                                        </div>
+                                    </div>
+                                    <div class="yesterday-race-result">
+                                        <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                            ✅ 的中
+                                        </div>
+                                        <div style="color: #8b5cf6; font-size: 0.9rem; font-weight: 600;">
+                                            {race.betType}{race.betPoints}点
+                                        </div>
+                                        <div style="font-size: 1.2rem; font-weight: bold; color: #fbbf24; min-width: 100px; text-align: right;">
+                                            ¥{race.payout.toLocaleString()}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <!-- アーカイブリンク -->
+                        <div style="text-align: center; margin-top: 30px;">
+                            <a href="/archive/" style="display: inline-block; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.3s;">
+                                過去の的中実績を見る →
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -448,23 +451,24 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
         .hero-section {
             text-align: center;
             padding: 60px 40px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(139, 92, 246, 0.12) 50%, rgba(251, 146, 60, 0.12) 100%);
             border-radius: var(--card-border-radius);
             margin-bottom: 40px;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(251, 146, 60, 0.2);
+            box-shadow: 0 4px 20px rgba(251, 146, 60, 0.08);
         }
 
         .hero-stats-section {
             margin-top: 50px;
             padding-top: 30px;
-            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            border-top: 1px solid rgba(251, 146, 60, 0.15);
         }
 
         .hero-title {
             font-size: 3rem;
             font-weight: 800;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #fb923c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
