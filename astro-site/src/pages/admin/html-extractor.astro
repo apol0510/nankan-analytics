@@ -261,7 +261,7 @@ const title = "HTML予想印抽出ツール";
             <h3 style="margin-top: 20px;">✅ 対応形式</h3>
             <ul>
                 <li><strong>標準形式：</strong>従来の競馬新聞HTML形式（レース番号付き・なし両対応）</li>
-                <li><strong>競馬ブック形式：</strong>テーブル形式の予想印データ（最大18頭対応）</li>
+                <li><strong>JRA形式：</strong>テーブル形式の予想印データ（最大18頭対応・穴印対応）</li>
             </ul>
         </div>
     </div>
@@ -312,11 +312,11 @@ const title = "HTML予想印抽出ツール";
                 'yoso-input': html.includes('js-yoso-input'),
                 'mysirusi': html.includes('mysirusi-input'),
                 'racekey': html.includes('racekey='),
-                '最終判定': isKeibaBookFormat ? '競馬ブック形式' : '標準形式'
+                '最終判定': isKeibaBookFormat ? 'JRA形式' : '標準形式'
             });
 
             if (isKeibaBookFormat) {
-                console.log('📖 競馬ブック形式を検出しました');
+                console.log('📖 JRA形式を検出しました');
                 return processKeibaBookFormat(html);
             }
 
@@ -380,10 +380,10 @@ const title = "HTML予想印抽出ツール";
             return output;
         }
 
-        // ✅ 競馬ブック形式専用抽出関数（新規追加）
+        // ✅ JRA形式専用抽出関数（新規追加）
         function processKeibaBookFormat(html) {
             let output = '';
-            console.log('📖 競馬ブック形式で処理開始');
+            console.log('📖 JRA形式で処理開始');
 
             // テーブル行を抽出（最大18頭）
             const parser = new DOMParser();
@@ -421,7 +421,7 @@ const title = "HTML予想印抽出ツール";
             return output;
         }
 
-        // ✅ 競馬ブック形式から1頭分のデータを抽出
+        // ✅ JRA形式から1頭分のデータを抽出
         function extractKeibaBookHorse(row) {
             try {
                 // テーブル行のHTML全体をチェック
