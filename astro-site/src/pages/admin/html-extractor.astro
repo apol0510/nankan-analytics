@@ -428,12 +428,20 @@ const title = "HTML予想印抽出ツール";
                 const rowHTML = row.innerHTML;
                 if (!rowHTML) return null;
 
-                // 馬番を抽出（複数のパターンを試す）
+                // 馬番を抽出（枠番の次のセルが馬番）
                 let number = null;
                 const tdCells = row.querySelectorAll('td');
 
-                // 最初のtdセルが馬番の可能性が高い
-                if (tdCells.length > 0) {
+                // 2番目のtdセルが馬番（1番目は枠番）
+                if (tdCells.length > 1) {
+                    const secondCell = tdCells[1].textContent.trim();
+                    if (/^\d+$/.test(secondCell)) {
+                        number = secondCell;
+                    }
+                }
+
+                // フォールバック：1番目のセルが馬番の場合
+                if (!number && tdCells.length > 0) {
                     const firstCell = tdCells[0].textContent.trim();
                     if (/^\d+$/.test(firstCell)) {
                         number = firstCell;
