@@ -461,20 +461,55 @@ const title = "HTML予想印抽出ツール";
                 if (!name) return null;
                 console.log(`🔍 馬名: ${name}`);
 
-                // 印を抽出（◎○▲と△SVG）
+                // 印を抽出（◎○▲△と「穴」）
+                // 馬名の位置を特定
+                let horseNameIndex = -1;
+                for (let i = 0; i < tdCells.length; i++) {
+                    const links = tdCells[i].querySelectorAll('a[href*="/db/uma/"]');
+                    if (links.length > 0) {
+                        horseNameIndex = i;
+                        break;
+                    }
+                }
+
                 let marks = '';
 
-                // テキストの印を抽出
-                const textMarks = rowHTML.match(/[◎○▲△]/g) || [];
-                marks = textMarks.join('');
+                // 馬名より前のセルから印を抽出（予想印列のみ）
+                for (let i = 2; i < tdCells.length; i++) {
+                    // 馬名セルに到達したら終了
+                    if (i === horseNameIndex) break;
 
-                // SVG三角形（△）をカウント
-                const svgTriangles = (rowHTML.match(/<polygon/g) || []).length;
-                if (svgTriangles > 0) {
-                    // テキストの△以外のSVG△を追加
-                    const textDelta = (rowHTML.match(/△/g) || []).length;
-                    const svgDelta = Math.max(0, svgTriangles - textDelta);
-                    marks += '△'.repeat(svgDelta);
+                    const cellHTML = tdCells[i].innerHTML;
+                    const cellText = tdCells[i].textContent.trim();
+
+                    // セル内容が空の場合はスキップ
+                    if (!cellText && !cellHTML.includes('<polygon') && !cellHTML.includes('<svg')) continue;
+
+                    // 減量マーク（▲、△）を含む場合はスキップ
+                    if (cellText.includes('減量') || cellHTML.includes('減量')) continue;
+
+                    // 斤量・体重などのセルはスキップ
+                    if (/^\d+(\.\d+)?$/.test(cellText)) continue;
+                    if (cellText.includes('kg') || cellText.includes('斤')) continue;
+
+                    // 「穴」を抽出
+                    if (cellText.includes('穴') || cellHTML.includes('穴')) {
+                        marks += '穴';
+                        continue;
+                    }
+
+                    // テキストの印を抽出（◎○▲△）
+                    const textMark = cellText.match(/[◎○▲△]/);
+                    if (textMark) {
+                        marks += textMark[0];
+                        continue;
+                    }
+
+                    // SVGの三角形を▲として抽出（テキスト印がない場合のみ）
+                    if (cellHTML.includes('<polygon') || cellHTML.includes('<svg')) {
+                        marks += '▲';
+                        continue;
+                    }
                 }
 
                 console.log(`🔍 印: ${marks || '（なし）'}`);
