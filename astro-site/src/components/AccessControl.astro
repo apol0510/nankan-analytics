@@ -398,24 +398,8 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         }
     }
 
-    // テスト用ヘルパー関数（開発時のみ）
-    window.setTestAuth = function(plan = 'premium', duration = 3600000) {
-        const authData = {
-            user: { id: 'test', email: 'test@example.com' },
-            plan: plan,
-            expiresAt: new Date(Date.now() + duration).toISOString()
-        };
-        localStorage.setItem('auth_data', JSON.stringify(authData));
-        console.log(`🧪 テスト認証設定: ${plan} (${duration/1000/60}分間)`);
-        location.reload();
-    };
-
-    window.clearTestAuth = function() {
-        localStorage.removeItem('auth_data');
-        sessionStorage.removeItem('temp_auth');
-        console.log('🧹 テスト認証をクリアしました');
-        location.reload();
-    };
+    // ⚠️ setTestAuth/clearTestAuth関数は public/test-auth.js で定義されています
+    // ここでの再定義は削除しました（重複防止）
 
     document.addEventListener('DOMContentLoaded', () => {
         console.log('📋 DOMContentLoaded - AccessControl初期化開始');
