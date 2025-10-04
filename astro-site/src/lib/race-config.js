@@ -28,9 +28,21 @@ export const RACE_TIERS_10R = {
   5: 'premium',
   6: 'premium',
   7: 'premium',
-  8: 'premium',
+  8: 'standard',
   9: 'free',      // 10レース時は9Rがメインレース
   10: 'standard'
+};
+
+// 8レース開催時のtier設定
+export const RACE_TIERS_8R = {
+  1: 'premium',
+  2: 'premium',
+  3: 'premium',
+  4: 'premium',
+  5: 'premium',
+  6: 'standard',
+  7: 'free',      // 8レース時は7Rがメインレース
+  8: 'standard'
 };
 
 /**
@@ -40,6 +52,9 @@ export const RACE_TIERS_10R = {
  * @returns {string} tier名（'free', 'standard', 'premium'）
  */
 export function getRaceTier(raceNumber, totalRaces = 12) {
+  if (totalRaces === 8) {
+    return RACE_TIERS_8R[raceNumber] || 'premium';
+  }
   if (totalRaces === 10) {
     return RACE_TIERS_10R[raceNumber] || 'premium';
   }
@@ -52,7 +67,9 @@ export function getRaceTier(raceNumber, totalRaces = 12) {
  * @returns {number} メインレース番号
  */
 export function getMainRaceNumber(totalRaces = 12) {
-  return totalRaces === 10 ? 9 : 11;
+  if (totalRaces === 8) return 7;
+  if (totalRaces === 10) return 9;
+  return 11; // 12レース時
 }
 
 /**
@@ -77,8 +94,9 @@ export const PLAN_ACCESS = {
   standard: {
     name: 'スタンダード会員',
     races: (totalRaces = 12) => {
-      if (totalRaces === 10) return [9, 10];
-      return [10, 11, 12];
+      if (totalRaces === 8) return [6, 7, 8];
+      if (totalRaces === 10) return [8, 9, 10];
+      return [10, 11, 12]; // 12レース時
     },
     features: ['後半3レース予想', '基礎コンテンツ']
   },

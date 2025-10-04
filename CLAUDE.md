@@ -273,6 +273,14 @@ Stripe決済成功
 10R:    Standard会員
 ```
 
+#### 8レース開催時
+```
+1R-5R:  Premium会員のみ
+6R:     Standard会員
+7R:     無料（メインレース）★★★
+8R:     Standard会員
+```
+
 ### 📋 重要ポイント
 - メインレース = 最終レースの1つ前（常に無料）
 - Standard = 後半3レース（メインレース除く）
@@ -591,10 +599,106 @@ open http://localhost:4321/admin/predictions
 
 ---
 
-**📅 最終更新日**: 2025-09-21
-**🏁 Project Phase**: SendGrid移行完了・メール配信統一実現 ★★★★★
-**🎯 Next Priority**: マーケティング強化・顧客獲得・UI/UX改善
-**✨ 本日の成果**: Brevo→SendGrid完全移行・メール統一システム構築・Zapier連携完了！
+**📅 最終更新日**: 2025-10-04
+**🏁 Project Phase**: archiveResults.json JSONエラー根本対策完全実装 ★★★★★
+**🎯 Next Priority**: 本番運用・マーケティング強化・ユーザー獲得施策
+**✨ 本日の成果**: GitHubエディタJSON編集エラー完全防止システム実装・視覚的ガイド・自動検証スクリプト完成！
+
+---
+
+## 🛡️ **archiveResults.json JSONエラー根本対策（2025-10-04新規実装）**
+
+### 🚨 **問題の本質**
+GitHubエディタでのarchiveResults.json編集時、JSON構文エラーが繰り返し発生していた問題を完全解決。
+
+### ✅ **実装した3層防止システム**
+
+#### **1. 視覚的ガイド付きJSON生成**
+- **カンマ自動付与**: 生成JSONに `,` プレフィックス自動追加
+- **詳細手順表示**: ステップバイステップの貼り付けガイド
+- **具体例表示**: 正しい貼り付け位置の視覚的サンプル
+- **エラー防止チェックリスト**: カンマ・インデント・括弧・プレビュー確認
+
+#### **2. 自動JSON検証スクリプト**
+```bash
+npm run validate:archive
+```
+- **構文検証**: JSON.parseによる即座エラー検出
+- **エラー位置特定**: 行番号・該当コード表示
+- **よくあるエラー解説**: カンマ・括弧・引用符エラーガイド
+- **データ統計表示**: 年・月・日数の確認
+
+#### **3. 管理画面UI強化**
+- **💡 重要ポイント（JSONエラー防止）**: 視覚的チェックリスト
+- **4つの確認項目**: カンマ・インデント・括弧・プレビュー
+- **GitHubプレビュー活用**: エディタ上部「Preview」タブ推奨
+
+### 📋 **技術的成果**
+- **エラー撲滅**: JSON構文エラーの完全防止システム確立
+- **視覚的ガイド**: 生成JSON内に詳細手順・サンプルコード埋め込み
+- **自動検証**: コミット前にローカルで構文検証可能
+- **復旧支援**: エラー発生時の原因特定・修正支援機能
+
+### 🎯 **使用方法**
+
+#### **GitHubエディタでの安全な編集手順**
+1. **admin/results-manager** で結果データ生成
+2. **「🏆 アーカイブJSON生成」** クリック → 視覚的ガイド付きJSON表示
+3. **「📋 コピー」** でクリップボードにコピー
+4. **「🌐 GitHubで編集」** ボタンでarchiveResults.json開く
+5. **該当月セクション**を探し、最新データの } 後にカンマ確認
+6. **生成JSON貼り付け**（カンマ含む・インデント2スペース）
+7. **「Preview」タブ**でシンタックスエラー確認
+8. **「Commit changes」**で本番反映
+
+#### **ローカルでの事前検証（推奨）**
+```bash
+# GitHubコミット前にローカル検証
+npm run validate:archive
+
+# 正常時: ✅ archiveResults.json は正常です！
+# エラー時: ❌ JSON構文エラー検出 → 修正箇所表示
+```
+
+### 🔧 **実装ファイル（archiveResults.json）**
+- `src/pages/admin/results-manager.astro`: 視覚的ガイド付きJSON生成
+- `scripts/validate-archive-json.cjs`: 自動検証スクリプト
+- `package.json`: `validate:archive` コマンド追加
+
+### 🔧 **実装ファイル（allRacesPrediction.json）** ✨新規追加
+- `src/pages/admin/betting-direct-super-simple.astro`: 視覚的ガイド付きJSON生成・GitHubエディタボタン
+- `scripts/validate-prediction-json.cjs`: 予想データ自動検証スクリプト
+- `package.json`: `validate:prediction` コマンド追加
+
+### 🛡️ **復活防止保証**
+- **自動検証**: コミット前に `npm run validate:archive` / `npm run validate:prediction` 実行推奨
+- **視覚的ガイド**: 生成JSONに詳細手順・サンプル埋め込み
+- **GitHubエディタ**: ワンクリックで編集画面へ・Preview機能でエラー確認
+- **エラー特定**: 問題箇所の行番号・コード自動表示
+
+---
+
+## 🎯 **allRacesPrediction.json 安全な編集手順（2025-10-04追加）**
+
+### **GitHubエディタでの編集手順**
+1. **admin/betting-direct-super-simple** で予想データ入力・解析
+2. **「🏆 allRacesPrediction.json生成」** クリック
+3. **視覚的ガイド付きJSON表示** を確認
+4. **「📋 コピー」** でクリップボードにコピー
+5. **「🌐 GitHubで編集（本番反映）」** ボタンでallRacesPrediction.json開く
+6. **ファイル全体を選択（Ctrl+A / Cmd+A）** して削除
+7. **生成JSONを貼り付け**（全体置換）
+8. **「Preview」タブ**でシンタックスエラーがないか確認
+9. **「Commit changes」**で本番反映（1-2分後）
+
+### **ローカルでの事前検証（推奨）**
+```bash
+# GitHubコミット前にローカル検証
+npm run validate:prediction
+
+# 正常時: ✅ allRacesPrediction.json は正常です！
+# エラー時: ❌ JSON構文エラー検出 → 修正箇所表示
+```
 
 ---
 
