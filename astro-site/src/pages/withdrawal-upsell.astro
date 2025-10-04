@@ -2,12 +2,13 @@
 // 退会前アップセル専用ページ
 // Cloudinary固定URL方式: デプロイ完全不要
 
-// 日付ベース方式の最新画像を使用
+// 日付ベース方式の最新画像を使用（昨日の結果）
 // 毎日の運用: upsell-YYYYMMDD.png 形式で新しい画像をアップロードするだけ
 // 例: upsell-20251002.png
-// 自動的に今日の画像が表示される（デプロイ不要）
+// レース結果は前日分が最新のため、昨日の日付を使用
 
 const today = new Date();
+today.setDate(today.getDate() - 1); // 昨日の日付
 const dateStr = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD形式
 const timestamp = Date.now();
 const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}.png?v=${timestamp}`;
