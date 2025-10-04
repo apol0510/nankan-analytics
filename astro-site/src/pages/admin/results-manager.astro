@@ -81,11 +81,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 </div>
 
                 <div style="margin-top: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px;">
-                    <strong style="color: #f59e0b;">💡 重要ポイント</strong>
+                    <strong style="color: #f59e0b;">💡 重要ポイント（JSONエラー防止）</strong>
                     <ul style="margin-top: 10px; padding-left: 20px; color: var(--accent-text-color); font-size: 0.9rem;">
-                        <li style="margin-bottom: 5px;">GitHubエディタで archiveResults.json を開いたら、既存の月データ内の適切な日付に追加してください</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ カンマ確認:</strong> 既存の最新データの } の後に <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">,</code>（カンマ）があることを必ず確認</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ インデント:</strong> 2スペース統一（タブNG）・生成されたJSONをそのまま貼り付け</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ 括弧確認:</strong> 貼り付け後、{ } の開閉が正しいか目視確認</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ プレビュー:</strong> GitHubエディタ上部の「Preview」タブでシンタックスエラーを確認</li>
                         <li style="margin-bottom: 5px;">編集後、ページ下部の「Commit changes」ボタンをクリックすると本番反映されます（1-2分後）</li>
-                        <li style="margin-bottom: 5px;">トップページ・standard-predictions・archive各ページに自動反映されます</li>
                     </ul>
                 </div>
             </div>
@@ -829,18 +831,42 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 }
             };
 
-            // 整形して表示
+            // 整形して表示（カンマ付きバージョン）
             const jsonString = JSON.stringify(archiveJSON, null, 2);
-            const output = `// ${year}年${parseInt(month)}月分のarchiveResults.jsonに追加してください
-// 以下を "2025" > "${month}" の中に追加：
 
-${jsonString}
+            // カンマ付きバージョン（既存データの後に追加する場合）
+            const jsonWithComma = jsonString.replace('"' + day + '":', ',"' + day + '":');
 
-// 使用方法：
-// 1. src/data/archiveResults.json を開く
-// 2. "2025" > "${month}" セクションを探す
-// 3. 上記のJSONを該当月の中に追加
-// 4. 既存のカンマ区切りに注意してください`;
+            const output = `// ========================================
+// 📋 GitHubエディタでの貼り付け手順
+// ========================================
+//
+// ✅ ステップ1: archiveResults.jsonで "2025" > "${month}" を探す
+// ✅ ステップ2: 既存の最新日付データの後ろにカンマを追加
+// ✅ ステップ3: 以下のJSONを貼り付け（カンマ含む）
+// ✅ ステップ4: インデントを確認（2スペース統一）
+//
+// ⚠️ 重要: 既存データの最後に「,」（カンマ）があることを確認！
+// ========================================
+
+${jsonWithComma}
+
+// ========================================
+// 📝 貼り付け例（"10": { の中）
+// ========================================
+//
+// "10": {
+//   "05": {              ← 既存の最新データ
+//     "venue": "大井",
+//     ...
+//   },                   ← ここにカンマがあることを確認！
+//   "${day}": {          ← 新しいデータはここに追加
+//     "venue": "${venue}",
+//     ...
+//   }
+// }
+//
+// ========================================`;
 
             document.getElementById('archiveCode').textContent = output;
         }
