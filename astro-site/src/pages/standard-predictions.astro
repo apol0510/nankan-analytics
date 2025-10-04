@@ -6,6 +6,7 @@ import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
 import { convertToYesterdayResults } from '../lib/archive-utils.js';
+import { getRaceTier, PLAN_ACCESS } from '../lib/race-config.js';
 import archiveResults from '../data/archiveResults.json';
 
 // 🛡️ 復活防止対策: processRaceDataのエラーハンドリング強化
@@ -38,11 +39,16 @@ const track = allRacesData.track; // "大井競馬"
 const [year, month, day] = raceDate.split('-');
 const formattedDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
 
-// Standard会員向け: 後半3レース（10R, 11R=メインレース, 12R）
+// Standard会員向け: 後半3レース（totalRaces別に動的取得）
 // 🛡️ 復活防止対策: sortedRacesの安全性チェック
-const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(race =>
-    race?.raceNumber === '10R' || race?.raceNumber === '11R' || race?.raceNumber === '12R'
-);
+const totalRaces = allRacesData.totalRaces || 12;
+const standardRaceNumbers = PLAN_ACCESS.standard.races(totalRaces); // [6,7,8] or [8,9,10] or [10,11,12]
+console.log('🔍 Standard会員対象レース:', { totalRaces, standardRaceNumbers });
+
+const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(race => {
+    const raceNum = parseInt(race?.raceNumber?.replace('R', ''));
+    return standardRaceNumbers.includes(raceNum);
+});
 
 // ✅ archiveResults.jsonから自動取得するyesterdayResults
 export const yesterdayResults = convertToYesterdayResults();
