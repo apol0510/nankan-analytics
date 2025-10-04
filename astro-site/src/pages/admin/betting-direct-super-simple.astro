@@ -91,8 +91,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
             <div class="action-buttons">
                 <button type="button" id="super-simple-parse-btn" class="btn-primary">📋 解析・プレビュー</button>
-                <button type="button" id="super-simple-update-json-btn" class="btn-success" style="display: none;">🚀 JSON更新実行</button>
-                <a href="/premium-predictions" id="super-simple-check-result-btn" class="btn-check" style="display: none;">👀 結果確認</a>
+                <button type="button" id="super-simple-generate-json-btn" class="btn-success" style="display: none;">🏆 allRacesPrediction.json生成</button>
             </div>
         </div>
 
@@ -101,10 +100,32 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <div id="super-simple-preview-content"></div>
         </div>
 
-        <div id="super-simple-success-section" class="success-section" style="display: none;">
-            <h2>✅ 更新完了</h2>
-            <p>全データが正常に更新されました！</p>
-            <p><strong>premium-predictions/</strong> で結果をご確認ください。</p>
+        <div id="super-simple-json-section" class="json-output-section" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2>🏆 生成されたJSON（視覚的ガイド付き）</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" id="copy-json-btn" class="btn-copy">📋 コピー</button>
+                    <a href="https://github.com/apol0510/nankan-analytics/edit/main/astro-site/src/data/allRacesPrediction.json"
+                       target="_blank"
+                       class="btn-github">
+                        🌐 GitHubで編集（本番反映）
+                    </a>
+                </div>
+            </div>
+
+            <!-- JSONエラー防止チェックリスト -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px;">
+                <strong style="color: #f59e0b;">💡 重要ポイント（JSONエラー防止）</strong>
+                <ul style="margin-top: 10px; padding-left: 20px; color: var(--text-color); font-size: 0.9rem;">
+                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ 全体置換:</strong> allRacesPrediction.jsonの内容を全て削除し、生成されたJSONで置き換え</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ インデント:</strong> 2スペース統一（タブNG）・生成されたJSONをそのまま貼り付け</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ 括弧確認:</strong> 貼り付け後、{ } の開閉が正しいか目視確認</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ プレビュー:</strong> GitHubエディタ上部の「Preview」タブでシンタックスエラーを確認</li>
+                    <li style="margin-bottom: 5px;">編集後、ページ下部の「Commit changes」ボタンをクリックすると本番反映されます（1-2分後）</li>
+                </ul>
+            </div>
+
+            <pre id="json-output-code" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; overflow-x: auto; max-height: 600px; color: #e2e8f0; font-size: 0.9rem; line-height: 1.6;"></pre>
         </div>
     </div>
 
@@ -185,11 +206,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 console.error('❌ パースボタンが見つかりません');
             }
 
-            // JSON更新処理
-            const updateBtn = document.getElementById('super-simple-update-json-btn');
-            if (updateBtn) {
-                updateBtn.addEventListener('click', function() {
-                    executeJsonUpdate();
+            // JSON生成処理
+            const generateBtn = document.getElementById('super-simple-generate-json-btn');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', function() {
+                    generateAndDisplayJson();
+                });
+            }
+
+            // JSONコピー処理
+            const copyBtn = document.getElementById('copy-json-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function() {
+                    copyJsonToClipboard();
                 });
             }
         });
@@ -211,16 +240,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 displaySuperSimplePreview(superSimpleParsedData);
 
                 document.getElementById('super-simple-preview-section').style.display = 'block';
-                document.getElementById('super-simple-update-json-btn').style.display = 'inline-block';
-                document.getElementById('super-simple-check-result-btn').style.display = 'inline-block';
+                document.getElementById('super-simple-generate-json-btn').style.display = 'inline-block';
             } catch (error) {
                 alert('データの解析に失敗しました: ' + error.message);
                 console.error('Super Simple Parse error:', error);
             }
         }
 
-        // JSON更新実行関数
-        function executeJsonUpdate() {
+        // JSON生成・表示関数（視覚的ガイド付き）
+        function generateAndDisplayJson() {
             if (!superSimpleParsedData) {
                 alert('先に解析を実行してください');
                 return;
@@ -232,37 +260,64 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 // allRacesPrediction.json形式に変換
                 const jsonOutput = generateAllRacesPredictionJson(superSimpleParsedData);
 
-                // ユニークなファイル名を生成（タイムスタンプ付き）
-                const now = new Date();
-                const timestamp = now.getFullYear() +
-                    String(now.getMonth() + 1).padStart(2, '0') +
-                    String(now.getDate()).padStart(2, '0') + '_' +
-                    String(now.getHours()).padStart(2, '0') +
-                    String(now.getMinutes()).padStart(2, '0') +
-                    String(now.getSeconds()).padStart(2, '0');
-                const fileName = `allRacesPrediction_${timestamp}.json`;
+                // 視覚的ガイド付きJSON生成
+                const raceDate = jsonOutput.raceDate || '未設定';
+                const track = jsonOutput.track || '未設定';
+                const totalRaces = jsonOutput.totalRaces || 0;
 
-                // JSONファイルとしてダウンロード
-                const blob = new Blob([JSON.stringify(jsonOutput, null, 2)], {
-                    type: 'application/json'
-                });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = fileName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
+                const guidedOutput = `// ========================================
+// 📋 GitHubエディタでの貼り付け手順
+// ========================================
+//
+// ✅ ステップ1: 下の「🌐 GitHubで編集（本番反映）」ボタンをクリック
+// ✅ ステップ2: allRacesPrediction.jsonの内容を全て選択（Ctrl+A / Cmd+A）
+// ✅ ステップ3: 削除してから、以下のJSONを貼り付け
+// ✅ ステップ4: 「Preview」タブでシンタックスエラー確認
+// ✅ ステップ5: 「Commit changes」で本番反映（1-2分後）
+//
+// 📊 予想データ情報:
+//    日付: ${raceDate}
+//    競馬場: ${track}
+//    レース数: ${totalRaces}R
+//
+// ⚠️ 重要: 全体を置き換えてください（追加ではなく置換）
+// ========================================
 
-                console.log('✅ JSON生成・ダウンロード完了:', fileName);
-                document.getElementById('super-simple-success-section').style.display = 'block';
-                document.getElementById('super-simple-check-result-btn').style.display = 'inline-block';
+${JSON.stringify(jsonOutput, null, 2)}
 
-                alert(`✅ ${fileName}の生成・ダウンロードが完了しました！\n\nファイルをdata/フォルダに配置してデプロイしてください。`);
+// ========================================
+// ✅ 確認事項
+// ========================================
+//
+// 1. ファイル全体が正しいJSON形式か確認
+// 2. raceDate, track, totalRacesが正しいか確認
+// 3. 全レースのデータが含まれているか確認（${totalRaces}レース分）
+// 4. GitHubの「Preview」タブで構文エラーがないか確認
+//
+// ========================================`;
+
+                // 表示
+                document.getElementById('json-output-code').textContent = guidedOutput;
+                document.getElementById('super-simple-json-section').style.display = 'block';
+
+                console.log('✅ JSON生成・表示完了');
             } catch (error) {
                 console.error('❌ JSON生成エラー:', error);
                 alert('JSON生成に失敗しました: ' + error.message);
+            }
+        }
+
+        // JSONコピー関数
+        async function copyJsonToClipboard() {
+            const code = document.getElementById('json-output-code').textContent;
+            if (code) {
+                try {
+                    await navigator.clipboard.writeText(code);
+                    alert('✅ JSONをクリップボードにコピーしました！\n\nGitHubエディタで allRacesPrediction.json を開いて貼り付けてください。');
+                } catch (err) {
+                    console.error('コピーに失敗しました:', err);
+                    alert('コピーに失敗しました。手動でコピーしてください。');
+                }
             }
         }
 
@@ -1220,6 +1275,45 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
         .btn-check:hover {
             transform: translateY(-2px);
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-github {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-github:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .json-output-section {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
         }
 
         .preview-section, .success-section {
