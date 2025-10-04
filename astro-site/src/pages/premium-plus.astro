@@ -8,17 +8,18 @@ export const prerender = true;
 // 例: upsell-20251002.png, upsell-20251003.png
 // 自動的に最新5枚が表示される（デプロイ不要）
 
-// 過去30日分の日付を生成（最新から古い順）
+// 過去30日分の日付を生成（昨日から古い順）
+// レース結果は前日分が最新のため、昨日（i=1）から開始
 const today = new Date();
 const datesToTry = [];
-for (let i = 0; i < 30; i++) {
+for (let i = 1; i <= 30; i++) {
   const date = new Date(today);
   date.setDate(today.getDate() - i);
   const dateStr = date.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD形式
   datesToTry.push(dateStr);
 }
 
-// 最新5枚の日付（実際には画像が存在するかどうかは表示時に判定）
+// 最新5枚の日付（昨日から5日分）
 const recentDates = datesToTry.slice(0, 5);
 const timestamp = Date.now();
 const recentImages = recentDates.map(dateStr => ({
