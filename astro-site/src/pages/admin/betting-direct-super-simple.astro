@@ -114,15 +114,29 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             </div>
 
             <!-- JSONエラー防止チェックリスト -->
-            <div style="margin-bottom: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px;">
-                <strong style="color: #f59e0b;">💡 重要ポイント（JSONエラー防止）</strong>
-                <ul style="margin-top: 10px; padding-left: 20px; color: var(--text-color); font-size: 0.9rem;">
-                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ 全体置換:</strong> allRacesPrediction.jsonの内容を全て削除し、生成されたJSONで置き換え</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ インデント:</strong> 2スペース統一（タブNG）・生成されたJSONをそのまま貼り付け</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ 括弧確認:</strong> 貼り付け後、{ } の開閉が正しいか目視確認</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #f59e0b;">✅ プレビュー:</strong> GitHubエディタ上部の「Preview」タブでシンタックスエラーを確認</li>
-                    <li style="margin-bottom: 5px;">編集後、ページ下部の「Commit changes」ボタンをクリックすると本番反映されます（1-2分後）</li>
-                </ul>
+            <div style="margin-bottom: 20px; padding: 20px; background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 12px;">
+                <h3 style="color: #ef4444; margin: 0 0 15px 0; font-size: 1.2rem;">🚨 構文エラー完全防止ガイド（必読）</h3>
+
+                <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong style="color: #fbbf24; font-size: 1.1rem;">📋 GitHubエディタでの正しい手順（5ステップ）</strong>
+                    <ol style="margin: 10px 0 0 0; padding-left: 20px; color: #e2e8f0; line-height: 2;">
+                        <li><strong style="color: #10b981;">ステップ1:</strong> 下の「📋 コピー」ボタンでJSONをコピー</li>
+                        <li><strong style="color: #10b981;">ステップ2:</strong> 「🌐 GitHubで編集」ボタンをクリック</li>
+                        <li><strong style="color: #10b981;">ステップ3:</strong> <span style="background: rgba(239, 68, 68, 0.3); padding: 2px 8px; border-radius: 4px;">Ctrl+A（Mac: Cmd+A）で全選択 → Delete</span></li>
+                        <li><strong style="color: #10b981;">ステップ4:</strong> <span style="background: rgba(239, 68, 68, 0.3); padding: 2px 8px; border-radius: 4px;">Ctrl+V（Mac: Cmd+V）でコピーしたJSONを貼り付け</span></li>
+                        <li><strong style="color: #10b981;">ステップ5:</strong> 「Preview」タブでエラーチェック → 「Commit changes」</li>
+                    </ol>
+                </div>
+
+                <div style="background: rgba(239, 68, 68, 0.2); padding: 12px; border-radius: 8px; border-left: 4px solid #ef4444;">
+                    <strong style="color: #ef4444;">⚠️ 絶対にやってはいけないこと:</strong>
+                    <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #fca5a5; line-height: 1.8;">
+                        <li>❌ 手動でカンマや括弧を追加・修正</li>
+                        <li>❌ 一部だけコピー&貼り付け（必ず全体置換）</li>
+                        <li>❌ コメント行（//で始まる）を貼り付け</li>
+                        <li>❌ タブキーでインデント（2スペース自動）</li>
+                    </ul>
+                </div>
             </div>
 
             <pre id="json-output-code" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; overflow-x: auto; max-height: 600px; color: #e2e8f0; font-size: 0.9rem; line-height: 1.6;"></pre>
@@ -260,41 +274,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 // allRacesPrediction.json形式に変換
                 const jsonOutput = generateAllRacesPredictionJson(superSimpleParsedData);
 
-                // 視覚的ガイド付きJSON生成
+                // 純粋なJSONのみ生成（コメント不可のため）
                 const raceDate = jsonOutput.raceDate || '未設定';
                 const track = jsonOutput.track || '未設定';
                 const totalRaces = jsonOutput.totalRaces || 0;
 
-                const guidedOutput = `// ========================================
-// 📋 GitHubエディタでの貼り付け手順
-// ========================================
-//
-// ✅ ステップ1: 下の「🌐 GitHubで編集（本番反映）」ボタンをクリック
-// ✅ ステップ2: allRacesPrediction.jsonの内容を全て選択（Ctrl+A / Cmd+A）
-// ✅ ステップ3: 削除してから、以下のJSONを貼り付け
-// ✅ ステップ4: 「Preview」タブでシンタックスエラー確認
-// ✅ ステップ5: 「Commit changes」で本番反映（1-2分後）
-//
-// 📊 予想データ情報:
-//    日付: ${raceDate}
-//    競馬場: ${track}
-//    レース数: ${totalRaces}R
-//
-// ⚠️ 重要: 全体を置き換えてください（追加ではなく置換）
-// ========================================
-
-${JSON.stringify(jsonOutput, null, 2)}
-
-// ========================================
-// ✅ 確認事項
-// ========================================
-//
-// 1. ファイル全体が正しいJSON形式か確認
-// 2. raceDate, track, totalRacesが正しいか確認
-// 3. 全レースのデータが含まれているか確認（${totalRaces}レース分）
-// 4. GitHubの「Preview」タブで構文エラーがないか確認
-//
-// ========================================`;
+                // JSONのみ（コメントなし）
+                const guidedOutput = JSON.stringify(jsonOutput, null, 2);
 
                 // 表示
                 document.getElementById('json-output-code').textContent = guidedOutput;
