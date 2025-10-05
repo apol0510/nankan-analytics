@@ -308,9 +308,9 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                             <span class="confidence-score">信頼度 {Math.floor(parseFloat(enhancedRaceInfo?.confidence || '0'))}%</span>
                         </div>
                         <div class="prediction-summary">
-                            船橋競馬 11R AI予想完了！
+                            {preview.summary}
                             <br><br>
-                            本命アランバローズ・対抗ナンセイホワイト 信頼度89% | 🎯 少点数的中型モデル・⚖️ バランス型モデル・🚀 高配当追求型モデルで的中と配当のバランスを最適化。
+                            {preview.features}
                             <br><br>
                             リスク分析: 分析中
                         </div>
