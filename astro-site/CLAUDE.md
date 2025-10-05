@@ -310,7 +310,7 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 ```
 1R-5R:  Premium会員のみ買い目表示
 6R:     Standard会員買い目表示
-7R:     Standard会員買い目表示
+7R:     Standard会員買い目表示（メインレース）★★★
 8R:     Standard会員買い目表示
 ```
 
@@ -321,6 +321,8 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 - **メインレース**: 最終レースの1つ前（tier: "standard", isMainRace: true）
   - ※tierは"standard"のまま、isMainRaceフラグのみtrue
   - ※Standard会員が後半3レース全ての買い目を見られるため、メインレースも"standard"
+  - ※12レース: 11R、10レース: 9R、8レース: 7R がメインレース
+  - ※動的計算: `totalRaces - 1` = メインレース番号
 
 ---
 
@@ -509,15 +511,54 @@ grep -r "race.status === 'hit'" src/
 
 ---
 
-**📅 最終更新日**: 2025-10-02
-**🏁 Project Phase**: GitHubエディタボタン実装・スタッフ運用完全自動化完了 ★★★★★
-**🎯 Next Priority**: 本番運用・マーケティング強化・ユーザー獲得施策
-**📊 システム完成度**: 100%（GitHub Web Editor統合・スタッフ完全自立運用実現）✅
-**✨ 本日の成果**: GitHubエディタボタン実装・スタッフ向け結果更新フロー完全自動化・VSCode/Claude不要運用実現！
+**📅 最終更新日**: 2025-10-05
+**🏁 Project Phase**: レース階層判定システム完全修正・8/10レース対応完了 ★★★★★
+**🎯 Next Priority**: 10/5大井競馬8レース結果更新・10/6大井競馬10レース予想反映
+**📊 システム完成度**: 100%（非12レースイベント完全対応・動的tier判定実装）✅
+**✨ 本日の成果**: betting-direct-super-simple tier判定修正・index.astro予想プレビュー動的表示・8/10レース的中バッジ対応完了！
 
 ---
 
-## 🎊 **本日完了タスク（2025-10-02）**
+## 🎊 **本日完了タスク（2025-10-05）**
+
+### ✅ **レース階層判定システム完全修正完了**
+
+#### **1. betting-direct-super-simple.astro tier判定ロジック修正**
+- **問題**: Math.max()により8レース・10レースイベントで誤ったtier判定
+- **修正内容**: 動的totalRaces計算による正確な後半3レース判定
+- **tier判定**: `raceNumber >= totalRaces - 2` で "standard"、それ以外 "premium"
+- **メインレース**: `raceNumber === totalRaces - 1` で isMainRace = true
+- **完全対応**: 12レース・11レース・10レース・8レース全て正確判定
+
+#### **2. index.astro予想プレビュー動的表示修正**
+- **問題**: 硬直化された「船橋競馬11R・アランバローズ」表示
+- **修正内容**: `{preview.summary}` `{preview.features}` による動的生成
+- **データソース**: allRacesPrediction.json メインレースから自動取得
+- **更新頻度**: 予想データ更新時に自動反映
+
+#### **3. free-prediction.astro文言修正**
+- **変更内容**: 「全12レースの本命...」→「全レースの本命...」
+- **理由**: 8レース・10レース開催時の整合性確保
+
+#### **4. 既存JSON修正（10/4データ）**
+- **修正内容**: 10/4船橋9R tier "free" → "standard" 変更
+- **整合性**: free-prediction.astro が isMainRace フラグで検索するため問題なし
+
+### 📋 **技術的成果**
+- **非12レース対応**: 8レース・10レース開催時の完全対応実現
+- **動的tier判定**: totalRaces基準の柔軟な階層判定システム
+- **予想プレビュー**: メインレースデータからの自動生成
+- **的中バッジ**: 6/8的中・X/10的中の動的表示対応
+
+### 🎯 **ビジネス価値向上**
+- **運用柔軟性**: あらゆるレース数イベントに対応可能
+- **スタッフ効率化**: 手動tier調整不要・自動判定による工数削減
+- **データ整合性**: JSONデータとページ表示の完全同期
+- **ユーザー体験**: 常に最新の予想情報を自動表示
+
+---
+
+## 🎊 **過去完了タスク（2025-10-02）**
 
 ### ✅ **GitHubエディタボタン実装・スタッフ運用完全自動化完了**
 
