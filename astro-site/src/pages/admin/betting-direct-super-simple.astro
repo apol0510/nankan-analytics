@@ -391,15 +391,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 if (!raceInfo || !raceInfo.horses.length) continue;
 
                 const raceNumber = parseInt(raceNum);
+                const totalRaces = Object.keys(raceData).length;
 
-                // レース階層の判定
+                // 🎯 レース階層の判定（CLAUDE.md完全準拠）
+                // メインレース = 最終レースの1つ前（最終-1）
+                // Standard = 後半3レース（メインレース除く）
                 let tier = "premium";
-                if (raceNumber >= Math.max(Object.keys(raceData).length - 2, 10)) {
-                    if (raceNumber === Math.max(Object.keys(raceData).length - 1, 11)) {
-                        tier = "free"; // メインレース
-                    } else {
-                        tier = "standard";
-                    }
+                let isMainRace = false;
+
+                // メインレース判定（最終レースの1つ前）
+                const mainRaceNumber = totalRaces - 1;
+                if (raceNumber === mainRaceNumber) {
+                    tier = "free";
+                    isMainRace = true;
+                }
+                // Standard判定（後半3レース、ただしメインレース除く）
+                else if (raceNumber === totalRaces || raceNumber === totalRaces - 2) {
+                    tier = "standard";
                 }
 
                 // 解析されたレース情報を使用
