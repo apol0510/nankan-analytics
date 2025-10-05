@@ -286,7 +286,7 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 ```
 1R-9R:  Premium会員のみ買い目表示
 10R:    Standard会員買い目表示
-11R:    Standard会員買い目表示（メインレース）★★★
+11R:    Standard会員買い目表示
 12R:    Standard会員買い目表示
 ```
 
@@ -294,7 +294,7 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 ```
 1R-8R:  Premium会員のみ買い目表示
 9R:     Standard会員買い目表示
-10R:    Standard会員買い目表示（メインレース）★★★
+10R:    Standard会員買い目表示
 11R:    Standard会員買い目表示
 ```
 
@@ -302,7 +302,7 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 ```
 1R-7R:  Premium会員のみ買い目表示
 8R:     Standard会員買い目表示
-9R:     Standard会員買い目表示（メインレース）★★★
+9R:     Standard会員買い目表示
 10R:    Standard会員買い目表示
 ```
 
@@ -310,7 +310,7 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 ```
 1R-5R:  Premium会員のみ買い目表示
 6R:     Standard会員買い目表示
-7R:     Standard会員買い目表示（メインレース）★★★
+7R:     Standard会員買い目表示
 8R:     Standard会員買い目表示
 ```
 
@@ -318,7 +318,6 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 - **無料会員**: 全レース予想・分析閲覧可能、**買い目は全レース非表示**
 - **Standard会員**: 後半3レース（10R, 11R, 12R等）の買い目表示
 - **Premium会員**: 全レースの買い目表示
-- **メインレース**: 最終レースの1つ前（Standard会員以上で買い目表示）
 
 ---
 
