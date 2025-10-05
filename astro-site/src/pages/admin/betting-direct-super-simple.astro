@@ -395,6 +395,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
                 // 🎯 レース階層の判定（CLAUDE.md完全準拠）
                 // 後半3レース = Standard（最終、最終-1、最終-2）
+                // メインレース = 最終レースの1つ前（tier: "free"）
                 // 無料会員: 全レース予想・分析閲覧可能、買い目は全レース非表示
                 let tier = "premium";
                 let isMainRace = false;
@@ -402,6 +403,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 // 後半3レース判定（最終、最終-1、最終-2）
                 if (raceNumber >= totalRaces - 2) {
                     tier = "standard";
+
+                    // メインレース判定（最終レースの1つ前）
+                    const mainRaceNumber = totalRaces - 1;
+                    if (raceNumber === mainRaceNumber) {
+                        tier = "free";
+                        isMainRace = true;
+                    }
                 }
 
                 // 解析されたレース情報を使用

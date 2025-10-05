@@ -318,6 +318,8 @@ if (raceData.strategies && raceData.strategies.safe && raceData.strategies.balan
 - **無料会員**: 全レース予想・分析閲覧可能、**買い目は全レース非表示**
 - **Standard会員**: 後半3レース（10R, 11R, 12R等）の買い目表示
 - **Premium会員**: 全レースの買い目表示
+- **メインレース**: 最終レースの1つ前（tier: "free", isMainRace: true）
+  - ※無料会員は全レース閲覧可能なため、メインレースという区分は買い目表示とは無関係
 
 ---
 
