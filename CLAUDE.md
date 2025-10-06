@@ -1136,9 +1136,9 @@ git push
 ---
 
 **📅 最終更新日**: 2025-10-07
-**🏁 Project Phase**: 画像表示システム真の根本解決・クライアントサイドJS完全実装完了 ★★★★★
+**🏁 Project Phase**: premium-plus画像システム完全修正・publicフォルダ日付ベース運用確立 ★★★★★
 **🎯 Next Priority**: 本番運用・マーケティング強化・高額プラン販売促進
-**✨ 本日の成果**: タイムゾーン問題完全解決・画像追加のみで即座表示・デプロイ不要システム確立！
+**✨ 本日の成果**: premium-plus画像システムpublicフォルダ移行・日付ベース自動表示・CLAUDE.md最新化完了！
 
 ---
 
@@ -1328,26 +1328,58 @@ AI予測43%
 
 ---
 
-## 🎊 **本日完了タスク（2025-10-04）**
+## 🎊 **本日完了タスク（2025-10-07）**
 
-### ✅ **premium-plus画像システム最終確定（publicフォルダ方式）**
+### ✅ **premium-plus画像システム最終確定（publicフォルダ方式・完全修正）**
 
-#### **1. 画像配置方法**
+#### **1. 問題の特定**
+- **7日間の問題**: クライアントサイドJSで画像が動的生成されるとレイアウトが崩れる問題が継続
+- **根本原因**: DOM動的生成とCSS gridレイアウトの競合・Astro SSRとの非互換性
+- **ユーザー報告**: 「premium-plus/画像表示が崩れる現象が復活しています」
+
+#### **2. 最終解決策（publicフォルダ直接参照）**
+- **方式**: HTML静的記述・JavaScriptなし・シンプルなimg要素のみ
 - **配置場所**: `public/upsell-images/`
-- **命名規則**: `upsell-YYYYMMDD.png`（例: upsell-20251005.png）
+- **命名規則**: `upsell-YYYYMMDD.png`（例: upsell-20251006.png）
 - **URL形式**: `/upsell-images/upsell-YYYYMMDD.png`
 
-#### **2. 表示ロジック**
-- **生成日数**: 過去10日分の候補を生成
-- **自動スキップ**: `onerror="this.parentElement.style.display='none'"` で存在しない画像の親要素を非表示
-- **表示結果**: 実際に存在する画像のみ表示（レースなし日は自動スキップ）
+#### **3. 実装方法**
+```html
+<div class="results-grid">
+  <div class="result-image-card">
+    <img src="/upsell-images/upsell-20251006.png" alt="..."
+         onerror="this.parentElement.style.display='none'" />
+  </div>
+  <!-- 5枚まで -->
+</div>
+```
 
-#### **3. 運用方法**
-- **画像追加**: public/upsell-images/ に新しい画像を配置
-- **デプロイ**: git add, commit, push で本番反映
-- **自動表示**: 最新から順に存在する画像を表示
+#### **4. 運用方法**
+- **画像更新**: public/upsell-images/ に日付ベースで配置
+- **日付変更時**: premium-plus.astro内のHTMLコードの日付を手動更新
+- **自動非表示**: onerrorで存在しない画像の親要素を非表示
+- **デプロイ必須**: 画像追加 + HTMLコード更新後、git add, commit, push
 
-#### **4. withdrawal-upsell.astro**
-- **日付計算**: `today.setDate(today.getDate() - 1)` で昨日取得
-- **表示画像**: 昨日の画像を表示
-- **同じ命名規則**: upsell-YYYYMMDD.png
+#### **5. withdrawal-upsell.astro**
+- **日付計算**: クライアントサイドJSで昨日の日付計算
+- **フォールバック**: 10日前まで遡って画像探索
+- **安定性**: withdrawal-upsellは単一画像なのでJS方式でも問題なし
+
+### 📋 **技術的成果**
+- **レイアウト修正**: 7日間の画像表示問題を完全解決
+- **シンプル設計**: 複雑なJS不要・HTML直接記述で確実な表示
+- **保守性向上**: 日付ベースファイル命名で管理容易
+- **復活防止**: クライアントサイドDOM生成の完全排除
+
+### 🎯 **運用フロー確立**
+1. **新しい画像作成**: `upsell-20251007.png` 等のファイル作成
+2. **publicフォルダ配置**: `/public/upsell-images/` に配置
+3. **HTMLコード更新**: premium-plus.astro内の5つのimg要素の日付を更新
+4. **コミット・プッシュ**: git add, commit, push で本番反映
+5. **自動表示**: 存在する画像のみ表示・存在しない画像は自動非表示
+
+### 🛡️ **復活防止対策**
+- ❌ **クライアントサイドDOM生成**: 禁止（レイアウト崩れの原因）
+- ❌ **動的createElement/appendChild**: 禁止（CSS grid競合）
+- ✅ **HTML静的記述**: 推奨（確実な表示保証）
+- ✅ **onerror自動非表示**: 許可（存在チェック用）
