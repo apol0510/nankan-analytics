@@ -675,18 +675,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             <span>${raceNum}R</span>
                             ${isHit ? `<span style="color: #10b981;">的中 ¥${r.payout.toLocaleString()}</span>` : '<span style="color: #64748b;">不的中</span>'}
                         </div>
-                        ${isHit ? `
-                            <div class="race-detail-inputs">
+                        <div class="race-detail-inputs">
+                            ${isHit ? `
                                 <div class="input-field">
                                     <label>レース名 *</label>
                                     <input type="text" id="raceName_${raceNum}" placeholder="例：2歳新馬" style="width: 100%;" />
                                 </div>
-                                <div class="input-field">
-                                    <label>買い目点数 *</label>
-                                    <input type="number" id="betPoints_${raceNum}" placeholder="例：3, 11, 17" min="1" />
-                                </div>
+                            ` : ''}
+                            <div class="input-field">
+                                <label>買い目点数 *</label>
+                                <input type="number" id="betPoints_${raceNum}" placeholder="例：3, 11, 17" min="1" />
                             </div>
-                        ` : '<p style="color: #64748b; text-align: center; padding: 10px;">不的中のため詳細入力不要</p>'}
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -782,13 +782,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 const raceNum = i + 1;
                 const result = dailyData.results[i];
 
-                if (result.result === 'win') {
-                    // 的中レースは詳細情報必須
-                    const raceName = document.getElementById(`raceName_${raceNum}`)?.value;
-                    const betPoints = document.getElementById(`betPoints_${raceNum}`)?.value;
+                const betPoints = document.getElementById(`betPoints_${raceNum}`)?.value;
 
-                    if (!raceName || !betPoints) {
-                        alert(`${raceNum}Rの詳細情報を入力してください（レース名・点数）`);
+                if (!betPoints) {
+                    alert(`${raceNum}Rの買い目点数を入力してください`);
+                    hasError = true;
+                    break;
+                }
+
+                if (result.result === 'win') {
+                    // 的中レースはレース名も必須
+                    const raceName = document.getElementById(`raceName_${raceNum}`)?.value;
+
+                    if (!raceName) {
+                        alert(`${raceNum}Rのレース名を入力してください`);
                         hasError = true;
                         break;
                     }
@@ -802,12 +809,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         payout: result.payout
                     });
                 } else {
-                    // 不的中レースはシンプルに
+                    // 不的中レースも点数を保存
                     races.push({
                         raceNumber: `${raceNum}R`,
                         raceName: "-",
                         betType: "馬単",
-                        betPoints: 0,
+                        betPoints: parseInt(betPoints),
                         hit: false,
                         payout: 0
                     });
