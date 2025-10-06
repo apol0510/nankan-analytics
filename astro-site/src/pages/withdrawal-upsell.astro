@@ -1,14 +1,17 @@
 ---
 // 退会前アップセル専用ページ
-// Cloudinary固定URL方式: デプロイ完全不要
+// 日付ベース画像システム（最新画像を自動取得）
 
-// 6枚ローテーションシステム: upsell-1.png（最新）を表示
-// premium-plusと統一管理（upsell-1〜6のローテーション）
-// 毎日の運用: Cloudinaryで最も古い画像をReplaceするだけ
-// デプロイ完全不要・両ページ統一システム
+// 昨日の日付を取得（レース結果は前日分が最新）
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+const year = yesterday.getFullYear();
+const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+const day = String(yesterday.getDate()).padStart(2, '0');
+const dateStr = `${year}${month}${day}`; // YYYYMMDD形式
 
 const timestamp = Date.now();
-const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.png?v=${timestamp}`;
+const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}.png?v=${timestamp}`;
 ---
 
 <!DOCTYPE html>
