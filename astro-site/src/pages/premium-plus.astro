@@ -27,7 +27,8 @@ for (let i = 1; i <= 10; i++) {
   datesToTry.push(dateStr);
 }
 
-const recentImages = datesToTry.map(dateStr => ({
+// 最大5枚のみ表示（10日分生成して最初の5つに制限）
+const recentImages = datesToTry.slice(0, 5).map(dateStr => ({
   id: dateStr,
   alt: `プレミアムプラス的中実績 ${dateStr}`,
   url: `/upsell-images/upsell-${dateStr}.png`
