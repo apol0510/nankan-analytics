@@ -6,9 +6,10 @@
 
 ## 🎯 **システム概要**
 
-### **固定番号ローテーションシステム**
-- **画像番号**: `upsell-1.png` 〜 `upsell-5.png`（5枚固定）
-- **運用方法**: Cloudinaryで毎日1枚ずつReplaceするだけ
+### **日付ベースシステム**
+- **Public ID形式**: `upsell-YYYYMMDD`（拡張子なし）
+- **例**: `upsell-20251005`, `upsell-20251003`
+- **運用方法**: Cloudinaryに日付ベースでアップロード
 - **デプロイ**: 完全不要（画像更新のみで即座反映）
 
 ---
@@ -17,13 +18,26 @@
 
 ### **premium-plus.astro（5枚表示）**
 ```javascript
-// 固定番号システム（upsell-1〜5）
-// OpaqueResponseBlocking対策: crossorigin属性追加
+// 日付ベース画像システム（レースなし日を自動スキップ）
+// Public ID: upsell-YYYYMMDD（拡張子なし）
+const today = new Date();
+const datesToTry = [];
+
+for (let i = 1; i <= 60; i++) {
+  const date = new Date(today);
+  date.setDate(today.getDate() - i);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const dateStr = `${year}${month}${day}`;
+  datesToTry.push(dateStr);
+}
+
 const timestamp = Date.now();
-const recentImages = [1, 2, 3, 4, 5].map(num => ({
-  id: `upsell-${num}`,
-  alt: `プレミアムプラス的中実績 ${num}`,
-  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${num}.png?v=${timestamp}`
+const recentImages = datesToTry.slice(0, 5).map(dateStr => ({
+  id: dateStr,
+  alt: `プレミアムプラス的中実績 ${dateStr}`,
+  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}?v=${timestamp}`
 }));
 
 // HTML
@@ -38,9 +52,17 @@ const recentImages = [1, 2, 3, 4, 5].map(num => ({
 
 ### **withdrawal-upsell.astro（1枚表示）**
 ```javascript
-// 固定番号システム: 最新1枚（upsell-1.png）を表示
+// 昨日の日付を取得（レース結果は前日分が最新）
+// Public ID: upsell-YYYYMMDD（拡張子なし）
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+const year = yesterday.getFullYear();
+const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+const day = String(yesterday.getDate()).padStart(2, '0');
+const dateStr = `${year}${month}${day}`;
+
 const timestamp = Date.now();
-const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.png?v=${timestamp}`;
+const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}?v=${timestamp}`;
 
 // HTML
 <img
@@ -81,13 +103,14 @@ const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.pn
 1. https://cloudinary.com/users/login
 2. NANKANアナリティクスアカウントでログイン
 
-### **ステップ2: 画像をReplace**
+### **ステップ2: 画像をアップロード**
 1. **Media Library** を開く
-2. **upsell-1.png** を探す（最も新しい画像）
-3. **Replace** ボタンをクリック
-4. 本日の的中実績画像をアップロード
-5. **Public ID**: `upsell-1`（変更しない）
-6. **保存**
+2. **Upload** ボタンをクリック
+3. 本日の的中実績画像を選択
+4. **Public ID**: `upsell-YYYYMMDD` 形式で入力
+   - 例: 10/5のレース → `upsell-20251005`
+   - ⚠️ 拡張子は不要（`.png`を付けない）
+5. **保存**
 
 ### **ステップ3: 確認（1-2分後）**
 - premium-plus: https://nankan-analytics.keiba.link/premium-plus
@@ -98,10 +121,10 @@ const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.pn
 ## 🛡️ **復活防止対策**
 
 ### **絶対に変更してはいけない要素**
-1. ❌ 固定番号システム（upsell-1〜5）を日付ベースに戻す
+1. ❌ Public ID形式を変更（`upsell-YYYYMMDD` 固定）
 2. ❌ `crossorigin="anonymous"` 属性を削除
 3. ❌ `?v=${timestamp}` キャッシュバスターを削除
-4. ❌ Cloudinary Public IDを変更（`upsell-1`固定）
+4. ❌ 拡張子（`.png`）をPublic IDに含める
 
 ### **安全な変更**
 1. ✅ 画像をReplaceする（Cloudinary管理画面）
@@ -134,13 +157,15 @@ const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.pn
 
 ### **画像が表示されない場合**
 1. **Cloudinaryで画像存在確認**
-   - Media Library で `upsell-1` 〜 `upsell-5` が存在するか確認
+   - Media Library で `upsell-20251005` 等が存在するか確認
+   - ⚠️ Public IDに `.png` が含まれていないか確認
 
 2. **ブラウザキャッシュクリア**
    - Cmd+Shift+R（Mac）/ Ctrl+F5（Windows）で強制リロード
 
-3. **Public ID確認**
-   - Cloudinary画像のPublic IDが `upsell-1`（拡張子なし）であること確認
+3. **Public ID形式確認**
+   - ✅ 正しい: `upsell-20251005`（拡張子なし）
+   - ❌ 間違い: `upsell-20251005.png`（拡張子あり）
 
 4. **CORS設定確認**
    - `crossorigin="anonymous"` が img タグに追加されているか確認
@@ -155,9 +180,15 @@ const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.pn
 ## 📝 **まとめ**
 
 ### **完璧なシステム実現**
-✅ 日付ベース複雑システム → 固定番号シンプルシステム
-✅ OpaqueResponseBlocking → crossorigin属性で完全解決
-✅ 画像更新デプロイ必要 → Cloudinary Replaceのみで完結
-✅ 複雑な運用 → 毎日1回Replaceするだけの超シンプル運用
+✅ **Public ID正確指定**: `upsell-YYYYMMDD`（拡張子なし）
+✅ **OpaqueResponseBlocking解決**: crossorigin属性で完全対策
+✅ **デプロイ不要**: Cloudinaryアップロードのみで即座反映
+✅ **レースなし日対応**: 自動スキップで空白表示なし
+✅ **キャッシュバスター**: `?v=${timestamp}` で即座更新
+
+### **重要ポイント**
+⚠️ **Public IDには拡張子を含めない**
+- ✅ 正: `upsell-20251005`
+- ❌ 誤: `upsell-20251005.png`
 
 **マコ&クロの最強コンビで、ストレスフリーな画像システムを完成！** 🌟✨🚀
