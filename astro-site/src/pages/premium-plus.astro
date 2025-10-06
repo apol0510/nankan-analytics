@@ -12,8 +12,8 @@ export const prerender = true;
 // public/upsell-images/YYYYMMDD.png 形式で配置
 // デプロイ時に自動反映・CORS問題完全解消
 
-// 過去10日分を生成（レースなし日考慮で多めに）
-// onerrorで存在しない画像は自動非表示
+// 過去10日分を生成（レースなし日も含めて候補を多めに生成）
+// 親要素ごと非表示にすることで、存在する画像のみ表示
 const today = new Date();
 const datesToTry = [];
 
@@ -27,8 +27,8 @@ for (let i = 1; i <= 10; i++) {
   datesToTry.push(dateStr);
 }
 
-// 最大5枚のみ表示（10日分生成して最初の5つに制限）
-const recentImages = datesToTry.slice(0, 5).map(dateStr => ({
+// 全10日分を表示候補とし、onerrorで存在しない画像の親要素を非表示
+const recentImages = datesToTry.map(dateStr => ({
   id: dateStr,
   alt: `プレミアムプラス的中実績 ${dateStr}`,
   url: `/upsell-images/upsell-${dateStr}.png`
@@ -506,7 +506,7 @@ const recentImages = datesToTry.slice(0, 5).map(dateStr => ({
               alt={image.alt}
               crossorigin="anonymous"
               loading="lazy"
-              onerror="this.style.display='none'"
+              onerror="this.parentElement.style.display='none'"
             />
           </div>
         ))}
