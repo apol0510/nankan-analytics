@@ -237,7 +237,14 @@ const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-1.pn
     <h1 class="title">ちょっと待ってください！<br>退会される前に…</h1>
     <p class="subtitle">この的中実績をご覧ください</p>
 
-    <img src={imagePath} alt="実際の的中実績 - AI超精密買い目" class="hit-image" onerror="this.src='/premium-predictions/kaime0929.png'" />
+    <img
+      src={imagePath}
+      alt="実際の的中実績 - AI超精密買い目"
+      class="hit-image"
+      crossorigin="anonymous"
+      loading="lazy"
+      onerror="this.src='/premium-predictions/kaime0929.png'"
+    />
 
     <div class="description">
       <p>

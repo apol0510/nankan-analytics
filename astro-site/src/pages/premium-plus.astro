@@ -8,24 +8,14 @@ export const prerender = true;
 // 例: upsell-20251002.png, upsell-20251003.png
 // 自動的に最新5枚が表示される（デプロイ不要）
 
-// 過去30日分の日付を生成（昨日から古い順）
-// レース結果は前日分が最新のため、昨日（i=1）から開始
-const today = new Date();
-const datesToTry = [];
-for (let i = 1; i <= 30; i++) {
-  const date = new Date(today);
-  date.setDate(today.getDate() - i);
-  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD形式
-  datesToTry.push(dateStr);
-}
-
-// 最新5枚の日付（昨日から5日分）
-const recentDates = datesToTry.slice(0, 5);
+// 固定番号システム（upsell-1〜5）
+// 毎日Cloudinaryで画像をReplaceするだけのシンプル運用
+// OpaqueResponseBlocking対策: crossorigin属性追加
 const timestamp = Date.now();
-const recentImages = recentDates.map(dateStr => ({
-  id: dateStr,
-  alt: `プレミアムプラス的中実績 ${dateStr}`,
-  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}.png?v=${timestamp}`
+const recentImages = [1, 2, 3, 4, 5].map(num => ({
+  id: `upsell-${num}`,
+  alt: `プレミアムプラス的中実績 ${num}`,
+  url: `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${num}.png?v=${timestamp}`
 }));
 ---
 
@@ -498,6 +488,8 @@ const recentImages = recentDates.map(dateStr => ({
             <img
               src={image.url}
               alt={image.alt}
+              crossorigin="anonymous"
+              loading="lazy"
               onerror="this.style.display='none'"
             />
           </div>
