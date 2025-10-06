@@ -826,23 +826,27 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             // パーフェクト的中判定
             const perfectHit = dailyData.hitCount === dailyData.totalCount;
 
-            // JSON構造生成
-            const archiveJSON = {
-                [day]: {
-                    venue: venue,
-                    totalRaces: dailyData.totalCount,
-                    hitRaces: dailyData.hitCount,
-                    perfectHit: perfectHit,
-                    totalPayout: dailyData.totalPayout,
-                    races: races
-                }
+            // JSON構造生成（日付データのみ、余分な括弧なし）
+            const dayData = {
+                venue: venue,
+                totalRaces: dailyData.totalCount,
+                hitRaces: dailyData.hitCount,
+                perfectHit: perfectHit,
+                totalPayout: dailyData.totalPayout,
+                races: races
             };
 
-            // 整形して表示（カンマなしバージョン）
-            const jsonString = JSON.stringify(archiveJSON, null, 2);
+            // 日付データのみを整形（2スペースインデント）
+            const dayDataString = JSON.stringify(dayData, null, 2);
 
-            // カンマなし（正しいJSON構文）
-            const jsonWithoutComma = jsonString;
+            // 各行に適切なインデントを追加（archiveResults.json内での配置用）
+            const indentedLines = dayDataString.split('\n').map((line, index) => {
+                if (index === 0) return `      "${day}": ${line}`; // 最初の行: "06": {
+                if (line === '}') return '      ' + line; // 最後の行: }
+                return '      ' + line; // 他の行: 6スペース追加
+            }).join('\n');
+
+            const jsonWithoutComma = indentedLines;
 
             const output = `// ========================================
 // 📋 GitHubエディタでの貼り付け手順
