@@ -1,6 +1,6 @@
 ---
 // 退会前アップセル専用ページ
-// 日付ベース画像システム（最新画像を自動取得）
+// publicフォルダベース画像システム（確実に動作）
 
 // 昨日の日付を取得（レース結果は前日分が最新）
 const yesterday = new Date();
@@ -10,8 +10,7 @@ const month = String(yesterday.getMonth() + 1).padStart(2, '0');
 const day = String(yesterday.getDate()).padStart(2, '0');
 const dateStr = `${year}${month}${day}`; // YYYYMMDD形式
 
-const timestamp = Date.now();
-const imagePath = `https://res.cloudinary.com/da1mkphuk/image/upload/upsell-${dateStr}?v=${timestamp}`;
+const imagePath = `/upsell-images/${dateStr}.png`;
 ---
 
 <!DOCTYPE html>
