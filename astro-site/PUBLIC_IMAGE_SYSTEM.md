@@ -8,8 +8,8 @@
 
 ### **publicフォルダベース**
 - **配置場所**: `public/upsell-images/`
-- **命名規則**: `YYYYMMDD.png`（日付のみ）
-- **例**: `20251005.png`, `20251003.png`
+- **命名規則**: `upsell-YYYYMMDD.png`
+- **例**: `upsell-20251005.png`, `upsell-20251003.png`
 - **デプロイ**: git push時に自動反映
 
 ---
@@ -33,8 +33,8 @@
 
 ### **ステップ1: 画像準備**
 1. 本日のレース結果画像を準備
-2. ファイル名を日付形式に変更
-   - 例: 10/5のレース → `20251005.png`
+2. ファイル名を`upsell-YYYYMMDD.png`形式に変更
+   - 例: 10/5のレース → `upsell-20251005.png`
 
 ### **ステップ2: 画像配置**
 ```bash
@@ -42,13 +42,13 @@
 cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
 
 # 画像をpublic/upsell-images/に配置
-cp ~/Downloads/結果画像.png public/upsell-images/20251005.png
+cp ~/Downloads/結果画像.png public/upsell-images/upsell-20251005.png
 ```
 
 ### **ステップ3: デプロイ**
 ```bash
 # Git管理に追加
-git add public/upsell-images/20251005.png
+git add public/upsell-images/upsell-20251005.png
 
 # コミット
 git commit -m "📸 upsell画像追加・20251005"
@@ -85,7 +85,7 @@ for (let i = 1; i <= 60; i++) {
 const recentImages = datesToTry.slice(0, 5).map(dateStr => ({
   id: dateStr,
   alt: `プレミアムプラス的中実績 ${dateStr}`,
-  url: `/upsell-images/${dateStr}.png`
+  url: `/upsell-images/upsell-${dateStr}.png`
 }));
 ```
 
@@ -99,7 +99,7 @@ const month = String(yesterday.getMonth() + 1).padStart(2, '0');
 const day = String(yesterday.getDate()).padStart(2, '0');
 const dateStr = `${year}${month}${day}`;
 
-const imagePath = `/upsell-images/${dateStr}.png`;
+const imagePath = `/upsell-images/upsell-${dateStr}.png`;
 ```
 
 ---
@@ -110,11 +110,11 @@ const imagePath = `/upsell-images/${dateStr}.png`;
 astro-site/
 ├── public/
 │   └── upsell-images/
-│       ├── 20251005.png  ← 最新
-│       ├── 20251003.png
-│       ├── 20251002.png
-│       ├── 20251001.png
-│       └── 20250930.png
+│       ├── upsell-20251005.png  ← 最新
+│       ├── upsell-20251003.png
+│       ├── upsell-20251002.png
+│       ├── upsell-20251001.png
+│       └── upsell-20250930.png
 └── src/
     └── pages/
         ├── premium-plus.astro
@@ -126,9 +126,9 @@ astro-site/
 ## ⚠️ **注意事項**
 
 ### **画像ファイル名ルール**
-- ✅ **正しい**: `20251005.png`（YYYYMMDD形式）
-- ❌ **間違い**: `2025-10-05.png`（ハイフン入り）
-- ❌ **間違い**: `upsell-20251005.png`（プレフィックス入り）
+- ✅ **正しい**: `upsell-20251005.png`（upsell-YYYYMMDD形式）
+- ❌ **間違い**: `20251005.png`（プレフィックスなし）
+- ❌ **間違い**: `upsell-2025-10-05.png`（ハイフン入り日付）
 
 ### **レースなし日の対応**
 - 画像を配置しない → 自動的にスキップされる
@@ -146,17 +146,17 @@ astro-site/
 
 #### **1. ファイル存在確認**
 ```bash
-ls -la public/upsell-images/20251005.png
+ls -la public/upsell-images/upsell-20251005.png
 ```
 
 #### **2. ファイル名確認**
-- YYYYMMDD形式か確認
+- `upsell-YYYYMMDD.png`形式か確認
 - 拡張子は`.png`か確認
 
 #### **3. デプロイ確認**
 ```bash
 git status
-# public/upsell-images/20251005.png がコミット済みか確認
+# public/upsell-images/upsell-20251005.png がコミット済みか確認
 ```
 
 #### **4. ブラウザキャッシュクリア**
