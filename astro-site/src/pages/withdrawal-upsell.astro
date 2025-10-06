@@ -1,10 +1,6 @@
 ---
 // 退会前アップセル専用ページ
-// publicフォルダベース画像システム（確実に動作）
-
-// 🔧 直接指定方式（タイムゾーン問題回避）
-// 画像更新時にこの日付を手動更新してください
-const imagePath = `/upsell-images/upsell-20251006.png`;
+// クライアントサイドで日付計算（デプロイ不要）
 ---
 
 <!DOCTYPE html>
@@ -234,12 +230,11 @@ const imagePath = `/upsell-images/upsell-20251006.png`;
     <p class="subtitle">この的中実績をご覧ください</p>
 
     <img
-      src={imagePath}
+      id="upsell-image"
       alt="実際の的中実績 - AI超精密買い目"
       class="hit-image"
       crossorigin="anonymous"
-      loading="lazy"
-      onerror="this.src='/premium-predictions/kaime0929.png'"
+      loading="eager"
     />
 
     <div class="description">
@@ -338,6 +333,49 @@ const imagePath = `/upsell-images/upsell-20251006.png`;
           modal.style.display = 'none';
         }
       });
+    </script>
+
+    <script>
+      // クライアントサイドで昨日の日付を計算（日本時間）
+      (function() {
+        const img = document.getElementById('upsell-image');
+        if (!img) return;
+
+        // 日本時間で昨日の日付を取得
+        const now = new Date();
+        const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+        jst.setDate(jst.getDate() - 1);
+
+        const year = jst.getFullYear();
+        const month = String(jst.getMonth() + 1).padStart(2, '0');
+        const day = String(jst.getDate()).padStart(2, '0');
+        const dateStr = `${year}${month}${day}`;
+
+        img.src = `/upsell-images/upsell-${dateStr}.png`;
+
+        // エラー時のフォールバック
+        img.onerror = function() {
+          // 1日ずつ遡って画像を探す（最大10日前まで）
+          let daysBack = 2;
+          const tryOlderImage = function() {
+            if (daysBack > 10) {
+              img.src = '/premium-predictions/kaime0929.png';
+              return;
+            }
+            const oldDate = new Date(jst);
+            oldDate.setDate(oldDate.getDate() - daysBack);
+            const y = oldDate.getFullYear();
+            const m = String(oldDate.getMonth() + 1).padStart(2, '0');
+            const d = String(oldDate.getDate()).padStart(2, '0');
+            img.src = `/upsell-images/upsell-${y}${m}${d}.png`;
+            img.onerror = function() {
+              daysBack++;
+              tryOlderImage();
+            };
+          };
+          tryOlderImage();
+        };
+      })();
     </script>
   </div>
 </body>
