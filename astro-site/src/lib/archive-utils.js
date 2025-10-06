@@ -63,6 +63,7 @@ export function convertToYesterdayResults() {
         totalCount: latestData.totalRaces,
         totalPayout: latestData.totalPayout,
         recoveryRate: recoveryRate,
+        totalBetPoints: totalBetPoints,
         results: results
     };
 }
