@@ -2,15 +2,9 @@
 // 退会前アップセル専用ページ
 // publicフォルダベース画像システム（確実に動作）
 
-// 昨日の日付を取得（レース結果は前日分が最新）
-const yesterday = new Date();
-yesterday.setDate(yesterday.getDate() - 1);
-const year = yesterday.getFullYear();
-const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-const day = String(yesterday.getDate()).padStart(2, '0');
-const dateStr = `${year}${month}${day}`; // YYYYMMDD形式
-
-const imagePath = `/upsell-images/upsell-${dateStr}.png`;
+// 🔧 直接指定方式（タイムゾーン問題回避）
+// 画像更新時にこの日付を手動更新してください
+const imagePath = `/upsell-images/upsell-20251006.png`;
 ---
 
 <!DOCTYPE html>

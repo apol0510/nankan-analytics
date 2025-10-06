@@ -3,36 +3,17 @@ export const prerender = true;
 // プレミアムプラス専用ページ - 完全リニューアル版
 // 納得感・信頼性・安心感を最大化
 
-// 直近5戦の的中実績画像（日付ベース方式）
-// 毎日の運用: upsell-YYYYMMDD.png 形式で新しい画像をアップロードするだけ
-// 例: upsell-20251002.png, upsell-20251003.png
-// 自動的に最新5枚が表示される（デプロイ不要）
-
-// publicフォルダベース画像システム（確実に動作）
-// public/upsell-images/YYYYMMDD.png 形式で配置
-// デプロイ時に自動反映・CORS問題完全解消
-
-// 過去10日分を生成（レースなし日も含めて候補を多めに生成）
-// 親要素ごと非表示にすることで、存在する画像のみ表示
-const today = new Date();
-const datesToTry = [];
-
-for (let i = 1; i <= 10; i++) {
-  const date = new Date(today);
-  date.setDate(today.getDate() - i);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const dateStr = `${year}${month}${day}`; // YYYYMMDD形式
-  datesToTry.push(dateStr);
-}
-
-// 全10日分を表示候補とし、onerrorで存在しない画像の親要素を非表示
-const recentImages = datesToTry.map(dateStr => ({
-  id: dateStr,
-  alt: `プレミアムプラス的中実績 ${dateStr}`,
-  url: `/upsell-images/upsell-${dateStr}.png`
-}));
+// 🔧 直接指定方式（タイムゾーン問題回避）
+// 画像更新時にこの配列を手動更新してください
+// 最新の画像から順に並べる（新しい順）
+const recentImages = [
+  { id: '20251006', alt: 'プレミアムプラス的中実績 20251006', url: '/upsell-images/upsell-20251006.png' },
+  { id: '20251005', alt: 'プレミアムプラス的中実績 20251005', url: '/upsell-images/upsell-20251005.png' },
+  { id: '20251003', alt: 'プレミアムプラス的中実績 20251003', url: '/upsell-images/upsell-20251003.png' },
+  { id: '20251002', alt: 'プレミアムプラス的中実績 20251002', url: '/upsell-images/upsell-20251002.png' },
+  { id: '20251001', alt: 'プレミアムプラス的中実績 20251001', url: '/upsell-images/upsell-20251001.png' },
+  { id: '20250930', alt: 'プレミアムプラス的中実績 20250930', url: '/upsell-images/upsell-20250930.png' },
+];
 ---
 
 <!DOCTYPE html>
