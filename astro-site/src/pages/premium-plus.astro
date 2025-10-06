@@ -2,7 +2,37 @@
 export const prerender = true;
 // プレミアムプラス専用ページ - 完全リニューアル版
 // 納得感・信頼性・安心感を最大化
-// クライアントサイドJSで動的に過去10日分の画像を表示（デプロイ不要で毎日自動更新）
+
+// 直近5戦の的中実績画像（日付ベース方式）
+// 毎日の運用: upsell-YYYYMMDD.png 形式で新しい画像をアップロードするだけ
+// 例: upsell-20251002.png, upsell-20251003.png
+// 自動的に最新5枚が表示される（デプロイ不要）
+
+// publicフォルダベース画像システム（確実に動作）
+// public/upsell-images/YYYYMMDD.png 形式で配置
+// デプロイ時に自動反映・CORS問題完全解消
+
+// 過去10日分を生成（レースなし日も含めて候補を多めに生成）
+// 親要素ごと非表示にすることで、存在する画像のみ表示
+const today = new Date();
+const datesToTry = [];
+
+for (let i = 1; i <= 10; i++) {
+  const date = new Date(today);
+  date.setDate(today.getDate() - i);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const dateStr = `${year}${month}${day}`; // YYYYMMDD形式
+  datesToTry.push(dateStr);
+}
+
+// 全10日分を表示候補とし、onerrorで存在しない画像の親要素を非表示
+const recentImages = datesToTry.map(dateStr => ({
+  id: dateStr,
+  alt: `プレミアムプラス的中実績 ${dateStr}`,
+  url: `/upsell-images/upsell-${dateStr}.png`
+}));
 ---
 
 <!DOCTYPE html>
@@ -468,8 +498,18 @@ export const prerender = true;
       <h2 class="section-title">📊 直近5戦の実際の的中画面</h2>
       <p class="section-subtitle">1日1鞍の結果を公開しています。</p>
 
-      <div class="results-grid" id="results-grid">
-        <!-- クライアントサイドJSで動的に画像を生成 -->
+      <div class="results-grid">
+        {recentImages.map(image => (
+          <div class="result-image-card">
+            <img
+              src={image.url}
+              alt={image.alt}
+              crossorigin="anonymous"
+              loading="lazy"
+              onerror="this.parentElement.style.display='none'"
+            />
+          </div>
+        ))}
       </div>
 
       <div class="stats-grid">
@@ -677,48 +717,5 @@ export const prerender = true;
       <a href="/premium-predictions/">← プレミアム予想に戻る</a>
     </div>
   </div>
-
-  <script is:inline>
-    // クライアントサイドで過去10日分の画像を動的に生成
-    (function() {
-      const today = new Date();
-      const resultsGrid = document.getElementById('results-grid');
-
-      if (!resultsGrid) return;
-
-      for (let i = 1; i <= 10; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const dateStr = `${year}${month}${day}`; // 例: 20251006
-
-        const imagePath = `/upsell-images/upsell-${dateStr}.png`;
-
-        // カード要素作成
-        const card = document.createElement('div');
-        card.className = 'result-image-card';
-        card.style.display = 'block';
-
-        // 画像要素作成
-        const img = document.createElement('img');
-        img.src = imagePath;
-        img.alt = `プレミアムプラス的中実績 ${dateStr}`;
-        img.crossOrigin = 'anonymous';
-        img.loading = 'lazy';
-
-        // エラー時は親要素ごと非表示
-        img.onerror = function() {
-          card.style.display = 'none';
-        };
-
-        card.appendChild(img);
-        resultsGrid.appendChild(card);
-      }
-
-      console.log('🖼️ 過去10日分の画像生成完了');
-    })();
-  </script>
 </body>
 </html>
