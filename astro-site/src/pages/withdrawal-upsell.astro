@@ -1,16 +1,7 @@
 ---
 // 退会前アップセル専用ページ
 // publicフォルダベース画像システム（確実に動作）
-
-// 昨日の日付を取得（レース結果は前日分が最新）
-const yesterday = new Date();
-yesterday.setDate(yesterday.getDate() - 1);
-const year = yesterday.getFullYear();
-const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-const day = String(yesterday.getDate()).padStart(2, '0');
-const dateStr = `${year}${month}${day}`; // YYYYMMDD形式
-
-const imagePath = `/upsell-images/upsell-${dateStr}.png`;
+// クライアントサイドJSで動的に昨日の画像を表示（デプロイ不要で毎日自動更新）
 ---
 
 <!DOCTYPE html>
@@ -240,7 +231,8 @@ const imagePath = `/upsell-images/upsell-${dateStr}.png`;
     <p class="subtitle">この的中実績をご覧ください</p>
 
     <img
-      src={imagePath}
+      id="upsell-image"
+      src="/upsell-images/upsell-20251006.png"
       alt="実際の的中実績 - AI超精密買い目"
       class="hit-image"
       crossorigin="anonymous"
@@ -344,6 +336,26 @@ const imagePath = `/upsell-images/upsell-${dateStr}.png`;
           modal.style.display = 'none';
         }
       });
+    </script>
+
+    <script is:inline>
+      // クライアントサイドで昨日の日付を計算し、画像パスを動的に設定
+      (function() {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const year = yesterday.getFullYear();
+        const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+        const day = String(yesterday.getDate()).padStart(2, '0');
+        const dateStr = `${year}${month}${day}`; // 例: 20251006
+
+        const imagePath = `/upsell-images/upsell-${dateStr}.png`;
+        const imgElement = document.getElementById('upsell-image');
+
+        if (imgElement) {
+          imgElement.src = imagePath;
+          console.log('🖼️ 昨日の画像パス設定:', imagePath);
+        }
+      })();
     </script>
   </div>
 </body>
