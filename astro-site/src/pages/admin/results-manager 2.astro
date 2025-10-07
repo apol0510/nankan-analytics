@@ -1,0 +1,764 @@
+---
+export const prerender = true;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="的中結果管理システム" description="毎日の的中結果を入力してトップページ用データを自動生成">
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🎯 的中結果管理システム</h1>
+            <p>毎日・週間の的中結果を入力して、トップページ用データを自動生成します</p>
+        </div>
+
+        <!-- 昨日の結果入力 -->
+        <div class="input-section">
+            <h2>📊 昨日の的中結果入力</h2>
+            <div class="input-group">
+                <label for="dailyData">結果データを貼り付けてください：</label>
+                <textarea
+                    id="dailyData"
+                    placeholder="９/８川崎競馬予想 有料版　結果
+１Ｒ ４-６馬単　1.900円 的中！
+２Ｒ ７-12馬単　1.990円 的中！
+..."
+                    rows="15"
+                ></textarea>
+                <button onclick="parseDailyData()" class="parse-btn">📈 解析実行</button>
+            </div>
+        </div>
+
+        <!-- 週間結果入力 -->
+        <div class="input-section">
+            <h2>📅 週間結果入力（5日分）</h2>
+            <div class="input-group">
+                <label for="weeklyData">5日分の結果データを貼り付けてください：</label>
+                <textarea
+                    id="weeklyData"
+                    placeholder="９/８川崎競馬予想 有料版　結果
+１Ｒ ４-６馬単　1.900円 的中！
+...
+
+９/９川崎競馬予想 有料版　結果
+２Ｒ ７-12馬単　1.990円 的中！
+..."
+                    rows="20"
+                ></textarea>
+                <button onclick="parseWeeklyData()" class="parse-btn">📊 週間解析実行</button>
+            </div>
+        </div>
+
+        <!-- プレビューセクション -->
+        <div class="preview-section">
+            <h2>👀 プレビュー</h2>
+            <div class="preview-tabs">
+                <button onclick="showPreview('daily')" class="tab-btn active" id="daily-tab">昨日の結果</button>
+                <button onclick="showPreview('weekly')" class="tab-btn" id="weekly-tab">週間結果</button>
+            </div>
+
+            <div id="daily-preview" class="preview-content">
+                <div id="daily-stats" class="stats-display"></div>
+                <div id="daily-results" class="results-display"></div>
+            </div>
+
+            <div id="weekly-preview" class="preview-content" style="display: none;">
+                <div id="weekly-stats" class="stats-display"></div>
+                <div id="weekly-results" class="results-display"></div>
+            </div>
+        </div>
+
+        <!-- JSONコード生成 -->
+        <div class="output-section">
+            <h2>💾 生成されたJSONコード</h2>
+            <p>以下のコードを <code>standard-predictions.astro</code> の該当箇所にコピーしてください：</p>
+            <div class="code-output">
+                <pre id="generatedCode">// 解析実行後にコードが表示されます</pre>
+                <button onclick="copyToClipboard()" class="copy-btn">📋 コピー</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: var(--body-text-color);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .input-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .input-section h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            color: var(--body-text-color);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .parse-btn, .copy-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .parse-btn:hover, .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .preview-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .preview-section h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .preview-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--body-text-color);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.3) 100%);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--body-text-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .results-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            max-width: 800px;
+        }
+
+        .race-result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .race-result.win {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .race-result.lose {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .race-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .race-icon {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+
+        .race-payout {
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .output-section {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .output-section h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .code-output {
+            position: relative;
+        }
+
+        .code-output pre {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        code {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .admin-header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .results-display {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+
+    <script is:inline>
+        let dailyData = null;
+        let weeklyData = null;
+
+        // 全角・半角数字の正規化
+        function normalizeText(text) {
+            return text
+                .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                .replace(/[Ｒｒ]/g, 'R')
+                .replace(/[，、]/g, ',')
+                .replace(/[．。]/g, '.')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // 金額抽出（1.900円 → 1900）
+        function extractPayout(text) {
+            const match = text.match(/([0-9,]+(?:\.[0-9]+)?)円/);
+            if (match) {
+                return parseInt(match[1].replace(/[,\.]/g, ''));
+            }
+            return 0;
+        }
+
+        // レース番号抽出（１Ｒ → 1）
+        function extractRaceNumber(text) {
+            const normalized = normalizeText(text);
+            const match = normalized.match(/(\d+)R/);
+            return match ? parseInt(match[1]) : null;
+        }
+
+        // 日付抽出（９/８川崎競馬 → 9/8）
+        function extractDate(text) {
+            const normalized = normalizeText(text);
+            const match = normalized.match(/(\d+)\/(\d+)/);
+            if (match) {
+                return `${parseInt(match[1])}/${parseInt(match[2])}`;
+            }
+            return null;
+        }
+
+        // 競馬場抽出（９/８川崎競馬 → 川崎競馬）
+        function extractTrack(text) {
+            const match = text.match(/(川崎|大井|船橋|浦和)競馬/);
+            return match ? match[1] + '競馬' : '川崎競馬';
+        }
+
+        // 昨日データ解析
+        function parseDailyData() {
+            const input = document.getElementById('dailyData').value;
+            if (!input.trim()) {
+                alert('データを入力してください');
+                return;
+            }
+
+            const lines = input.split('\n').filter(line => line.trim());
+            const headerLine = lines[0];
+
+            const date = extractDate(headerLine);
+            const track = extractTrack(headerLine);
+
+            if (!date) {
+                alert('日付を正しく認識できませんでした');
+                return;
+            }
+
+            // 12レース分の結果を初期化
+            const results = [];
+            for (let i = 1; i <= 12; i++) {
+                results.push({ race: `${i}R`, result: 'lose', payout: 0 });
+            }
+
+            let totalPayout = 0;
+            let hitCount = 0;
+
+            // 的中レースを解析
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                const raceNum = extractRaceNumber(line);
+                const payout = extractPayout(line);
+
+                if (raceNum && raceNum >= 1 && raceNum <= 12 && line.includes('的中')) {
+                    results[raceNum - 1] = {
+                        race: `${raceNum}R`,
+                        result: 'win',
+                        payout: payout
+                    };
+                    totalPayout += payout;
+                    hitCount++;
+                }
+            }
+
+            const hitRate = ((hitCount / 12) * 100).toFixed(1);
+            const purchaseAmount = 12 * 1000; // 🛡️ 復活防止: 12レース × 1000円（計算式統一）
+            const recoveryRate = Math.round((totalPayout / purchaseAmount) * 100);
+
+            dailyData = {
+                date: date,
+                track: track,
+                hitRate: parseFloat(hitRate),
+                hitCount: hitCount,
+                totalCount: 12,
+                totalPayout: totalPayout,
+                recoveryRate: recoveryRate,
+                results: results
+            };
+
+            displayDailyPreview();
+            generateCode();
+        }
+
+        // 週間データ解析
+        function parseWeeklyData() {
+            const input = document.getElementById('weeklyData').value;
+            if (!input.trim()) {
+                alert('週間データを入力してください');
+                return;
+            }
+
+            // より確実な方法: 改行で全行を分割してから処理
+            const lines = input.split('\n');
+            const sections = [];
+            let currentSection = [];
+
+            for (const line of lines) {
+                const normalizedLine = normalizeText(line);
+                // 日付パターンを含む行が新しいセクションの開始
+                if (normalizedLine.match(/^\d+\/\d+.*競馬/)) {
+                    // 前のセクションを保存
+                    if (currentSection.length > 0) {
+                        sections.push(currentSection.join('\n'));
+                    }
+                    // 新しいセクション開始
+                    currentSection = [line];
+                } else if (currentSection.length > 0) {
+                    // 既存セクションに追加
+                    currentSection.push(line);
+                }
+            }
+
+            // 最後のセクションを保存
+            if (currentSection.length > 0) {
+                sections.push(currentSection.join('\n'));
+            }
+
+            console.log(`検出されたセクション数: ${sections.length}`);
+
+            // 各セクションから日付を抽出して表示
+            sections.forEach((section, index) => {
+                const firstLine = section.split('\n')[0];
+                const date = extractDate(firstLine);
+                console.log(`セクション${index + 1}: 日付=${date}, 最初の行=${firstLine.substring(0, 30)}...`);
+            });
+
+            const dailyResults = [];
+            let totalHits = 0;
+            let totalRaces = 0;
+            let totalPayout = 0;
+            let startDate = null;
+            let endDate = null;
+            let startDateValue = null;
+            let endDateValue = null;
+            let track = '川崎競馬';
+
+            for (const section of sections) {
+                if (!section.trim()) continue;
+                console.log(`処理中のセクション: ${section.substring(0, 50)}...`);
+
+                const lines = section.split('\n').filter(line => line.trim());
+                const headerLine = lines[0];
+
+                const date = extractDate(headerLine);
+                track = extractTrack(headerLine);
+
+                console.log(`抽出された日付: ${date}, トラック: ${track}`);
+
+                if (!date) {
+                    console.log(`日付が抽出できませんでした: ${headerLine}`);
+                    continue;
+                }
+
+                // 日付の順序を正しく保持（数値で比較）
+                const dateParts = date.split('/');
+                const dateValue = parseInt(dateParts[0]) * 100 + parseInt(dateParts[1]); // 9/8 → 908, 9/12 → 912
+
+                if (!startDate) {
+                    startDate = date;
+                    startDateValue = dateValue;
+                } else {
+                    const startParts = startDate.split('/');
+                    const startValue = parseInt(startParts[0]) * 100 + parseInt(startParts[1]);
+                    if (dateValue < startValue) {
+                        startDate = date;
+                        startDateValue = dateValue;
+                    }
+                }
+
+                if (!endDate) {
+                    endDate = date;
+                    endDateValue = dateValue;
+                } else {
+                    const endParts = endDate.split('/');
+                    const endValue = parseInt(endParts[0]) * 100 + parseInt(endParts[1]);
+                    if (dateValue > endValue) {
+                        endDate = date;
+                        endDateValue = dateValue;
+                    }
+                }
+
+                // その日の結果を解析
+                const dayResults = [];
+                for (let i = 1; i <= 12; i++) {
+                    dayResults.push({ race: `${i}R`, result: 'lose', payout: 0 });
+                }
+
+                let dayHits = 0;
+                let dayPayout = 0;
+
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i];
+                    const raceNum = extractRaceNumber(line);
+                    const payout = extractPayout(line);
+
+                    if (raceNum && raceNum >= 1 && raceNum <= 12 && line.includes('的中')) {
+                        dayResults[raceNum - 1] = {
+                            race: `${raceNum}R`,
+                            result: 'win',
+                            payout: payout
+                        };
+                        dayPayout += payout;
+                        dayHits++;
+                    }
+                }
+
+                const dayHitRate = Math.round((dayHits / 12) * 100);
+                dailyResults.push({
+                    date: date.replace('/', ''),
+                    hitRate: dayHitRate,
+                    label: `${date} (${dayHitRate}%)`,
+                    results: dayResults
+                });
+
+                totalHits += dayHits;
+                totalRaces += 12;
+                totalPayout += dayPayout;
+            }
+
+            // 正確な計算：totalRacesは総レース数(12×日数)、購入額は1レース10点×100円
+            const overallHitRate = ((totalHits / totalRaces) * 100).toFixed(1);
+            const purchaseAmount = totalRaces * 10 * 100;  // 総レース数 × 10点 × 100円
+            const recoveryRate = Math.round((totalPayout / purchaseAmount) * 100);
+
+            weeklyData = {
+                period: `${startDate}〜${endDate}`,
+                track: track,
+                hitRate: parseFloat(overallHitRate),
+                hitCount: totalHits,
+                totalCount: totalRaces,
+                totalPayout: totalPayout,
+                recoveryRate: recoveryRate,
+                dailyTabs: dailyResults.map(day => ({
+                    date: day.date,
+                    hitRate: day.hitRate,
+                    label: day.label
+                })),
+                dailyResultsData: dailyResults.reduce((acc, day) => {
+                    acc[day.date] = day.results;
+                    return acc;
+                }, {})
+            };
+
+            displayWeeklyPreview();
+            generateCode();
+        }
+
+        // 昨日プレビュー表示
+        function displayDailyPreview() {
+            if (!dailyData) return;
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value">${dailyData.hitRate}%</div>
+                    <div class="stat-label">的中率 (${dailyData.hitCount}/${dailyData.totalCount})</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">¥${dailyData.totalPayout.toLocaleString()}</div>
+                    <div class="stat-label">配当合計</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${dailyData.recoveryRate}%</div>
+                    <div class="stat-label">回収率</div>
+                </div>
+            `;
+
+            const resultsHtml = dailyData.results.map(result => `
+                <div class="race-result ${result.result}">
+                    <div class="race-number">${result.race}</div>
+                    <div class="race-icon">${result.result === 'win' ? '⭕' : '❌'}</div>
+                    ${result.result === 'win' ? `<div class="race-payout">¥${result.payout.toLocaleString()}</div>` : ''}
+                </div>
+            `).join('');
+
+            document.getElementById('daily-stats').innerHTML = statsHtml;
+            document.getElementById('daily-results').innerHTML = resultsHtml;
+        }
+
+        // 週間プレビュー表示
+        function displayWeeklyPreview() {
+            if (!weeklyData) return;
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value">${weeklyData.hitRate}%</div>
+                    <div class="stat-label">的中率 (${weeklyData.hitCount}/${weeklyData.totalCount})</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">¥${weeklyData.totalPayout.toLocaleString()}</div>
+                    <div class="stat-label">週間配当</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${weeklyData.recoveryRate}%</div>
+                    <div class="stat-label">回収率</div>
+                </div>
+            `;
+
+            // 最初の日の結果を表示
+            const firstDay = Object.keys(weeklyData.dailyResultsData)[0];
+            const firstDayResults = weeklyData.dailyResultsData[firstDay] || [];
+
+            const resultsHtml = firstDayResults.map(result => `
+                <div class="race-result ${result.result}">
+                    <div class="race-number">${result.race}</div>
+                    <div class="race-icon">${result.result === 'win' ? '⭕' : '❌'}</div>
+                    ${result.result === 'win' ? `<div class="race-payout">¥${result.payout.toLocaleString()}</div>` : ''}
+                </div>
+            `).join('');
+
+            document.getElementById('weekly-stats').innerHTML = statsHtml;
+            document.getElementById('weekly-results').innerHTML = resultsHtml;
+        }
+
+        // タブ切り替え
+        function showPreview(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.preview-content').forEach(content => content.style.display = 'none');
+
+            document.getElementById(`${type}-tab`).classList.add('active');
+            document.getElementById(`${type}-preview`).style.display = 'block';
+        }
+
+        // JSONコード生成
+        function generateCode() {
+            let code = '';
+
+            if (dailyData) {
+                code += `// 昨日の的中結果データ（${dailyData.date} ${dailyData.track}）\n`;
+                code += `export const yesterdayResults = {\n`;
+                code += `    date: "${dailyData.date}",\n`;
+                code += `    track: "${dailyData.track}",\n`;
+                code += `    hitRate: ${dailyData.hitRate},\n`;
+                code += `    hitCount: ${dailyData.hitCount},\n`;
+                code += `    totalCount: ${dailyData.totalCount},\n`;
+                code += `    totalPayout: ${dailyData.totalPayout},\n`;
+                code += `    recoveryRate: ${dailyData.recoveryRate}, // 🛡️ 復活防止: 回収率フィールド追加\n`;
+                code += `    results: [\n`;
+                dailyData.results.forEach(result => {
+                    code += `        { race: '${result.race}', result: '${result.result}', payout: ${result.payout} },\n`;
+                });
+                code += `    ]\n`;
+                code += `};\n\n`;
+            }
+
+            if (weeklyData) {
+                code += `// 週間の的中結果データ（${weeklyData.period} ${weeklyData.track}）\n`;
+                code += `export const weeklyResults = {\n`;
+                code += `    period: "${weeklyData.period}",\n`;
+                code += `    track: "${weeklyData.track}",\n`;
+                code += `    hitRate: ${weeklyData.hitRate},\n`;
+                code += `    hitCount: ${weeklyData.hitCount},\n`;
+                code += `    totalCount: ${weeklyData.totalCount},\n`;
+                code += `    totalPayout: ${weeklyData.totalPayout},\n`;
+                code += `    recoveryRate: ${weeklyData.recoveryRate}\n`;
+                code += `};\n\n`;
+
+                code += `export const dailyTabs = [\n`;
+                weeklyData.dailyTabs.forEach(tab => {
+                    code += `    { date: '${tab.date}', hitRate: ${tab.hitRate}, label: '${tab.label}' },\n`;
+                });
+                code += `];\n\n`;
+
+                code += `export const dailyResultsData = {\n`;
+                Object.entries(weeklyData.dailyResultsData).forEach(([date, results]) => {
+                    code += `    '${date}': [\n`;
+                    results.forEach(result => {
+                        code += `        { race: '${result.race}', result: '${result.result}', payout: ${result.payout} },\n`;
+                    });
+                    code += `    ],\n`;
+                });
+                code += `};\n`;
+            }
+
+            if (!code) {
+                code = '// 解析実行後にコードが表示されます';
+            }
+
+            document.getElementById('generatedCode').textContent = code;
+        }
+
+        // クリップボードにコピー
+        async function copyToClipboard() {
+            const code = document.getElementById('generatedCode').textContent;
+            if (code && code !== '// 解析実行後にコードが表示されます') {
+                try {
+                    await navigator.clipboard.writeText(code);
+                    alert('コードをクリップボードにコピーしました！');
+                } catch (err) {
+                    console.error('コピーに失敗しました:', err);
+                    alert('コピーに失敗しました。手動でコピーしてください。');
+                }
+            } else {
+                alert('生成されたコードがありません。まず解析を実行してください。');
+            }
+        }
+    </script>
+</BaseLayout>
