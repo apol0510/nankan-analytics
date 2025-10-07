@@ -77,11 +77,6 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Apolon予約配信自動実行（5分ごと）
-[[functions]]
-  name = "execute-apolon-scheduled-emails"
-  schedule = "*/5 * * * *"
-
 [dev]
   command = "npm run dev"
   port = 4321
