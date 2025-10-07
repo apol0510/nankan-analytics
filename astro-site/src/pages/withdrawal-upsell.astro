@@ -230,10 +230,9 @@
     <p class="subtitle">この的中実績をご覧ください</p>
 
     <img
-      id="upsell-image"
+      src="/upsell-images/upsell-20251007.png"
       alt="実際の的中実績 - AI超精密買い目"
       class="hit-image"
-      crossorigin="anonymous"
       loading="eager"
     />
 
@@ -335,48 +334,6 @@
       });
     </script>
 
-    <script>
-      // クライアントサイドで昨日の日付を計算（日本時間）
-      (function() {
-        const img = document.getElementById('upsell-image');
-        if (!img) return;
-
-        // 日本時間で昨日の日付を取得
-        const now = new Date();
-        const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
-        jst.setDate(jst.getDate() - 1);
-
-        const year = jst.getFullYear();
-        const month = String(jst.getMonth() + 1).padStart(2, '0');
-        const day = String(jst.getDate()).padStart(2, '0');
-        const dateStr = `${year}${month}${day}`;
-
-        img.src = `/upsell-images/upsell-${dateStr}.png`;
-
-        // エラー時のフォールバック
-        img.onerror = function() {
-          // 1日ずつ遡って画像を探す（最大10日前まで）
-          let daysBack = 2;
-          const tryOlderImage = function() {
-            if (daysBack > 10) {
-              img.src = '/premium-predictions/kaime0929.png';
-              return;
-            }
-            const oldDate = new Date(jst);
-            oldDate.setDate(oldDate.getDate() - daysBack);
-            const y = oldDate.getFullYear();
-            const m = String(oldDate.getMonth() + 1).padStart(2, '0');
-            const d = String(oldDate.getDate()).padStart(2, '0');
-            img.src = `/upsell-images/upsell-${y}${m}${d}.png`;
-            img.onerror = function() {
-              daysBack++;
-              tryOlderImage();
-            };
-          };
-          tryOlderImage();
-        };
-      })();
-    </script>
   </div>
 </body>
 </html>
