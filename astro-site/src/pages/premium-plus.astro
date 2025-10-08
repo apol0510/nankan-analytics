@@ -467,22 +467,8 @@ export const prerender = true;
       <h2 class="section-title">📊 直近5戦の実際の的中画面</h2>
       <p class="section-subtitle">1日1鞍の結果を公開しています。</p>
 
-      <div class="results-grid">
-        <div class="result-image-card">
-          <img src="/upsell-images/upsell-20251008.png" alt="プレミアムプラス的中実績 20251008" onerror="this.parentElement.style.display='none'" />
-        </div>
-        <div class="result-image-card">
-          <img src="/upsell-images/upsell-20251007.png" alt="プレミアムプラス的中実績 20251007" onerror="this.parentElement.style.display='none'" />
-        </div>
-        <div class="result-image-card">
-          <img src="/upsell-images/upsell-20251006.png" alt="プレミアムプラス的中実績 20251006" onerror="this.parentElement.style.display='none'" />
-        </div>
-        <div class="result-image-card">
-          <img src="/upsell-images/upsell-20251005.png" alt="プレミアムプラス的中実績 20251005" onerror="this.parentElement.style.display='none'" />
-        </div>
-        <div class="result-image-card">
-          <img src="/upsell-images/upsell-20251003.png" alt="プレミアムプラス的中実績 20251003" onerror="this.parentElement.style.display='none'" />
-        </div>
+      <div class="results-grid" id="resultsGrid">
+        <!-- 画像はJavaScriptで自動生成 -->
       </div>
 
       <div class="stats-grid">
@@ -690,6 +676,63 @@ export const prerender = true;
       <a href="/premium-predictions/">← プレミアム予想に戻る</a>
     </div>
   </div>
+
+  <script>
+    // 直近5戦の画像を自動生成（日本時間で15日前まで遡って探索）
+    function loadRecentImages() {
+      const grid = document.getElementById('resultsGrid');
+      const now = new Date();
+      const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+
+      const images = [];
+      let daysBack = 1;
+      let foundCount = 0;
+
+      function tryNextImage() {
+        if (foundCount >= 5 || daysBack > 15) {
+          return; // 5枚見つかったか15日遡ったら終了
+        }
+
+        const targetDate = new Date(jst);
+        targetDate.setDate(targetDate.getDate() - daysBack);
+
+        const year = targetDate.getFullYear();
+        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const day = String(targetDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}${month}${day}`;
+
+        const img = new Image();
+        img.onload = function() {
+          // 画像が存在する場合
+          const card = document.createElement('div');
+          card.className = 'result-image-card';
+
+          const displayImg = document.createElement('img');
+          displayImg.src = `/upsell-images/upsell-${dateStr}.png`;
+          displayImg.alt = `プレミアムプラス的中実績 ${dateStr}`;
+
+          card.appendChild(displayImg);
+          grid.appendChild(card);
+
+          foundCount++;
+          daysBack++;
+          tryNextImage();
+        };
+
+        img.onerror = function() {
+          // 画像が存在しない場合は次の日へ
+          daysBack++;
+          tryNextImage();
+        };
+
+        img.src = `/upsell-images/upsell-${dateStr}.png`;
+      }
+
+      tryNextImage();
+    }
+
+    loadRecentImages();
+  </script>
 
 </body>
 </html>
