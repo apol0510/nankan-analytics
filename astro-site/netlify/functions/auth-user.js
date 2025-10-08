@@ -133,11 +133,38 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // ログインポイント付与チェック + プラン変更ボーナス
+    // 🔧 プラン値正規化: 大文字小文字混在問題解決
+    const normalizedPlan = normalizePlan(currentPlan);
+
+    // 📊 期限切れユーザーのレスポンス構築（ポイント付与なし）
+    if (isExpired) {
+      return {
+        statusCode: 200,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success: true,
+          isNewUser: false,
+          isExpired: true, // 期限切れフラグ
+          user: {
+            email,
+            plan: 'expired', // 特別なステータス
+            originalPlan: normalizedPlan, // 元のプラン
+            points: currentPoints, // ポイント付与なし
+            pointsAdded: 0, // ポイント付与なし
+            lastLogin: today,
+            expiryDate: expiryDate,
+            registeredAt: user.get('登録日')
+          },
+          message: 'プランの有効期限が切れています。継続をご希望の場合はプランを更新してください。'
+        }, null, 2)
+      };
+    }
+
+    // ログインポイント付与チェック + プラン変更ボーナス（期限切れでない場合のみ）
     let pointsAdded = 0;
     let newPoints = currentPoints;
     let updateData = {};
-    
+
     const POINTS_BY_PLAN = {
       'free': 1,
       'Free': 1,
@@ -160,36 +187,9 @@ exports.handler = async (event, context) => {
     if (pointsAdded > 0) {
       newPoints = currentPoints + pointsAdded;
       updateData['ポイント'] = newPoints;
-      
+
       // Airtable更新
       await base('Customers').update(user.id, updateData);
-    }
-
-    // 🔧 プラン値正規化: 大文字小文字混在問題解決
-    const normalizedPlan = normalizePlan(currentPlan);
-
-    // 📊 期限切れユーザーのレスポンス構築
-    if (isExpired) {
-      return {
-        statusCode: 200,
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          success: true,
-          isNewUser: false,
-          isExpired: true, // 期限切れフラグ
-          user: {
-            email,
-            plan: 'expired', // 特別なステータス
-            originalPlan: normalizedPlan, // 元のプラン
-            points: newPoints,
-            pointsAdded,
-            lastLogin: today,
-            expiryDate: expiryDate,
-            registeredAt: user.get('登録日')
-          },
-          message: 'プランの有効期限が切れています。継続をご希望の場合はプランを更新してください。'
-        }, null, 2)
-      };
     }
 
     // 通常ユーザーのレスポンス
