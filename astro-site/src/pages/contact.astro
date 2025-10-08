@@ -60,8 +60,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </form>
 
             <div class="contact-info">
-                <h2>📞 その他のお問い合わせ方法</h2>
-
                 <div class="welcome-message">
                     <p>💙 お客様の声を大切にしています</p>
                     <p class="welcome-sub">困ったこと、分からないこと、改善してほしいことなど、何でもお聞かせください。一緒により良いサービスを作っていきましょう！</p>
@@ -71,6 +69,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <h3>📧 メールでのお問い合わせ</h3>
                     <p class="email-address">support@keiba.link</p>
                 </div>
+
                 <div class="info-item">
                     <h3>⏰ サポート対応時間</h3>
                     <p class="business-hours">24時間対応　順次ご返信いたします</p>
@@ -268,20 +267,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             padding: 30px;
         }
 
-        .contact-info h2 {
-            color: var(--body-text-color);
-            font-size: 1.5rem;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
         .welcome-message {
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             text-align: center;
         }
 
@@ -300,13 +291,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
 
         .info-item {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
         }
 
         .info-item h3 {
             color: var(--primary-color);
-            font-size: 1.1rem;
-            margin-bottom: 10px;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
         }
 
         .info-item p {
