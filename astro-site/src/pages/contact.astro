@@ -6,43 +6,49 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="お問い合わせ | NANKANアナリティクス">
     <div class="contact-container">
         <div class="contact-header">
-            <h1>お問い合わせ</h1>
-            <p>NANKANアナリティクスへのご質問・ご要望をお聞かせください</p>
+            <h1>💬 お気軽にお問い合わせください</h1>
+            <p class="header-main">ご質問・ご要望・ご相談など、どんなことでもお気軽にお寄せください。</p>
+            <p class="header-sub">専門スタッフが丁寧にサポートいたします 😊</p>
         </div>
 
         <div class="contact-form-wrapper">
             <form id="contactForm" class="contact-form">
+                <div class="form-intro">
+                    <p>✨ 些細なことでも構いません。お困りのことがあれば、ぜひご連絡ください！</p>
+                </div>
+
                 <div class="form-group">
                     <label for="name">お名前 <span class="required">*</span></label>
-                    <input type="text" id="name" name="name" required placeholder="山田 太郎">
+                    <input type="text" id="name" name="name" required placeholder="例：山田 太郎">
                 </div>
 
                 <div class="form-group">
                     <label for="email">メールアドレス <span class="required">*</span></label>
-                    <input type="email" id="email" name="email" required placeholder="example@email.com">
+                    <input type="email" id="email" name="email" required placeholder="例：yamada@example.com">
                 </div>
 
                 <div class="form-group">
-                    <label for="subject">件名 <span class="required">*</span></label>
+                    <label for="subject">お問い合わせの種類 <span class="required">*</span></label>
                     <select id="subject" name="subject" required>
-                        <option value="">選択してください</option>
-                        <option value="サービスについて">サービスについて</option>
-                        <option value="料金プランについて">料金プランについて</option>
-                        <option value="技術的な質問">技術的な質問</option>
-                        <option value="アカウントについて">アカウントについて</option>
-                        <option value="不具合報告">不具合報告</option>
-                        <option value="その他">その他</option>
+                        <option value="">お選びください</option>
+                        <option value="サービスについて">💡 サービスについて知りたい</option>
+                        <option value="料金プランについて">💰 料金プランについて相談したい</option>
+                        <option value="使い方について">📖 使い方を教えてほしい</option>
+                        <option value="アカウントについて">👤 アカウントについて相談したい</option>
+                        <option value="不具合報告">🔧 不具合を報告したい</option>
+                        <option value="ご要望・ご意見">💭 ご要望・ご意見を伝えたい</option>
+                        <option value="その他">📝 その他</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="message">お問い合わせ内容 <span class="required">*</span></label>
-                    <textarea id="message" name="message" rows="8" required placeholder="お問い合わせ内容をご記入ください"></textarea>
+                    <textarea id="message" name="message" rows="8" required placeholder="どんなことでもお気軽にお書きください。詳しく教えていただけると、より的確にサポートできます 😊"></textarea>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="submit-btn">
-                        <span class="btn-text">送信する</span>
+                        <span class="btn-text">📨 送信する</span>
                         <span class="btn-loading" style="display: none;">
                             <span class="spinner"></span>
                             送信中...
@@ -54,16 +60,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </form>
 
             <div class="contact-info">
-                <h2>お問い合わせ先情報</h2>
+                <h2>📞 その他のお問い合わせ方法</h2>
+
+                <div class="welcome-message">
+                    <p>💙 お客様の声を大切にしています</p>
+                    <p class="welcome-sub">困ったこと、分からないこと、改善してほしいことなど、何でもお聞かせください。一緒により良いサービスを作っていきましょう！</p>
+                </div>
+
                 <div class="info-item">
-                    <h3>📧 メールアドレス</h3>
-                    <p>support@keiba.link</p>
-                    <p class="info-note">営業時間内に順次ご返信いたします</p>
+                    <h3>📧 メールでのお問い合わせ</h3>
+                    <p class="email-address">support@keiba.link</p>
+                    <p class="info-note">📮 営業時間内に順次ご返信いたします（通常1営業日以内）</p>
                 </div>
                 <div class="info-item">
-                    <h3>⏰ 営業時間</h3>
-                    <p>平日 10:00 - 18:00</p>
-                    <p class="info-note">土日祝日は休業日となります</p>
+                    <h3>⏰ サポート対応時間</h3>
+                    <p class="business-hours">平日 10:00 - 18:00</p>
+                    <p class="info-note">💤 土日祝日は休業日となります</p>
+                    <p class="info-note">📬 休業日にいただいたお問い合わせは、翌営業日に順次対応させていただきます</p>
                 </div>
             </div>
         </div>
@@ -91,9 +104,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             margin-bottom: 15px;
         }
 
-        .contact-header p {
+        .contact-header .header-main {
+            color: var(--body-text-color);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .contact-header .header-sub {
             color: var(--accent-text-color);
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .contact-form-wrapper {
@@ -109,6 +129,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 12px;
             padding: 30px;
+        }
+
+        .form-intro {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        .form-intro p {
+            color: var(--body-text-color);
+            margin: 0;
+            font-size: 0.95rem;
         }
 
         .form-group {
@@ -245,6 +279,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             border-bottom: 1px solid rgba(59, 130, 246, 0.2);
         }
 
+        .welcome-message {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome-message p {
+            color: var(--body-text-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .welcome-sub {
+            color: var(--accent-text-color);
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
         .info-item {
             margin-bottom: 30px;
         }
@@ -263,6 +320,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .info-note {
             color: var(--accent-text-color);
             font-size: 0.9rem;
+        }
+
+        .email-address {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .business-hours {
+            color: var(--body-text-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 10px 0;
         }
 
         .info-item ul {
