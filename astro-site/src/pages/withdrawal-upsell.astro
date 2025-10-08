@@ -230,8 +230,7 @@
     <p class="subtitle">この的中実績をご覧ください</p>
 
     <img
-      id="upsellImage"
-      src=""
+      src="/upsell-images/upsell-20251007.png"
       alt="実際の的中実績 - AI超精密買い目"
       class="hit-image"
       loading="eager"
@@ -305,41 +304,6 @@
     </div>
 
     <script>
-      // 画像の日付を自動設定（日本時間で昨日の画像を表示）
-      function setUpsellImage() {
-        const img = document.getElementById('upsellImage');
-        const now = new Date();
-
-        // 日本時間に変換
-        const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
-        jst.setDate(jst.getDate() - 1); // 昨日
-
-        const year = jst.getFullYear();
-        const month = String(jst.getMonth() + 1).padStart(2, '0');
-        const day = String(jst.getDate()).padStart(2, '0');
-        const dateStr = `${year}${month}${day}`;
-
-        img.src = `/upsell-images/upsell-${dateStr}.png`;
-
-        // 画像が存在しない場合は10日前まで遡って探す
-        let daysBack = 1;
-        img.onerror = function() {
-          if (daysBack < 10) {
-            daysBack++;
-            const oldDate = new Date(jst);
-            oldDate.setDate(oldDate.getDate() - daysBack);
-            const oldYear = oldDate.getFullYear();
-            const oldMonth = String(oldDate.getMonth() + 1).padStart(2, '0');
-            const oldDay = String(oldDate.getDate()).padStart(2, '0');
-            img.src = `/upsell-images/upsell-${oldYear}${oldMonth}${oldDay}.png`;
-          } else {
-            img.style.display = 'none';
-          }
-        };
-      }
-
-      setUpsellImage();
-
       const modal = document.getElementById('withdrawalModal');
       const proceedBtn = document.getElementById('proceedWithdrawal');
       const confirmBtn = document.getElementById('confirmWithdrawal');
