@@ -77,13 +77,13 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Scheduled Functions（期限切れチェック）
-[[functions]]
-  path = "netlify/functions/cron-expiry-check.js"
-  schedule = "0 9 * * *" # 毎日午前9時（UTC）= 日本時間18時
-
 [dev]
   command = "npm run dev"
   port = 4321
   publish = "dist"
   autoLaunch = false
+
+# Scheduled Functions（期限切れチェック）
+# 毎日午前9時UTC（日本時間18時）自動実行
+[functions."cron-expiry-check"]
+  schedule = "0 9 * * *"
