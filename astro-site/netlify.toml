@@ -82,8 +82,3 @@
   port = 4321
   publish = "dist"
   autoLaunch = false
-
-# Scheduled Functions（期限切れチェック）
-# 毎日午前9時UTC（日本時間18時）自動実行
-[functions."cron-expiry-check"]
-  schedule = "0 9 * * *"
