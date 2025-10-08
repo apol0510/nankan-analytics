@@ -22,10 +22,10 @@ exports.handler = async (event, context) => {
     const records = await base('Customers')
       .select({
         filterByFormula: `AND(
-          {ExpiryDate} != '',
+          {ExpiryDate},
           IS_BEFORE({ExpiryDate}, TODAY()),
           {プラン} != 'Free',
-          {ExpiryNotificationSent} != TRUE()
+          NOT({ExpiryNotificationSent})
         )`,
         maxRecords: 100
       })
