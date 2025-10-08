@@ -236,10 +236,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             <!-- ログアウトボタン（有料会員のみ表示） -->
             <div id="logout-section-paid" class="logout-section-paid" style="display: none;">
-                <h2>⚙️ アカウント設定</h2>
-                <div class="logout-actions">
-                    <button id="logout-btn-paid" class="action-btn logout-primary">ログアウト</button>
-                </div>
+                <button id="logout-btn-paid" class="action-btn logout-primary">ログアウト</button>
             </div>
 
             <!-- アップグレード促進（無料・Standard会員のみ表示） -->
@@ -2387,18 +2384,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         /* ログアウトセクション（有料会員専用） */
         .logout-section-paid {
             margin-bottom: 2rem;
-        }
-
-        .logout-section-paid h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: #f1f5f9;
-        }
-
-        .logout-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+            text-align: center;
         }
 
         .action-btn {
