@@ -230,12 +230,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <h2>📋 プラン管理</h2>
                 <div class="plan-actions">
                     <a href="/pricing/" class="action-btn upgrade">プランをアップグレード</a>
+                    <button id="logout-btn-free" class="action-btn logout">ログアウト</button>
                 </div>
             </div>
 
-            <!-- ログアウトボタン（全会員表示） -->
-            <div class="logout-section">
-                <button id="logout-btn" class="action-btn logout">ログアウト</button>
+            <!-- ログアウトボタン（有料会員のみ表示） -->
+            <div id="logout-section-paid" class="logout-section-paid" style="display: none;">
+                <h2>⚙️ アカウント設定</h2>
+                <div class="logout-actions">
+                    <button id="logout-btn-paid" class="action-btn logout-primary">ログアウト</button>
+                </div>
             </div>
 
             <!-- アップグレード促進（無料・Standard会員のみ表示） -->
@@ -1202,6 +1206,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             if (planLower === 'free') {
                 console.log('プラン管理を表示（無料会員）');
                 document.getElementById('plan-section').style.display = 'block';
+            } else {
+                // 有料会員はログアウトセクション表示
+                console.log('ログアウトセクション表示（有料会員）');
+                document.getElementById('logout-section-paid').style.display = 'block';
             }
 
             // アップグレード促進の表示制御
@@ -1324,10 +1332,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // 🛡️ 復活防止対策: プログレスバー即座に初期化
             initializeProgressBar();
 
-            // ログアウトボタンにイベントリスナーを追加
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
+            // ログアウトボタンにイベントリスナーを追加（無料会員用）
+            const logoutBtnFree = document.getElementById('logout-btn-free');
+            if (logoutBtnFree) {
+                logoutBtnFree.addEventListener('click', () => {
+                    logout();
+                });
+            }
+
+            // ログアウトボタンにイベントリスナーを追加（有料会員用）
+            const logoutBtnPaid = document.getElementById('logout-btn-paid');
+            if (logoutBtnPaid) {
+                logoutBtnPaid.addEventListener('click', () => {
                     logout();
                 });
             }
@@ -2368,9 +2384,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             flex-wrap: wrap;
         }
 
-        /* ログアウトセクション（全会員） */
-        .logout-section {
+        /* ログアウトセクション（有料会員専用） */
+        .logout-section-paid {
             margin-bottom: 2rem;
+        }
+
+        .logout-section-paid h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #f1f5f9;
+        }
+
+        .logout-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .action-btn {
@@ -2392,6 +2420,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             background: rgba(30, 41, 59, 0.8);
             color: #e2e8f0;
             border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        /* 有料会員用ログアウトボタン（目立つデザイン） */
+        .action-btn.logout-primary {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            font-weight: 600;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .action-btn.logout-primary:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.3) 100%);
+            border-color: rgba(239, 68, 68, 0.6);
+            color: #fecaca;
         }
 
         .action-btn:hover {
