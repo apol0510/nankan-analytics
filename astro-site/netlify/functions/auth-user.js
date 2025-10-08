@@ -119,8 +119,19 @@ exports.handler = async (event, context) => {
     const currentPoints = user.get('ポイント') || 0;
     const currentPlan = user.get('プラン') || 'free';
     const lastLogin = user.get('最終ポイント付与日');
-    // 最終プランチェック日フィールドは現在使用しない（Airtableに存在しないため）
+    const expiryDate = user.get('ExpiryDate'); // 有効期限取得
     const today = new Date().toISOString().split('T')[0];
+
+    // 🔍 有効期限チェック（期限切れでもログインOK・状態のみ返却）
+    let isExpired = false;
+    if (expiryDate) {
+      const expiry = new Date(expiryDate);
+      const now = new Date();
+      if (expiry < now) {
+        isExpired = true;
+        console.log(`⚠️ ユーザー ${email} は期限切れです（${expiryDate}）`);
+      }
+    }
 
     // ログインポイント付与チェック + プラン変更ボーナス
     let pointsAdded = 0;
@@ -157,18 +168,45 @@ exports.handler = async (event, context) => {
     // 🔧 プラン値正規化: 大文字小文字混在問題解決
     const normalizedPlan = normalizePlan(currentPlan);
 
+    // 📊 期限切れユーザーのレスポンス構築
+    if (isExpired) {
+      return {
+        statusCode: 200,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success: true,
+          isNewUser: false,
+          isExpired: true, // 期限切れフラグ
+          user: {
+            email,
+            plan: 'expired', // 特別なステータス
+            originalPlan: normalizedPlan, // 元のプラン
+            points: newPoints,
+            pointsAdded,
+            lastLogin: today,
+            expiryDate: expiryDate,
+            registeredAt: user.get('登録日')
+          },
+          message: 'プランの有効期限が切れています。継続をご希望の場合はプランを更新してください。'
+        }, null, 2)
+      };
+    }
+
+    // 通常ユーザーのレスポンス
     return {
       statusCode: 200,
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: true,
         isNewUser: false,
+        isExpired: false,
         user: {
           email,
           plan: normalizedPlan,
           points: newPoints,
           pointsAdded,
           lastLogin: today,
+          expiryDate: expiryDate || null,
           registeredAt: user.get('登録日')
         },
         message: pointsAdded > 0

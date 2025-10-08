@@ -41,6 +41,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- ダッシュボード（ログイン後表示） -->
         <div id="dashboard-section" style="display: none;">
+            <!-- 期限切れ警告（期限切れユーザーのみ表示） -->
+            <div id="expiry-warning-section" class="expiry-warning-section" style="display: none;">
+                <div class="expiry-warning-card">
+                    <div class="expiry-warning-icon">⚠️</div>
+                    <div class="expiry-warning-content">
+                        <h3>プランの有効期限が切れています</h3>
+                        <div class="expiry-details">
+                            <p>お客様の<strong id="expired-plan-name">プレミアム</strong>プランは、<strong id="expiry-date-display">2025-10-01</strong>に有効期限を迎えました。</p>
+                            <p>現在は<strong>無料会員</strong>としてご利用いただけます。</p>
+                        </div>
+                        <div class="expiry-actions">
+                            <div class="expiry-action-card">
+                                <h4>🔄 継続をご希望の場合</h4>
+                                <p>クレジットカード登録で自動更新（おすすめ）</p>
+                                <a href="/pricing/" class="expiry-btn renew">今すぐプランを更新</a>
+                            </div>
+                            <div class="expiry-action-card secondary">
+                                <h4>🚪 退会をご希望の場合</h4>
+                                <p>退会処理後も有効期限内はご利用可能</p>
+                                <button id="withdrawal-btn-expired" class="expiry-btn withdraw">退会処理へ進む</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 今回のログイン情報 -->
             <div id="login-info-section" class="login-info-section" style="display: none;">
                 <div class="login-info-card">
@@ -426,21 +452,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 
                 if (data.success && data.user) {
                     console.log('✅ ログイン成功:', data.user);
-                    
+
                     // セッション情報保存
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('userEmail', data.user.email);
                     localStorage.setItem('userPlan', data.user.plan);
-                    
+
+                    // 期限切れ情報保存
+                    if (data.isExpired) {
+                        localStorage.setItem('isExpired', 'true');
+                        localStorage.setItem('originalPlan', data.user.originalPlan || 'premium');
+                        localStorage.setItem('expiryDate', data.user.expiryDate || '');
+                    } else {
+                        localStorage.removeItem('isExpired');
+                        localStorage.removeItem('originalPlan');
+                        if (data.user.expiryDate) {
+                            localStorage.setItem('expiryDate', data.user.expiryDate);
+                        }
+                    }
+
                     const planNames = {
                         'free': '無料会員',
                         'Free': '無料会員',
                         'standard': 'Standard会員',
                         'Standard': 'Standard会員',
                         'premium': 'Premium会員',
-                        'Premium': 'Premium会員'
+                        'Premium': 'Premium会員',
+                        'expired': '期限切れ' // 期限切れ表示
                     };
-                    
+
                     const planDisplayName = planNames[data.user.plan] || data.user.plan;
                     
                     // ログイン情報をダッシュボードに保存（画面切り替え後に表示用）
@@ -533,23 +573,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // ダッシュボード表示
         function showDashboard(customerData) {
             console.log('🎨 showDashboard 開始, customerData:', customerData);
-            
+
             // セクション切り替え
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('dashboard-section').style.display = 'block';
-            
+
+            // 期限切れチェック・警告表示
+            const isExpired = localStorage.getItem('isExpired') === 'true';
+            if (isExpired) {
+                showExpiryWarning();
+            } else {
+                document.getElementById('expiry-warning-section').style.display = 'none';
+            }
+
             // ログイン情報表示
             showLoginInfo();
-            
+
             // 会員情報表示
             updateMembershipInfo(customerData);
-            
+
             // ポイント表示
             console.log('🎯 updatePointsDisplay 呼び出し, points:', customerData.points);
             updatePointsDisplay(customerData.points, customerData.hasClaimedReward);
-            
+
             // プラン別コンテンツ表示
             showPlanContent(customerData.plan);
+        }
+
+        // 期限切れ警告表示
+        function showExpiryWarning() {
+            const originalPlan = localStorage.getItem('originalPlan') || 'Premium';
+            const expiryDate = localStorage.getItem('expiryDate') || '不明';
+
+            const planNames = {
+                'premium': 'プレミアム',
+                'Premium': 'プレミアム',
+                'standard': 'スタンダード',
+                'Standard': 'スタンダード'
+            };
+
+            document.getElementById('expired-plan-name').textContent = planNames[originalPlan] || originalPlan;
+            document.getElementById('expiry-date-display').textContent = expiryDate;
+            document.getElementById('expiry-warning-section').style.display = 'block';
+
+            // 退会ボタンイベント設定
+            document.getElementById('withdrawal-btn-expired').addEventListener('click', function() {
+                if (confirm('退会処理を続けますか？\n\n退会後も有効期限内はサービスをご利用いただけます。')) {
+                    window.location.href = '/withdrawal-upsell/';
+                }
+            });
         }
 
         // ログイン情報表示
@@ -3159,6 +3231,129 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             .progress-fill::after {
                 animation-duration: 1.5s;
+            }
+        }
+
+        /* 期限切れ警告スタイル */
+        .expiry-warning-section {
+            margin-bottom: 30px;
+        }
+
+        .expiry-warning-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .expiry-warning-icon {
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+
+        .expiry-warning-content {
+            flex: 1;
+        }
+
+        .expiry-warning-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ef4444;
+            margin-bottom: 15px;
+        }
+
+        .expiry-details {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .expiry-details p {
+            color: var(--body-text-color);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .expiry-details p:last-child {
+            margin-bottom: 0;
+        }
+
+        .expiry-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .expiry-action-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .expiry-action-card.secondary {
+            background: rgba(100, 116, 139, 0.1);
+            border-color: rgba(100, 116, 139, 0.3);
+        }
+
+        .expiry-action-card h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--body-text-color);
+            margin-bottom: 10px;
+        }
+
+        .expiry-action-card p {
+            font-size: 0.9rem;
+            color: var(--accent-text-color);
+            margin-bottom: 15px;
+        }
+
+        .expiry-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .expiry-btn.renew {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .expiry-btn.renew:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .expiry-btn.withdraw {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--body-text-color);
+            border: 1px solid rgba(100, 116, 139, 0.5);
+        }
+
+        .expiry-btn.withdraw:hover {
+            background: rgba(100, 116, 139, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .expiry-warning-card {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .expiry-actions {
+                grid-template-columns: 1fr;
             }
         }
     </style>
