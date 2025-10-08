@@ -225,13 +225,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
             </div>
 
-            <!-- プラン管理 -->
-            <div class="plan-section">
+            <!-- プラン管理（無料会員のみ表示） -->
+            <div id="plan-section" class="plan-section" style="display: none;">
                 <h2>📋 プラン管理</h2>
                 <div class="plan-actions">
                     <a href="/pricing/" class="action-btn upgrade">プランをアップグレード</a>
-                    <button id="logout-btn" class="action-btn logout">ログアウト</button>
                 </div>
+            </div>
+
+            <!-- ログアウトボタン（全会員表示） -->
+            <div class="logout-section">
+                <button id="logout-btn" class="action-btn logout">ログアウト</button>
             </div>
 
             <!-- アップグレード促進（無料・Standard会員のみ表示） -->
@@ -1194,6 +1198,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('premium-predictions').style.display = 'block';
             }
             
+            // プラン管理の表示制御（無料会員のみ）
+            if (planLower === 'free') {
+                console.log('プラン管理を表示（無料会員）');
+                document.getElementById('plan-section').style.display = 'block';
+            }
+
             // アップグレード促進の表示制御
             if (planLower !== 'premium') {
                 console.log('アップグレード促進を表示');
@@ -2341,7 +2351,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             transform: translateY(-2px);
         }
 
-        /* プラン管理 */
+        /* プラン管理（無料会員のみ） */
         .plan-section {
             margin-bottom: 2rem;
         }
@@ -2356,6 +2366,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+        }
+
+        /* ログアウトセクション（全会員） */
+        .logout-section {
+            margin-bottom: 2rem;
         }
 
         .action-btn {
