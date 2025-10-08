@@ -67,12 +67,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
                 <div class="info-item">
                     <h3>📝 よくあるご質問</h3>
-                    <ul>
-                        <li>AI予想の精度について</li>
-                        <li>料金プランの変更方法</li>
-                        <li>退会手続きについて</li>
-                        <li>予想データの更新タイミング</li>
-                    </ul>
+                    <div class="faq-list">
+                        <div class="faq-item-contact">
+                            <strong>Q: 解約方法について</strong>
+                            <p>マイページの「退会処理」ボタンから解約申請が可能です。解約処理完了後も有効期限内はサービスをご利用いただけます。</p>
+                        </div>
+                        <div class="faq-item-contact">
+                            <strong>Q: ログインポイントについて</strong>
+                            <p>毎日のログインでポイント付与（無料1pt、スタンダード10pt、プレミアム30pt）。貯めたポイントで特別限定予想と交換可能です。</p>
+                        </div>
+                        <div class="faq-item-contact">
+                            <strong>Q: 料金・サービス詳細</strong>
+                            <p><a href="/pricing" style="color: #3b82f6; text-decoration: underline;">料金プランページ</a>をご確認ください。</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -287,6 +295,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         .info-item li:last-child {
             border-bottom: none;
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .faq-item-contact {
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .faq-item-contact strong {
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .faq-item-contact p {
+            color: var(--accent-text-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
         }
 
         @media (max-width: 768px) {
