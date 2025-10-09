@@ -110,7 +110,7 @@ function generatePreview(raceInfo, strategies, horses) {
     const horseInfo = mainHorseName && subHorseName ? `本命${mainHorseName}・対抗${subHorseName}` : '';
 
     const summary = `${raceInfo.track} ${raceInfo.raceNumber} AI予想完了！`;
-    const features = horseInfo ? `${horseInfo}\n信頼度${confidence}% | ${safeTitle}・${balanceTitle}・${aggressiveTitle}で的中と配当のバランスを最適化。` : `信頼度${confidence}% | ${safeTitle}・${balanceTitle}・${aggressiveTitle}で的中と配当のバランスを最適化。`;
+    const features = horseInfo ? `${horseInfo}\n\n信頼度${confidence}%\n\n🎯 ${safeTitle}・⚖️ ${balanceTitle}・🚀 ${aggressiveTitle}で的中と配当のバランスを最適化。` : `信頼度${confidence}%\n\n🎯 ${safeTitle}・⚖️ ${balanceTitle}・🚀 ${aggressiveTitle}で的中と配当のバランスを最適化。`;
 
     return { summary, features };
 }
