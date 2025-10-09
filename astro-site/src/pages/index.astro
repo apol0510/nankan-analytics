@@ -314,7 +314,7 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                         <div class="prediction-summary">
                             {preview.summary}
                             <br><br>
-                            {preview.features}
+                            <div set:html={preview.features.split('\n\n').join('<br><br>')}></div>
                             <br><br>
                             リスク分析: 分析中
                         </div>
