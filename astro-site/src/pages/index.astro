@@ -918,7 +918,7 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
             line-height: 1.6;
         }
 
-        /* 昨日の的中結果レースカード用スタイル */
+        /* 昨日の的中結果レースカード用スタイル（PC：横並び） */
         .yesterday-race-card {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(100, 116, 139, 0.3);
@@ -928,6 +928,11 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s;
+        }
+
+        .yesterday-race-card:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(15, 23, 42, 0.8);
         }
 
         .yesterday-race-info {
@@ -943,22 +948,24 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
             align-items: center;
         }
 
+        /* モバイル：縦並び（768px以下のみ適用） */
         @media (max-width: 768px) {
             .yesterday-race-card {
                 display: grid;
                 grid-template-columns: 1fr;
-                gap: 12px;
-                padding: 12px 15px;
+                gap: 0.75rem;
+                padding: 1rem 1.5rem;
             }
 
             .yesterday-race-info {
                 display: grid;
                 grid-template-columns: auto 1fr;
-                gap: 8px;
+                gap: 0.5rem;
                 align-items: center;
             }
 
-            .yesterday-race-name {
+            /* レース名を独立行に配置（archive/2025/10.astroと同じ） */
+            .yesterday-race-info > div:nth-child(2) {
                 grid-column: 1 / -1;
             }
 
@@ -966,6 +973,7 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                gap: 1rem;
             }
 
             .footer-content {
