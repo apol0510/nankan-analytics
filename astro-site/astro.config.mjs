@@ -7,7 +7,7 @@ import netlify from '@astrojs/netlify';
 export default defineConfig({
   site: 'https://nankan-analytics.keiba.link',
   base: '/',
-  output: 'static',
+  output: 'server',
   adapter: netlify(),
 
   // インテグレーション
