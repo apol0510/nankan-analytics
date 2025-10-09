@@ -91,9 +91,32 @@ done
 echo ""
 echo "✅ 全ての更新完了！"
 echo ""
-echo "📋 次のステップ:"
-echo "  1. git add src/pages/premium-plus.astro src/pages/withdrawal-upsell.astro"
-echo "  2. git commit -m '📸 画像更新・$(date +%Y%m%d)反映（premium-plus5枚・withdrawal-upsell1枚）'"
-echo "  3. git push origin main"
+
+# ========================================
+# 3. Git自動コミット・プッシュ
+# ========================================
+echo "🚀 Git自動コミット・プッシュ開始..."
 echo ""
-echo "🎉 デプロイ後、約1-2分で本番反映されます！"
+
+cd "$PROJECT_ROOT"
+
+# 画像ファイルと更新されたAstroファイルを追加
+echo "📦 変更ファイルを追加中..."
+git add public/upsell-images/*.png
+git add src/pages/premium-plus.astro
+git add src/pages/withdrawal-upsell.astro
+
+# コミット
+COMMIT_DATE=$(date +%Y%m%d)
+COMMIT_MSG="📸 画像更新・${COMMIT_DATE}反映（premium-plus5枚・withdrawal-upsell1枚・自動コミット）"
+echo "💾 コミット実行: $COMMIT_MSG"
+git commit -m "$COMMIT_MSG"
+
+# プッシュ
+echo "🌐 プッシュ実行..."
+git push origin main
+
+echo ""
+echo "🎉 完了！Netlify自動デプロイ開始しました"
+echo "📅 約1-2分後に本番反映されます"
+echo ""
