@@ -1,5 +1,6 @@
 // 退会申請処理 - Airtable連携 + SendGrid通知
 // 2025-10-10新規実装
+// 2025-10-10 v1.3: メール文言最終版（銀行振込記述削除）
 
 export const handler = async (event, context) => {
     const headers = {
