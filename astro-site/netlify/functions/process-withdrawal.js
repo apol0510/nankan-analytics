@@ -65,14 +65,23 @@ export const handler = async (event, context) => {
         // 既存の有効期限を取得（日本語フィールド「有効期限」優先、互換性のためValidUntil/ExpiryDateも確認）
         const existingValidUntil = customerRecord.fields['有効期限'] || customerRecord.fields.ValidUntil || customerRecord.fields.ExpiryDate;
 
-        // 有効期限が未設定の場合、現在から30日後に設定（クレカ決済想定）
+        // 有効期限が未設定の場合、登録日から30日後を計算（正しい有効期限）
         let validUntil = existingValidUntil;
         if (!validUntil) {
-            const thirtyDaysLater = new Date();
-            thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
-            // Airtableの日付フィールドはYYYY-MM-DD形式を期待
-            validUntil = thirtyDaysLater.toISOString().split('T')[0];
-            console.log(`📅 有効期限を自動設定: ${validUntil}`);
+            const createdAt = customerRecord.fields.CreatedAt;
+            if (createdAt) {
+                // 登録日から30日後を計算
+                const registrationDate = new Date(createdAt);
+                registrationDate.setDate(registrationDate.getDate() + 30);
+                validUntil = registrationDate.toISOString().split('T')[0];
+                console.log(`📅 有効期限を登録日から計算: ${createdAt} → ${validUntil}`);
+            } else {
+                // CreatedAtが無い場合のフォールバック（本来あり得ない）
+                const thirtyDaysLater = new Date();
+                thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+                validUntil = thirtyDaysLater.toISOString().split('T')[0];
+                console.log(`⚠️ 登録日不明のため退会日から30日後を設定: ${validUntil}`);
+            }
         } else {
             console.log(`📅 既存の有効期限を維持: ${validUntil}`);
         }
