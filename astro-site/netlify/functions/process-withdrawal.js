@@ -70,7 +70,8 @@ export const handler = async (event, context) => {
         if (!validUntil) {
             const thirtyDaysLater = new Date();
             thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
-            validUntil = thirtyDaysLater.toISOString();
+            // Airtableの日付フィールドはYYYY-MM-DD形式を期待
+            validUntil = thirtyDaysLater.toISOString().split('T')[0];
             console.log(`📅 有効期限を自動設定: ${validUntil}`);
         } else {
             console.log(`📅 既存の有効期限を維持: ${validUntil}`);
@@ -78,7 +79,7 @@ export const handler = async (event, context) => {
 
         await updateCustomerWithdrawalStatus(customerRecord.id, {
             withdrawalRequested: true,
-            withdrawalDate: new Date().toISOString(),
+            withdrawalDate: new Date().toISOString().split('T')[0],
             withdrawalReason: withdrawalReason,
             validUntil: validUntil
         });
