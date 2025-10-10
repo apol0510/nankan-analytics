@@ -76,7 +76,7 @@ export const handler = async (event, context) => {
                 <div style="background: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
                     <p><strong>受信日時:</strong> ${timestamp}</p>
                     <p><strong>メールアドレス:</strong> ${email}</p>
-                    <p><strong>現在のプラン:</strong> ${customerRecord.fields.Plan || '不明'}</p>
+                    <p><strong>現在のプラン:</strong> ${customerRecord.fields['プラン'] || customerRecord.fields.Plan || '不明'}</p>
                     <p><strong>登録日:</strong> ${customerRecord.fields.CreatedAt || '不明'}</p>
                 </div>
 
@@ -103,7 +103,7 @@ export const handler = async (event, context) => {
 
         await sendEmailViaSendGrid({
             to: 'nankan.analytics@gmail.com',
-            subject: `【退会申請】${email} - ${customerRecord.fields.Plan || '会員'}`,
+            subject: `【退会申請】${email} - ${customerRecord.fields['プラン'] || customerRecord.fields.Plan || '会員'}`,
             html: adminEmailHtml,
             replyTo: email,
             fromName: 'NANKANアナリティクス 退会管理'
@@ -123,7 +123,7 @@ export const handler = async (event, context) => {
                 <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
                     <p><strong>受付日時:</strong> ${timestamp}</p>
                     <p><strong>メールアドレス:</strong> ${email}</p>
-                    <p><strong>現在のプラン:</strong> ${customerRecord.fields.Plan || '不明'}</p>
+                    <p><strong>現在のプラン:</strong> ${customerRecord.fields['プラン'] || customerRecord.fields.Plan || '不明'}</p>
                     <p><strong>退会理由:</strong></p>
                     <p style="white-space: pre-wrap; background: #fff; padding: 15px; border-radius: 4px;">${withdrawalReason}</p>
                 </div>
