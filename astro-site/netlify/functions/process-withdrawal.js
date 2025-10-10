@@ -61,11 +61,26 @@ export const handler = async (event, context) => {
             };
         }
 
-        // 2. Airtableで退会フラグを設定
+        // 2. Airtableで退会フラグを設定 + 有効期限設定
+        // 既存の有効期限を取得（日本語フィールド「有効期限」優先、互換性のためValidUntil/ExpiryDateも確認）
+        const existingValidUntil = customerRecord.fields['有効期限'] || customerRecord.fields.ValidUntil || customerRecord.fields.ExpiryDate;
+
+        // 有効期限が未設定の場合、現在から30日後に設定（クレカ決済想定）
+        let validUntil = existingValidUntil;
+        if (!validUntil) {
+            const thirtyDaysLater = new Date();
+            thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+            validUntil = thirtyDaysLater.toISOString();
+            console.log(`📅 有効期限を自動設定: ${validUntil}`);
+        } else {
+            console.log(`📅 既存の有効期限を維持: ${validUntil}`);
+        }
+
         await updateCustomerWithdrawalStatus(customerRecord.id, {
             withdrawalRequested: true,
             withdrawalDate: new Date().toISOString(),
-            withdrawalReason: withdrawalReason
+            withdrawalReason: withdrawalReason,
+            validUntil: validUntil
         });
 
         // 3. 管理者向け退会通知メール
@@ -133,7 +148,8 @@ export const handler = async (event, context) => {
                     <ul>
                         <li>担当者より2営業日以内に退会処理完了のご連絡をいたします</li>
                         <li>Stripe定期支払いの停止処理を行います</li>
-                        <li>お支払い済み期間（次回更新日）までプレミアムコンテンツをご利用いただけます</li>
+                        <li>【有効期限】${new Date(validUntil).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}までプレミアムコンテンツをご利用いただけます</li>
+                        <li>※この日以降は自動的にFreeプランに切り替わります</li>
                     </ul>
                 </div>
 
@@ -234,7 +250,8 @@ async function updateCustomerWithdrawalStatus(recordId, updateData) {
             fields: {
                 WithdrawalRequested: updateData.withdrawalRequested,
                 WithdrawalDate: updateData.withdrawalDate,
-                WithdrawalReason: updateData.withdrawalReason
+                WithdrawalReason: updateData.withdrawalReason,
+                '有効期限': updateData.validUntil
             }
         })
     });

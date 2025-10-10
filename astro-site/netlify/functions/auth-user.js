@@ -117,48 +117,40 @@ exports.handler = async (event, context) => {
     // 既存ユーザーの情報取得
     const user = records[0];
     const currentPoints = user.get('ポイント') || 0;
-    const currentPlan = user.get('プラン') || 'free';
+    let currentPlan = user.get('プラン') || 'free';
     const lastLogin = user.get('最終ポイント付与日');
-    const expiryDate = user.get('ExpiryDate'); // 有効期限取得
     const today = new Date().toISOString().split('T')[0];
 
-    // 🔍 有効期限チェック（期限切れでもログインOK・状態のみ返却）
+    // 🔍 有効期限チェック（PremiumまたはStandardで期限切れならFreeに自動降格）
     let isExpired = false;
-    if (expiryDate) {
-      const expiry = new Date(expiryDate);
+    let wasDowngraded = false;
+
+    // 有効期限フィールド取得（日本語フィールド「有効期限」優先、互換性のためValidUntil/ExpiryDateも確認）
+    const validUntil = user.get('有効期限') || user.get('ValidUntil') || user.get('ExpiryDate');
+
+    if (validUntil) {
+      const expiry = new Date(validUntil);
       const now = new Date();
+
       if (expiry < now) {
         isExpired = true;
-        console.log(`⚠️ ユーザー ${email} は期限切れです（${expiryDate}）`);
+        console.log(`⚠️ ユーザー ${email} は期限切れです（${validUntil}）`);
+
+        // PremiumまたはStandardの場合のみFreeに自動降格
+        const normalizedCurrentPlan = normalizePlan(currentPlan);
+        if (normalizedCurrentPlan === 'premium' || normalizedCurrentPlan === 'standard') {
+          console.log(`🔽 プラン自動降格: ${currentPlan} → Free`);
+          await base('Customers').update(user.id, {
+            'プラン': 'Free'
+          });
+          currentPlan = 'Free';
+          wasDowngraded = true;
+        }
       }
     }
 
     // 🔧 プラン値正規化: 大文字小文字混在問題解決
     const normalizedPlan = normalizePlan(currentPlan);
-
-    // 📊 期限切れユーザーのレスポンス構築（ポイント付与なし）
-    if (isExpired) {
-      return {
-        statusCode: 200,
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          success: true,
-          isNewUser: false,
-          isExpired: true, // 期限切れフラグ
-          user: {
-            email,
-            plan: 'expired', // 特別なステータス
-            originalPlan: normalizedPlan, // 元のプラン
-            points: currentPoints, // ポイント付与なし
-            pointsAdded: 0, // ポイント付与なし
-            lastLogin: today,
-            expiryDate: expiryDate,
-            registeredAt: user.get('登録日')
-          },
-          message: 'プランの有効期限が切れています。継続をご希望の場合はプランを更新してください。'
-        }, null, 2)
-      };
-    }
 
     // ログインポイント付与チェック + プラン変更ボーナス（期限切れでない場合のみ）
     let pointsAdded = 0;
@@ -193,6 +185,15 @@ exports.handler = async (event, context) => {
     }
 
     // 通常ユーザーのレスポンス
+    let message = '';
+    if (wasDowngraded) {
+      message = '有効期限が切れたため、Freeプランに変更されました。';
+    } else if (pointsAdded > 0) {
+      message = `ログイン成功！本日のポイント${pointsAdded}pt付与`;
+    } else {
+      message = 'ログイン成功！（本日のポイントは付与済み）';
+    }
+
     return {
       statusCode: 200,
       headers: { ...headers, 'Content-Type': 'application/json' },
@@ -200,18 +201,17 @@ exports.handler = async (event, context) => {
         success: true,
         isNewUser: false,
         isExpired: false,
+        wasDowngraded: wasDowngraded,
         user: {
           email,
           plan: normalizedPlan,
           points: newPoints,
           pointsAdded,
           lastLogin: today,
-          expiryDate: expiryDate || null,
+          validUntil: validUntil || null,
           registeredAt: user.get('登録日')
         },
-        message: pointsAdded > 0
-          ? `ログイン成功！本日のポイント${pointsAdded}pt付与`
-          : 'ログイン成功！（本日のポイントは付与済み）'
+        message: message
       }, null, 2)
     };
 
