@@ -12,9 +12,13 @@ command = "npm run build"
 functions = "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site/netlify/functions"
 
 [build.environment]
-NODE_VERSION = "18"
-NPM_VERSION = "9"
-NETLIFY_CACHE_VERSION = "v2"
+NODE_VERSION = "20"
+NPM_VERSION = "10"
+NETLIFY_CACHE_VERSION = "v6"
+BUILD_TIMESTAMP = "2025-09-14-13:58-FINAL-DEPLOY"
+BET_DISPLAY_VERSION = "v5-FINAL-BETTING-SYSTEM"
+FORCE_REBUILD = "EMERGENCY"
+CACHE_CLEAR = "TOTAL"
 
 [build.processing]
 
