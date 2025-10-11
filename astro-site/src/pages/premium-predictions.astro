@@ -3,6 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
+import BettingSelectionQA from '../components/BettingSelectionQA.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
 
@@ -84,13 +85,11 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
 
                     <div class="odds-case">
                         <div class="case-header">
-                            <span class="case-condition">馬単オッズ一番人気が<span class="highlight">5倍以下</span>の場合</span>
+                            <span class="case-condition">馬単オッズ一番人気が<span class="highlight">10倍以下</span>の場合</span>
                         </div>
                         <div class="case-content">
                             <strong>少点数的中型＋バランス型</strong>の組み合わせがおすすめです。<br>
-                            この場合、オッズが低いため一部でトリガミ（配当＜投資額）となる可能性があります。
-                            しかし、<strong class="important">重要なのは一つひとつのレース結果ではなく「全体の収支」</strong>です。
-                            的中率を安定させつつ、長期的にトータルでプラスを狙う方が効率的で、結果として資金の増加につながります。
+                            的中率を重視しつつ、バランス型で買い目の幅を広げることで、安定した収支を実現できます。
                         </div>
                     </div>
                 </div>
@@ -111,9 +110,9 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
                                 <td class="point">高配当狙いを絡めて回収率アップ</td>
                             </tr>
                             <tr>
-                                <td class="odds-range">5倍以下</td>
+                                <td class="odds-range">10倍以下</td>
                                 <td class="recommended-model">少点数的中型＋バランス型</td>
-                                <td class="point">トリガミもあるが、トータルで効率的にプラスを狙える</td>
+                                <td class="point">的中率重視で安定した収支を実現</td>
                             </tr>
                         </tbody>
                     </table>
@@ -645,6 +644,9 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         })}
 
         </div>
+
+        <!-- 買い目選択Q&Aセクション -->
+        <BettingSelectionQA />
 
         <!-- さりげないプレミアムプラス案内（一時的にリンク無効） -->
         <div class="premium-plus-notice">
