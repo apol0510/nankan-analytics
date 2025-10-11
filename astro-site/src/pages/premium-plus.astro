@@ -688,6 +688,122 @@ export const prerender = true;
       margin-top: 2rem;
     }
 
+    /* FAQ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .faq-item {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(100, 116, 139, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    }
+
+    .faq-question {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .faq-q-icon {
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .faq-question h4 {
+      color: #e2e8f0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .faq-answer {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding-left: 12px;
+    }
+
+    .faq-a-icon {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .faq-answer-content {
+      flex: 1;
+    }
+
+    .faq-answer-content p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin: 0 0 12px 0;
+    }
+
+    .faq-answer-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .faq-answer-content strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .faq-contact {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .faq-contact-text {
+      font-size: 1rem;
+      color: #cbd5e1;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-contact-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      text-decoration: none;
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .faq-contact-link:hover {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 1rem 0.5rem;
@@ -778,6 +894,37 @@ export const prerender = true;
 
       .final-push-question {
         font-size: 1.1rem;
+      }
+
+      .faq-item {
+        padding: 1.2rem;
+      }
+
+      .faq-question {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .faq-question h4 {
+        font-size: 1rem;
+      }
+
+      .faq-answer {
+        flex-direction: column;
+        padding-left: 0;
+      }
+
+      .faq-contact {
+        padding: 1.5rem;
+      }
+
+      .faq-contact-text {
+        font-size: 0.9rem;
+      }
+
+      .faq-contact-link {
+        font-size: 0.9rem;
+        padding: 10px 24px;
       }
     }
   </style>
@@ -1135,6 +1282,115 @@ export const prerender = true;
           フライング参加の今だけ、<strong>特別価格¥98,000</strong>でご提供。<br>
           通常価格改定後は¥150,000を予定しています。
         </p>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section">
+      <h2 class="section-title">💬 よくあるご質問（FAQ）</h2>
+      <p class="section-subtitle">お客様からよく寄せられる質問にお答えします</p>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-q-icon">Q1</span>
+            <h4>¥98,000は高額ですが、本当に価値がありますか？</h4>
+          </div>
+          <div class="faq-answer">
+            <span class="faq-a-icon">A</span>
+            <div class="faq-answer-content">
+              <p><strong>平均配当¥281,340なので、1鞍的中で投資額の約3倍回収できます。</strong></p>
+              <p>直近12戦で9鞍的中（79%）の実績があり、期待リターンは265%です。<br>
+              月に1回購入して的中すれば、投資額を上回るリターンが期待できます。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-q-icon">Q2</span>
+            <h4>Premium会員とどう違いますか？</h4>
+          </div>
+          <div class="faq-answer">
+            <span class="faq-a-icon">A</span>
+            <div class="faq-answer-content">
+              <p><strong>Premium会員は全レース・3戦略提供、プレミアムプラスは1日1鞍のみ厳選配信です。</strong></p>
+              <p>Premium会員: 自分で戦略を選ぶ必要があり、オッズ確認・買い目選択が必要<br>
+              プレミアムプラス: AIが数万通りから選んだ最高確率の1鞍のみ、迷う必要なし</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-q-icon">Q3</span>
+            <h4>不的中の場合、返金はありますか？</h4>
+          </div>
+          <div class="faq-answer">
+            <span class="faq-a-icon">A</span>
+            <div class="faq-answer-content">
+              <p><strong>競馬予想の性質上、返金制度はございません。</strong></p>
+              <p>ただし、直近12戦で9鞍的中（79%）の高い的中率を実現しており、<br>
+              透明性保証として全ての的中・不的中データを公開しています。<br>
+              統計的に長期的な期待リターンは265%となっております。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-q-icon">Q4</span>
+            <h4>途中解約・キャンセルはできますか？</h4>
+          </div>
+          <div class="faq-answer">
+            <span class="faq-a-icon">A</span>
+            <div class="faq-answer-content">
+              <p><strong>プレミアムプラスは単発購入（¥98,000）のため、サブスクリプションではありません。</strong></p>
+              <p>購入後すぐに当日の超勝負レース1鞍の買い目が提供されます。<br>
+              継続利用される場合は、その都度ご購入いただく形となります。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-q-icon">Q5</span>
+            <h4>どのタイミングで買い目が配信されますか？</h4>
+          </div>
+          <div class="faq-answer">
+            <span class="faq-a-icon">A</span>
+            <div class="faq-answer-content">
+              <p><strong>購入後、当日の超勝負レース1鞍の買い目を即座に配信いたします。</strong></p>
+              <p>AIが分析した最高確率のレースと買い目を、発走時刻の十分前にお届けします。<br>
+              マイページにログイン後、専用ページで確認いただけます。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-q-icon">Q6</span>
+            <h4>初心者でも大丈夫ですか？</h4>
+          </div>
+          <div class="faq-answer">
+            <span class="faq-a-icon">A</span>
+            <div class="faq-answer-content">
+              <p><strong>はい、むしろ初心者の方にこそおすすめです。</strong></p>
+              <p>買い目は「馬単 3→11,12 2点」のように具体的に提示されるので、<br>
+              そのまま購入するだけでOKです。戦略選択・オッズ確認などの複雑な作業は一切不要です。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-contact">
+        <p class="faq-contact-text">
+          上記以外のご質問がある方は、お気軽にお問い合わせください。<br>
+          AI開発者が直接対応いたします。
+        </p>
+        <a href="/contact" class="faq-contact-link">
+          📧 お問い合わせはこちら
+        </a>
       </div>
     </div>
 
