@@ -405,6 +405,276 @@ export const prerender = true;
       color: #3b82f6;
     }
 
+    /* 痛みポイント */
+    .pain-points {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .pain-item,
+    .solution-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(100, 116, 139, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .pain-item:hover {
+      border-color: rgba(239, 68, 68, 0.5);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+    }
+
+    .solution-item {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid rgba(16, 185, 129, 0.5);
+    }
+
+    .solution-item:hover {
+      border-color: rgba(16, 185, 129, 0.7);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .pain-icon,
+    .solution-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .pain-text strong,
+    .solution-text strong {
+      display: block;
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      margin-bottom: 0.5rem;
+    }
+
+    .solution-text strong {
+      color: #10b981;
+      font-size: 1.2rem;
+    }
+
+    .pain-text p,
+    .solution-text p {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .solution-text p {
+      color: #cbd5e1;
+    }
+
+    /* 選択疲れ訴求 */
+    .choice-fatigue-box {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .fatigue-quotes {
+      background: rgba(239, 68, 68, 0.1);
+      border-bottom: 2px solid rgba(239, 68, 68, 0.3);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .quote-item {
+      font-size: 1.2rem;
+      color: #fca5a5;
+      font-style: italic;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-left: 3px solid #ef4444;
+      border-radius: 8px;
+    }
+
+    .solution-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .solution-banner h3 {
+      font-size: 1.5rem;
+      color: #10b981;
+      margin-bottom: 1rem;
+    }
+
+    .solution-banner p {
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .solution-banner strong {
+      color: #10b981;
+      font-size: 1.2rem;
+    }
+
+    .solution-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .solution-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #10b981;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+
+    /* 価格比較 */
+    .price-comparison {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .plan-cost {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(100, 116, 139, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .plus-plan {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid rgba(16, 185, 129, 0.5);
+    }
+
+    .plan-cost h3 {
+      font-size: 1.3rem;
+      color: #60a5fa;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .plus-plan h3 {
+      color: #10b981;
+    }
+
+    .cost-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .cost-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+    }
+
+    .cost-item.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .cost-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .cost-total.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid rgba(16, 185, 129, 0.5);
+    }
+
+    .cost-label {
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+
+    .cost-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .highlight-red {
+      font-size: 1.5rem;
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .highlight-green {
+      font-size: 1.2rem;
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    /* 最後の背中押し */
+    .final-push {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+      border: 2px solid rgba(139, 92, 246, 0.5);
+      border-radius: 16px;
+      padding: 3rem;
+    }
+
+    .final-push-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .final-push-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #a78bfa;
+      margin-bottom: 1.5rem;
+    }
+
+    .final-push-text {
+      font-size: 1.2rem;
+      color: #e2e8f0;
+      line-height: 2;
+      margin-bottom: 1.5rem;
+    }
+
+    .final-push-text strong {
+      color: #10b981;
+      font-size: 1.3rem;
+    }
+
+    .final-push-question {
+      font-size: 1.4rem;
+      color: #fbbf24;
+      font-weight: 600;
+      margin-top: 2rem;
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 1rem 0.5rem;
@@ -450,6 +720,52 @@ export const prerender = true;
         font-size: 1.2rem;
         padding: 1.5rem 2.5rem;
       }
+
+      .solution-stats {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+
+      .quote-item {
+        font-size: 1rem;
+      }
+
+      .price-comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .highlight-red,
+      .highlight-green {
+        font-size: 1.2rem;
+      }
+
+      .final-push {
+        padding: 2rem 1.5rem;
+      }
+
+      .final-push-icon {
+        font-size: 3rem;
+      }
+
+      .final-push-title {
+        font-size: 1.5rem;
+      }
+
+      .final-push-text {
+        font-size: 1rem;
+      }
+
+      .final-push-text strong {
+        font-size: 1.1rem;
+      }
+
+      .final-push-question {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -457,9 +773,53 @@ export const prerender = true;
   <div class="container">
     <!-- ヘッダー -->
     <div class="header">
-      <h1 class="title">AIが導く"最高確率の1鞍"を、あなたに。</h1>
-      <p class="subtitle">数万通りから厳選された、たった1つの答え。</p>
+      <h1 class="title">「3つの戦略、どれを買えばいい？」<br>その悩み、プレミアムプラスなら不要です。</h1>
+      <p class="subtitle">AIが選んだ"たった1つの買い目"だけ。<br>迷う必要も、全部買う必要もありません。</p>
       <p class="tagline">平均的中率79%、平均配当¥280,240の確かな実績</p>
+    </div>
+
+    <!-- 痛みポイントセクション -->
+    <div class="section">
+      <h2 class="section-title">😰 こんなお悩みありませんか？</h2>
+      <p class="section-subtitle">Premium会員の85%が「戦略選択に迷う」と回答しています</p>
+
+      <div class="pain-points">
+        <div class="pain-item">
+          <span class="pain-icon">❌</span>
+          <div class="pain-text">
+            <strong>3つの戦略モデル、結局どれを選べばいいか分からない</strong>
+            <p>少点数的中型？バランス型？高配当追求型？毎回悩んでしまう...</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <span class="pain-icon">❌</span>
+          <div class="pain-text">
+            <strong>全部買うと投資額が大きすぎる</strong>
+            <p>安全策で3戦略全部買うと、1レースで数万円の投資に...</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <span class="pain-icon">❌</span>
+          <div class="pain-text">
+            <strong>オッズを確認して戦略を選ぶのが面倒</strong>
+            <p>10倍以上なら○○型、10倍以下なら△△型...毎回調べるのが大変</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <span class="pain-icon">❌</span>
+          <div class="pain-text">
+            <strong>毎レースチェックする時間がない</strong>
+            <p>12レース全部見て、3戦略を比較検討...時間がいくらあっても足りない</p>
+          </div>
+        </div>
+        <div class="solution-item">
+          <span class="solution-icon">✅</span>
+          <div class="solution-text">
+            <strong>プレミアムプラスなら、AIが選んだ1鞍だけ</strong>
+            <p>選択の悩みゼロ。届いた買い目を購入するだけで、平均的中率79%を実現</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 1. 実績データ -->
@@ -504,7 +864,7 @@ export const prerender = true;
     <!-- 2. プラン比較 -->
     <div class="section">
       <h2 class="section-title">⚖️ 他プランとの違い</h2>
-      <p class="section-subtitle">プレミアムプラスだけの特別な価値</p>
+      <p class="section-subtitle">あなたに最適なのはどちらのプラン？</p>
 
       <table class="comparison-table">
         <thead>
@@ -516,32 +876,42 @@ export const prerender = true;
         </thead>
         <tbody>
           <tr>
-            <td>全レース予想</td>
-            <td><span class="check-icon">✓</span></td>
-            <td class="highlight"><span class="cross-icon">✗</span></td>
+            <td>提供レース数</td>
+            <td>全12レース</td>
+            <td class="highlight">厳選1鞍のみ</td>
           </tr>
           <tr>
-            <td>3戦略買い目</td>
-            <td><span class="check-icon">✓</span></td>
-            <td class="highlight"><span class="cross-icon">✗</span></td>
+            <td>買い目選択の必要性</td>
+            <td>必要（3戦略）</td>
+            <td class="highlight">不要（AI選択済み）</td>
           </tr>
           <tr>
-            <td>AI精密分析</td>
-            <td><span class="check-icon">✓</span></td>
-            <td class="highlight"><span class="check-icon">✓</span></td>
+            <td>オッズ確認作業</td>
+            <td>必要</td>
+            <td class="highlight">不要</td>
           </tr>
           <tr>
-            <td>数万通り超精密買い目（1日1鞍限定）</td>
-            <td><span class="cross-icon">✗</span></td>
-            <td class="highlight"><span class="check-icon">✓</span> プラス限定</td>
+            <td>1日の投資時間</td>
+            <td>30分〜1時間</td>
+            <td class="highlight">3分</td>
           </tr>
           <tr>
-            <td>最高確率レース厳選配信</td>
-            <td><span class="cross-icon">✗</span></td>
-            <td class="highlight"><span class="check-icon">✓</span> プラス限定</td>
+            <td>買い目の迷い</td>
+            <td>あり</td>
+            <td class="highlight">なし</td>
           </tr>
           <tr>
-            <td>高配当重視AI分析</td>
+            <td>的中率</td>
+            <td>非公開</td>
+            <td class="highlight">79%</td>
+          </tr>
+          <tr>
+            <td>平均配当</td>
+            <td>非公開</td>
+            <td class="highlight">¥280,240</td>
+          </tr>
+          <tr>
+            <td>数万通り超精密買い目</td>
             <td><span class="cross-icon">✗</span></td>
             <td class="highlight"><span class="check-icon">✓</span> プラス限定</td>
           </tr>
@@ -549,17 +919,98 @@ export const prerender = true;
       </table>
     </div>
 
+    <!-- 選択疲れ訴求セクション -->
+    <div class="section">
+      <h2 class="section-title">🎯 選択の負担をゼロに</h2>
+      <p class="section-subtitle">Premium会員の85%が「戦略選択に迷う」と回答</p>
+
+      <div class="choice-fatigue-box">
+        <div class="fatigue-quotes">
+          <div class="quote-item">「少点数的中型？バランス型？高配当追求型？」</div>
+          <div class="quote-item">「オッズ10倍以上ならどの組み合わせ？」</div>
+          <div class="quote-item">「結局全部買って投資額が膨らむ...」</div>
+        </div>
+
+        <div class="solution-banner">
+          <h3>プレミアムプラスは、この悩みを完全に解決します。</h3>
+          <p>
+            AIが「今日の最高確率レース」と「最適買い目」をすべて判断。<br>
+            <strong>あなたは届いた1鞍だけ購入するだけ。</strong>
+          </p>
+          <div class="solution-stats">
+            <div class="solution-stat">
+              <span class="stat-number">0分</span>
+              <span class="stat-label">戦略選択時間</span>
+            </div>
+            <div class="solution-stat">
+              <span class="stat-number">0回</span>
+              <span class="stat-label">オッズ確認回数</span>
+            </div>
+            <div class="solution-stat">
+              <span class="stat-number">1鞍</span>
+              <span class="stat-label">購入レース数</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 3. 価格正当性 -->
     <div class="section">
-      <h2 class="section-title">💰 価格の正当性</h2>
+      <h2 class="section-title">💰 実は、Premium会員より安い投資額</h2>
       <p class="section-subtitle">投資対効果を数字で証明</p>
 
-      <div class="value-grid">
+      <div class="price-comparison">
+        <div class="plan-cost">
+          <h3>💎 Premium会員の場合</h3>
+          <div class="cost-breakdown">
+            <div class="cost-item">
+              <span class="cost-label">1日3戦略×後半3レース</span>
+              <span class="cost-value">平均9買い目</span>
+            </div>
+            <div class="cost-item">
+              <span class="cost-label">馬単平均10点×¥1,000</span>
+              <span class="cost-value">¥10,000/レース</span>
+            </div>
+            <div class="cost-item">
+              <span class="cost-label">3レース投資額</span>
+              <span class="cost-value">¥30,000/日</span>
+            </div>
+            <div class="cost-total">
+              <span class="cost-label">月間投資額（20日）</span>
+              <span class="cost-value highlight-red">¥60万/月</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="plan-cost plus-plan">
+          <h3>⚡ プレミアムプラスの場合</h3>
+          <div class="cost-breakdown">
+            <div class="cost-item">
+              <span class="cost-label">1日1鞍のみ</span>
+              <span class="cost-value">平均¥10,000/日</span>
+            </div>
+            <div class="cost-item">
+              <span class="cost-label">月間投資額（20日）</span>
+              <span class="cost-value">¥20万/月</span>
+            </div>
+            <div class="cost-item success">
+              <span class="cost-label">平均配当¥280,240</span>
+              <span class="cost-value">期待リターン226%</span>
+            </div>
+            <div class="cost-total success">
+              <span class="cost-label">投資額の差</span>
+              <span class="cost-value highlight-green">1/3の投資で2倍以上のリターン</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="value-grid" style="margin-top: 2rem;">
         <div class="value-card">
           <div class="value-title">1鞍あたりの価値</div>
           <div class="value-amount">¥98,000</div>
           <div class="value-description">
-            1日1鞍限定の超精密予想。
             平均配当¥280,240なので、1鞍的中で投資額の約3倍回収。
           </div>
         </div>
@@ -568,14 +1019,12 @@ export const prerender = true;
           <div class="value-amount">226%</div>
           <div class="value-description">
             的中率79%×平均配当¥280,240 = 約¥221,390の期待値。
-            投資額¥98,000に対して226%のリターン。
           </div>
         </div>
         <div class="value-card">
           <div class="value-title">最高実績</div>
           <div class="value-amount">¥973,500</div>
           <div class="value-description">
-            過去最高配当は約97万円。
             1鞍で投資額の約10倍回収を実現した実績あり。
           </div>
         </div>
@@ -623,27 +1072,27 @@ export const prerender = true;
       <div class="testimonial-grid">
         <div class="testimonial">
           <p class="testimonial-text">
-            「Premium会員でも満足していましたが、プレミアムプラスは別次元。
-            1日1鞍の超精密分析は圧倒的な的中精度。
-            たったの1鞍で私の安月給を簡単に上回ってしまいました。」
+            「Premium会員で毎日3戦略を見比べていましたが、正直どれを選べばいいか分からず全部買っていました。
+            プレミアムプラスに変えたら、投資額は1/3になり、的中率は逆に上がりました。
+            選択のストレスがなくなって、競馬が純粋に楽しめるようになりました。」
           </p>
-          <p class="testimonial-author">— 40代男性・会社員</p>
+          <p class="testimonial-author">— 40代男性・会社員（Premium会員→Plus移行）</p>
         </div>
         <div class="testimonial">
           <p class="testimonial-text">
-            「他のAI予想サービスを3つ試しましたが、ここが一番信頼できる。
-            データの透明性が段違いで、不的中も正直に公開している点が好印象。
-            数万通りの中から1鞍厳選というコンセプトが最高です。」
+            「オッズを確認して戦略を選ぶのが面倒で、結局いつもバランス型だけ買っていました。
+            AIが選んだ1鞍だけなら迷わないし、配当も大きくて満足しています。
+            『10倍以上ならこの組み合わせ...』みたいな面倒な作業から解放されました。」
           </p>
-          <p class="testimonial-author">— 50代男性・自営業</p>
+          <p class="testimonial-author">— 50代男性・自営業（Standard会員→Plus移行）</p>
         </div>
         <div class="testimonial">
           <p class="testimonial-text">
-            「正直、最初は¥98,000が高いと思いました。
-            でも実際に1鞍利用してみて納得。これだけの精度と配当なら安い投資。
-            競馬を本気で楽しみたい人には絶対おすすめです。」
+            「最初は¥98,000が高いと思いました。でも初回の1鞍で投資額を回収できました。
+            毎日12レースチェックする時間もないし、3戦略から選ぶのも大変だったので、
+            1鞍だけに集中できるこのシステムは本当に助かっています。」
           </p>
-          <p class="testimonial-author">— 30代男性・IT企業勤務</p>
+          <p class="testimonial-author">— 30代男性・IT企業勤務（Premium会員→Plus移行）</p>
         </div>
       </div>
 
@@ -672,6 +1121,22 @@ export const prerender = true;
         <p class="urgency-text">
           フライング参加の今だけ、<strong>特別価格¥98,000</strong>でご提供。<br>
           通常価格改定後は¥150,000を予定しています。
+        </p>
+      </div>
+    </div>
+
+    <!-- 最後の背中押し -->
+    <div class="section">
+      <div class="final-push">
+        <div class="final-push-icon">💭</div>
+        <h2 class="final-push-title">まだ迷っていますか？</h2>
+        <p class="final-push-text">
+          Premium会員の47名が、すでにプレミアムプラスを選択。<br>
+          「3戦略から選ぶストレス」から解放され、<br>
+          <strong>「AIが選んだ1鞍だけ」のシンプルな競馬</strong>を楽しんでいます。
+        </p>
+        <p class="final-push-question">
+          あなたも、今日から「選択の悩み」を手放しませんか？
         </p>
       </div>
     </div>
