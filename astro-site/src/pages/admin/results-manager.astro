@@ -605,8 +605,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             }
 
             const hitRate = ((hitCount / 12) * 100).toFixed(1);
-            const purchaseAmount = 12 * 1000; // 🛡️ 復活防止: 12レース × 1000円（計算式統一）
-            const recoveryRate = Math.round((totalPayout / purchaseAmount) * 100);
 
             dailyData = {
                 date: date,
@@ -615,7 +613,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 hitCount: hitCount,
                 totalCount: 12,
                 totalPayout: totalPayout,
-                recoveryRate: recoveryRate,
                 results: results
             };
 
@@ -637,9 +634,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     <div class="stat-value">¥${dailyData.totalPayout.toLocaleString()}</div>
                     <div class="stat-label">配当合計</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">${dailyData.recoveryRate}%</div>
-                    <div class="stat-label">回収率</div>
+                <div class="stat-card" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
+                    <div class="stat-value" style="color: #f59e0b;">--</div>
+                    <div class="stat-label">回収率（点数入力後に計算）</div>
                 </div>
             `;
 
@@ -777,6 +774,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             // レース配列を生成
             const races = [];
             let hasError = false;
+            let totalBetPoints = 0; // 🔧 購入点数合計を計算
 
             for (let i = 0; i < dailyData.results.length; i++) {
                 const raceNum = i + 1;
@@ -789,6 +787,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     hasError = true;
                     break;
                 }
+
+                totalBetPoints += parseInt(betPoints); // 🔧 点数を累積
 
                 if (result.result === 'win') {
                     // 的中レースはレース名も必須
@@ -826,6 +826,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             // パーフェクト的中判定
             const perfectHit = dailyData.hitCount === dailyData.totalCount;
 
+            // 🔧 購入金額と回収率を計算（実際の点数合計から）
+            const purchaseAmount = totalBetPoints * 100; // 100円単位
+            const recoveryRate = Math.round((dailyData.totalPayout / purchaseAmount) * 100);
+
             // JSON構造生成（日付データのみ、余分な括弧なし）
             const dayData = {
                 venue: venue,
@@ -833,6 +837,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 hitRaces: dailyData.hitCount,
                 perfectHit: perfectHit,
                 totalPayout: dailyData.totalPayout,
+                recoveryRate: recoveryRate, // 🔧 回収率を追加
                 races: races
             };
 
