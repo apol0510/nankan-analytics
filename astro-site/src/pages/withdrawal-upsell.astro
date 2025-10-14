@@ -506,12 +506,12 @@
     </div>
 
     <script>
-      // 画像自動設定（クライアントサイドで昨日の日付計算）
+      // 画像自動設定（クライアントサイドで今日の日付計算）
       (function() {
         const img = document.getElementById('hitImage');
         const now = new Date();
         const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
-        jst.setDate(jst.getDate() - 1); // 昨日
+        // jst.setDate(jst.getDate() - 1); // 昨日 → 今日に変更
 
         function tryLoadImage(daysBack) {
           const testDate = new Date(jst);
