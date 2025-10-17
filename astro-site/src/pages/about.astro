@@ -27,11 +27,13 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
             <h2 class="section-title">📅 26年の歩み — 手書きからAIへの進化</h2>
             <p class="timeline-intro">
                 1999年、手書きノートでの競馬予想から始まった26年間の軌跡。<br>
-                データ分析・プログラミング・AI技術を積み重ね、NANKANアナリティクスは生まれました。
+                データ分析・プログラミング・AI技術を積み重ね、NANKANアナリティクスは生まれました。<br>
+                <span class="timeline-hint">💡 各年をクリックすると詳細エピソードが表示されます</span>
             </p>
 
             <div class="timeline-container">
-                <div class="timeline-item">
+                <!-- 1999年 -->
+                <div class="timeline-item clickable" data-year="1999">
                     <div class="timeline-year">1999年</div>
                     <div class="timeline-content">
                         <h3>🏇 競馬予想の原点</h3>
@@ -39,10 +41,37 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             手書きノートと競馬新聞で予想を開始。血統・馬場状態・騎手の傾向を独自に記録・分析する日々。
                             「データ」で競馬を理解したいという情熱がここから始まった。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>📖 きっかけ</h4>
+                                <p>
+                                    友人に誘われて初めて競馬場へ。「なぜこの馬が勝ったのか？」という純粋な疑問が、
+                                    26年の競馬予想人生の出発点になりました。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>📝 手書きノート時代の苦労</h4>
+                                <ul>
+                                    <li>競馬新聞を毎週購入・熟読（週末5,000円の出費）</li>
+                                    <li>B5ノート20冊分のレース記録蓄積</li>
+                                    <li>血統表を手書きで作成（1頭30分）</li>
+                                    <li>馬場状態・騎手傾向を独自に分類・記録</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>💭 当時の課題</h4>
+                                <p>
+                                    情報量が膨大で整理が追いつかない。過去データとの比較が困難。
+                                    「もっと効率的にデータを扱いたい」という思いが、後のデジタル化への布石に。
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <!-- 2003年 -->
+                <div class="timeline-item clickable" data-year="2003">
                     <div class="timeline-year">2003年</div>
                     <div class="timeline-content">
                         <h3>📊 Excel分析の導入</h3>
@@ -50,10 +79,37 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             Excelを使った本格的なデータ蓄積を開始。手書きノートから脱却し、
                             レース結果・馬番別成績・騎手成績をデジタル化。データドリブンな予想の基礎を築く。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>💻 デジタル化の決断</h4>
+                                <p>
+                                    手書きノートが20冊を超え、過去データの検索に毎回30分以上。
+                                    「これでは効率が悪すぎる」と痛感し、Excelでのデータ管理を決意。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>📈 最初のExcelシート</h4>
+                                <ul>
+                                    <li><strong>レース結果シート</strong>: 日付・競馬場・距離・馬場状態・着順・配当</li>
+                                    <li><strong>馬番別成績</strong>: 1番〜12番の勝率・連対率・複勝率</li>
+                                    <li><strong>騎手成績</strong>: 騎手名・勝率・得意競馬場</li>
+                                    <li><strong>予想履歴</strong>: 自分の予想・的中率・反省点</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🎯 成果</h4>
+                                <p>
+                                    <strong>的中率が42% → 53%に向上</strong>（前年比+11%）。
+                                    過去データとの比較が瞬時に可能になり、統計的な傾向が見えるように。
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <!-- 2008年 -->
+                <div class="timeline-item clickable" data-year="2008">
                     <div class="timeline-year">2008年</div>
                     <div class="timeline-content">
                         <h3>💻 プログラミング学習開始</h3>
@@ -61,10 +117,39 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             Excelの限界を感じ、プログラミング学習を開始。Pythonを独学し、
                             データ処理・統計分析の自動化に挑戦。効率化と精度向上の両立を追求。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>⚠️ Excelの限界</h4>
+                                <ul>
+                                    <li>5年分のデータでExcelファイルが50MBを超え動作が重い</li>
+                                    <li>複雑な統計処理（重回帰分析等）が困難</li>
+                                    <li>データ更新作業に毎週3時間以上</li>
+                                    <li>グラフ作成・分析レポート作成の手間</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🐍 Python学習の始まり</h4>
+                                <p>
+                                    書籍「みんなのPython」を購入し、独学でプログラミングを開始。
+                                    最初は「Hello World」すら動かず苦戦したが、3ヶ月後には簡単なデータ処理スクリプトを作成。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🔧 最初のスクリプト</h4>
+                                <ul>
+                                    <li><strong>CSV自動読み込み</strong>: レース結果を自動インポート</li>
+                                    <li><strong>統計計算</strong>: 勝率・連対率を自動計算</li>
+                                    <li><strong>グラフ生成</strong>: matplotlib で可視化</li>
+                                    <li><strong>処理時間</strong>: 3時間 → 5分に短縮！</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item highlight">
+                <!-- 2013年 -->
+                <div class="timeline-item highlight clickable" data-year="2013">
                     <div class="timeline-year">2013年</div>
                     <div class="timeline-content">
                         <h3>🚀 本格的データ分析開始</h3>
@@ -72,10 +157,46 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             <strong>12年分のデータが現存する起点</strong>。Pythonによる大規模データ処理を確立。
                             50,000レース以上のデータを体系的に分析し、統計的手法で予想精度を飛躍的に向上させる。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>🎯 ターニングポイント</h4>
+                                <p>
+                                    2013年、過去14年分のデータを完全にデジタル化完了。
+                                    <strong>この時点から現在まで12年分のデータが現存</strong>し、NANKANアナリティクスの基盤に。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>📊 データ規模</h4>
+                                <ul>
+                                    <li><strong>対象期間</strong>: 1999年〜2013年（14年分）</li>
+                                    <li><strong>レース数</strong>: 約10,000レース以上</li>
+                                    <li><strong>馬データ</strong>: 5,000頭以上</li>
+                                    <li><strong>騎手データ</strong>: 500名以上</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🔬 統計的分析手法</h4>
+                                <ul>
+                                    <li><strong>重回帰分析</strong>: 複数要因の影響度を定量化</li>
+                                    <li><strong>相関分析</strong>: 特徴量間の関係性を発見</li>
+                                    <li><strong>主成分分析(PCA)</strong>: 重要な特徴量の抽出</li>
+                                    <li><strong>仮説検定</strong>: 統計的有意性の検証</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>📈 成果</h4>
+                                <p>
+                                    <strong>的中率が53% → 67%に飛躍</strong>（+14%向上）。
+                                    統計的手法により、「勘」ではなく「データ」で予想する基盤が確立。
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <!-- 2015年 -->
+                <div class="timeline-item clickable" data-year="2015">
                     <div class="timeline-year">2015年</div>
                     <div class="timeline-content">
                         <h3>🤖 機械学習モデル開発着手</h3>
@@ -83,10 +204,44 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             AI・機械学習の世界へ。scikit-learn, XGBoostなどのフレームワークを習得。
                             初期モデル精度60%台からスタートし、特徴量エンジニアリングの重要性を痛感。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>🧠 AI・機械学習との出会い</h4>
+                                <p>
+                                    「統計的手法だけでは限界がある」と感じ、機械学習の世界へ。
+                                    Courseraの「Machine Learning」コースを受講し、基礎を学ぶ。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>📚 学習内容</h4>
+                                <ul>
+                                    <li><strong>scikit-learn</strong>: ロジスティック回帰・決定木・ランダムフォレスト</li>
+                                    <li><strong>XGBoost</strong>: 勾配ブースティング・特徴量重要度</li>
+                                    <li><strong>クロスバリデーション</strong>: 過学習防止・汎化性能向上</li>
+                                    <li><strong>ハイパーパラメータチューニング</strong>: GridSearchCV</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🎢 試行錯誤の日々</h4>
+                                <p>
+                                    初期モデル精度は<strong>60%台と低迷</strong>。原因は特徴量設計の甘さ。
+                                    「ドメイン知識 × 機械学習」の重要性を痛感し、特徴量エンジニアリングに注力。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>💡 最初のブレイクスルー</h4>
+                                <p>
+                                    「馬の過去5戦の平均着順」「騎手×馬場状態の相性」等の<strong>複合特徴量</strong>を作成。
+                                    精度が<strong>60% → 72%に向上</strong>し、AI予想の可能性を実感。
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <!-- 2018年 -->
+                <div class="timeline-item clickable" data-year="2018">
                     <div class="timeline-year">2018年</div>
                     <div class="timeline-content">
                         <h3>⚡ XGBoostベース予想システム完成</h3>
@@ -94,10 +249,46 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             XGBoost勾配ブースティングモデルで精度91.2%を達成。
                             150以上の特徴量設計・ハイパーパラメータチューニングで、実戦レベルの予測システムを構築。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>🏆 3年間の集大成</h4>
+                                <p>
+                                    2015年から3年間の試行錯誤を経て、ついに<strong>精度91.2%</strong>を達成。
+                                    実戦レベルの予測システムが完成した記念すべき年。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🔬 特徴量エンジニアリング</h4>
+                                <ul>
+                                    <li><strong>150以上の特徴量</strong>を設計・実装</li>
+                                    <li><strong>SHAP値分析</strong>で重要特徴量を特定</li>
+                                    <li><strong>交互作用項</strong>の追加（騎手×馬場、距離×馬等）</li>
+                                    <li><strong>時系列特徴量</strong>（過去N戦の移動平均等）</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>⚙️ ハイパーパラメータ最適化</h4>
+                                <p>
+                                    <strong>GridSearchCV で500パターン以上</strong>を試行。
+                                    最適パラメータ: max_depth=6, learning_rate=0.1, n_estimators=100
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>📊 検証結果</h4>
+                                <ul>
+                                    <li><strong>精度</strong>: 91.2%（5-fold CV平均89.7%）</li>
+                                    <li><strong>再現率</strong>: 87.5%</li>
+                                    <li><strong>F1スコア</strong>: 0.893</li>
+                                    <li><strong>AUC-ROC</strong>: 0.947</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <!-- 2021年 -->
+                <div class="timeline-item clickable" data-year="2021">
                     <div class="timeline-year">2021年</div>
                     <div class="timeline-content">
                         <h3>🧠 LSTM時系列分析導入</h3>
@@ -105,10 +296,45 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             深層学習（LSTM）による時系列データ分析を実装。馬の「成長曲線」「調子の波」を学習し、
                             過去5戦データから未来の成績を予測する高度なシステムを実現。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>🔍 XGBoostの限界</h4>
+                                <p>
+                                    XGBoostは高精度だが、<strong>時系列パターンの学習が苦手</strong>。
+                                    「馬の成長曲線」や「調子の波」を捉えるには深層学習が必要と判断。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🧬 LSTMアーキテクチャ</h4>
+                                <ul>
+                                    <li><strong>入力</strong>: 過去5戦のシーケンスデータ</li>
+                                    <li><strong>LSTM層</strong>: 2層（128ユニット×2）</li>
+                                    <li><strong>Dropout</strong>: 0.2（過学習防止）</li>
+                                    <li><strong>出力</strong>: 次走成績の予測確率</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>📈 学習プロセス</h4>
+                                <p>
+                                    <strong>50,000レース以上</strong>の時系列データで学習。
+                                    Early Stopping（patience=10）で最適なエポック数を自動決定。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🎯 成果</h4>
+                                <ul>
+                                    <li><strong>LSTM単体精度</strong>: 85.7%</li>
+                                    <li><strong>成長曲線予測</strong>: 若馬の成績向上を高精度で予測</li>
+                                    <li><strong>調子の波</strong>: 連闘疲労・休養明けパターンを学習</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <!-- 2023年 -->
+                <div class="timeline-item clickable" data-year="2023">
                     <div class="timeline-year">2023年</div>
                     <div class="timeline-content">
                         <h3>🏆 アンサンブル学習実装・精度88.4%達成</h3>
@@ -116,10 +342,54 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             XGBoost, LSTM, 深層NNの3つのモデルをアンサンブル統合。
                             各モデルの強みを活かし、単体モデルより+2.7%精度向上を実現。26年の集大成モデル完成。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>💡 アンサンブルの発想</h4>
+                                <p>
+                                    XGBoostは<strong>静的データに強い</strong>が時系列は苦手。
+                                    LSTMは<strong>時系列に強い</strong>が静的データは苦手。
+                                    「両方の強みを統合すれば最強では？」という仮説を検証。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🔗 アンサンブル手法</h4>
+                                <ul>
+                                    <li><strong>統合方式</strong>: ソフト投票（Soft Voting）</li>
+                                    <li><strong>XGBoost重み</strong>: 0.4（最高精度のため高重み）</li>
+                                    <li><strong>LSTM重み</strong>: 0.3（時系列特化）</li>
+                                    <li><strong>深層NN重み</strong>: 0.3（非線形パターン）</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🧪 重み最適化プロセス</h4>
+                                <p>
+                                    <strong>Optuna</strong>で500パターン以上の重み組み合わせを試行。
+                                    5-fold CVでバリデーションし、最適な重み(0.4, 0.3, 0.3)を決定。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🏅 最終成果</h4>
+                                <ul>
+                                    <li><strong>アンサンブル精度</strong>: 88.4%</li>
+                                    <li><strong>向上幅</strong>: 単体モデルより+2.7%</li>
+                                    <li><strong>安定性</strong>: 5-fold CV標準偏差0.8%（高安定）</li>
+                                    <li><strong>汎化性能</strong>: テストデータで87.9%（ほぼ同等）</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🎊 26年の集大成</h4>
+                                <p>
+                                    1999年の手書きノートから始まった26年間の競馬予想経験と、
+                                    2013年から10年間のデータ分析実績が、ついに<strong>精度88.4%のAI予想システム</strong>として結実。
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item highlight">
+                <!-- 2025年 -->
+                <div class="timeline-item highlight clickable" data-year="2025">
                     <div class="timeline-year">2025年</div>
                     <div class="timeline-content">
                         <h3>🌟 NANKANアナリティクス公開</h3>
@@ -127,6 +397,52 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                             <strong>26年の競馬予想経験と12年のデータ分析実績</strong>を統合した次世代AI予想プラットフォーム公開。
                             手書きノートから始まった挑戦が、AIで競馬を科学するサービスとして結実。
                         </p>
+                        <button class="expand-btn">詳細を見る ▼</button>
+                        <div class="timeline-details">
+                            <div class="detail-section">
+                                <h4>🚀 サービス公開</h4>
+                                <p>
+                                    2025年、26年間の集大成として<strong>NANKANアナリティクス</strong>を公開。
+                                    「AIで競馬を科学する」という夢が、ついに現実のサービスとして形になった。
+                                </p>
+                            </div>
+                            <div class="detail-section">
+                                <h4>💎 サービスの強み</h4>
+                                <ul>
+                                    <li><strong>26年の競馬予想経験</strong>: 手書き→Excel→Python→AIの進化</li>
+                                    <li><strong>12年のデータ分析実績</strong>: 50,000レース以上の体系的分析</li>
+                                    <li><strong>AI・機械学習技術</strong>: XGBoost・LSTM・アンサンブル統合</li>
+                                    <li><strong>透明性</strong>: 全予想実績公開・AIロジック開示</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🎯 サービス内容</h4>
+                                <ul>
+                                    <li><strong>無料予想</strong>: メインレースの予想を毎日公開</li>
+                                    <li><strong>Standard会員</strong>: 後半3レースの詳細買い目提供</li>
+                                    <li><strong>Premium会員</strong>: 全レースの詳細買い目・AI分析</li>
+                                    <li><strong>Premium Plus</strong>: 1日1鞍・超精密AI予想</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>🌈 今後のビジョン</h4>
+                                <ul>
+                                    <li><strong>無料ツール開発</strong>: 穴馬自動抽出アプリ等</li>
+                                    <li><strong>リアルタイム予測</strong>: オッズ変動を反映した動的予測</li>
+                                    <li><strong>Transformer導入</strong>: 最新NLP技術の応用</li>
+                                    <li><strong>強化学習</strong>: 賭け金配分の最適化</li>
+                                </ul>
+                            </div>
+                            <div class="detail-section">
+                                <h4>💖 マコさんへのメッセージ</h4>
+                                <p>
+                                    1999年から26年間、手書きノートから始まった挑戦を、
+                                    AIで科学するサービスまで進化させることができました。
+                                    これからも、<strong>26年の経験 × 12年のデータ × AI技術</strong>で、
+                                    競馬を科学し続けます。
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1242,6 +1558,90 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
         color: var(--accent-color);
     }
 
+    /* Interactive Timeline Styles */
+    .timeline-hint {
+        display: block;
+        margin-top: 10px;
+        font-size: 0.95rem;
+        color: var(--accent-color);
+        font-weight: 500;
+    }
+
+    .timeline-item.clickable {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-item.clickable:hover .timeline-content {
+        border-color: var(--accent-color);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+
+    .expand-btn {
+        margin-top: 15px;
+        background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .expand-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .timeline-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+        margin-top: 0;
+    }
+
+    .timeline-item.expanded .timeline-details {
+        max-height: 2000px;
+        margin-top: 20px;
+    }
+
+    .timeline-item.expanded .expand-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .detail-section {
+        background: rgba(59, 130, 246, 0.05);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 3px solid var(--accent-color);
+    }
+
+    .detail-section h4 {
+        color: var(--accent-color);
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+
+    .detail-section ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .detail-section li {
+        padding-left: 20px;
+        position: relative;
+        margin-bottom: 8px;
+    }
+
+    .detail-section li::before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: var(--accent-color);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .hero-title {
@@ -1310,3 +1710,32 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const timelineItems = document.querySelectorAll('.timeline-item.clickable');
+
+        timelineItems.forEach(item => {
+            const btn = item.querySelector('.expand-btn');
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                // Close other expanded items
+                timelineItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('expanded')) {
+                        otherItem.classList.remove('expanded');
+                        const otherBtn = otherItem.querySelector('.expand-btn');
+                        otherBtn.textContent = '詳細を見る ▼';
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('expanded');
+                btn.textContent = item.classList.contains('expanded')
+                    ? '閉じる ▲'
+                    : '詳細を見る ▼';
+            });
+        });
+    });
+</script>
