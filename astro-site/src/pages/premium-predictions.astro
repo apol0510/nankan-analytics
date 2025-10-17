@@ -23,6 +23,64 @@ const formattedDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
 const { raceInfo, strategies, horses, analysis, preview, allHorses, totalHorses } = mainRace;
 const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHorses, allHorses: race12RAllHorses } = race12R || {};
 
+// 全レースを自動分析（本日の傾向分析用）
+const highConfidenceRaces = [];
+const upsetModeRaces = [];
+const normalRaces = [];
+
+sortedRaces.forEach(raceData => {
+    // 各レースの全馬の累積スコアを取得
+    const horses = raceData.horses || {};
+    const allHorses = [
+        horses.main,
+        horses.sub,
+        ...(horses.minor || []),
+        ...(horses.low || []),
+        ...(horses.other || [])
+    ].filter(Boolean);
+
+    // 最高スコアを取得（confidenceフィールドから）
+    const scores = allHorses.map(h => {
+        if (h.confidence) return h.confidence;
+        if (h.mark) return getHorseConfidenceFromMark(h);
+        return 0;
+    }).filter(s => s > 0);
+
+    const maxScore = Math.max(...scores, 0);
+
+    // レース分類
+    if (maxScore >= 89) {
+        highConfidenceRaces.push({
+            raceNumber: raceData.raceNumber,
+            raceName: raceData.raceName,
+            maxScore: maxScore
+        });
+    } else if (maxScore <= 85 && maxScore > 0) {
+        upsetModeRaces.push({
+            raceNumber: raceData.raceNumber,
+            raceName: raceData.raceName,
+            maxScore: maxScore
+        });
+    } else if (maxScore > 0) {
+        normalRaces.push({
+            raceNumber: raceData.raceNumber,
+            raceName: raceData.raceName,
+            maxScore: maxScore
+        });
+    }
+});
+
+// 自動コメント生成
+let autoInsight = '';
+if (highConfidenceRaces.length >= 3) {
+    autoInsight = `本日は高信頼度レースが${highConfidenceRaces.length}レースと多く、本命決着の可能性が高い一日です。少点数的中型・バランス型モデルでの堅実な勝負がおすすめです。`;
+} else if (upsetModeRaces.length >= 3) {
+    autoInsight = `本日は波乱含みのレースが${upsetModeRaces.length}レースと多く、穴馬に注目の一日です。高配当追求型モデルで一攫千金を狙うチャンスがあります。`;
+} else if (highConfidenceRaces.length > 0 && upsetModeRaces.length > 0) {
+    autoInsight = `本日は高信頼度レース（${highConfidenceRaces.length}R）と高配当モードレース（${upsetModeRaces.length}R）がバランス良く配置されています。レースごとに戦略を使い分けるのが効果的です。`;
+} else {
+    autoInsight = '本日はバランスの取れたレース構成です。各レースのAI信頼度を確認しながら、適切な戦略モデルをお選びください。';
+}
 
 ---
 
@@ -121,144 +179,81 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
         </div>
 
         <!-- 本日の傾向分析（AI自動判定） -->
-        {(() => {
-            // 全レースを自動分析
-            const highConfidenceRaces = [];
-            const upsetModeRaces = [];
-            const normalRaces = [];
+        <div class="daily-analysis-section">
+            <h3 class="analysis-title">🔍 本日の傾向分析（AI自動判定）</h3>
+            <p class="analysis-subtitle">累積スコアに基づく自動分類で、本日のレース傾向を把握できます</p>
 
-            sortedRaces.forEach(raceData => {
-                // 各レースの全馬の累積スコアを取得
-                const horses = raceData.horses || {};
-                const allHorses = [
-                    horses.main,
-                    horses.sub,
-                    ...(horses.minor || []),
-                    ...(horses.low || []),
-                    ...(horses.other || [])
-                ].filter(Boolean);
-
-                // 最高スコアを取得（confidenceフィールドから）
-                const scores = allHorses.map(h => {
-                    if (h.confidence) return h.confidence;
-                    if (h.mark) return getHorseConfidenceFromMark(h);
-                    return 0;
-                }).filter(s => s > 0);
-
-                const maxScore = Math.max(...scores, 0);
-
-                // レース分類
-                if (maxScore >= 89) {
-                    highConfidenceRaces.push({
-                        raceNumber: raceData.raceNumber,
-                        raceName: raceData.raceName,
-                        maxScore: maxScore
-                    });
-                } else if (maxScore <= 85 && maxScore > 0) {
-                    upsetModeRaces.push({
-                        raceNumber: raceData.raceNumber,
-                        raceName: raceData.raceName,
-                        maxScore: maxScore
-                    });
-                } else if (maxScore > 0) {
-                    normalRaces.push({
-                        raceNumber: raceData.raceNumber,
-                        raceName: raceData.raceName,
-                        maxScore: maxScore
-                    });
-                }
-            });
-
-            // 自動コメント生成
-            let autoInsight = '';
-            if (highConfidenceRaces.length >= 3) {
-                autoInsight = `本日は高信頼度レースが${highConfidenceRaces.length}レースと多く、本命決着の可能性が高い一日です。少点数的中型・バランス型モデルでの堅実な勝負がおすすめです。`;
-            } else if (upsetModeRaces.length >= 3) {
-                autoInsight = `本日は波乱含みのレースが${upsetModeRaces.length}レースと多く、穴馬に注目の一日です。高配当追求型モデルで一攫千金を狙うチャンスがあります。`;
-            } else if (highConfidenceRaces.length > 0 && upsetModeRaces.length > 0) {
-                autoInsight = `本日は高信頼度レース（${highConfidenceRaces.length}R）と高配当モードレース（${upsetModeRaces.length}R）がバランス良く配置されています。レースごとに戦略を使い分けるのが効果的です。`;
-            } else {
-                autoInsight = '本日はバランスの取れたレース構成です。各レースのAI信頼度を確認しながら、適切な戦略モデルをお選びください。';
-            }
-
-            return (
-                <div class="daily-analysis-section">
-                    <h3 class="analysis-title">🔍 本日の傾向分析（AI自動判定）</h3>
-                    <p class="analysis-subtitle">累積スコアに基づく自動分類で、本日のレース傾向を把握できます</p>
-
-                    <div class="analysis-stats">
-                        <div class="stat-card high-confidence">
-                            <div class="stat-icon">⭐</div>
-                            <div class="stat-content">
-                                <div class="stat-number">{highConfidenceRaces.length}</div>
-                                <div class="stat-label">高信頼度レース</div>
-                                <div class="stat-description">累積スコア89pt以上</div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card upset-mode">
-                            <div class="stat-icon">💰</div>
-                            <div class="stat-content">
-                                <div class="stat-number">{upsetModeRaces.length}</div>
-                                <div class="stat-label">高配当モードレース</div>
-                                <div class="stat-description">累積スコア85pt以下</div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card normal">
-                            <div class="stat-icon">📊</div>
-                            <div class="stat-content">
-                                <div class="stat-number">{normalRaces.length}</div>
-                                <div class="stat-label">通常レース</div>
-                                <div class="stat-description">累積スコア86-88pt</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="auto-insight">
-                        <div class="insight-icon">💡</div>
-                        <div class="insight-text">{autoInsight}</div>
-                    </div>
-
-                    {/* レース別詳細リスト */}
-                    <div class="race-classification-list">
-                        {highConfidenceRaces.length > 0 && (
-                            <div class="classification-group">
-                                <div class="classification-header high">
-                                    <span class="badge">⭐ 高信頼度</span>
-                                    <span class="count">{highConfidenceRaces.length}レース</span>
-                                </div>
-                                <div class="race-chips">
-                                    {highConfidenceRaces.map(race => (
-                                        <div class="race-chip high">
-                                            <span class="chip-race">{race.raceNumber}</span>
-                                            <span class="chip-score">{race.maxScore}pt</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {upsetModeRaces.length > 0 && (
-                            <div class="classification-group">
-                                <div class="classification-header upset">
-                                    <span class="badge">💰 高配当モード</span>
-                                    <span class="count">{upsetModeRaces.length}レース</span>
-                                </div>
-                                <div class="race-chips">
-                                    {upsetModeRaces.map(race => (
-                                        <div class="race-chip upset">
-                                            <span class="chip-race">{race.raceNumber}</span>
-                                            <span class="chip-score">{race.maxScore}pt</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+            <div class="analysis-stats">
+                <div class="stat-card high-confidence">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{highConfidenceRaces.length}</div>
+                        <div class="stat-label">高信頼度レース</div>
+                        <div class="stat-description">累積スコア89pt以上</div>
                     </div>
                 </div>
-            );
-        })()}
+
+                <div class="stat-card upset-mode">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{upsetModeRaces.length}</div>
+                        <div class="stat-label">高配当モードレース</div>
+                        <div class="stat-description">累積スコア85pt以下</div>
+                    </div>
+                </div>
+
+                <div class="stat-card normal">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{normalRaces.length}</div>
+                        <div class="stat-label">通常レース</div>
+                        <div class="stat-description">累積スコア86-88pt</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auto-insight">
+                <div class="insight-icon">💡</div>
+                <div class="insight-text">{autoInsight}</div>
+            </div>
+
+            {/* レース別詳細リスト */}
+            <div class="race-classification-list">
+                {highConfidenceRaces.length > 0 && (
+                    <div class="classification-group">
+                        <div class="classification-header high">
+                            <span class="badge">⭐ 高信頼度</span>
+                            <span class="count">{highConfidenceRaces.length}レース</span>
+                        </div>
+                        <div class="race-chips">
+                            {highConfidenceRaces.map((race) => (
+                                <div class="race-chip high">
+                                    <span class="chip-race">{race.raceNumber}</span>
+                                    <span class="chip-score">{race.maxScore}pt</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {upsetModeRaces.length > 0 && (
+                    <div class="classification-group">
+                        <div class="classification-header upset">
+                            <span class="badge">💰 高配当モード</span>
+                            <span class="count">{upsetModeRaces.length}レース</span>
+                        </div>
+                        <div class="race-chips">
+                            {upsetModeRaces.map((race) => (
+                                <div class="race-chip upset">
+                                    <span class="chip-race">{race.raceNumber}</span>
+                                    <span class="chip-score">{race.maxScore}pt</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
 
         <!-- 全レースアコーディオン（データドリブン） -->
         {sortedRaces.map((raceData) => {
