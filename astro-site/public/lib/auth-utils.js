@@ -64,7 +64,7 @@ export function canAccessRace(userPlan, raceNumber) {
             return raceNum >= 10;
         case 'free':
         default:
-            // 無料会員はメインレース（11R）のみ
+            // 無料会員は全レース予想・分析閲覧可能（買い目は非表示）
             return raceNum === 11;
     }
 }

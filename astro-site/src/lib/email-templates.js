@@ -231,7 +231,7 @@ export const emailTemplates = {
             <div class="steps">
                 <div class="step">
                     <h3>🔍 無料予想をチェック</h3>
-                    <p>まずは無料のメインレース予想で、AI予想の精度を体感してください。毎日更新中！</p>
+                    <p>全レースの予想・分析を無料公開中。買い目は有料会員のみ表示されます。まずはAI予想の精度を体感してください！</p>
                 </div>
                 <div class="step">
                     <h3>📊 予想の見方を学習</h3>
@@ -430,7 +430,7 @@ export const presetContents = {
 
 <div class="highlight">
 <ul>
-<li>🎯 <strong>無料予想</strong>: 毎日のメインレース予想</li>
+<li>🎯 <strong>無料予想</strong>: 全レースの予想・分析</li>
 <li>📊 <strong>戦略ガイド</strong>: 効率的な馬券購入方法</li>
 <li>💰 <strong>投資管理</strong>: リスク管理の基本</li>
 </ul>

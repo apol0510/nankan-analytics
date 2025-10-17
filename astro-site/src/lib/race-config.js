@@ -15,7 +15,7 @@ export const RACE_TIERS = {
   8: 'premium',
   9: 'premium',
   10: 'standard', // スタンダード会員
-  11: 'free',     // 無料（メインレース）★重要★
+  11: 'free',     // 無料（全レース予想・分析閲覧可能・買い目非表示）
   12: 'standard'  // スタンダード会員（最終レースだが無料ではない！）
 };
 
