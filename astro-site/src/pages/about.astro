@@ -448,6 +448,53 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
             </div>
         </section>
 
+        <!-- 26年間の精度進化グラフ -->
+        <section class="metrics-section">
+            <h2 class="section-title">📈 26年間の精度進化 — データで見る成長の軌跡</h2>
+            <p class="metrics-intro">
+                手書きノート時代から現在まで、データ分析とAI技術の進化により、
+                予想精度がどのように向上してきたかを可視化しました。
+            </p>
+
+            <div class="chart-container">
+                <canvas id="accuracyChart" width="800" height="400"></canvas>
+            </div>
+
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <span class="legend-marker" style="background: #3b82f6;"></span>
+                    <span>予想精度（%）</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-marker milestone" style="background: #fbbf24;"></span>
+                    <span>重要マイルストーン</span>
+                </div>
+            </div>
+
+            <div class="milestone-cards">
+                <div class="milestone-card">
+                    <div class="milestone-year">2003年</div>
+                    <div class="milestone-metric">53%</div>
+                    <div class="milestone-label">Excel導入</div>
+                </div>
+                <div class="milestone-card">
+                    <div class="milestone-year">2013年</div>
+                    <div class="milestone-metric">67%</div>
+                    <div class="milestone-label">データ分析本格化</div>
+                </div>
+                <div class="milestone-card">
+                    <div class="milestone-year">2018年</div>
+                    <div class="milestone-metric">91.2%</div>
+                    <div class="milestone-label">XGBoost完成</div>
+                </div>
+                <div class="milestone-card">
+                    <div class="milestone-year">2023年</div>
+                    <div class="milestone-metric">88.4%</div>
+                    <div class="milestone-label">アンサンブル学習</div>
+                </div>
+            </div>
+        </section>
+
         <!-- 運営者プロフィール -->
         <section class="profile-section">
             <h2 class="section-title">🧑‍💻 運営者プロフィール</h2>
@@ -1642,6 +1689,101 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
         color: var(--accent-color);
     }
 
+    /* Metrics Section */
+    .metrics-section {
+        margin-bottom: 80px;
+    }
+
+    .metrics-intro {
+        text-align: center;
+        font-size: 1.1rem;
+        color: var(--body-text-color);
+        margin-bottom: 50px;
+        line-height: 1.8;
+    }
+
+    .chart-container {
+        background: var(--card-background);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    #accuracyChart {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .chart-legend {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95rem;
+        color: var(--body-text-color);
+    }
+
+    .legend-marker {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+
+    .legend-marker.milestone {
+        border-radius: 50%;
+    }
+
+    .milestone-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .milestone-card {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .milestone-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .milestone-year {
+        font-size: 0.9rem;
+        color: var(--accent-text-color);
+        margin-bottom: 10px;
+    }
+
+    .milestone-metric {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent-color) 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .milestone-label {
+        font-size: 1rem;
+        color: var(--body-text-color);
+        font-weight: 600;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .hero-title {
@@ -1737,5 +1879,120 @@ const pageDescription = "AI・機械学習で南関競馬を科学する。デ�
                     : '詳細を見る ▼';
             });
         });
+    });
+
+    // 26年間の精度進化グラフ
+    function drawAccuracyChart() {
+        const canvas = document.getElementById('accuracyChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+
+        // レスポンシブ対応
+        const container = canvas.parentElement;
+        const rect = container.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = 400 * dpr;
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = '400px';
+        ctx.scale(dpr, dpr);
+
+        const width = rect.width;
+        const height = 400;
+        const padding = { top: 40, right: 40, bottom: 60, left: 60 };
+
+        // データポイント
+        const data = [
+            { year: 2003, accuracy: 53, label: 'Excel' },
+            { year: 2013, accuracy: 67, label: 'データ分析' },
+            { year: 2015, accuracy: 72, label: 'ML開始' },
+            { year: 2018, accuracy: 91.2, label: 'XGBoost' },
+            { year: 2021, accuracy: 85.7, label: 'LSTM' },
+            { year: 2023, accuracy: 88.4, label: 'アンサンブル' }
+        ];
+
+        // スケール計算
+        const xScale = (width - padding.left - padding.right) / (2023 - 2003);
+        const yScale = (height - padding.top - padding.bottom) / 100;
+
+        // 背景グリッド
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 10; i++) {
+            const y = padding.top + (height - padding.top - padding.bottom) * (1 - i / 10);
+            ctx.beginPath();
+            ctx.moveTo(padding.left, y);
+            ctx.lineTo(width - padding.right, y);
+            ctx.stroke();
+        }
+
+        // Y軸ラベル
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 10; i++) {
+            const y = padding.top + (height - padding.top - padding.bottom) * (1 - i / 10);
+            ctx.fillText(i * 10 + '%', padding.left - 10, y + 4);
+        }
+
+        // X軸ラベル
+        ctx.textAlign = 'center';
+        data.forEach(point => {
+            const x = padding.left + (point.year - 2003) * xScale;
+            ctx.fillText(point.year, x, height - padding.bottom + 25);
+        });
+
+        // 線グラフ
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        data.forEach((point, i) => {
+            const x = padding.left + (point.year - 2003) * xScale;
+            const y = padding.top + (100 - point.accuracy) * yScale;
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.stroke();
+
+        // データポイント
+        data.forEach(point => {
+            const x = padding.left + (point.year - 2003) * xScale;
+            const y = padding.top + (100 - point.accuracy) * yScale;
+
+            // 外側の円（マイルストーン強調）
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 内側の円
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 精度ラベル
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(point.accuracy + '%', x, y - 15);
+        });
+    }
+
+    // 初期描画とリサイズ対応
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', drawAccuracyChart);
+    } else {
+        drawAccuracyChart();
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(drawAccuracyChart, 250);
     });
 </script>
