@@ -129,7 +129,7 @@ const { raceInfo: race12RInfo, strategies: race12RStrategies, horses: race12RHor
 
             sortedRaces.forEach(raceData => {
                 // 各レースの全馬の累積スコアを取得
-                const horses = raceData.horses || [];
+                const horses = raceData.horses || {};
                 const allHorses = [
                     horses.main,
                     horses.sub,
