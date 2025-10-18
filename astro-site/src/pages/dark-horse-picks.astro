@@ -159,15 +159,17 @@ export const prerender = true;
         // ユーザープラン取得（既存システムのLocalStorageから）
         async function loadUserPlan() {
             try {
-                // LocalStorageからプラン情報取得（premium-predictions等と同じ方法）
-                const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+                // 本番システムは個別キーを使用（userPlan, isLoggedIn, userEmail）
+                const storedPlan = localStorage.getItem('userPlan');
+                const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-                if (storedUser) {
-                    const userData = JSON.parse(storedUser);
-                    const planName = (userData.plan || '').toLowerCase();
+                console.log('📋 userPlan:', storedPlan);
+                console.log('📋 isLoggedIn:', isLoggedIn);
 
-                    console.log('📋 LocalStorageから取得したユーザー:', userData);
-                    console.log('📋 プラン:', planName);
+                if (storedPlan && isLoggedIn === 'true') {
+                    const planName = storedPlan.toLowerCase();
+
+                    console.log('📋 検出されたプラン:', planName);
 
                     if (planName.includes('premium')) {
                         userPlan = 'premium';
@@ -180,7 +182,7 @@ export const prerender = true;
                         updatePlanBadge('free');
                     }
                 } else {
-                    // LocalStorageに情報がない場合は無料会員
+                    // ログインしていない場合は無料会員
                     userPlan = 'free';
                     updatePlanBadge('free');
                     console.log('📋 未ログイン状態：無料会員として表示');
