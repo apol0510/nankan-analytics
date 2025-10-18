@@ -261,14 +261,17 @@ export const prerender = true;
                 const usedBadge = card.querySelector('.used-badge');
 
                 if (usedPicks.includes(raceNumber)) {
-                    // 取得済み
+                    // 取得済み → 再確認可能
                     card.classList.add('used');
-                    revealButton.style.display = 'none';
-                    usedBadge.style.display = 'block';
+                    revealButton.style.display = 'block';  // ボタンは表示
+                    revealButton.disabled = false;
+                    revealButton.innerHTML = '<span class="button-icon">👀</span><span class="button-text">再確認する</span>';
+                    usedBadge.style.display = 'none';  // バッジは非表示（ボタンで代替）
                 } else if (userPlan === 'premium' || usedPicks.length < PLAN_LIMITS[userPlan]) {
                     // 取得可能
                     card.classList.remove('disabled');
                     revealButton.disabled = false;
+                    revealButton.innerHTML = '<span class="button-icon">🔓</span><span class="button-text">穴馬を見る</span>';
                 } else {
                     // 取得不可
                     card.classList.add('disabled');
@@ -294,8 +297,11 @@ export const prerender = true;
                     const raceCard = button.closest('.race-card');
                     const raceNumber = raceCard.dataset.raceNumber;
 
-                    // 制限チェック
-                    if (userPlan !== 'premium' && usedPicks.length >= PLAN_LIMITS[userPlan]) {
+                    // 取得済みレースの場合は制限チェックをスキップ（再確認のため）
+                    const isAlreadyUsed = usedPicks.includes(raceNumber);
+
+                    // 制限チェック（新規取得の場合のみ）
+                    if (!isAlreadyUsed && userPlan !== 'premium' && usedPicks.length >= PLAN_LIMITS[userPlan]) {
                         alert('本日の取得回数上限に達しました。プランをアップグレードすると、さらに多くのレース情報を取得できます。');
                         return;
                     }
