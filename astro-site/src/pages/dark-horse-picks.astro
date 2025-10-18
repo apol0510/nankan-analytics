@@ -1,5 +1,4 @@
 ---
-import { supabase } from '../lib/supabase';
 import '../styles/global.css';
 
 const darkHorseData = await import('../data/darkHorseData.json');
@@ -137,6 +136,7 @@ export const prerender = true;
     <script is:inline define:vars={{ races: data.races }}>
         // LocalStorage キー定義
         const STORAGE_KEY = 'darkHorsePicks';
+        const USER_STORAGE_KEY = 'user-plan'; // 既存システムと統一
 
         // プラン別制限
         const PLAN_LIMITS = {
@@ -148,10 +148,6 @@ export const prerender = true;
         let userPlan = 'free';
         let usedPicks = [];
 
-        // Supabase初期化
-        const SUPABASE_URL = 'https://ksxlgnexgjfqylkthqtx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzeGxnbmV4Z2pmcXlsa3RocXR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYwNDE4MTgsImV4cCI6MjA0MTYxNzgxOH0.Wl9BpY7QJI8Sy0dPj7LvuZG83gDmFRSyXATLp02SztM';
-
         // ページ読み込み時
         document.addEventListener('DOMContentLoaded', async () => {
             await loadUserPlan();
@@ -160,42 +156,33 @@ export const prerender = true;
             attachEventListeners();
         });
 
-        // ユーザープラン取得
+        // ユーザープラン取得（既存システムのLocalStorageから）
         async function loadUserPlan() {
             try {
-                const { createClient } = window.supabase;
-                const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                // LocalStorageからプラン情報取得（既存システムと統一）
+                const storedPlan = localStorage.getItem(USER_STORAGE_KEY);
 
-                const { data: { user }, error: authError } = await supabase.auth.getUser();
+                if (storedPlan) {
+                    const planData = JSON.parse(storedPlan);
+                    const planName = (planData.plan || planData.Plan || '').toLowerCase();
 
-                if (authError || !user) {
-                    userPlan = 'free';
-                    updatePlanBadge('free');
-                    return;
-                }
+                    console.log('📋 LocalStorageから取得したプラン:', planName);
 
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('subscription_status, subscription_plan')
-                    .eq('id', user.id)
-                    .single();
-
-                if (profileError || !profile || profile.subscription_status !== 'active') {
-                    userPlan = 'free';
-                    updatePlanBadge('free');
-                    return;
-                }
-
-                const planName = profile.subscription_plan?.toLowerCase();
-                if (planName?.includes('premium')) {
-                    userPlan = 'premium';
-                    updatePlanBadge('premium');
-                } else if (planName?.includes('standard')) {
-                    userPlan = 'standard';
-                    updatePlanBadge('standard');
+                    if (planName.includes('premium')) {
+                        userPlan = 'premium';
+                        updatePlanBadge('premium');
+                    } else if (planName.includes('standard')) {
+                        userPlan = 'standard';
+                        updatePlanBadge('standard');
+                    } else {
+                        userPlan = 'free';
+                        updatePlanBadge('free');
+                    }
                 } else {
+                    // LocalStorageに情報がない場合は無料会員
                     userPlan = 'free';
                     updatePlanBadge('free');
+                    console.log('📋 未ログイン状態：無料会員として表示');
                 }
             } catch (error) {
                 console.error('プラン取得エラー:', error);
