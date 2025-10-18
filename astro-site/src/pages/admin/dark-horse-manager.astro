@@ -65,21 +65,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <div class="format-grid">
                 <div class="format-example">
                     <h4>形式1: 基本形式</h4>
-                    <pre>川崎1R 3番 ダークホース 前走好走・騎手変更で今回期待 ★★★
-川崎2R 7番 サプライズ 血統妙味・距離適性◎ ★★</pre>
+                    <pre>川崎1R 3番 ダークホース 前走好走・騎手変更で今回期待 85%
+川崎2R 7番 サプライズ 血統妙味・距離適性◎ 70%</pre>
                 </div>
                 <div class="format-example">
                     <h4>形式2: コロン形式</h4>
-                    <pre>1R: 3番 ダークホース (前走好走・騎手変更で今回期待) ★★★
-2R: 7番 サプライズ (血統妙味・距離適性◎) ★★</pre>
+                    <pre>1R: 3番 ダークホース (前走好走・騎手変更で今回期待) 85%
+2R: 7番 サプライズ (血統妙味・距離適性◎) 70%</pre>
                 </div>
                 <div class="format-example">
                     <h4>形式3: 括弧形式</h4>
-                    <pre>1R 【3】ダークホース 前走好走 ★★★
-2R 【7】サプライズ 血統妙味 ★★</pre>
+                    <pre>1R 【3】ダークホース 前走好走 85%
+2R 【7】サプライズ 血統妙味 70%</pre>
                 </div>
             </div>
-            <p class="note">※ レース名は自動検出されます（省略可）。星の数（★★★ = 高信頼度、★★ = 中、★ = 低）</p>
+            <p class="note">※ レース名は自動検出されます（省略可）。信頼度は%値で指定（例: 85% = 高信頼度、70% = 中信頼度、55% = 低信頼度）</p>
         </div>
 
         <!-- 日付・競馬場設定 -->
@@ -134,15 +134,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 例:
 1R 3
 前走好走・騎手変更で今回期待
-★★★
+85
 
 2R 7
 血統妙味・距離適性◎
-★★
+70
 
 3R 11
 前走2着好走・今回距離短縮
-★★★
+80
 ..."></textarea>
                 <div class="button-group">
                     <button id="parseSimpleBtn" class="primary-btn">🚀 簡略入力を解析</button>
@@ -179,12 +179,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     </div>
                     <div class="form-row">
                         <div class="form-item">
-                            <label for="horseConfidence">信頼度</label>
-                            <select id="horseConfidence">
-                                <option value="★★★">★★★ 高信頼度</option>
-                                <option value="★★" selected>★★ 中信頼度</option>
-                                <option value="★">★ 低信頼度</option>
-                            </select>
+                            <label for="horseConfidence">信頼度（%）</label>
+                            <input type="number" id="horseConfidence" min="0" max="100" step="1" value="70" placeholder="例: 70">
                         </div>
                         <div class="form-item">
                             <button id="addHorseBtn" class="add-btn" disabled>➕ 穴馬を追加</button>
@@ -210,8 +206,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     placeholder="全レースの穴馬データを貼り付けてください...
 
 例:
-川崎1R 3番 ダークホース 前走好走・騎手変更で今回期待 ★★★
-川崎2R 7番 サプライズ 血統妙味・距離適性◎ ★★
+川崎1R 3番 ダークホース 前走好走・騎手変更で今回期待 85%
+川崎2R 7番 サプライズ 血統妙味・距離適性◎ 70%
 ..."></textarea>
                 <div class="button-group">
                     <button id="parseBtn" class="primary-btn">🔍 解析して生成</button>
@@ -804,7 +800,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
 
     .form-item select,
-    .form-item textarea {
+    .form-item textarea,
+    .form-item input[type="number"] {
         background: rgba(15, 23, 42, 0.8);
         border: 1px solid rgba(100, 116, 139, 0.3);
         border-radius: 8px;
@@ -814,7 +811,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
 
     .form-item select:focus,
-    .form-item textarea:focus {
+    .form-item textarea:focus,
+    .form-item input[type="number"]:focus {
         outline: none;
         border-color: #3b82f6;
     }
@@ -1139,9 +1137,9 @@ function addHorseFromDropdown() {
     const raceNumber = document.getElementById('selectRace').value;
     const horseData = document.getElementById('selectHorse').value;
     const reason = document.getElementById('horseReason').value.trim();
-    const confidence = document.getElementById('horseConfidence').value;
+    const confidenceValue = document.getElementById('horseConfidence').value;
 
-    if (!raceNumber || !horseData || !reason) {
+    if (!raceNumber || !horseData || !reason || !confidenceValue) {
         alert('すべての項目を入力してください');
         return;
     }
@@ -1155,7 +1153,7 @@ function addHorseFromDropdown() {
         horseNumber: horse.number,
         horseName: horse.name,
         reason: reason,
-        confidence: confidence
+        confidence: `${confidenceValue}%`
     };
 
     addedHorses.push(horseItem);
@@ -1164,7 +1162,7 @@ function addHorseFromDropdown() {
 
     // フォームリセット
     document.getElementById('horseReason').value = '';
-    document.getElementById('horseConfidence').value = '★★';
+    document.getElementById('horseConfidence').value = '70';
 }
 
 // 追加済みリスト更新
@@ -1257,13 +1255,14 @@ function parseSimpleInput() {
                 horseNumber: horseNumber,
                 horseName: horse.name,
                 reason: '',
-                confidence: '★★'
+                confidence: '70%'
             };
         }
-        // 星評価（例: ★★★）
-        else if (line.match(/^★+$/)) {
+        // %値（例: 85, 85%）
+        else if (line.match(/^\d+%?$/)) {
             if (currentHorse) {
-                currentHorse.confidence = line.trim();
+                const confidence = line.trim().replace('%', '');
+                currentHorse.confidence = `${confidence}%`;
             }
         }
         // 理由（それ以外のテキスト）
@@ -1358,39 +1357,42 @@ function parseDarkHorseData() {
 
 // 一行パース（従来方式）
 function parseLine(line) {
-    // パターン1: 川崎1R 3番 ダークホース 前走好走・騎手変更で今回期待 ★★★
-    let match = line.match(/(\d+)R[:\s]*(\d+)番\s+([^\s]+)\s+([^★]+)\s*(★+)?/);
+    // パターン1: 川崎1R 3番 ダークホース 前走好走・騎手変更で今回期待 85%
+    let match = line.match(/(\d+)R[:\s]*(\d+)番\s+([^\s]+)\s+(.+?)\s*(\d+%?)$/);
     if (match) {
+        const confidence = match[5].replace('%', '');
         return {
             raceNumber: `${match[1]}R`,
             horseNumber: match[2],
             horseName: match[3],
             reason: match[4].trim(),
-            confidence: match[5] || '★★'
+            confidence: `${confidence}%`
         };
     }
 
-    // パターン2: 1R: 3番 ダークホース (前走好走・騎手変更で今回期待) ★★★
-    match = line.match(/(\d+)R[:\s]*(\d+)番\s+([^\s(]+)\s*\(([^)]+)\)\s*(★+)?/);
+    // パターン2: 1R: 3番 ダークホース (前走好走・騎手変更で今回期待) 85%
+    match = line.match(/(\d+)R[:\s]*(\d+)番\s+([^\s(]+)\s*\(([^)]+)\)\s*(\d+%?)$/);
     if (match) {
+        const confidence = match[5].replace('%', '');
         return {
             raceNumber: `${match[1]}R`,
             horseNumber: match[2],
             horseName: match[3],
             reason: match[4].trim(),
-            confidence: match[5] || '★★'
+            confidence: `${confidence}%`
         };
     }
 
-    // パターン3: 1R 【3】ダークホース 前走好走 ★★★
-    match = line.match(/(\d+)R[:\s]*[【\[](\d+)[】\]]\s*([^\s]+)\s+([^★]+)\s*(★+)?/);
+    // パターン3: 1R 【3】ダークホース 前走好走 85%
+    match = line.match(/(\d+)R[:\s]*[【\[](\d+)[】\]]\s*([^\s]+)\s+(.+?)\s*(\d+%?)$/);
     if (match) {
+        const confidence = match[5].replace('%', '');
         return {
             raceNumber: `${match[1]}R`,
             horseNumber: match[2],
             horseName: match[3],
             reason: match[4].trim(),
-            confidence: match[5] || '★★'
+            confidence: `${confidence}%`
         };
     }
 
