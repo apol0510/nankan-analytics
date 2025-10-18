@@ -1,0 +1,887 @@
+---
+import { supabase } from '../lib/supabase';
+import '../styles/global.css';
+
+const darkHorseData = await import('../data/darkHorseData.json');
+const data = darkHorseData.default;
+
+export const prerender = true;
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本日の穴馬抽出 - NANKANアナリティクス</title>
+    <meta name="description" content="AI解析による本日の穴馬情報。プロ馬券師が経験と勘で厳選した穴馬を提供。" />
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <header class="page-header">
+            <div class="header-content">
+                <a href="/" class="back-link">← トップへ戻る</a>
+                <h1>🐴 本日の穴馬抽出</h1>
+                <p class="subtitle">プロ馬券師が経験と勘で厳選した穴馬情報</p>
+            </div>
+        </header>
+
+        <!-- ユーザー情報セクション -->
+        <div id="user-info-section" class="user-info-card">
+            <div class="user-plan-info">
+                <div class="plan-badge" id="plan-badge">読み込み中...</div>
+                <div class="remaining-picks">
+                    <span class="picks-label">本日の残り取得回数:</span>
+                    <span class="picks-count" id="remaining-picks">-</span>
+                </div>
+            </div>
+            <div class="daily-info">
+                <p class="date-info">{data.date} {data.track}</p>
+                <p class="last-updated">最終更新: {new Date(data.lastUpdated).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</p>
+            </div>
+        </div>
+
+        <!-- プラン別ルール説明 -->
+        <div class="plan-rules-card">
+            <h2>📋 プラン別取得ルール</h2>
+            <div class="rules-grid">
+                <div class="rule-item rule-free">
+                    <div class="rule-header">
+                        <span class="rule-icon">🎯</span>
+                        <span class="rule-plan">無料会員</span>
+                    </div>
+                    <p class="rule-desc">1日1レースまで取得可能</p>
+                </div>
+                <div class="rule-item rule-standard">
+                    <div class="rule-header">
+                        <span class="rule-icon">⭐</span>
+                        <span class="rule-plan">スタンダード会員</span>
+                    </div>
+                    <p class="rule-desc">1日3レースまで取得可能</p>
+                </div>
+                <div class="rule-item rule-premium">
+                    <div class="rule-header">
+                        <span class="rule-icon">👑</span>
+                        <span class="rule-plan">プレミアム会員</span>
+                    </div>
+                    <p class="rule-desc">全レース無制限で取得可能</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- レース選択グリッド -->
+        <div class="races-section">
+            <h2>🏇 レースを選択してください</h2>
+            <div class="races-grid">
+                {data.races.map((race: any) => (
+                    <div class="race-card" data-race-number={race.raceNumber}>
+                        <div class="race-header">
+                            <span class="race-number">{race.raceNumber}</span>
+                            <span class="race-name">{race.raceName}</span>
+                        </div>
+                        <div class="race-confidence">
+                            <span class="confidence-label">信頼度:</span>
+                            <span class="confidence-stars">{race.confidence}</span>
+                        </div>
+                        <button class="reveal-button" data-race-index={data.races.indexOf(race)}>
+                            <span class="button-icon">🔓</span>
+                            <span class="button-text">穴馬を見る</span>
+                        </button>
+                        <div class="used-badge" style="display: none;">
+                            <span>✅ 取得済み</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        <!-- アップグレードCTAセクション -->
+        <div id="upgrade-cta" class="upgrade-cta-card" style="display: none;">
+            <div class="cta-content">
+                <h3>🚀 さらに穴馬情報を取得するには</h3>
+                <p class="cta-desc">本日の取得回数上限に達しました。プレミアム会員なら無制限で全レースの穴馬情報を取得できます。</p>
+                <div class="cta-buttons">
+                    <a href="/pricing" class="cta-button primary">プランをアップグレード</a>
+                    <a href="/" class="cta-button secondary">トップページへ戻る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル -->
+    <div id="dark-horse-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div class="modal-header">
+                <h2 id="modal-race-title">レース情報</h2>
+            </div>
+            <div class="modal-body">
+                <div class="horse-info-card">
+                    <div class="horse-number-badge" id="modal-horse-number">-</div>
+                    <h3 class="horse-name" id="modal-horse-name">-</h3>
+                    <div class="horse-confidence" id="modal-confidence">-</div>
+                </div>
+                <div class="reason-card">
+                    <h4>📊 穴馬選定理由</h4>
+                    <p id="modal-reason">-</p>
+                </div>
+                <div class="disclaimer-card">
+                    <p>⚠️ この情報はプロ馬券師の経験と勘に基づく穴馬候補です。投資は自己責任でお願いします。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script is:inline define:vars={{ races: data.races }}>
+        // LocalStorage キー定義
+        const STORAGE_KEY = 'darkHorsePicks';
+
+        // プラン別制限
+        const PLAN_LIMITS = {
+            free: 1,
+            standard: 3,
+            premium: Infinity
+        };
+
+        let userPlan = 'free';
+        let usedPicks = [];
+
+        // Supabase初期化
+        const SUPABASE_URL = 'https://ksxlgnexgjfqylkthqtx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzeGxnbmV4Z2pmcXlsa3RocXR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYwNDE4MTgsImV4cCI6MjA0MTYxNzgxOH0.Wl9BpY7QJI8Sy0dPj7LvuZG83gDmFRSyXATLp02SztM';
+
+        // ページ読み込み時
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadUserPlan();
+            loadUsedPicks();
+            updateUI();
+            attachEventListeners();
+        });
+
+        // ユーザープラン取得
+        async function loadUserPlan() {
+            try {
+                const { createClient } = window.supabase;
+                const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+                const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+                if (authError || !user) {
+                    userPlan = 'free';
+                    updatePlanBadge('free');
+                    return;
+                }
+
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('subscription_status, subscription_plan')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profileError || !profile || profile.subscription_status !== 'active') {
+                    userPlan = 'free';
+                    updatePlanBadge('free');
+                    return;
+                }
+
+                const planName = profile.subscription_plan?.toLowerCase();
+                if (planName?.includes('premium')) {
+                    userPlan = 'premium';
+                    updatePlanBadge('premium');
+                } else if (planName?.includes('standard')) {
+                    userPlan = 'standard';
+                    updatePlanBadge('standard');
+                } else {
+                    userPlan = 'free';
+                    updatePlanBadge('free');
+                }
+            } catch (error) {
+                console.error('プラン取得エラー:', error);
+                userPlan = 'free';
+                updatePlanBadge('free');
+            }
+        }
+
+        // プランバッジ更新
+        function updatePlanBadge(plan) {
+            const planBadge = document.getElementById('plan-badge');
+            const planNames = {
+                free: '🎯 無料会員',
+                standard: '⭐ スタンダード会員',
+                premium: '👑 プレミアム会員'
+            };
+            planBadge.textContent = planNames[plan] || planNames.free;
+            planBadge.className = 'plan-badge plan-' + plan;
+        }
+
+        // 使用済みレース読み込み
+        function loadUsedPicks() {
+            const today = new Date().toISOString().split('T')[0];
+            const stored = localStorage.getItem(STORAGE_KEY);
+
+            if (stored) {
+                const data = JSON.parse(stored);
+                if (data.date === today) {
+                    usedPicks = data.usedRaces || [];
+                } else {
+                    // 日付が変わっていればリセット
+                    usedPicks = [];
+                    saveUsedPicks();
+                }
+            } else {
+                usedPicks = [];
+                saveUsedPicks();
+            }
+        }
+
+        // 使用済みレース保存
+        function saveUsedPicks() {
+            const today = new Date().toISOString().split('T')[0];
+            const data = {
+                date: today,
+                usedRaces: usedPicks,
+                count: usedPicks.length
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // UI更新
+        function updateUI() {
+            const limit = PLAN_LIMITS[userPlan];
+            const remaining = limit === Infinity ? '無制限' : (limit - usedPicks.length);
+
+            document.getElementById('remaining-picks').textContent = remaining;
+
+            // レースカード更新
+            document.querySelectorAll('.race-card').forEach(card => {
+                const raceNumber = card.dataset.raceNumber;
+                const revealButton = card.querySelector('.reveal-button');
+                const usedBadge = card.querySelector('.used-badge');
+
+                if (usedPicks.includes(raceNumber)) {
+                    // 取得済み
+                    card.classList.add('used');
+                    revealButton.style.display = 'none';
+                    usedBadge.style.display = 'block';
+                } else if (userPlan === 'premium' || usedPicks.length < PLAN_LIMITS[userPlan]) {
+                    // 取得可能
+                    card.classList.remove('disabled');
+                    revealButton.disabled = false;
+                } else {
+                    // 取得不可
+                    card.classList.add('disabled');
+                    revealButton.disabled = true;
+                    revealButton.innerHTML = '<span class="button-icon">🔒</span><span class="button-text">上限到達</span>';
+                }
+            });
+
+            // アップグレードCTA表示判定
+            if (userPlan !== 'premium' && usedPicks.length >= PLAN_LIMITS[userPlan]) {
+                document.getElementById('upgrade-cta').style.display = 'block';
+            } else {
+                document.getElementById('upgrade-cta').style.display = 'none';
+            }
+        }
+
+        // イベントリスナー設定
+        function attachEventListeners() {
+            // レース選択ボタン
+            document.querySelectorAll('.reveal-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const raceIndex = parseInt(button.dataset.raceIndex);
+                    const raceCard = button.closest('.race-card');
+                    const raceNumber = raceCard.dataset.raceNumber;
+
+                    // 制限チェック
+                    if (userPlan !== 'premium' && usedPicks.length >= PLAN_LIMITS[userPlan]) {
+                        alert('本日の取得回数上限に達しました。プランをアップグレードすると、さらに多くのレース情報を取得できます。');
+                        return;
+                    }
+
+                    // モーダル表示
+                    showModal(raceIndex, raceNumber);
+                });
+            });
+
+            // モーダル閉じるボタン
+            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+            document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
+        }
+
+        // モーダル表示
+        function showModal(raceIndex, raceNumber) {
+            const race = races[raceIndex];
+
+            document.getElementById('modal-race-title').textContent = `${race.raceNumber} ${race.raceName}`;
+            document.getElementById('modal-horse-number').textContent = `${race.horseNumber}番`;
+            document.getElementById('modal-horse-name').textContent = race.horseName;
+            document.getElementById('modal-confidence').textContent = `信頼度: ${race.confidence}`;
+            document.getElementById('modal-reason').textContent = race.reason;
+
+            document.getElementById('dark-horse-modal').classList.add('show');
+
+            // 使用済みに追加
+            if (!usedPicks.includes(raceNumber)) {
+                usedPicks.push(raceNumber);
+                saveUsedPicks();
+                updateUI();
+            }
+        }
+
+        // モーダル閉じる
+        function closeModal() {
+            document.getElementById('dark-horse-modal').classList.remove('show');
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ヘッダー */
+        .page-header {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        .back-link {
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #60a5fa;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* ユーザー情報カード */
+        .user-info-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-plan-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .plan-badge {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .plan-badge.plan-free {
+            background: rgba(148, 163, 184, 0.2);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .plan-badge.plan-standard {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .plan-badge.plan-premium {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .remaining-picks {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .picks-label {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .picks-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .daily-info {
+            text-align: right;
+        }
+
+        .date-info {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .last-updated {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        /* プランルールカード */
+        .plan-rules-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .plan-rules-card h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .rule-item {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .rule-free {
+            background: rgba(148, 163, 184, 0.1);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        .rule-standard {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .rule-premium {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .rule-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .rule-icon {
+            font-size: 1.5rem;
+        }
+
+        .rule-plan {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .rule-desc {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        /* レースセクション */
+        .races-section {
+            margin-bottom: 30px;
+        }
+
+        .races-section h2 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .races-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .race-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .race-card:hover:not(.disabled):not(.used) {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .race-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .race-card.used {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .race-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .race-number {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .race-name {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        .race-confidence {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .confidence-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .confidence-stars {
+            color: #fbbf24;
+            font-size: 1.1rem;
+        }
+
+        .reveal-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .reveal-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .reveal-button:disabled {
+            background: rgba(100, 116, 139, 0.5);
+            cursor: not-allowed;
+        }
+
+        .used-badge {
+            text-align: center;
+            padding: 12px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* アップグレードCTA */
+        .upgrade-cta-card {
+            background: rgba(245, 158, 11, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .cta-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-desc {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .cta-button.primary {
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            color: white;
+        }
+
+        .cta-button.primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .cta-button.secondary {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        .cta-button.secondary:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        /* モーダル */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .horse-info-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .horse-number-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .horse-name {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .horse-confidence {
+            color: #fbbf24;
+            font-size: 1.3rem;
+        }
+
+        .reason-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .reason-card h4 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .reason-card p {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .disclaimer-card {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .disclaimer-card p {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .user-info-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-plan-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .daily-info {
+                text-align: left;
+            }
+
+            .back-link {
+                position: static;
+                display: block;
+                margin-bottom: 15px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .horse-name {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</body>
+</html>
