@@ -136,7 +136,7 @@ export const prerender = true;
     <script is:inline define:vars={{ races: data.races }}>
         // LocalStorage キー定義
         const STORAGE_KEY = 'darkHorsePicks';
-        const USER_STORAGE_KEY = 'user-plan'; // 既存システムと統一
+        const USER_STORAGE_KEY = 'nankan_user'; // 既存システムと統一（premium-predictions等と同じキー）
 
         // プラン別制限
         const PLAN_LIMITS = {
@@ -159,14 +159,15 @@ export const prerender = true;
         // ユーザープラン取得（既存システムのLocalStorageから）
         async function loadUserPlan() {
             try {
-                // LocalStorageからプラン情報取得（既存システムと統一）
-                const storedPlan = localStorage.getItem(USER_STORAGE_KEY);
+                // LocalStorageからプラン情報取得（premium-predictions等と同じ方法）
+                const storedUser = localStorage.getItem(USER_STORAGE_KEY);
 
-                if (storedPlan) {
-                    const planData = JSON.parse(storedPlan);
-                    const planName = (planData.plan || planData.Plan || '').toLowerCase();
+                if (storedUser) {
+                    const userData = JSON.parse(storedUser);
+                    const planName = (userData.plan || '').toLowerCase();
 
-                    console.log('📋 LocalStorageから取得したプラン:', planName);
+                    console.log('📋 LocalStorageから取得したユーザー:', userData);
+                    console.log('📋 プラン:', planName);
 
                     if (planName.includes('premium')) {
                         userPlan = 'premium';
