@@ -18,13 +18,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <p>登録はメールアドレスを入力のみ。すぐに南関競馬のAI予想が無料でご利用いただけます！</p>
                 
                 <div class="email-input-section">
-                    <input 
-                        type="email" 
-                        id="email-input" 
-                        placeholder="example@email.com"
-                        required
-                        class="email-input"
-                    />
+                    <div class="input-group">
+                        <label for="email-input" class="input-label">メールアドレス</label>
+                        <input
+                            type="email"
+                            id="email-input"
+                            placeholder="example@email.com"
+                            required
+                            class="email-input"
+                            autocomplete="email"
+                        />
+                    </div>
+                    <div class="input-group">
+                        <label for="email-confirm" class="input-label">メールアドレス（確認用）</label>
+                        <input
+                            type="email"
+                            id="email-confirm"
+                            placeholder="もう一度入力してください"
+                            required
+                            class="email-input"
+                            autocomplete="off"
+                        />
+                        <div id="email-match-message" class="email-match-message" style="display: none;"></div>
+                    </div>
                     <button id="signup-btn" class="signup-btn">
                         今すぐ無料で始める
                     </button>
@@ -143,6 +159,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         margin-bottom: 2rem;
     }
 
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: left;
+    }
+
+    .input-label {
+        font-size: 0.875rem;
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+
     .email-input {
         padding: 0.875rem 1rem;
         border-radius: 0.5rem;
@@ -157,6 +186,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         outline: none;
         border-color: #3b82f6;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .email-match-message {
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+    }
+
+    .email-match-message.success {
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .email-match-message.error {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .email-match-message.warning {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
     .signup-btn {
@@ -370,19 +424,67 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script>
+    // メールアドレス確認用リアルタイムチェック
+    document.getElementById('email-confirm').addEventListener('input', function() {
+        const email = document.getElementById('email-input').value.trim();
+        const emailConfirm = this.value.trim();
+        const matchMessage = document.getElementById('email-match-message');
+
+        if (!emailConfirm) {
+            matchMessage.style.display = 'none';
+            return;
+        }
+
+        matchMessage.style.display = 'block';
+
+        if (email === emailConfirm) {
+            matchMessage.className = 'email-match-message success';
+            matchMessage.textContent = '✓ メールアドレスが一致しています';
+        } else {
+            matchMessage.className = 'email-match-message error';
+            matchMessage.textContent = '✗ メールアドレスが一致しません';
+        }
+    });
+
     // 無料会員登録処理
     document.getElementById('signup-btn').addEventListener('click', function() {
         const emailInput = document.getElementById('email-input');
+        const emailConfirmInput = document.getElementById('email-confirm');
         const email = emailInput.value.trim();
-        
+        const emailConfirm = emailConfirmInput.value.trim();
+
         if (!email) {
             showError('メールアドレスを入力してください');
             return;
         }
-        
+
+        if (!emailConfirm) {
+            showError('確認用メールアドレスを入力してください');
+            return;
+        }
+
+        if (email !== emailConfirm) {
+            showError('メールアドレスが一致しません。もう一度ご確認ください。');
+            return;
+        }
+
         if (!isValidEmail(email)) {
             showError('有効なメールアドレスを入力してください');
             return;
+        }
+
+        // よくあるタイポチェック
+        const typoWarning = checkEmailTypo(email);
+        if (typoWarning) {
+            const matchMessage = document.getElementById('email-match-message');
+            matchMessage.style.display = 'block';
+            matchMessage.className = 'email-match-message warning';
+            matchMessage.textContent = typoWarning;
+
+            // 確認ダイアログを表示
+            if (!confirm(`⚠️ ${typoWarning}\n\nこのまま登録しますか？`)) {
+                return;
+            }
         }
 
         // 無料会員として登録
@@ -506,6 +608,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    }
+
+    // よくあるメールアドレスのタイポをチェック
+    function checkEmailTypo(email) {
+        const domain = email.split('@')[1];
+        if (!domain) return null;
+
+        const commonTypos = {
+            'gmial.com': 'gmail.com',
+            'gmai.com': 'gmail.com',
+            'gmaill.com': 'gmail.com',
+            'gmali.com': 'gmail.com',
+            'gmal.com': 'gmail.com',
+            'yahooo.co.jp': 'yahoo.co.jp',
+            'yaho.co.jp': 'yahoo.co.jp',
+            'yahho.co.jp': 'yahoo.co.jp',
+            'outloook.com': 'outlook.com',
+            'outlok.com': 'outlook.com',
+            'hotmial.com': 'hotmail.com',
+            'hotmal.com': 'hotmail.com',
+            'iclould.com': 'icloud.com',
+            'iclood.com': 'icloud.com',
+            'icoud.com': 'icloud.com',
+            'docomo.ne.jpp': 'docomo.ne.jp',
+            'ezweb.ne.jpp': 'ezweb.ne.jp',
+            'softbank.ne.jpp': 'softbank.ne.jp'
+        };
+
+        if (commonTypos[domain]) {
+            return `「${domain}」は「${commonTypos[domain]}」の間違いではありませんか？`;
+        }
+
+        return null;
     }
 
     function showLoginInfo(isNewUser, user, message) {
