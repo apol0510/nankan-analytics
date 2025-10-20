@@ -180,7 +180,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     <div class="form-row">
                         <div class="form-item">
                             <label for="horseConfidence">信頼度（%）</label>
-                            <input type="number" id="horseConfidence" min="0" max="100" step="1" value="70" placeholder="例: 70">
+                            <input type="number" id="horseConfidence" min="0" max="100" step="1" value="50" placeholder="例: 50">
                         </div>
                         <div class="form-item">
                             <button id="addHorseBtn" class="add-btn" disabled>➕ 穴馬を追加</button>
@@ -1162,7 +1162,7 @@ function addHorseFromDropdown() {
 
     // フォームリセット
     document.getElementById('horseReason').value = '';
-    document.getElementById('horseConfidence').value = '70';
+    document.getElementById('horseConfidence').value = '50';
 }
 
 // 追加済みリスト更新
@@ -1255,7 +1255,7 @@ function parseSimpleInput() {
                 horseNumber: horseNumber,
                 horseName: horse.name,
                 reason: '',
-                confidence: '70%'
+                confidence: '50%'
             };
         }
         // %値（例: 85, 85%）
