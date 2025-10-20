@@ -76,6 +76,12 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  # タイムアウト設定: 26秒（Netlify Pro最大値）
+  # Airtable API遅延対策
+  [functions.auth-user]
+    timeout = 26
+  [functions."*"]
+    timeout = 26
 
 [dev]
   command = "npm run dev"

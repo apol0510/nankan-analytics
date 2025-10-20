@@ -52,17 +52,40 @@ exports.handler = async (event, context) => {
     // Airtable設定
     console.log('🔍 Environment check - AIRTABLE_API_KEY exists:', !!process.env.AIRTABLE_API_KEY);
     console.log('🔍 Environment check - AIRTABLE_BASE_ID exists:', !!process.env.AIRTABLE_BASE_ID);
-    
+
     const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
       .base(process.env.AIRTABLE_BASE_ID);
 
-    // ユーザー検索
-    const records = await base('Customers')
-      .select({
-        filterByFormula: `{Email} = '${email}'`,
-        maxRecords: 1
-      })
-      .firstPage();
+    // ユーザー検索（リトライロジック付き）
+    let records;
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    while (retryCount < maxRetries) {
+      try {
+        console.log(`🔄 Airtable検索試行 ${retryCount + 1}/${maxRetries}`);
+        records = await base('Customers')
+          .select({
+            filterByFormula: `{Email} = '${email}'`,
+            maxRecords: 1
+          })
+          .firstPage();
+        console.log('✅ Airtable検索成功');
+        break;
+      } catch (airtableError) {
+        retryCount++;
+        console.error(`⚠️ Airtable検索エラー（試行${retryCount}/${maxRetries}）:`, airtableError.message);
+
+        if (retryCount >= maxRetries) {
+          throw new Error(`Airtable API接続エラー（${maxRetries}回試行）: ${airtableError.message}`);
+        }
+
+        // 指数バックオフ: 1秒、2秒、4秒
+        const waitTime = Math.pow(2, retryCount - 1) * 1000;
+        console.log(`⏳ ${waitTime}ms待機後に再試行...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
 
     if (records.length === 0) {
       // 新規ユーザーとして登録
