@@ -70,7 +70,7 @@ exports.handler = async (event, context) => {
         'Email': email,
         'プラン': 'Free',
         'ポイント': 1,
-        '最終ポイント付与日': new Date().toISOString().split('T')[0]
+        '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0]
       });
 
       // 新規ユーザー通知は独立したuser-notification.jsで処理（復活防止対策）
@@ -119,7 +119,9 @@ exports.handler = async (event, context) => {
     const currentPoints = user.get('ポイント') || 0;
     let currentPlan = user.get('プラン') || 'free';
     const lastLogin = user.get('最終ポイント付与日');
-    const today = new Date().toISOString().split('T')[0];
+    // 日本時間（JST）で日付を取得
+    const jstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+    const today = jstDate.toISOString().split('T')[0];
 
     // 🔍 有効期限チェック（PremiumまたはStandardで期限切れならFreeに自動降格）
     let isExpired = false;
