@@ -173,8 +173,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     </div>
                     <div class="form-row">
                         <div class="form-item full-width">
-                            <label for="horseReason">穴馬選定理由</label>
-                            <textarea id="horseReason" rows="3" placeholder="例: 前走好走・騎手変更で今回期待"></textarea>
+                            <label for="horseReason">穴馬選定理由（任意）</label>
+                            <textarea id="horseReason" rows="3" placeholder="例: 前走好走・騎手変更で今回期待（空欄でもOK）"></textarea>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1139,8 +1139,8 @@ function addHorseFromDropdown() {
     const reason = document.getElementById('horseReason').value.trim();
     const confidenceValue = document.getElementById('horseConfidence').value;
 
-    if (!raceNumber || !horseData || !reason || !confidenceValue) {
-        alert('すべての項目を入力してください');
+    if (!raceNumber || !horseData || !confidenceValue) {
+        alert('レース、馬、信頼度を選択してください');
         return;
     }
 
@@ -1184,7 +1184,7 @@ function updateAddedList() {
                     <span class="added-item-horse">${horse.horseNumber}番 ${horse.horseName}</span>
                     <span class="confidence-badge">${horse.confidence}</span>
                 </div>
-                <div class="added-item-reason">💡 ${horse.reason}</div>
+                ${horse.reason ? `<div class="added-item-reason">💡 ${horse.reason}</div>` : ''}
             </div>
             <button class="remove-btn" onclick="removeHorse(${index})">🗑️ 削除</button>
         </div>
@@ -1422,7 +1422,7 @@ function displayPreview(races) {
                 <span class="horse-number">${race.horseNumber}番</span>
                 <span class="horse-name">${race.horseName}</span>
             </div>
-            <div class="reason-text">💡 ${race.reason}</div>
+            ${race.reason ? `<div class="reason-text">💡 ${race.reason}</div>` : ''}
         </div>
     `).join('');
 }
