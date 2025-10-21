@@ -99,9 +99,6 @@ export const prerender = true;
                             <span class="race-number">{raceGroup.raceNumber}</span>
                             <span class="race-name">{raceGroup.raceName}</span>
                         </div>
-                        <div class="race-info-preview">
-                            <span class="horse-count">穴馬 {raceGroup.horses.length}頭</span>
-                        </div>
                         <button class="reveal-button" data-race-number={raceGroup.raceNumber}>
                             <span class="button-icon">🔓</span>
                             <span class="button-text">穴馬を見る</span>
@@ -680,23 +677,6 @@ export const prerender = true;
         .race-name {
             color: #cbd5e1;
             font-size: 0.95rem;
-        }
-
-        .race-info-preview {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 8px;
-        }
-
-        .horse-count {
-            color: #3b82f6;
-            font-size: 1rem;
-            font-weight: 600;
         }
 
         .race-confidence {
