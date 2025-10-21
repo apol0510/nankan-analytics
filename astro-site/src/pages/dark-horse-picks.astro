@@ -959,10 +959,13 @@ export const prerender = true;
         .reveal-button {
             width: 100%;
             padding: 14px 20px;
-            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            /* ガラスモーフィズム */
+            background: rgba(245, 158, 11, 0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(245, 158, 11, 0.5);
             color: white;
-            border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1.05rem;
             font-weight: 700;
             cursor: pointer;
@@ -971,7 +974,8 @@ export const prerender = true;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
         }
@@ -984,7 +988,7 @@ export const prerender = true;
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
@@ -995,16 +999,23 @@ export const prerender = true;
         }
 
         .reveal-button:hover:not(:disabled) {
+            background: rgba(245, 158, 11, 0.35);
+            border-color: rgba(245, 158, 11, 0.7);
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 12px 40px rgba(245, 158, 11, 0.5),
+                        0 0 60px rgba(245, 158, 11, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .reveal-button:active:not(:disabled) {
             transform: translateY(0);
+            background: rgba(245, 158, 11, 0.3);
         }
 
         .reveal-button:disabled {
-            background: rgba(100, 116, 139, 0.5);
+            background: rgba(100, 116, 139, 0.2);
+            backdrop-filter: blur(8px);
+            border-color: rgba(100, 116, 139, 0.3);
             cursor: not-allowed;
             box-shadow: none;
         }
