@@ -384,6 +384,11 @@ export const prerender = true;
             // メイン穴馬表示ボタン
             document.querySelectorAll('.reveal-button').forEach(button => {
                 button.addEventListener('click', (e) => {
+                    // アップグレードボタンの場合は早期リターン（onclickハンドラに任せる）
+                    if (button.classList.contains('upgrade-button')) {
+                        return;
+                    }
+
                     const raceNumber = button.dataset.raceNumber;
 
                     // 取得済みレースの場合は制限チェックをスキップ（再確認のため）
