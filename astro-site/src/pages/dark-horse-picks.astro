@@ -4,6 +4,26 @@ import '../styles/global.css';
 const darkHorseData = await import('../data/darkHorseData.json');
 const data = darkHorseData.default;
 
+// レース番号ごとにグループ化
+const groupedRaces = data.races.reduce((acc: any, race: any) => {
+  if (!acc[race.raceNumber]) {
+    acc[race.raceNumber] = {
+      raceNumber: race.raceNumber,
+      raceName: race.raceName,
+      horses: []
+    };
+  }
+  acc[race.raceNumber].horses.push({
+    horseNumber: race.horseNumber,
+    horseName: race.horseName,
+    reason: race.reason,
+    confidence: race.confidence
+  });
+  return acc;
+}, {});
+
+const racesArray = Object.values(groupedRaces);
+
 export const prerender = true;
 ---
 
@@ -73,20 +93,29 @@ export const prerender = true;
         <div class="races-section">
             <h2>🏇 レースを選択してください</h2>
             <div class="races-grid">
-                {data.races.map((race: any) => (
-                    <div class="race-card" data-race-number={race.raceNumber}>
+                {racesArray.map((raceGroup: any) => (
+                    <div class="race-card" data-race-number={raceGroup.raceNumber}>
                         <div class="race-header">
-                            <span class="race-number">{race.raceNumber}</span>
-                            <span class="race-name">{race.raceName}</span>
+                            <span class="race-number">{raceGroup.raceNumber}</span>
+                            <span class="race-name">{raceGroup.raceName}</span>
                         </div>
-                        <div class="race-confidence">
-                            <span class="confidence-label">信頼度:</span>
-                            <span class="confidence-stars">{race.confidence}</span>
+                        <div class="horses-list">
+                            {raceGroup.horses.map((horse: any, index: number) => (
+                                <div class="horse-item">
+                                    <div class="horse-info">
+                                        <span class="horse-number-small">{horse.horseNumber}番</span>
+                                        <span class="horse-name-small">{horse.horseName}</span>
+                                    </div>
+                                    <div class="horse-confidence-small">
+                                        <span class="confidence-stars">{horse.confidence}</span>
+                                    </div>
+                                    <button class="reveal-button-small" data-race-number={raceGroup.raceNumber} data-horse-index={index}>
+                                        <span class="button-icon">🔓</span>
+                                        <span class="button-text">見る</span>
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-                        <button class="reveal-button" data-race-index={data.races.indexOf(race)}>
-                            <span class="button-icon">🔓</span>
-                            <span class="button-text">穴馬を見る</span>
-                        </button>
                         <div class="used-badge" style="display: none;">
                             <span>✅ 取得済み</span>
                         </div>
@@ -133,7 +162,7 @@ export const prerender = true;
         </div>
     </div>
 
-    <script is:inline define:vars={{ races: data.races }}>
+    <script is:inline define:vars={{ racesData: data.races }}>
         // LocalStorage キー定義
         const STORAGE_KEY = 'darkHorsePicks';
         const USER_STORAGE_KEY = 'nankan_user'; // 既存システムと統一（premium-predictions等と同じキー）
@@ -147,6 +176,25 @@ export const prerender = true;
 
         let userPlan = 'free';
         let usedPicks = [];
+
+        // レースデータをグループ化（フロントマターと同じロジック）
+        const groupedRaces = racesData.reduce((acc, race) => {
+          if (!acc[race.raceNumber]) {
+            acc[race.raceNumber] = {
+              raceNumber: race.raceNumber,
+              raceName: race.raceName,
+              horses: []
+            };
+          }
+          acc[race.raceNumber].horses.push({
+            horseNumber: race.horseNumber,
+            horseName: race.horseName,
+            reason: race.reason,
+            confidence: race.confidence
+          });
+          return acc;
+        }, {});
+        const racesArray = Object.values(groupedRaces);
 
         // ページ読み込み時
         document.addEventListener('DOMContentLoaded', async () => {
@@ -247,26 +295,32 @@ export const prerender = true;
             // レースカード更新
             document.querySelectorAll('.race-card').forEach(card => {
                 const raceNumber = card.dataset.raceNumber;
-                const revealButton = card.querySelector('.reveal-button');
+                const revealButtons = card.querySelectorAll('.reveal-button-small');
                 const usedBadge = card.querySelector('.used-badge');
 
                 if (usedPicks.includes(raceNumber)) {
                     // 取得済み → 再確認可能
                     card.classList.add('used');
-                    revealButton.style.display = 'block';  // ボタンは表示
-                    revealButton.disabled = false;
-                    revealButton.innerHTML = '<span class="button-icon">👀</span><span class="button-text">再確認する</span>';
+                    revealButtons.forEach(btn => {
+                        btn.style.display = 'flex';  // ボタンは表示
+                        btn.disabled = false;
+                        btn.innerHTML = '<span class="button-icon">👀</span><span class="button-text">再確認</span>';
+                    });
                     usedBadge.style.display = 'none';  // バッジは非表示（ボタンで代替）
                 } else if (userPlan === 'premium' || usedPicks.length < PLAN_LIMITS[userPlan]) {
                     // 取得可能
                     card.classList.remove('disabled');
-                    revealButton.disabled = false;
-                    revealButton.innerHTML = '<span class="button-icon">🔓</span><span class="button-text">穴馬を見る</span>';
+                    revealButtons.forEach(btn => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<span class="button-icon">🔓</span><span class="button-text">見る</span>';
+                    });
                 } else {
                     // 取得不可
                     card.classList.add('disabled');
-                    revealButton.disabled = true;
-                    revealButton.innerHTML = '<span class="button-icon">🔒</span><span class="button-text">上限到達</span>';
+                    revealButtons.forEach(btn => {
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="button-icon">🔒</span><span class="button-text">上限</span>';
+                    });
                 }
             });
 
@@ -281,11 +335,11 @@ export const prerender = true;
         // イベントリスナー設定
         function attachEventListeners() {
             // レース選択ボタン
-            document.querySelectorAll('.reveal-button').forEach(button => {
+            document.querySelectorAll('.reveal-button-small').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const raceIndex = parseInt(button.dataset.raceIndex);
+                    const raceNumber = button.dataset.raceNumber;
+                    const horseIndex = parseInt(button.dataset.horseIndex);
                     const raceCard = button.closest('.race-card');
-                    const raceNumber = raceCard.dataset.raceNumber;
 
                     // 取得済みレースの場合は制限チェックをスキップ（再確認のため）
                     const isAlreadyUsed = usedPicks.includes(raceNumber);
@@ -297,7 +351,7 @@ export const prerender = true;
                     }
 
                     // モーダル表示
-                    showModal(raceIndex, raceNumber);
+                    showModal(raceNumber, horseIndex);
                 });
             });
 
@@ -307,14 +361,15 @@ export const prerender = true;
         }
 
         // モーダル表示
-        function showModal(raceIndex, raceNumber) {
-            const race = races[raceIndex];
+        function showModal(raceNumber, horseIndex) {
+            const raceGroup = racesArray.find(r => r.raceNumber === raceNumber);
+            const horse = raceGroup.horses[horseIndex];
 
-            document.getElementById('modal-race-title').textContent = `${race.raceNumber} ${race.raceName}`;
-            document.getElementById('modal-horse-number').textContent = `${race.horseNumber}番`;
-            document.getElementById('modal-horse-name').textContent = race.horseName;
-            document.getElementById('modal-confidence').textContent = `信頼度: ${race.confidence}`;
-            document.getElementById('modal-reason').textContent = race.reason;
+            document.getElementById('modal-race-title').textContent = `${raceGroup.raceNumber} ${raceGroup.raceName}`;
+            document.getElementById('modal-horse-number').textContent = `${horse.horseNumber}番`;
+            document.getElementById('modal-horse-name').textContent = horse.horseName;
+            document.getElementById('modal-confidence').textContent = `信頼度: ${horse.confidence}`;
+            document.getElementById('modal-reason').textContent = horse.reason;
 
             document.getElementById('dark-horse-modal').classList.add('show');
 
@@ -614,6 +669,93 @@ export const prerender = true;
             font-size: 1.1rem;
         }
 
+        /* 馬リストスタイル */
+        .horses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .horse-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .horse-item:hover {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .horse-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .horse-number-small {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .horse-name-small {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .horse-confidence-small {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .horse-confidence-small .confidence-stars {
+            font-size: 0.9rem;
+        }
+
+        .reveal-button-small {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .reveal-button-small .button-icon {
+            font-size: 1rem;
+        }
+
+        .reveal-button-small:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .reveal-button-small:disabled {
+            background: rgba(100, 116, 139, 0.5);
+            cursor: not-allowed;
+        }
+
         .reveal-button {
             width: 100%;
             padding: 12px;
@@ -876,6 +1018,27 @@ export const prerender = true;
 
             .horse-name {
                 font-size: 1.5rem;
+            }
+
+            /* 馬アイテムモバイル対応 */
+            .horse-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .horse-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .horse-confidence-small {
+                justify-content: flex-start;
+            }
+
+            .reveal-button-small {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
