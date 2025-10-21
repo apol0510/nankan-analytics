@@ -340,7 +340,7 @@ export const prerender = true;
             document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
         }
 
-        // モーダル表示（複数馬対応）
+        // モーダル表示（複数馬対応・区切り線方式）
         function showModal(raceNumber) {
             const raceGroup = racesArray.find(r => r.raceNumber === raceNumber);
 
@@ -351,46 +351,30 @@ export const prerender = true;
             const modalBody = document.getElementById('modal-body');
             modalBody.innerHTML = '';
 
-            if (raceGroup.horses.length > 1) {
-                // 複数頭の場合：中間カード（horses-container）を作成
-                const horsesContainer = document.createElement('div');
-                horsesContainer.className = 'horses-container-card';
-
-                raceGroup.horses.forEach(horse => {
-                    const horseCard = document.createElement('div');
-                    horseCard.className = 'horse-info-card';
-                    horseCard.innerHTML = `
-                        <div class="horse-number-badge">${horse.horseNumber}番</div>
-                        <h3 class="horse-name">${horse.horseName}</h3>
-                        <div class="horse-confidence">信頼度: ${horse.confidence}</div>
-                        ${horse.reason ? `
-                            <div class="reason-card">
-                                <h4>📊 穴馬選定理由</h4>
-                                <p>${horse.reason}</p>
-                            </div>
-                        ` : ''}
-                    `;
-                    horsesContainer.appendChild(horseCard);
-                });
-
-                modalBody.appendChild(horsesContainer);
-            } else {
-                // 1頭の場合：直接追加（2層構造）
+            // 全ての馬を順番に表示（複数頭の場合は区切り線で分ける）
+            raceGroup.horses.forEach((horse, index) => {
                 const horseCard = document.createElement('div');
                 horseCard.className = 'horse-info-card';
                 horseCard.innerHTML = `
-                    <div class="horse-number-badge">${raceGroup.horses[0].horseNumber}番</div>
-                    <h3 class="horse-name">${raceGroup.horses[0].horseName}</h3>
-                    <div class="horse-confidence">信頼度: ${raceGroup.horses[0].confidence}</div>
-                    ${raceGroup.horses[0].reason ? `
+                    <div class="horse-number-badge">${horse.horseNumber}番</div>
+                    <h3 class="horse-name">${horse.horseName}</h3>
+                    <div class="horse-confidence">信頼度: ${horse.confidence}</div>
+                    ${horse.reason ? `
                         <div class="reason-card">
                             <h4>📊 穴馬選定理由</h4>
-                            <p>${raceGroup.horses[0].reason}</p>
+                            <p>${horse.reason}</p>
                         </div>
                     ` : ''}
                 `;
                 modalBody.appendChild(horseCard);
-            }
+
+                // 複数頭の場合、最後以外は区切り線を追加
+                if (raceGroup.horses.length > 1 && index < raceGroup.horses.length - 1) {
+                    const divider = document.createElement('div');
+                    divider.className = 'horse-divider';
+                    modalBody.appendChild(divider);
+                }
+            });
 
             document.getElementById('dark-horse-modal').classList.add('show');
         }
@@ -949,40 +933,29 @@ export const prerender = true;
             background: rgba(15, 23, 42, 0.8);
             border: 2px solid rgba(59, 130, 246, 0.3);
             border-radius: 16px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            padding: 20px;
             margin-bottom: 20px;
         }
 
-        /* 複数頭の場合の中間コンテナ（3層目） */
-        .horses-container-card {
-            background: rgba(59, 130, 246, 0.08);
-            border: 2px solid rgba(59, 130, 246, 0.5);
-            border-radius: 14px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
-            margin: 5px 0;
-        }
-
         .horse-info-card {
-            background: rgba(30, 41, 59, 0.95);
-            border: 2px solid rgba(139, 92, 246, 0.6);
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.4);
             border-radius: 12px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             transition: all 0.3s;
         }
 
         .horse-info-card:hover {
-            border-color: rgba(139, 92, 246, 0.8);
-            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
-            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        /* 区切り線（複数頭の場合） */
+        .horse-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5) 50%, transparent);
+            margin: 20px 0;
         }
 
         .horse-number-badge {
