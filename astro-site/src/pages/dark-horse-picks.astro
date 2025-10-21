@@ -106,9 +106,8 @@ export const prerender = true;
                     const horseCount = horseCountMatch ? horseCountMatch[1] : '';
                     const startTime = timeMatch ? `${timeMatch[1]}:${timeMatch[2]}` : '';
 
-                    // 穴馬数と最高信頼度を計算
+                    // 穴馬数を計算
                     const darkHorseCount = raceGroup.horses.length;
-                    const maxConfidence = Math.max(...raceGroup.horses.map((h: any) => parseInt(h.confidence)));
 
                     return (
                         <div class="race-card" data-race-number={raceGroup.raceNumber}>
@@ -146,10 +145,6 @@ export const prerender = true;
                                 <div class="dark-horse-count">
                                     <span class="dark-horse-count-icon">💎</span>
                                     <span class="dark-horse-count-text">穴馬{darkHorseCount}頭発見</span>
-                                </div>
-                                <div class="dark-horse-confidence">
-                                    <span class="confidence-label">最高信頼度</span>
-                                    <span class="confidence-value">{maxConfidence}%</span>
                                 </div>
                             </div>
 
