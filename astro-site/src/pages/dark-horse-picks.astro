@@ -351,23 +351,46 @@ export const prerender = true;
             const modalBody = document.getElementById('modal-body');
             modalBody.innerHTML = '';
 
-            // 各馬の情報を表示
-            raceGroup.horses.forEach(horse => {
+            if (raceGroup.horses.length > 1) {
+                // 複数頭の場合：中間カード（horses-container）を作成
+                const horsesContainer = document.createElement('div');
+                horsesContainer.className = 'horses-container-card';
+
+                raceGroup.horses.forEach(horse => {
+                    const horseCard = document.createElement('div');
+                    horseCard.className = 'horse-info-card';
+                    horseCard.innerHTML = `
+                        <div class="horse-number-badge">${horse.horseNumber}番</div>
+                        <h3 class="horse-name">${horse.horseName}</h3>
+                        <div class="horse-confidence">信頼度: ${horse.confidence}</div>
+                        ${horse.reason ? `
+                            <div class="reason-card">
+                                <h4>📊 穴馬選定理由</h4>
+                                <p>${horse.reason}</p>
+                            </div>
+                        ` : ''}
+                    `;
+                    horsesContainer.appendChild(horseCard);
+                });
+
+                modalBody.appendChild(horsesContainer);
+            } else {
+                // 1頭の場合：直接追加（2層構造）
                 const horseCard = document.createElement('div');
                 horseCard.className = 'horse-info-card';
                 horseCard.innerHTML = `
-                    <div class="horse-number-badge">${horse.horseNumber}番</div>
-                    <h3 class="horse-name">${horse.horseName}</h3>
-                    <div class="horse-confidence">信頼度: ${horse.confidence}</div>
-                    ${horse.reason ? `
+                    <div class="horse-number-badge">${raceGroup.horses[0].horseNumber}番</div>
+                    <h3 class="horse-name">${raceGroup.horses[0].horseName}</h3>
+                    <div class="horse-confidence">信頼度: ${raceGroup.horses[0].confidence}</div>
+                    ${raceGroup.horses[0].reason ? `
                         <div class="reason-card">
                             <h4>📊 穴馬選定理由</h4>
-                            <p>${horse.reason}</p>
+                            <p>${raceGroup.horses[0].reason}</p>
                         </div>
                     ` : ''}
                 `;
                 modalBody.appendChild(horseCard);
-            });
+            }
 
             document.getElementById('dark-horse-modal').classList.add('show');
         }
@@ -931,6 +954,18 @@ export const prerender = true;
             flex-direction: column;
             gap: 20px;
             margin-bottom: 20px;
+        }
+
+        /* 複数頭の場合の中間コンテナ（3層目） */
+        .horses-container-card {
+            background: rgba(20, 30, 50, 0.85);
+            border: 1.5px solid rgba(59, 130, 246, 0.35);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .horse-info-card {
