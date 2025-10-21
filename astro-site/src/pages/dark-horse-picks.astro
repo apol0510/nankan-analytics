@@ -99,9 +99,16 @@ export const prerender = true;
                             <span class="race-number">{raceGroup.raceNumber}</span>
                             <span class="race-name">{raceGroup.raceName}</span>
                         </div>
-                        <div class="horses-list">
+                        <div class="race-info-preview">
+                            <span class="horse-count">穴馬 {raceGroup.horses.length}頭</span>
+                        </div>
+                        <button class="reveal-button" data-race-number={raceGroup.raceNumber}>
+                            <span class="button-icon">🔓</span>
+                            <span class="button-text">穴馬を見る</span>
+                        </button>
+                        <div class="horses-list" style="display: none;">
                             {raceGroup.horses.map((horse: any, index: number) => (
-                                <div class="horse-item">
+                                <div class="horse-item" data-horse-index={index}>
                                     <div class="horse-info">
                                         <span class="horse-number-small">{horse.horseNumber}番</span>
                                         <span class="horse-name-small">{horse.horseName}</span>
@@ -109,9 +116,9 @@ export const prerender = true;
                                     <div class="horse-confidence-small">
                                         <span class="confidence-stars">{horse.confidence}</span>
                                     </div>
-                                    <button class="reveal-button-small" data-race-number={raceGroup.raceNumber} data-horse-index={index}>
-                                        <span class="button-icon">🔓</span>
-                                        <span class="button-text">見る</span>
+                                    <button class="view-detail-button" data-race-number={raceGroup.raceNumber} data-horse-index={index}>
+                                        <span class="button-icon">📊</span>
+                                        <span class="button-text">詳細</span>
                                     </button>
                                 </div>
                             ))}
@@ -295,32 +302,33 @@ export const prerender = true;
             // レースカード更新
             document.querySelectorAll('.race-card').forEach(card => {
                 const raceNumber = card.dataset.raceNumber;
-                const revealButtons = card.querySelectorAll('.reveal-button-small');
+                const revealButton = card.querySelector('.reveal-button');
+                const horsesList = card.querySelector('.horses-list');
                 const usedBadge = card.querySelector('.used-badge');
 
                 if (usedPicks.includes(raceNumber)) {
-                    // 取得済み → 再確認可能
+                    // 取得済み → 馬リスト表示・メインボタン非表示
                     card.classList.add('used');
-                    revealButtons.forEach(btn => {
-                        btn.style.display = 'flex';  // ボタンは表示
-                        btn.disabled = false;
-                        btn.innerHTML = '<span class="button-icon">👀</span><span class="button-text">再確認</span>';
-                    });
-                    usedBadge.style.display = 'none';  // バッジは非表示（ボタンで代替）
+                    horsesList.style.display = 'flex';
+                    revealButton.style.display = 'none';
+                    usedBadge.style.display = 'none';
+
+                    // 詳細ボタンのイベントリスナーを設定
+                    attachDetailButtonListeners(card);
                 } else if (userPlan === 'premium' || usedPicks.length < PLAN_LIMITS[userPlan]) {
                     // 取得可能
                     card.classList.remove('disabled');
-                    revealButtons.forEach(btn => {
-                        btn.disabled = false;
-                        btn.innerHTML = '<span class="button-icon">🔓</span><span class="button-text">見る</span>';
-                    });
+                    horsesList.style.display = 'none';
+                    revealButton.style.display = 'flex';
+                    revealButton.disabled = false;
+                    revealButton.innerHTML = '<span class="button-icon">🔓</span><span class="button-text">穴馬を見る</span>';
                 } else {
                     // 取得不可
                     card.classList.add('disabled');
-                    revealButtons.forEach(btn => {
-                        btn.disabled = true;
-                        btn.innerHTML = '<span class="button-icon">🔒</span><span class="button-text">上限</span>';
-                    });
+                    horsesList.style.display = 'none';
+                    revealButton.style.display = 'flex';
+                    revealButton.disabled = true;
+                    revealButton.innerHTML = '<span class="button-icon">🔒</span><span class="button-text">上限到達</span>';
                 }
             });
 
@@ -334,12 +342,12 @@ export const prerender = true;
 
         // イベントリスナー設定
         function attachEventListeners() {
-            // レース選択ボタン
-            document.querySelectorAll('.reveal-button-small').forEach(button => {
+            // メイン穴馬表示ボタン
+            document.querySelectorAll('.reveal-button').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const raceNumber = button.dataset.raceNumber;
-                    const horseIndex = parseInt(button.dataset.horseIndex);
                     const raceCard = button.closest('.race-card');
+                    const horsesList = raceCard.querySelector('.horses-list');
 
                     // 取得済みレースの場合は制限チェックをスキップ（再確認のため）
                     const isAlreadyUsed = usedPicks.includes(raceNumber);
@@ -350,14 +358,36 @@ export const prerender = true;
                         return;
                     }
 
-                    // モーダル表示
-                    showModal(raceNumber, horseIndex);
+                    // 馬リストを表示
+                    horsesList.style.display = 'flex';
+                    button.style.display = 'none';
+
+                    // 使用済みに追加
+                    if (!isAlreadyUsed) {
+                        usedPicks.push(raceNumber);
+                        saveUsedPicks();
+                        updateUI();
+                    }
+
+                    // 詳細ボタンのイベントリスナーを設定
+                    attachDetailButtonListeners(raceCard);
                 });
             });
 
             // モーダル閉じるボタン
             document.getElementById('modal-close-btn').addEventListener('click', closeModal);
             document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
+        }
+
+        // 詳細ボタンのイベントリスナー設定
+        function attachDetailButtonListeners(raceCard) {
+            raceCard.querySelectorAll('.view-detail-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const raceNumber = button.dataset.raceNumber;
+                    const horseIndex = parseInt(button.dataset.horseIndex);
+                    showModal(raceNumber, horseIndex);
+                });
+            });
         }
 
         // モーダル表示
@@ -652,6 +682,23 @@ export const prerender = true;
             font-size: 0.95rem;
         }
 
+        .race-info-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+        }
+
+        .horse-count {
+            color: #3b82f6;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
         .race-confidence {
             display: flex;
             align-items: center;
@@ -725,7 +772,8 @@ export const prerender = true;
             font-size: 0.9rem;
         }
 
-        .reveal-button-small {
+        .reveal-button-small,
+        .view-detail-button {
             padding: 8px 16px;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             color: white;
@@ -742,16 +790,27 @@ export const prerender = true;
             white-space: nowrap;
         }
 
-        .reveal-button-small .button-icon {
+        .view-detail-button {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .reveal-button-small .button-icon,
+        .view-detail-button .button-icon {
             font-size: 1rem;
         }
 
-        .reveal-button-small:hover:not(:disabled) {
+        .reveal-button-small:hover:not(:disabled),
+        .view-detail-button:hover:not(:disabled) {
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
-        .reveal-button-small:disabled {
+        .view-detail-button:hover:not(:disabled) {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .reveal-button-small:disabled,
+        .view-detail-button:disabled {
             background: rgba(100, 116, 139, 0.5);
             cursor: not-allowed;
         }
@@ -1036,7 +1095,8 @@ export const prerender = true;
                 justify-content: flex-start;
             }
 
-            .reveal-button-small {
+            .reveal-button-small,
+            .view-detail-button {
                 width: 100%;
                 justify-content: center;
             }
