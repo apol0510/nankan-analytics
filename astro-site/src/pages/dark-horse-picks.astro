@@ -91,23 +91,78 @@ export const prerender = true;
 
         <!-- レース選択グリッド -->
         <div class="races-section">
-            <h2>🏇 レースを選択してください</h2>
+            <h2>🏇 本日のプロ馬券師厳選穴馬</h2>
+            <p class="section-subtitle">経験と勘で見極めた、狙い目の穴馬をレース別にご紹介</p>
             <div class="races-grid">
-                {racesArray.map((raceGroup: any) => (
-                    <div class="race-card" data-race-number={raceGroup.raceNumber}>
-                        <div class="race-header">
-                            <span class="race-number">{raceGroup.raceNumber}</span>
-                            <span class="race-name">{raceGroup.raceName}</span>
+                {racesArray.map((raceGroup: any) => {
+                    // レース名から情報を抽出
+                    const raceName = raceGroup.raceName;
+                    const distanceMatch = raceName.match(/ダ?([\d,]+)m/);
+                    const horseCountMatch = raceName.match(/（(\d+)頭）/);
+                    const timeMatch = raceName.match(/発走時刻(\d{2}):(\d{2})/);
+                    const cleanRaceName = raceName.split('ダ')[0].replace(/（\d+頭）.*$/, '').trim();
+
+                    const distance = distanceMatch ? distanceMatch[1] : '';
+                    const horseCount = horseCountMatch ? horseCountMatch[1] : '';
+                    const startTime = timeMatch ? `${timeMatch[1]}:${timeMatch[2]}` : '';
+
+                    // 穴馬数と最高信頼度を計算
+                    const darkHorseCount = raceGroup.horses.length;
+                    const maxConfidence = Math.max(...raceGroup.horses.map((h: any) => parseInt(h.confidence)));
+
+                    return (
+                        <div class="race-card" data-race-number={raceGroup.raceNumber}>
+                            <div class="race-header">
+                                <div class="race-title-row">
+                                    <span class="race-number">{raceGroup.raceNumber}</span>
+                                    <span class="race-name">{cleanRaceName || raceGroup.raceName}</span>
+                                </div>
+                            </div>
+
+                            {/* レース詳細情報 */}
+                            <div class="race-details">
+                                {distance && (
+                                    <div class="race-detail-item">
+                                        <span class="race-detail-icon">📏</span>
+                                        <span>距離: {distance}m</span>
+                                    </div>
+                                )}
+                                {horseCount && (
+                                    <div class="race-detail-item">
+                                        <span class="race-detail-icon">🐎</span>
+                                        <span>頭数: {horseCount}頭</span>
+                                    </div>
+                                )}
+                                {startTime && (
+                                    <div class="race-detail-item">
+                                        <span class="race-detail-icon">🕐</span>
+                                        <span>発走: {startTime}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* 穴馬ハイライト */}
+                            <div class="dark-horse-highlight">
+                                <div class="dark-horse-count">
+                                    <span class="dark-horse-count-icon">💎</span>
+                                    <span class="dark-horse-count-text">穴馬{darkHorseCount}頭発見</span>
+                                </div>
+                                <div class="dark-horse-confidence">
+                                    <span class="confidence-label">最高信頼度</span>
+                                    <span class="confidence-value">{maxConfidence}%</span>
+                                </div>
+                            </div>
+
+                            <button class="reveal-button" data-race-number={raceGroup.raceNumber}>
+                                <span class="button-icon">🔓</span>
+                                <span class="button-text">プロの穴馬を見る</span>
+                            </button>
+                            <div class="used-badge" style="display: none;">
+                                <span>✅ 取得済み</span>
+                            </div>
                         </div>
-                        <button class="reveal-button" data-race-number={raceGroup.raceNumber}>
-                            <span class="button-icon">🔓</span>
-                            <span class="button-text">穴馬を見る</span>
-                        </button>
-                        <div class="used-badge" style="display: none;">
-                            <span>✅ 取得済み</span>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
 
@@ -428,17 +483,30 @@ export const prerender = true;
         }
 
         .page-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            font-size: 2.8rem;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #f59e0b, #ea580c, #fbbf24);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 40px rgba(245, 158, 11, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
         }
 
         .subtitle {
-            color: #94a3b8;
-            font-size: 1.1rem;
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            font-weight: 500;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 12px 24px;
+            display: inline-block;
         }
 
         /* ユーザー情報カード */
@@ -586,30 +654,69 @@ export const prerender = true;
         }
 
         .races-section h2 {
-            margin-bottom: 20px;
-            font-size: 1.8rem;
+            margin-bottom: 12px;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+            margin-bottom: 24px;
+            text-align: center;
         }
 
         .races-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
         }
 
         .race-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            overflow: hidden;
+        }
+
+        /* 特別感のあるグラデーションボーダー */
+        .race-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 2px;
+            background: linear-gradient(135deg, #f59e0b, #ea580c, #f59e0b);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.6;
+            transition: opacity 0.4s;
+        }
+
+        .race-card:hover:not(.disabled):not(.used)::before {
+            opacity: 1;
+            animation: borderGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
 
         .race-card:hover:not(.disabled):not(.used) {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.4), 0 0 60px rgba(245, 158, 11, 0.2);
         }
 
         .race-card.disabled {
@@ -617,30 +724,120 @@ export const prerender = true;
             cursor: not-allowed;
         }
 
+        .race-card.disabled::before {
+            background: linear-gradient(135deg, #64748b, #475569);
+            opacity: 0.3;
+        }
+
         .race-card.used {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .race-card.used::before {
+            background: linear-gradient(135deg, #10b981, #059669);
+            opacity: 0.8;
         }
 
         .race-header {
             display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .race-title-row {
+            display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
         }
 
         .race-number {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
             color: white;
-            padding: 5px 12px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            flex-shrink: 0;
         }
 
         .race-name {
+            color: #e2e8f0;
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        /* レース詳細情報 */
+        .race-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .race-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
             color: #cbd5e1;
+        }
+
+        .race-detail-icon {
+            font-size: 1.1rem;
+            width: 20px;
+        }
+
+        /* 穴馬情報ハイライト */
+        .dark-horse-highlight {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(234, 88, 12, 0.2));
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+
+        .dark-horse-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dark-horse-count-icon {
+            font-size: 1.5rem;
+        }
+
+        .dark-horse-count-text {
             font-size: 0.95rem;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .dark-horse-confidence {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .confidence-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
+
+        .confidence-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fbbf24;
         }
 
         .race-confidence {
@@ -761,29 +958,65 @@ export const prerender = true;
 
         .reveal-button {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reveal-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .reveal-button:hover:not(:disabled)::before {
+            width: 300px;
+            height: 300px;
         }
 
         .reveal-button:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.3);
+        }
+
+        .reveal-button:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         .reveal-button:disabled {
             background: rgba(100, 116, 139, 0.5);
             cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .button-icon,
+        .button-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .button-icon {
+            font-size: 1.3rem;
         }
 
         .used-badge {
@@ -1006,11 +1239,45 @@ export const prerender = true;
         /* レスポンシブ */
         @media (max-width: 768px) {
             .page-header h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
 
             .subtitle {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+
+            .section-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .races-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .race-number {
+                font-size: 1.1rem;
+                padding: 6px 12px;
+            }
+
+            .race-name {
                 font-size: 0.95rem;
+            }
+
+            .dark-horse-highlight {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .dark-horse-confidence {
+                align-items: flex-start;
+            }
+
+            .reveal-button {
+                padding: 12px 16px;
+                font-size: 1rem;
             }
 
             .user-info-card {
