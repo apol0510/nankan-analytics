@@ -30,8 +30,59 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2025年10月 的中実績アーカイブ | NANKANアナリティクス</title>
-  <meta name="description" content="2025年10月の全的中実績を公開。パーフェクト的中の記録と配当金額をすべて確認できます。">
+
+  <!-- SEO最適化メタタグ -->
+  <title>2025年10月 南関競馬的中実績｜マリーンカップ・日本テレビ盃｜NANKANアナリティクス</title>
+  <meta name="description" content="2025年10月の南関競馬全的中実績を公開。マリーンカップ・日本テレビ盃等の重賞レース的中記録と配当金額を完全掲載。的中率{hitRate}%・総配当¥{totalPayoutMonth.toLocaleString()}の実績データ。" />
+  <meta name="keywords" content="南関競馬,的中実績,2025年10月,マリーンカップ,日本テレビ盃,権之助坂賞,オクトーバー賞,的中率,配当,競馬予想" />
+  <link rel="canonical" href="https://nankan-analytics.keiba.link/archive/2025/10" />
+
+  <!-- OGPタグ -->
+  <meta property="og:title" content="2025年10月 南関競馬的中実績｜マリーンカップ・日本テレビ盃" />
+  <meta property="og:description" content="マリーンカップ・日本テレビ盃等の重賞レース的中記録。的中率{hitRate}%・総配当¥{totalPayoutMonth.toLocaleString()}の実績データ公開。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://nankan-analytics.keiba.link/archive/2025/10" />
+  <meta property="og:site_name" content="NANKANアナリティクス" />
+  <meta property="og:locale" content="ja_JP" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="2025年10月 南関競馬的中実績｜マリーンカップ・日本テレビ盃" />
+  <meta name="twitter:description" content="的中率{hitRate}%・総配当¥{totalPayoutMonth.toLocaleString()}の実績データ公開。" />
+
+  <!-- 構造化データ（JSON-LD） -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "2025年10月 南関競馬的中実績",
+    "description": "南関競馬の的中実績アーカイブ。重賞レースを含む全レースの的中記録と配当金額。",
+    "numberOfItems": {totalHitRaces},
+    "itemListElement": [
+      {
+        "@type": "SportsEvent",
+        "name": "南関競馬的中実績",
+        "startDate": "2025-10",
+        "location": {
+          "@type": "Place",
+          "name": "南関競馬（大井・川崎・船橋・浦和）"
+        },
+        "sport": "競馬",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "{hitRate}",
+          "bestRating": "100",
+          "worstRating": "0",
+          "ratingCount": "{totalRaces}"
+        }
+      }
+    ],
+    "about": {
+      "@type": "Thing",
+      "name": "マリーンカップ・日本テレビ盃等の重賞レース"
+    }
+  }
+  </script>
   <style>
     * {
       margin: 0;
