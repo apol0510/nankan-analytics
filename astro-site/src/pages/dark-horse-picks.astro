@@ -340,7 +340,7 @@ export const prerender = true;
             document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
         }
 
-        // モーダル表示（複数馬対応・区切り線方式）
+        // モーダル表示（複数馬対応）
         function showModal(raceNumber) {
             const raceGroup = racesArray.find(r => r.raceNumber === raceNumber);
 
@@ -351,8 +351,8 @@ export const prerender = true;
             const modalBody = document.getElementById('modal-body');
             modalBody.innerHTML = '';
 
-            // 全ての馬を順番に表示（複数頭の場合は区切り線で分ける）
-            raceGroup.horses.forEach((horse, index) => {
+            // 全ての馬を順番に表示
+            raceGroup.horses.forEach(horse => {
                 const horseCard = document.createElement('div');
                 horseCard.className = 'horse-info-card';
                 horseCard.innerHTML = `
@@ -367,13 +367,6 @@ export const prerender = true;
                     ` : ''}
                 `;
                 modalBody.appendChild(horseCard);
-
-                // 複数頭の場合、最後以外は区切り線を追加
-                if (raceGroup.horses.length > 1 && index < raceGroup.horses.length - 1) {
-                    const divider = document.createElement('div');
-                    divider.className = 'horse-divider';
-                    modalBody.appendChild(divider);
-                }
             });
 
             document.getElementById('dark-horse-modal').classList.add('show');
@@ -937,30 +930,22 @@ export const prerender = true;
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
-            gap: 0;
+            gap: 30px;
         }
 
         .horse-info-card {
-            background: rgba(30, 41, 59, 0.95);
-            border: 2px solid rgba(59, 130, 246, 0.5);
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.4);
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
             transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .horse-info-card:hover {
-            border-color: rgba(59, 130, 246, 0.7);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
             transform: translateY(-2px);
-        }
-
-        /* 区切り線（複数頭の場合） */
-        .horse-divider {
-            height: 1px;
-            background: rgba(226, 232, 240, 0.3);
-            margin: 30px 0;
         }
 
         .horse-number-badge {
