@@ -346,11 +346,26 @@ export const prerender = true;
                     revealButton.disabled = false;
                     revealButton.innerHTML = '<span class="button-icon">🔓</span><span class="button-text">穴馬を見る</span>';
                 } else {
-                    // 取得不可
+                    // 取得不可 → アップグレード促進
                     card.classList.add('disabled');
+
+                    // プレミアムバッジ追加
+                    let badge = card.querySelector('.premium-badge');
+                    if (!badge) {
+                        badge = document.createElement('div');
+                        badge.className = 'premium-badge';
+                        badge.innerHTML = '<span class="premium-badge-icon">👑</span><span>Premium限定</span>';
+                        card.appendChild(badge);
+                    }
+
                     revealButton.style.display = 'flex';
                     revealButton.disabled = true;
-                    revealButton.innerHTML = '<span class="button-icon">🔒</span><span class="button-text">上限到達</span>';
+                    revealButton.innerHTML = '<span class="button-icon">✨</span><span class="button-text">今すぐアップグレード</span>';
+
+                    // クリック時にプライシングページへ
+                    revealButton.onclick = () => {
+                        window.location.href = '/pricing';
+                    };
                 }
             });
 
@@ -723,13 +738,45 @@ export const prerender = true;
         }
 
         .race-card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            cursor: pointer;
+            position: relative;
         }
 
         .race-card.disabled::before {
-            background: linear-gradient(135deg, #64748b, #475569);
-            opacity: 0.3;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            opacity: 0.5;
+        }
+
+        /* 上限到達カードのぼかし効果 */
+        .race-card.disabled .dark-horse-highlight {
+            filter: blur(6px);
+            transition: filter 0.3s;
+        }
+
+        .race-card.disabled:hover .dark-horse-highlight {
+            filter: blur(3px);
+        }
+
+        /* プレミアムバッジ */
+        .premium-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1f2937;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+            z-index: 10;
+        }
+
+        .premium-badge-icon {
+            font-size: 0.9rem;
         }
 
         .race-card.used {
@@ -1020,11 +1067,21 @@ export const prerender = true;
         }
 
         .reveal-button:disabled {
-            background: rgba(100, 116, 139, 0.2);
-            backdrop-filter: blur(8px);
-            border-color: rgba(100, 116, 139, 0.3);
-            cursor: not-allowed;
-            box-shadow: none;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.3));
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(251, 191, 36, 0.6);
+            cursor: pointer;
+            box-shadow: 0 8px 32px rgba(251, 191, 36, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .reveal-button:disabled:hover {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.4), rgba(245, 158, 11, 0.4));
+            border-color: rgba(251, 191, 36, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(251, 191, 36, 0.5),
+                        0 0 60px rgba(251, 191, 36, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .button-icon,
