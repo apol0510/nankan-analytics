@@ -130,6 +130,52 @@ raceDetails: raceNameMatch
 
 ---
 
+## 🛡️ **dark-horse-picks LocalStorageリセット問題・完全解決（2025-10-22新規実装）** ✅
+
+### ⚠️ **過去の問題（日付変更時にリセットされない）**
+- **問題**: darkHorseData.jsonを更新しても、LocalStorageに古い日付のクリック状態が残る
+- **症状**: 22日のデータに更新しても、21日の「再確認するボタン」が表示される
+- **原因**: ブラウザのローカル時刻と比較していたため、データ更新時にリセットされない
+
+### ✅ **完全解決策（2025-10-22実装完了）**
+
+#### **darkHorseData.jsonの日付と比較してリセット**
+```javascript
+// dark-horse-picks.astro（361-393行目）
+function loadUsedPicks() {
+    const dataDate = "{data.date}"; // darkHorseData.jsonの日付を使用
+    const stored = localStorage.getItem(STORAGE_KEY);
+
+    if (stored) {
+        const data = JSON.parse(stored);
+        if (data.date === dataDate) {
+            usedPicks = data.usedRaces || [];
+        } else {
+            // データの日付が変わっていればリセット
+            console.log(`🔄 日付変更検出: ${data.date} → ${dataDate} - LocalStorageをリセット`);
+            usedPicks = [];
+            saveUsedPicks();
+        }
+    }
+}
+```
+
+### 🚫 **絶対に復活させてはいけない問題**
+1. ❌ ブラウザのローカル時刻（`new Date().toISOString()`）との比較
+2. ❌ データ更新時にLocalStorageがリセットされない状態
+3. ❌ 古い日付のクリック状態が残り続ける問題
+
+### 🔒 **復活防止保証**
+- **darkHorseData.json基準**: サーバー側データの日付を基準に判定
+- **自動リセット**: データ更新時に自動的にLocalStorageをクリア
+- **デバッグログ**: 日付変更検出時にコンソールログ出力
+
+### 📋 **実装ファイル**
+- `src/pages/dark-horse-picks.astro`: LocalStorage管理ロジック修正（361-393行目）
+- **復活防止コメント**: コード内に詳細な説明・理由を記録
+
+---
+
 ## プロジェクト概要
 
 ### サイト名
