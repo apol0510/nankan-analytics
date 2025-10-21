@@ -120,37 +120,21 @@ export const prerender = true;
 
                             {/* レース詳細情報 */}
                             <div class="race-details">
-                                {distance && (
-                                    <div class="race-detail-item">
-                                        <span class="race-detail-icon">📏</span>
-                                        <span>距離: {distance}m</span>
-                                    </div>
-                                )}
-                                {horseCount && (
-                                    <div class="race-detail-item">
-                                        <span class="race-detail-icon">🐎</span>
-                                        <span>頭数: {horseCount}頭</span>
+                                {(distance || horseCount) && (
+                                    <div class="race-detail-line">
+                                        {distance && horseCount ? `${distance}m（${horseCount}頭）` : distance ? `${distance}m` : `${horseCount}頭`}
                                     </div>
                                 )}
                                 {startTime && (
-                                    <div class="race-detail-item">
-                                        <span class="race-detail-icon">🕐</span>
-                                        <span>発走: {startTime}</span>
+                                    <div class="race-detail-line start-time">
+                                        💎発走時刻 {startTime}
                                     </div>
                                 )}
-                            </div>
-
-                            {/* 穴馬ハイライト */}
-                            <div class="dark-horse-highlight">
-                                <div class="dark-horse-count">
-                                    <span class="dark-horse-count-icon">💎</span>
-                                    <span class="dark-horse-count-text">穴馬{darkHorseCount}頭発見</span>
-                                </div>
                             </div>
 
                             <button class="reveal-button" data-race-number={raceGroup.raceNumber}>
                                 <span class="button-icon">🔓</span>
-                                <span class="button-text">プロの穴馬を見る</span>
+                                <span class="button-text">穴馬を見る</span>
                             </button>
                             <div class="used-badge" style="display: none;">
                                 <span>✅ 取得済み</span>
@@ -852,6 +836,18 @@ export const prerender = true;
         .race-detail-icon {
             font-size: 1.1rem;
             width: 20px;
+        }
+
+        .race-detail-line {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .race-detail-line.start-time {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-top: 4px;
         }
 
         /* 穴馬情報ハイライト */
