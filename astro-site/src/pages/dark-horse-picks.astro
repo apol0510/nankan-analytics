@@ -103,23 +103,6 @@ export const prerender = true;
                             <span class="button-icon">🔓</span>
                             <span class="button-text">穴馬を見る</span>
                         </button>
-                        <div class="horses-list" style="display: none;">
-                            {raceGroup.horses.map((horse: any, index: number) => (
-                                <div class="horse-item" data-horse-index={index}>
-                                    <div class="horse-info">
-                                        <span class="horse-number-small">{horse.horseNumber}番</span>
-                                        <span class="horse-name-small">{horse.horseName}</span>
-                                    </div>
-                                    <div class="horse-confidence-small">
-                                        <span class="confidence-stars">{horse.confidence}</span>
-                                    </div>
-                                    <button class="view-detail-button" data-race-number={raceGroup.raceNumber} data-horse-index={index}>
-                                        <span class="button-icon">📊</span>
-                                        <span class="button-text">詳細</span>
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
                         <div class="used-badge" style="display: none;">
                             <span>✅ 取得済み</span>
                         </div>
@@ -149,19 +132,11 @@ export const prerender = true;
             <div class="modal-header">
                 <h2 id="modal-race-title">レース情報</h2>
             </div>
-            <div class="modal-body">
-                <div class="horse-info-card">
-                    <div class="horse-number-badge" id="modal-horse-number">-</div>
-                    <h3 class="horse-name" id="modal-horse-name">-</h3>
-                    <div class="horse-confidence" id="modal-confidence">-</div>
-                </div>
-                <div class="reason-card">
-                    <h4>📊 穴馬選定理由</h4>
-                    <p id="modal-reason">-</p>
-                </div>
-                <div class="disclaimer-card">
-                    <p>⚠️ この情報はプロ馬券師の経験と勘に基づく穴馬候補です。投資は自己責任でお願いします。</p>
-                </div>
+            <div class="modal-body" id="modal-body">
+                <!-- 動的に生成 -->
+            </div>
+            <div class="disclaimer-card">
+                <p>⚠️ この情報はプロ馬券師の経験と勘に基づく穴馬候補です。投資は自己責任でお願いします。</p>
             </div>
         </div>
     </div>
@@ -300,29 +275,24 @@ export const prerender = true;
             document.querySelectorAll('.race-card').forEach(card => {
                 const raceNumber = card.dataset.raceNumber;
                 const revealButton = card.querySelector('.reveal-button');
-                const horsesList = card.querySelector('.horses-list');
                 const usedBadge = card.querySelector('.used-badge');
 
                 if (usedPicks.includes(raceNumber)) {
-                    // 取得済み → 馬リスト表示・メインボタン非表示
+                    // 取得済み → 再確認可能
                     card.classList.add('used');
-                    horsesList.style.display = 'flex';
-                    revealButton.style.display = 'none';
+                    revealButton.style.display = 'flex';
+                    revealButton.disabled = false;
+                    revealButton.innerHTML = '<span class="button-icon">👀</span><span class="button-text">再確認する</span>';
                     usedBadge.style.display = 'none';
-
-                    // 詳細ボタンのイベントリスナーを設定
-                    attachDetailButtonListeners(card);
                 } else if (userPlan === 'premium' || usedPicks.length < PLAN_LIMITS[userPlan]) {
                     // 取得可能
                     card.classList.remove('disabled');
-                    horsesList.style.display = 'none';
                     revealButton.style.display = 'flex';
                     revealButton.disabled = false;
                     revealButton.innerHTML = '<span class="button-icon">🔓</span><span class="button-text">穴馬を見る</span>';
                 } else {
                     // 取得不可
                     card.classList.add('disabled');
-                    horsesList.style.display = 'none';
                     revealButton.style.display = 'flex';
                     revealButton.disabled = true;
                     revealButton.innerHTML = '<span class="button-icon">🔒</span><span class="button-text">上限到達</span>';
@@ -343,8 +313,6 @@ export const prerender = true;
             document.querySelectorAll('.reveal-button').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const raceNumber = button.dataset.raceNumber;
-                    const raceCard = button.closest('.race-card');
-                    const horsesList = raceCard.querySelector('.horses-list');
 
                     // 取得済みレースの場合は制限チェックをスキップ（再確認のため）
                     const isAlreadyUsed = usedPicks.includes(raceNumber);
@@ -355,9 +323,8 @@ export const prerender = true;
                         return;
                     }
 
-                    // 馬リストを表示
-                    horsesList.style.display = 'flex';
-                    button.style.display = 'none';
+                    // モーダル表示
+                    showModal(raceNumber);
 
                     // 使用済みに追加
                     if (!isAlreadyUsed) {
@@ -365,9 +332,6 @@ export const prerender = true;
                         saveUsedPicks();
                         updateUI();
                     }
-
-                    // 詳細ボタンのイベントリスナーを設定
-                    attachDetailButtonListeners(raceCard);
                 });
             });
 
@@ -376,36 +340,34 @@ export const prerender = true;
             document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
         }
 
-        // 詳細ボタンのイベントリスナー設定
-        function attachDetailButtonListeners(raceCard) {
-            raceCard.querySelectorAll('.view-detail-button').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const raceNumber = button.dataset.raceNumber;
-                    const horseIndex = parseInt(button.dataset.horseIndex);
-                    showModal(raceNumber, horseIndex);
-                });
-            });
-        }
-
-        // モーダル表示
-        function showModal(raceNumber, horseIndex) {
+        // モーダル表示（複数馬対応）
+        function showModal(raceNumber) {
             const raceGroup = racesArray.find(r => r.raceNumber === raceNumber);
-            const horse = raceGroup.horses[horseIndex];
 
+            // モーダルタイトル設定
             document.getElementById('modal-race-title').textContent = `${raceGroup.raceNumber} ${raceGroup.raceName}`;
-            document.getElementById('modal-horse-number').textContent = `${horse.horseNumber}番`;
-            document.getElementById('modal-horse-name').textContent = horse.horseName;
-            document.getElementById('modal-confidence').textContent = `信頼度: ${horse.confidence}`;
-            document.getElementById('modal-reason').textContent = horse.reason;
+
+            // モーダルボディをクリア
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = '';
+
+            // 各馬の情報を表示
+            raceGroup.horses.forEach(horse => {
+                const horseCard = document.createElement('div');
+                horseCard.className = 'horse-info-card';
+                horseCard.innerHTML = `
+                    <div class="horse-number-badge">${horse.horseNumber}番</div>
+                    <h3 class="horse-name">${horse.horseName}</h3>
+                    <div class="horse-confidence">信頼度: ${horse.confidence}</div>
+                    <div class="reason-card">
+                        <h4>📊 穴馬選定理由</h4>
+                        <p>${horse.reason}</p>
+                    </div>
+                `;
+                modalBody.appendChild(horseCard);
+            });
 
             document.getElementById('dark-horse-modal').classList.add('show');
-
-            // 使用済みに追加
-            if (!usedPicks.includes(raceNumber)) {
-                usedPicks.push(raceNumber);
-                saveUsedPicks();
-                updateUI();
-            }
         }
 
         // モーダル閉じる
@@ -958,12 +920,17 @@ export const prerender = true;
             margin-bottom: 20px;
         }
 
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .horse-info-card {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
             text-align: center;
         }
 
@@ -979,31 +946,33 @@ export const prerender = true;
         }
 
         .horse-name {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 10px;
         }
 
         .horse-confidence {
             color: #fbbf24;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
         }
 
-        .reason-card {
+        .horse-info-card .reason-card {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
         }
 
-        .reason-card h4 {
-            margin-bottom: 12px;
-            font-size: 1.2rem;
+        .horse-info-card .reason-card h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
         }
 
-        .reason-card p {
+        .horse-info-card .reason-card p {
             color: #cbd5e1;
-            font-size: 1.05rem;
+            font-size: 1rem;
             line-height: 1.6;
         }
 
