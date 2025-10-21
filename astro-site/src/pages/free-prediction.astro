@@ -53,6 +53,18 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
             <!-- 余計な詳細指標を削除し、シンプルに -->
         </div>
 
+        <!-- 穴馬ページリンク -->
+        <div class="dark-horse-link-section">
+            <a href="/dark-horse-picks/" class="dark-horse-link-btn">
+                <span class="dark-horse-icon">🐎</span>
+                <div class="dark-horse-text">
+                    <span class="dark-horse-title">本日の穴馬抽出ツール</span>
+                    <span class="dark-horse-subtitle">AI予想から狙い目の穴馬を自動抽出</span>
+                </div>
+                <span class="dark-horse-arrow">→</span>
+            </a>
+        </div>
+
         <!-- プレミアムと100%同じアコーディオンシステム -->
         <section style="margin-bottom: 60px;">
             <div class="analysis-section">
@@ -1753,6 +1765,91 @@ const subHorseScore = getHorseConfidenceFromMark(mainRace.horses.sub);
         .importance-value {
             min-width: 30px;
             font-size: 0.75rem;
+        }
+    }
+
+    /* 穴馬ページリンク */
+    .dark-horse-link-section {
+        margin-bottom: 30px;
+    }
+
+    .dark-horse-link-btn {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: linear-gradient(135deg, #f59e0b, #ea580c);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 16px;
+        padding: 20px 24px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .dark-horse-link-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
+        border-color: rgba(245, 158, 11, 0.5);
+    }
+
+    .dark-horse-icon {
+        font-size: 2rem;
+        flex-shrink: 0;
+    }
+
+    .dark-horse-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+    }
+
+    .dark-horse-title {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .dark-horse-subtitle {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9rem;
+        line-height: 1.3;
+    }
+
+    .dark-horse-arrow {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .dark-horse-link-btn:hover .dark-horse-arrow {
+        transform: translateX(5px);
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+        .dark-horse-link-btn {
+            padding: 16px 20px;
+            gap: 12px;
+        }
+
+        .dark-horse-icon {
+            font-size: 1.5rem;
+        }
+
+        .dark-horse-title {
+            font-size: 1rem;
+        }
+
+        .dark-horse-subtitle {
+            font-size: 0.85rem;
+        }
+
+        .dark-horse-arrow {
+            font-size: 1.3rem;
         }
     }
 </style>

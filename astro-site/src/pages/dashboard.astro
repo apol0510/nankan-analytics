@@ -84,6 +84,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
             </div>
 
+            <!-- 穴馬ページリンク -->
+            <div class="dark-horse-link-section">
+                <a href="/dark-horse-picks/" class="dark-horse-link-btn">
+                    <span class="dark-horse-icon">🐎</span>
+                    <div class="dark-horse-text">
+                        <span class="dark-horse-title">本日の穴馬抽出ツール</span>
+                        <span class="dark-horse-subtitle">AI予想から狙い目の穴馬を自動抽出</span>
+                    </div>
+                    <span class="dark-horse-arrow">→</span>
+                </a>
+            </div>
+
             <!-- 会員ステータス -->
             <div class="status-section">
                 <div class="status-grid">
@@ -3355,6 +3367,78 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             .expiry-actions {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* 穴馬ページリンク */
+        .dark-horse-link-section {
+            margin-bottom: 30px;
+        }
+
+        .dark-horse-link-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dark-horse-link-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+
+        .dark-horse-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .dark-horse-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dark-horse-title {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .dark-horse-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .dark-horse-arrow {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .dark-horse-link-btn {
+                padding: 16px 18px;
+            }
+
+            .dark-horse-icon {
+                font-size: 1.5rem;
+            }
+
+            .dark-horse-title {
+                font-size: 1rem;
+            }
+
+            .dark-horse-subtitle {
+                font-size: 0.85rem;
             }
         }
     </style>
