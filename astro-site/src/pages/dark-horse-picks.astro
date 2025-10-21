@@ -933,29 +933,36 @@ export const prerender = true;
             background: rgba(15, 23, 42, 0.8);
             border: 2px solid rgba(59, 130, 246, 0.3);
             border-radius: 16px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
 
         .horse-info-card {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(59, 130, 246, 0.4);
+            background: rgba(30, 41, 59, 0.95);
+            border: 2px solid rgba(59, 130, 246, 0.5);
             border-radius: 12px;
-            padding: 20px;
+            padding: 24px;
             text-align: center;
             transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .horse-info-card:hover {
-            border-color: rgba(59, 130, 246, 0.6);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.7);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
         }
 
         /* 区切り線（複数頭の場合） */
         .horse-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5) 50%, transparent);
-            margin: 20px 0;
+            height: 2px;
+            background: rgba(59, 130, 246, 0.8);
+            margin: 24px 0;
+            border-radius: 1px;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
         }
 
         .horse-number-badge {
