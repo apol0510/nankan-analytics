@@ -352,7 +352,7 @@ export const prerender = true;
             modalBody.innerHTML = '';
 
             // 全ての馬を順番に表示
-            raceGroup.horses.forEach((horse, index) => {
+            raceGroup.horses.forEach(horse => {
                 const horseCard = document.createElement('div');
                 horseCard.className = 'horse-info-card';
                 horseCard.innerHTML = `
@@ -367,13 +367,6 @@ export const prerender = true;
                     ` : ''}
                 `;
                 modalBody.appendChild(horseCard);
-
-                // 最後の馬以外は区切り線を追加
-                if (index < raceGroup.horses.length - 1) {
-                    const divider = document.createElement('hr');
-                    divider.className = 'horse-divider';
-                    modalBody.appendChild(divider);
-                }
             });
 
             document.getElementById('dark-horse-modal').classList.add('show');
@@ -937,22 +930,16 @@ export const prerender = true;
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
-            gap: 50px;
+            gap: 30px;
         }
 
         .horse-info-card {
             background: rgba(30, 41, 59, 0.9);
-            border: 2px solid rgba(59, 130, 246, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.4);
             border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 80px;
+            padding: 20px;
             text-align: center;
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .horse-info-card:last-child {
-            margin-bottom: 0;
         }
 
         .horse-info-card:hover {
@@ -1001,12 +988,6 @@ export const prerender = true;
             color: #cbd5e1;
             font-size: 1rem;
             line-height: 1.6;
-        }
-
-        .horse-divider {
-            border: none;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
-            margin: 0;
         }
 
         .disclaimer-card {
