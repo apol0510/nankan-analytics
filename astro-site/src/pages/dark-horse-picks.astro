@@ -359,11 +359,13 @@ export const prerender = true;
                     }
 
                     revealButton.style.display = 'flex';
-                    revealButton.disabled = true;
+                    revealButton.disabled = false; // クリック可能に
+                    revealButton.classList.add('upgrade-button');
                     revealButton.innerHTML = '<span class="button-icon">✨</span><span class="button-text">今すぐアップグレード</span>';
 
                     // クリック時にプライシングページへ
-                    revealButton.onclick = () => {
+                    revealButton.onclick = (e) => {
+                        e.preventDefault();
                         window.location.href = '/pricing';
                     };
                 }
@@ -1066,7 +1068,8 @@ export const prerender = true;
             background: rgba(139, 92, 246, 0.3);
         }
 
-        .reveal-button:disabled {
+        /* アップグレードボタン */
+        .reveal-button.upgrade-button {
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.3));
             backdrop-filter: blur(12px);
             border: 1.5px solid rgba(251, 191, 36, 0.6);
@@ -1075,13 +1078,21 @@ export const prerender = true;
                         inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
-        .reveal-button:disabled:hover {
+        .reveal-button.upgrade-button:hover {
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.4), rgba(245, 158, 11, 0.4));
             border-color: rgba(251, 191, 36, 0.8);
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(251, 191, 36, 0.5),
                         0 0 60px rgba(251, 191, 36, 0.3),
                         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .reveal-button:disabled {
+            background: rgba(100, 116, 139, 0.2);
+            backdrop-filter: blur(8px);
+            border-color: rgba(100, 116, 139, 0.3);
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         .button-icon,
