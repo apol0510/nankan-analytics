@@ -359,10 +359,12 @@ export const prerender = true;
                     <div class="horse-number-badge">${horse.horseNumber}番</div>
                     <h3 class="horse-name">${horse.horseName}</h3>
                     <div class="horse-confidence">信頼度: ${horse.confidence}</div>
-                    <div class="reason-card">
-                        <h4>📊 穴馬選定理由</h4>
-                        <p>${horse.reason}</p>
-                    </div>
+                    ${horse.reason ? `
+                        <div class="reason-card">
+                            <h4>📊 穴馬選定理由</h4>
+                            <p>${horse.reason}</p>
+                        </div>
+                    ` : ''}
                 `;
                 modalBody.appendChild(horseCard);
             });
