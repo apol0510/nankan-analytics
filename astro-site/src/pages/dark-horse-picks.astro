@@ -91,8 +91,8 @@ export const prerender = true;
 
         <!-- レース選択グリッド -->
         <div class="races-section">
-            <h2>🏇 本日のプロ馬券師厳選穴馬</h2>
-            <p class="section-subtitle">経験と勘で見極めた、狙い目の穴馬をレース別にご紹介</p>
+            <h2>🏇　{data.date}　{data.track}</h2>
+            <p class="section-subtitle">狙い目の穴馬をレース別に抽出</p>
             <div class="races-grid">
                 {racesArray.map((raceGroup: any) => {
                     // レース名から情報を抽出
