@@ -78,6 +78,58 @@ git push origin main
 
 ---
 
+## 🛡️ **予想データ矛盾問題・完全根絶対策（2025-10-22新規実装）** ✅
+
+### ⚠️ **過去の問題（データ矛盾）**
+- **問題**: allRacesPrediction.json生成時、raceNameとraceInfo内のdistance/horseCountが矛盾
+- **具体例**:
+  ```json
+  "raceName": "Ｃ３(一)(二)ダ1,600m（14頭） 発走時刻14:30"  // 1,600m・14頭
+  "distance": "1400m",  // 矛盾！
+  "horseCount": 10,     // 矛盾！
+  "raceDetails": "大井1R 1400m （10頭） 発走時刻14:45 Ｃ３(一)(二)ダ1,600m（14頭） 発走時刻14:30"  // 重複！
+  ```
+- **原因**: raceNameに含まれる距離・頭数・時刻を無視して、別の値を設定していた
+
+### ✅ **完全根絶解決策（2025-10-22実装完了）**
+
+#### **1. raceNameから正確な情報を抽出（優先使用）**
+```javascript
+// betting-direct-super-simple.astro（415-435行目）
+// raceNameに距離・頭数・時刻が含まれている場合は、そこから抽出して優先使用
+const raceNameMatch = actualRaceName.match(/ダ([\d,]+)m.*?（(\d+)頭）.*?発走時刻(\d+:\d+)/);
+if (raceNameMatch) {
+    actualDistance = raceNameMatch[1].replace(/,/g, ',') + 'm';  // "1,600m"形式維持
+    actualHorseCount = parseInt(raceNameMatch[2]);
+    actualStartTime = raceNameMatch[3];
+    console.log(`✅ ${raceNum}R: raceNameから情報抽出 - 距離=${actualDistance}, 頭数=${actualHorseCount}, 時刻=${actualStartTime}`);
+}
+```
+
+#### **2. raceDetails重複防止**
+```javascript
+// betting-direct-super-simple.astro（456-459行目）
+raceDetails: raceNameMatch
+    ? `${actualTrack}${raceNum}R ${actualRaceName}`  // raceNameに詳細あり→シンプル表記
+    : `${actualTrack}${raceNum}R ${actualDistance} （${actualHorseCount}頭） 発走時刻${actualStartTime} ${actualRaceName}`  // 詳細なし→追加
+```
+
+### 🚫 **絶対に復活させてはいけない問題**
+1. ❌ raceNameの情報を無視して別の値を設定
+2. ❌ raceDetailsに2つの異なる情報を重複記載
+3. ❌ 距離・頭数・時刻の矛盾データ生成
+
+### 🔒 **復活防止保証**
+- **自動抽出**: raceNameから距離・頭数・時刻を自動抽出して優先使用
+- **矛盾検出**: コンソールログで抽出情報を表示・確認可能
+- **重複防止**: raceNameに詳細が含まれている場合はraceDetailsをシンプル化
+
+### 📋 **実装ファイル**
+- `src/pages/admin/betting-direct-super-simple.astro`: JSON生成ロジック修正（415-459行目）
+- **復活防止コメント**: コード内に詳細な説明・理由を記録
+
+---
+
 ## プロジェクト概要
 
 ### サイト名

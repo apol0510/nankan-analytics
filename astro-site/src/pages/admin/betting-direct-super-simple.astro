@@ -412,13 +412,27 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     }
                 }
 
-                // 解析されたレース情報を使用
+                // 🛡️ 復活防止（2025-10-22）: raceNameから正確な情報を抽出してデータ矛盾を防止
+                // 問題: raceNameに「ダ1,600m（14頭）発走時刻14:30」が含まれているのに、
+                //       別途actualDistance=1400m, actualHorseCount=10 を設定すると矛盾が発生
+                // 解決: raceNameから距離・頭数・時刻を抽出して優先的に使用
                 const parsedRaceInfo = raceInfo.raceInfo || {};
                 const actualRaceName = parsedRaceInfo.raceName || `${String(raceNumber).padStart(2, '0')}R`;
-                const actualDistance = parsedRaceInfo.distance || "1400m";
-                const actualStartTime = parsedRaceInfo.startTime || "14:45";
-                const actualHorseCount = parsedRaceInfo.horseCount || raceInfo.horses.length;
+
+                // デフォルト値を設定
+                let actualDistance = parsedRaceInfo.distance || "1400m";
+                let actualStartTime = parsedRaceInfo.startTime || "14:45";
+                let actualHorseCount = parsedRaceInfo.horseCount || raceInfo.horses.length;
                 const actualTrack = parsedRaceInfo.track || detectedVenue;
+
+                // raceNameに距離・頭数・時刻が含まれている場合は、そこから抽出して優先使用（矛盾防止）
+                const raceNameMatch = actualRaceName.match(/ダ([\d,]+)m.*?（(\d+)頭）.*?発走時刻(\d+:\d+)/);
+                if (raceNameMatch) {
+                    actualDistance = raceNameMatch[1].replace(/,/g, ',') + 'm';  // "1,600m"形式維持
+                    actualHorseCount = parseInt(raceNameMatch[2]);
+                    actualStartTime = raceNameMatch[3];
+                    console.log(`✅ ${raceNum}R: raceNameから情報抽出 - 距離=${actualDistance}, 頭数=${actualHorseCount}, 時刻=${actualStartTime}`);
+                }
 
                 const raceEntry = {
                     raceNumber: `${raceNum}R`,
@@ -439,7 +453,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         horseCount: actualHorseCount,
                         startTime: actualStartTime,
                         raceCondition: parsedRaceInfo.raceCondition || "",
-                        raceDetails: `${actualTrack}${raceNum}R ${actualDistance} （${actualHorseCount}頭） 発走時刻${actualStartTime} ${actualRaceName}`
+                        // 🛡️ 復活防止: raceNameに詳細が含まれている場合は重複を避ける
+                        raceDetails: raceNameMatch
+                            ? `${actualTrack}${raceNum}R ${actualRaceName}`  // raceNameに詳細あり→シンプル表記
+                            : `${actualTrack}${raceNum}R ${actualDistance} （${actualHorseCount}頭） 発走時刻${actualStartTime} ${actualRaceName}`  // 詳細なし→追加
                     },
                     horses: {
                         main: convertHorseToExistingFormat(raceInfo.horses.find(h => h.type === '本命')),
