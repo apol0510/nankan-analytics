@@ -87,7 +87,7 @@
       box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
     }
 
-    .badge-50off {
+    .badge-discount {
       display: inline-block;
       background: #fff;
       color: #ef4444;
@@ -433,7 +433,7 @@
       <p>
         <strong>1日1鞍限定・AI超精密買い目</strong>を提供する<br>
         <strong>「プレミアムプラス」プラン</strong>を、<br>
-        退会者様限定<strong>50%OFF（¥49,000）</strong>でご案内します。
+        退会者様限定<strong>¥30,000引き（¥68,000）</strong>でご案内します。
       </p>
       <p style="margin-top: 1rem; font-size: 0.95rem; color: #94a3b8;">
         数万通りの買い目からAIが導き出す、<br>
@@ -452,30 +452,44 @@
     </div>
 
     <div class="price-box">
-      <div class="badge-50off">🎯 ラストチャンス 50%OFF 🎯</div>
+      <div class="badge-discount">🎯 ラストチャンス ¥30,000引き 🎯</div>
       <div class="original-price">通常価格: ¥98,000</div>
-      <div class="sale-price">¥49,000</div>
+      <div class="sale-price">¥68,000</div>
       <p class="price-note">
         ※退会者様限定の特別価格<br>
         ※次の超勝負レース1鞍のAI超精密買い目提供<br>
         ※人間では実現不可能なレベルの的中精度
       </p>
+
+      <!-- 割引コード表示 -->
+      <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 12px;">
+        <p style="font-size: 1rem; color: #10b981; font-weight: 600; margin-bottom: 0.5rem;">
+          💰 特別割引コード
+        </p>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1rem 0;">
+          <code id="promoCode" style="font-size: 1.8rem; font-weight: bold; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 0.5rem 1.5rem; border-radius: 8px; letter-spacing: 2px;">off30000</code>
+          <button onclick="copyPromoCode()" style="padding: 0.5rem 1rem; background: #10b981; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">📋 コピー</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
+          👉 お申し込みボタンをクリック後、Stripe決済ページで<br>
+          上記の割引コードを入力すると<strong style="color: #10b981;">¥30,000引き</strong>が適用されます
+        </p>
+      </div>
     </div>
 
     <!-- ラストチャンス強調 -->
     <div class="urgency-warning">
       <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">
-        ⚠️ この50%OFF価格は、このページからのお申し込み限定です
+        ⚠️ この¥30,000引き価格は、このページからのお申し込み限定です
       </p>
       <p style="font-size: 1rem; line-height: 1.8; color: #cbd5e1;">
-        一度退会されますと、この特別価格で再度ご利用いただくことはできません。<br>
-        通常価格¥98,000での再開となります。
+        一度退会されますと、この特別価格で再度ご利用いただくことはできません。
       </p>
     </div>
 
     <div class="button-group">
-      <a href="https://buy.stripe.com/4gMbJ1cd3asEc0jfRhdby0N" class="cta-button">
-        🏆 今すぐ50%OFFで申し込む
+      <a href="https://buy.stripe.com/9B628rdh7gR22pJdJ9dby0O" class="cta-button">
+        🏆 割引コードを使って申し込む
       </a>
 
       <button id="proceedWithdrawal" class="secondary-button">
@@ -505,7 +519,7 @@
       </div>
     </div>
 
-    <script>
+    <script is:inline>
       // 画像自動設定（クライアントサイドで今日の日付計算）
       (function() {
         const img = document.getElementById('hitImage');
@@ -602,6 +616,46 @@
           modal.style.display = 'none';
         }
       });
+
+      // 割引コードコピー機能（より確実な実装）
+      function copyPromoCode() {
+        const code = 'off30000';
+
+        // テキストエリアを使った従来の方法（より確実）
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        try {
+          const successful = document.execCommand('copy');
+          document.body.removeChild(textarea);
+
+          if (successful) {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ コピー完了！';
+            btn.style.background = '#059669';
+            setTimeout(() => {
+              btn.textContent = originalText;
+              btn.style.background = '#10b981';
+            }, 2000);
+          } else {
+            throw new Error('Copy failed');
+          }
+        } catch (err) {
+          document.body.removeChild(textarea);
+          // フォールバック：コードを選択状態にする
+          const codeElement = document.getElementById('promoCode');
+          const range = document.createRange();
+          range.selectNode(codeElement);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+          alert('コードを選択しました。Ctrl+C（Mac: Cmd+C）でコピーしてください');
+        }
+      }
     </script>
 
   </div>
