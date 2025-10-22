@@ -358,38 +358,62 @@ export const prerender = true;
             planBadge.className = 'plan-badge plan-' + plan;
         }
 
-        // 🛡️ 復活防止（2025-10-22）: darkHorseData.jsonの日付と比較してリセット
-        // 問題: ブラウザのローカル時刻と比較していたため、データ更新時にリセットされない
-        // 解決: darkHorseData.jsonのdata.dateと比較して、日付が変わったら自動リセット
+        // 🛡️ 復活防止強化版（2025-10-22最終版）: バージョン管理 + 日付比較の二重チェック
+        // 問題1: ブラウザのローカル時刻と比較していたため、データ更新時にリセットされない
+        // 問題2: ブラウザキャッシュにより古いJavaScriptが実行され続ける
+        // 解決: バージョン番号 + darkHorseData.jsonのdata.dateの二重チェック
+        // ⚠️ 絶対に削除・変更してはいけない: このシステムがないと古いボタン状態が残り続ける
         function loadUsedPicks() {
+            const STORAGE_VERSION = '2025-10-23'; // ⚠️ darkHorseData更新時にこの日付も更新すること
             const dataDate = "{data.date}"; // darkHorseData.jsonの日付を使用
             const stored = localStorage.getItem(STORAGE_KEY);
 
             if (stored) {
-                const data = JSON.parse(stored);
-                if (data.date === dataDate) {
-                    usedPicks = data.usedRaces || [];
-                } else {
-                    // データの日付が変わっていればリセット
-                    console.log(`🔄 日付変更検出: ${data.date} → ${dataDate} - LocalStorageをリセット`);
+                try {
+                    const data = JSON.parse(stored);
+
+                    // 🔴 第1チェック: バージョン番号確認（ブラウザキャッシュ対策）
+                    if (!data.version || data.version !== STORAGE_VERSION) {
+                        console.log(`🔄 バージョン変更検出: ${data.version || '未設定'} → ${STORAGE_VERSION} - LocalStorageをリセット`);
+                        usedPicks = [];
+                        saveUsedPicks();
+                        return;
+                    }
+
+                    // 🔴 第2チェック: 日付確認（データ更新時の確実なリセット）
+                    if (data.date === dataDate) {
+                        usedPicks = data.usedRaces || [];
+                        console.log(`✅ LocalStorage読み込み成功: ${usedPicks.length}レース使用済み`);
+                    } else {
+                        console.log(`🔄 日付変更検出: ${data.date} → ${dataDate} - LocalStorageをリセット`);
+                        usedPicks = [];
+                        saveUsedPicks();
+                    }
+                } catch (error) {
+                    console.error('❌ LocalStorage読み込みエラー:', error);
                     usedPicks = [];
                     saveUsedPicks();
                 }
             } else {
+                console.log('🆕 新規LocalStorage作成');
                 usedPicks = [];
                 saveUsedPicks();
             }
         }
 
-        // 使用済みレース保存
+        // 使用済みレース保存（バージョン情報付き）
         function saveUsedPicks() {
+            const STORAGE_VERSION = '2025-10-23'; // ⚠️ loadUsedPicks()と同じバージョン番号を使用
             const dataDate = "{data.date}"; // darkHorseData.jsonの日付を使用
             const data = {
+                version: STORAGE_VERSION, // 🔴 バージョン番号追加（ブラウザキャッシュ対策）
                 date: dataDate,
                 usedRaces: usedPicks,
-                count: usedPicks.length
+                count: usedPicks.length,
+                savedAt: new Date().toISOString() // デバッグ用タイムスタンプ
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            console.log(`💾 LocalStorage保存完了: バージョン=${STORAGE_VERSION}, 日付=${dataDate}, 使用済み=${usedPicks.length}レース`);
         }
 
         // UI更新
