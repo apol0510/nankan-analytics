@@ -1432,6 +1432,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         });
 
+        // 🔧 グローバルスコープに公開（is:inline scriptからアクセスするため）
+        window.getCustomerData = getCustomerData;
+        window.fetchUserPoints = fetchUserPoints;
+        console.log('✅ getCustomerData/fetchUserPoints をグローバルスコープに公開しました');
+
     </script>
 
     <style>
@@ -3646,8 +3651,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     console.log(`📊 必要ポイント: ${requiredPoints}pt, 特典: ${rewardName}`);
 
                     try {
-                        // 既存のgetCustomerData()関数を使用
-                        const userData = await getCustomerData();
+                        // 既存のgetCustomerData()関数を使用（グローバルスコープから）
+                        const userData = await window.getCustomerData();
 
                         if (!userData || !userData.email) {
                             alert('ログインが必要です。再度ログインしてください。');
