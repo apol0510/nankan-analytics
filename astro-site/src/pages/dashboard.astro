@@ -229,32 +229,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     
                     <div class="exchange-grid">
                         <!-- 1000pt特典 -->
-                        <div class="exchange-option">
+                        <div class="exchange-option clickable-card" onclick="requestExchange(1000, 'AI解析による隠れ上昇馬情報')">
+                            <div class="exchange-icon">🎯</div>
                             <div class="exchange-cost">1000pt</div>
                             <div class="exchange-reward">AI解析による隠れ上昇馬情報</div>
-                            <button class="exchange-btn" onclick="requestExchange(1000, 'AI解析による隠れ上昇馬情報')">
-                                交換申請
-                            </button>
+                            <div class="exchange-action">クリックして交換申請 →</div>
                         </div>
 
                         <!-- 2000pt特典 -->
-                        <div class="exchange-option premium-option">
+                        <div class="exchange-option premium-option clickable-card" onclick="requestExchange(2000, 'AI解析による急上昇 激走穴馬情報')">
+                            <div class="exchange-icon">⚡</div>
                             <div class="exchange-cost">2000pt</div>
                             <div class="exchange-reward">AI解析による急上昇 激走穴馬情報</div>
-                            <button class="exchange-btn" onclick="requestExchange(2000, 'AI解析による急上昇 激走穴馬情報')">
-                                交換申請
-                            </button>
+                            <div class="exchange-action">クリックして交換申請 →</div>
                         </div>
-                        
+
                         <!-- 3000pt特典 -->
-                        <div class="exchange-option orange-option">
+                        <div class="exchange-option orange-option clickable-card" onclick="requestExchange(3000, '厩舎の発射タイミング予測による激走穴馬情報')">
+                            <div class="exchange-icon">🔥</div>
                             <div class="exchange-cost">3000pt</div>
                             <div class="exchange-reward">厩舎の発射タイミング予測による激走穴馬情報</div>
-                            <button class="exchange-btn" onclick="requestExchange(3000, '厩舎の発射タイミング予測による激走穴馬情報')">
-                                交換申請
-                            </button>
+                            <div class="exchange-action">クリックして交換申請 →</div>
                         </div>
-                        
+
                     </div>
                     
                     <div class="exchange-note">
@@ -2599,16 +2596,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 24px;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            user-select: none;
         }
-        
+
         .exchange-option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .exchange-option:active {
+            transform: translateY(-2px) scale(1.01);
         }
         
         .orange-option {
@@ -2627,33 +2630,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
         }
         
-        .exchange-cost {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 8px;
+        .exchange-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: block;
         }
-        
+
+        .exchange-cost {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
         .exchange-reward {
             font-size: 1.1rem;
-            margin-bottom: 15px;
-            line-height: 1.4;
+            margin-bottom: 16px;
+            line-height: 1.5;
+            min-height: 50px;
         }
-        
-        .exchange-btn {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 10px 20px;
+
+        .exchange-action {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 12px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
         }
-        
-        .exchange-btn:hover {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.5);
+
+        .exchange-option:hover .exchange-action {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
         }
         
         .exchange-note {
