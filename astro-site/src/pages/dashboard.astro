@@ -1362,34 +1362,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
         });
 
-        // ポイント交換申請関数
-        window.requestExchange = async function(requiredPoints, rewardName) {
-            const customer = await getCustomerData();
-            
-            if (!customer || !customer.email) {
-                alert('ログインが必要です');
-                return;
-            }
-            
-            if (customer.points < requiredPoints) {
-                alert(`ポイントが不足しています。\n必要: ${requiredPoints}pt\n現在: ${customer.points}pt`);
-                return;
-            }
-            
-            const subject = `ポイント交換申請: ${rewardName}`;
-            const body = `
-ユーザー: ${customer.email}
-プラン: ${customer.plan}
-申請: ${requiredPoints}pt → ${rewardName}
-現在のポイント: ${customer.points}pt
-申請日時: ${new Date().toLocaleString()}
-
-※この申請は自動送信されました。管理者が確認後にご連絡いたします。
-            `.trim();
-            
-            // メール申請を開く
-            window.location.href = `mailto:support@keiba.link?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        };
+        // ポイント交換申請関数は下部の <script is:inline> セクションで定義
 
         // ログアウト（簡略化）
         window.logout = function() {
