@@ -1,6 +1,6 @@
 // ポイント交換申請処理
 // Airtableに申請データ保存 + オプションでメール通知
-// 最終更新: 2025-10-22 23:45 強制再デプロイ（Function未デプロイ問題対応）
+// 最終更新: 2025-10-23 0:15 RequestDate形式修正（Airtable Date型対応）
 
 const Airtable = require('airtable');
 
@@ -69,6 +69,9 @@ exports.handler = async (event, context) => {
 
     // Airtableに申請データを保存
     try {
+      // Airtable Date型フィールド対応: YYYY-MM-DD形式で送信
+      const today = new Date().toISOString().split('T')[0];
+
       const record = await base('PointExchangeRequests').create({
         Email: userEmail,
         Name: userName || '',
@@ -77,7 +80,7 @@ exports.handler = async (event, context) => {
         RequiredPoints: requiredPoints,
         RewardName: rewardName,
         Status: 'Pending',
-        RequestDate: new Date().toISOString(),
+        RequestDate: today,
         ProcessedDate: null,
         Notes: ''
       });
