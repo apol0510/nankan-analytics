@@ -60,7 +60,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div class="expiry-action-card secondary">
                                 <h4>🚪 退会をご希望の場合</h4>
                                 <p>退会処理後も有効期限内はご利用可能</p>
-                                <a href="/withdrawal-upsell/" class="expiry-btn withdraw" style="text-decoration: none; text-align: center;">退会処理へ進む</a>
+                                <button id="withdrawal-btn-expired" class="expiry-btn withdraw">退会処理へ進む</button>
                             </div>
                         </div>
                     </div>
@@ -628,11 +628,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             document.getElementById('expiry-date-display').textContent = expiryDate;
             document.getElementById('expiry-warning-section').style.display = 'block';
 
-            // 退会ボタンイベント設定
+            // 退会ボタンイベント設定（プラン判定付き）
             document.getElementById('withdrawal-btn-expired').addEventListener('click', function() {
                 const modal = document.getElementById('withdrawalModal');
-                if (modal) {
-                    modal.style.display = 'flex';
+                const userPlan = localStorage.getItem('userPlan') || '';
+
+                // 無料会員はモーダル表示、有料会員はwithdrawal-upsellへ遷移
+                if (userPlan.toLowerCase() === 'free') {
+                    if (modal) {
+                        modal.style.display = 'flex';
+                    }
+                } else {
+                    window.location.href = '/withdrawal-upsell/';
                 }
             });
         }
@@ -3471,9 +3478,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <p style="color: #94a3b8; margin-bottom: 1.5rem;">
             退会をご希望の場合は、下記ボタンからお手続きください。
         </p>
-        <a href="/withdrawal-upsell/" style="display: inline-block; padding: 0.75rem 1.5rem; background: #64748b; color: #fff; border: none; border-radius: 8px; transition: all 0.3s; cursor: pointer; font-family: inherit; font-size: 1rem; text-decoration: none;">
+        <button id="withdrawal-btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: #64748b; color: #fff; border: none; border-radius: 8px; transition: all 0.3s; cursor: pointer; font-family: inherit; font-size: 1rem;">
             退会申請
-        </a>
+        </button>
     </div>
 
     <!-- 退会確認モーダル -->
@@ -3537,10 +3544,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const cancelBtn = document.getElementById('cancelWithdrawal');
         const reasonTextarea = document.getElementById('withdrawalReason');
 
-        // 退会ボタンクリックでモーダル表示
+        // 退会ボタンクリック（プラン判定付き）
         if (withdrawalBtn) {
             withdrawalBtn.addEventListener('click', function() {
-                modal.style.display = 'flex';
+                const userPlan = localStorage.getItem('userPlan') || '';
+
+                // 無料会員はモーダル表示、有料会員はwithdrawal-upsellへ遷移
+                if (userPlan.toLowerCase() === 'free') {
+                    modal.style.display = 'flex';
+                } else {
+                    window.location.href = '/withdrawal-upsell/';
+                }
             });
         }
 
