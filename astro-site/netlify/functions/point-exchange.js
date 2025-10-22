@@ -1,10 +1,14 @@
 // ポイント交換申請処理
-// Airtableに申請データ保存 + オプションでメール通知
-// 最終更新: 2025-10-23 0:45 Plan値正規化追加（premium→Premium統一）
+// Airtableに申請データ保存 + SendGridメール通知
+// 最終更新: 2025-10-23 1:00 SendGridメール通知実装（管理者＋申請者）
 
 const Airtable = require('airtable');
+const sgMail = require('@sendgrid/mail');
 
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
+
+// SendGrid設定
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.handler = async (event, context) => {
   // CORSヘッダー設定
@@ -93,6 +97,98 @@ exports.handler = async (event, context) => {
       });
 
       console.log('✅ Airtable申請データ保存成功:', record.id);
+
+      // メール通知送信
+      try {
+        const requestDate = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
+
+        // 1. 管理者向けメール
+        const adminEmail = {
+          to: 'nankan.analytics@gmail.com',
+          from: 'nankan-analytics@keiba.link',
+          subject: `【ポイント交換申請】${userEmail} - ${rewardName}`,
+          html: `
+            <h2>ポイント交換申請を受け付けました</h2>
+            <p><strong>申請ID:</strong> ${record.id}</p>
+            <hr>
+            <h3>申請者情報</h3>
+            <ul>
+              <li><strong>メールアドレス:</strong> ${userEmail}</li>
+              <li><strong>お名前:</strong> ${userName || '未登録'}</li>
+              <li><strong>会員プラン:</strong> ${normalizePlan(userPlan)}</li>
+              <li><strong>申請日時:</strong> ${requestDate}</li>
+            </ul>
+            <hr>
+            <h3>交換内容</h3>
+            <ul>
+              <li><strong>交換特典:</strong> ${rewardName}</li>
+              <li><strong>必要ポイント:</strong> ${requiredPoints}pt</li>
+              <li><strong>現在の保有ポイント:</strong> ${currentPoints}pt</li>
+              <li><strong>交換後残高:</strong> ${currentPoints - requiredPoints}pt</li>
+            </ul>
+            <hr>
+            <p><strong>対応が必要です:</strong></p>
+            <ol>
+              <li>Airtableで申請内容を確認</li>
+              <li>特典メールを${userEmail}宛に送信</li>
+              <li>Airtableのステータスを「処理済み」に更新</li>
+            </ol>
+          `,
+          tracking_settings: {
+            click_tracking: { enable: false, enable_text: false },
+            open_tracking: { enable: false },
+            subscription_tracking: { enable: false },
+            ganalytics: { enable: false }
+          }
+        };
+
+        // 2. 申請者向け確認メール
+        const userEmail_data = {
+          to: userEmail,
+          from: 'nankan-analytics@keiba.link',
+          subject: '【ポイント交換申請受付】NANKANアナリティクス',
+          html: `
+            <h2>ポイント交換申請を受け付けました</h2>
+            <p>${userName || 'お客様'}、この度はポイント交換をお申し込みいただき、ありがとうございます。</p>
+            <hr>
+            <h3>申請内容</h3>
+            <ul>
+              <li><strong>申請ID:</strong> ${record.id}</li>
+              <li><strong>交換特典:</strong> ${rewardName}</li>
+              <li><strong>必要ポイント:</strong> ${requiredPoints}pt</li>
+              <li><strong>申請日時:</strong> ${requestDate}</li>
+            </ul>
+            <hr>
+            <h3>今後の流れ</h3>
+            <ol>
+              <li>管理者が申請内容を確認いたします</li>
+              <li>1営業日以内に、特典をメールでお送りいたします</li>
+              <li>特典メール送信後、交換が完了となります</li>
+            </ol>
+            <p>ご不明な点がございましたら、お気軽にお問い合わせください。</p>
+            <hr>
+            <p>NANKANアナリティクス<br>
+            <a href="https://nankan-analytics.keiba.link">https://nankan-analytics.keiba.link</a></p>
+          `,
+          tracking_settings: {
+            click_tracking: { enable: false, enable_text: false },
+            open_tracking: { enable: false },
+            subscription_tracking: { enable: false },
+            ganalytics: { enable: false }
+          }
+        };
+
+        // メール送信
+        await sgMail.send(adminEmail);
+        console.log('✅ 管理者通知メール送信成功');
+
+        await sgMail.send(userEmail_data);
+        console.log('✅ 申請者確認メール送信成功');
+
+      } catch (emailError) {
+        console.error('⚠️ メール送信エラー（Airtable保存は成功）:', emailError);
+        // メール送信失敗してもAirtableには保存済みなのでエラーにしない
+      }
 
       return {
         statusCode: 200,
