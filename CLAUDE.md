@@ -88,6 +88,63 @@ bash scripts/update-all-images.sh
 
 ---
 
+## 🎯 **予想更新手順（2025-10-22新規追加）** ⚠️ **最重要**
+
+### 💡 **「予想更新」の意味**
+「予想更新」= 管理画面で生成した予想データをコミット・プッシュして本番反映する作業
+
+### 🚨 **絶対に忘れてはいけない：src/public同期**
+
+**予想更新時は必ず以下の手順を厳守：**
+
+#### **1. src/data/allRacesPrediction.json 更新確認**
+```bash
+git status src/data/allRacesPrediction.json
+```
+
+#### **2. 🔴 src → public 同期（絶対必須・最重要）**
+```bash
+cp src/data/allRacesPrediction.json public/data/allRacesPrediction.json
+```
+
+#### **3. 同期確認**
+```bash
+md5 src/data/allRacesPrediction.json public/data/allRacesPrediction.json
+```
+**→ MD5ハッシュが一致していることを確認**
+
+#### **4. 両方をコミット**
+```bash
+git add src/data/allRacesPrediction.json public/data/allRacesPrediction.json
+git commit -m "🏇 予想更新・[日付][競馬場名] + src/public同期"
+git push origin main
+```
+
+### 🎯 **Claude（クロ）への厳守事項**
+
+**「予想更新」「予想反映」「予想更新コミットプッシュ」と言われたら：**
+
+1. ✅ src/data/allRacesPrediction.json の変更確認
+2. ✅ **必ず `cp src/data/allRacesPrediction.json public/data/allRacesPrediction.json` 実行**
+3. ✅ md5コマンドで同期確認
+4. ✅ **両方のファイル**を git add
+5. ✅ コミット・プッシュ
+
+### ⚠️ **絶対に忘れてはいけないこと**
+
+- ❌ src/data/allRacesPrediction.json だけをコミット → **NG**
+- ✅ src + public 両方を同期してコミット → **正解**
+- 🔴 **public/data/allRacesPrediction.json の同期を忘れると本番環境で古いデータが表示される**
+
+### 📋 **確認チェックリスト**
+
+- [ ] cp コマンドで src → public コピー
+- [ ] md5 コマンドでハッシュ一致確認
+- [ ] 両方のファイルを git add
+- [ ] コミットメッセージに「src/public同期」を含める
+
+---
+
 ## プロジェクト概要
 
 ### サイト名
