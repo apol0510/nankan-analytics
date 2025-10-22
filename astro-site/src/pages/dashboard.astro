@@ -3469,6 +3469,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         console.log('💡 テスト用: setTestAuth("premium"), setTestAuth("standard"), setTestAuth("free") が利用可能です');
     </script>
 
+    <!-- ポイント交換確認モーダル -->
+    <div id="exchangeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: #1e293b; border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);">
+            <h3 style="color: #fbbf24; margin-bottom: 1rem; font-size: 1.3rem;">🎁 ポイント交換確認</h3>
+
+            <div style="background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 1rem; margin: 1rem 0; border-radius: 8px;">
+                <p style="color: #cbd5e1; margin: 0.5rem 0;"><strong>交換特典:</strong> <span id="modal-reward-name"></span></p>
+                <p style="color: #cbd5e1; margin: 0.5rem 0;"><strong>必要ポイント:</strong> <span id="modal-required-points"></span>pt</p>
+                <p style="color: #cbd5e1; margin: 0.5rem 0;"><strong>現在のポイント:</strong> <span id="modal-current-points"></span>pt</p>
+                <p style="color: #fbbf24; margin: 0.5rem 0; font-weight: 600;"><strong>交換後:</strong> <span id="modal-after-points"></span>pt</p>
+            </div>
+
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin: 1rem 0;">
+                交換申請後、1営業日以内にメールで特典をお送りします。<br>
+                ポイントは特典送付時に自動的に減算されます。
+            </p>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button id="exchange-cancel-btn" style="flex: 1; padding: 0.75rem; background: rgba(100, 116, 139, 0.3); color: #cbd5e1; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    キャンセル
+                </button>
+                <button id="exchange-confirm-btn" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;">
+                    交換申請する
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 退会申請セクション（ダッシュボード下部） -->
     <div id="withdrawal-section" style="display: none; margin-top: 3rem; padding: 2rem; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px;">
         <h3 style="color: #f87171; margin-bottom: 1rem;">退会について</h3>
@@ -3608,6 +3636,113 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             if (e.target === modal) {
                 modal.style.display = 'none';
             }
+        });
+    </script>
+
+    <script is:inline>
+        // ポイント交換申請システム
+
+        let currentExchangeData = null;
+
+        // ポイント交換申請関数（ボタンから呼ばれる）
+        function requestExchange(requiredPoints, rewardName) {
+            // ユーザー情報取得
+            const userDataRaw = localStorage.getItem('user-plan');
+            if (!userDataRaw) {
+                alert('ログインが必要です。再度ログインしてください。');
+                window.location.href = '/';
+                return;
+            }
+
+            const userData = JSON.parse(userDataRaw);
+            const currentPoints = userData.points || 0;
+
+            // ポイント不足チェック
+            if (currentPoints < requiredPoints) {
+                alert(`ポイントが不足しています。\n\n必要: ${requiredPoints}pt\n現在: ${currentPoints}pt\n不足: ${requiredPoints - currentPoints}pt`);
+                return;
+            }
+
+            // 交換データ保存
+            currentExchangeData = {
+                userEmail: userData.email,
+                userName: userData.name || '',
+                userPlan: userData.plan || 'Free',
+                currentPoints: currentPoints,
+                requiredPoints: requiredPoints,
+                rewardName: rewardName
+            };
+
+            // モーダルに情報表示
+            document.getElementById('modal-reward-name').textContent = rewardName;
+            document.getElementById('modal-required-points').textContent = requiredPoints;
+            document.getElementById('modal-current-points').textContent = currentPoints;
+            document.getElementById('modal-after-points').textContent = currentPoints - requiredPoints;
+
+            // モーダル表示
+            const exchangeModal = document.getElementById('exchangeModal');
+            exchangeModal.style.display = 'flex';
+        }
+
+        // ページ読み込み時にイベントリスナー設定
+        document.addEventListener('DOMContentLoaded', function() {
+            const exchangeModal = document.getElementById('exchangeModal');
+            const cancelBtn = document.getElementById('exchange-cancel-btn');
+            const confirmBtn = document.getElementById('exchange-confirm-btn');
+
+            // キャンセルボタン
+            cancelBtn.addEventListener('click', function() {
+                exchangeModal.style.display = 'none';
+                currentExchangeData = null;
+            });
+
+            // 交換申請ボタン
+            confirmBtn.addEventListener('click', async function() {
+                if (!currentExchangeData) return;
+
+                // ボタン無効化
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = '申請中...';
+
+                try {
+                    // Netlify Functionに送信
+                    const response = await fetch('/.netlify/functions/point-exchange', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(currentExchangeData)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        // 成功時
+                        exchangeModal.style.display = 'none';
+                        alert(`✅ ${result.message}\n\n特典情報はメールでお送りしますので、しばらくお待ちください。`);
+
+                        // ページリロード（ポイント表示更新のため）
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        throw new Error(result.error || result.message || '申請に失敗しました');
+                    }
+                } catch (error) {
+                    console.error('❌ ポイント交換エラー:', error);
+                    alert(`エラーが発生しました: ${error.message}\n\nお手数ですが、お問い合わせフォームからご連絡ください。`);
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '交換申請する';
+                }
+            });
+
+            // モーダル外クリックで閉じる
+            exchangeModal.addEventListener('click', function(e) {
+                if (e.target === exchangeModal) {
+                    exchangeModal.style.display = 'none';
+                    currentExchangeData = null;
+                }
+            });
         });
     </script>
 </BaseLayout>
