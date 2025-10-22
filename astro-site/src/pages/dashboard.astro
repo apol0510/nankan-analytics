@@ -229,7 +229,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     
                     <div class="exchange-grid">
                         <!-- 1000pt特典 -->
-                        <div class="exchange-option clickable-card" onclick="requestExchange(1000, 'AI解析による隠れ上昇馬情報')">
+                        <div class="exchange-option clickable-card" data-points="1000" data-reward="AI解析による隠れ上昇馬情報">
                             <div class="exchange-icon">🎯</div>
                             <div class="exchange-cost">1000pt</div>
                             <div class="exchange-reward">AI解析による隠れ上昇馬情報</div>
@@ -237,7 +237,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         </div>
 
                         <!-- 2000pt特典 -->
-                        <div class="exchange-option premium-option clickable-card" onclick="requestExchange(2000, 'AI解析による急上昇 激走穴馬情報')">
+                        <div class="exchange-option premium-option clickable-card" data-points="2000" data-reward="AI解析による急上昇 激走穴馬情報">
                             <div class="exchange-icon">⚡</div>
                             <div class="exchange-cost">2000pt</div>
                             <div class="exchange-reward">AI解析による急上昇 激走穴馬情報</div>
@@ -245,7 +245,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         </div>
 
                         <!-- 3000pt特典 -->
-                        <div class="exchange-option orange-option clickable-card" onclick="requestExchange(3000, '厩舎の発射タイミング予測による激走穴馬情報')">
+                        <div class="exchange-option orange-option clickable-card" data-points="3000" data-reward="厩舎の発射タイミング予測による激走穴馬情報">
                             <div class="exchange-icon">🔥</div>
                             <div class="exchange-cost">3000pt</div>
                             <div class="exchange-reward">厩舎の発射タイミング予測による激走穴馬情報</div>
@@ -3622,57 +3622,73 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <script is:inline>
         // ポイント交換申請システム
-
         let currentExchangeData = null;
-
-        // ポイント交換申請関数（ボタンから呼ばれる）
-        // 同期関数でラップしてonclick属性から呼び出し可能にする
-        window.requestExchange = function(requiredPoints, rewardName) {
-            (async function() {
-                // 既存のgetCustomerData()関数を使用
-                const userData = await getCustomerData();
-
-                if (!userData || !userData.email) {
-                    alert('ログインが必要です。再度ログインしてください。');
-                    window.location.href = '/';
-                    return;
-                }
-
-                const currentPoints = userData.points || 0;
-
-                // ポイント不足チェック
-                if (currentPoints < requiredPoints) {
-                    alert(`ポイントが不足しています。\n\n必要: ${requiredPoints}pt\n現在: ${currentPoints}pt\n不足: ${requiredPoints - currentPoints}pt`);
-                    return;
-                }
-
-                // 交換データ保存
-                currentExchangeData = {
-                    userEmail: userData.email,
-                    userName: userData.name || '',
-                    userPlan: userData.plan || 'Free',
-                    currentPoints: currentPoints,
-                    requiredPoints: requiredPoints,
-                    rewardName: rewardName
-                };
-
-                // モーダルに情報表示
-                document.getElementById('modal-reward-name').textContent = rewardName;
-                document.getElementById('modal-required-points').textContent = requiredPoints;
-                document.getElementById('modal-current-points').textContent = currentPoints;
-                document.getElementById('modal-after-points').textContent = currentPoints - requiredPoints;
-
-                // モーダル表示
-                const exchangeModal = document.getElementById('exchangeModal');
-                exchangeModal.style.display = 'flex';
-            })();
-        };
 
         // ページ読み込み時にイベントリスナー設定
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔧 ポイント交換システム初期化開始');
+
             const exchangeModal = document.getElementById('exchangeModal');
             const cancelBtn = document.getElementById('exchange-cancel-btn');
             const confirmBtn = document.getElementById('exchange-confirm-btn');
+
+            // 全てのポイント交換カードにイベントリスナーを追加
+            const exchangeCards = document.querySelectorAll('.exchange-option.clickable-card');
+            console.log(`✅ 交換カード検出: ${exchangeCards.length}個`);
+
+            exchangeCards.forEach((card, index) => {
+                card.addEventListener('click', async function() {
+                    console.log(`🎯 カード${index + 1}クリック検出`);
+
+                    const requiredPoints = parseInt(card.dataset.points);
+                    const rewardName = card.dataset.reward;
+
+                    console.log(`📊 必要ポイント: ${requiredPoints}pt, 特典: ${rewardName}`);
+
+                    try {
+                        // 既存のgetCustomerData()関数を使用
+                        const userData = await getCustomerData();
+
+                        if (!userData || !userData.email) {
+                            alert('ログインが必要です。再度ログインしてください。');
+                            window.location.href = '/';
+                            return;
+                        }
+
+                        const currentPoints = userData.points || 0;
+                        console.log(`💰 現在のポイント: ${currentPoints}pt`);
+
+                        // ポイント不足チェック
+                        if (currentPoints < requiredPoints) {
+                            alert(`ポイントが不足しています。\n\n必要: ${requiredPoints}pt\n現在: ${currentPoints}pt\n不足: ${requiredPoints - currentPoints}pt`);
+                            return;
+                        }
+
+                        // 交換データ保存
+                        currentExchangeData = {
+                            userEmail: userData.email,
+                            userName: userData.name || '',
+                            userPlan: userData.plan || 'Free',
+                            currentPoints: currentPoints,
+                            requiredPoints: requiredPoints,
+                            rewardName: rewardName
+                        };
+
+                        // モーダルに情報表示
+                        document.getElementById('modal-reward-name').textContent = rewardName;
+                        document.getElementById('modal-required-points').textContent = requiredPoints;
+                        document.getElementById('modal-current-points').textContent = currentPoints;
+                        document.getElementById('modal-after-points').textContent = currentPoints - requiredPoints;
+
+                        // モーダル表示
+                        console.log('📋 モーダル表示');
+                        exchangeModal.style.display = 'flex';
+                    } catch (error) {
+                        console.error('❌ エラー:', error);
+                        alert('エラーが発生しました。再度お試しください。');
+                    }
+                });
+            });
 
             // キャンセルボタン
             cancelBtn.addEventListener('click', function() {
