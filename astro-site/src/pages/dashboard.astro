@@ -3626,16 +3626,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         let currentExchangeData = null;
 
         // ポイント交換申請関数（ボタンから呼ばれる）
-        function requestExchange(requiredPoints, rewardName) {
-            // ユーザー情報取得
-            const userDataRaw = localStorage.getItem('user-plan');
-            if (!userDataRaw) {
+        async function requestExchange(requiredPoints, rewardName) {
+            // 既存のgetCustomerData()関数を使用
+            const userData = await getCustomerData();
+
+            if (!userData || !userData.email) {
                 alert('ログインが必要です。再度ログインしてください。');
                 window.location.href = '/';
                 return;
             }
 
-            const userData = JSON.parse(userDataRaw);
             const currentPoints = userData.points || 0;
 
             // ポイント不足チェック
