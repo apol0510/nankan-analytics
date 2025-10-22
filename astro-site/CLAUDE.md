@@ -130,33 +130,57 @@ raceDetails: raceNameMatch
 
 ---
 
-## 🛡️ **dark-horse-picks LocalStorageリセット問題・完全解決（2025-10-22新規実装）** ✅
+## 🛡️ **dark-horse-picks LocalStorageリセット問題・完全解決（2025-10-22最終強化版）** ✅
 
 ### ⚠️ **過去の問題（日付変更時にリセットされない）**
-- **問題**: darkHorseData.jsonを更新しても、LocalStorageに古い日付のクリック状態が残る
+- **問題1**: darkHorseData.jsonを更新しても、LocalStorageに古い日付のクリック状態が残る
+- **問題2**: ブラウザキャッシュにより古いJavaScriptが実行され続け、修正が反映されない
 - **症状**: 22日のデータに更新しても、21日の「再確認するボタン」が表示される
-- **原因**: ブラウザのローカル時刻と比較していたため、データ更新時にリセットされない
+- **原因1**: ブラウザのローカル時刻と比較していたため、データ更新時にリセットされない
+- **原因2**: ブラウザがキャッシュした古いJavaScriptコードが実行され続ける
 
-### ✅ **完全解決策（2025-10-22実装完了）**
+### ✅ **完全解決策（2025-10-22最終強化版実装完了）**
 
-#### **darkHorseData.jsonの日付と比較してリセット**
+#### **バージョン管理 + 日付比較の二重チェックシステム**
 ```javascript
-// dark-horse-picks.astro（361-393行目）
+// dark-horse-picks.astro（361-417行目）
 function loadUsedPicks() {
+    const STORAGE_VERSION = '2025-10-23'; // ⚠️ darkHorseData更新時にこの日付も更新すること
     const dataDate = "{data.date}"; // darkHorseData.jsonの日付を使用
     const stored = localStorage.getItem(STORAGE_KEY);
 
     if (stored) {
         const data = JSON.parse(stored);
+
+        // 🔴 第1チェック: バージョン番号確認（ブラウザキャッシュ対策）
+        if (!data.version || data.version !== STORAGE_VERSION) {
+            console.log(`🔄 バージョン変更検出 - LocalStorageをリセット`);
+            usedPicks = [];
+            saveUsedPicks();
+            return;
+        }
+
+        // 🔴 第2チェック: 日付確認（データ更新時の確実なリセット）
         if (data.date === dataDate) {
             usedPicks = data.usedRaces || [];
         } else {
-            // データの日付が変わっていればリセット
-            console.log(`🔄 日付変更検出: ${data.date} → ${dataDate} - LocalStorageをリセット`);
+            console.log(`🔄 日付変更検出 - LocalStorageをリセット`);
             usedPicks = [];
             saveUsedPicks();
         }
     }
+}
+
+function saveUsedPicks() {
+    const STORAGE_VERSION = '2025-10-23'; // ⚠️ loadUsedPicks()と同じバージョン番号
+    const data = {
+        version: STORAGE_VERSION, // 🔴 バージョン番号追加
+        date: dataDate,
+        usedRaces: usedPicks,
+        count: usedPicks.length,
+        savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 ```
 
@@ -164,15 +188,26 @@ function loadUsedPicks() {
 1. ❌ ブラウザのローカル時刻（`new Date().toISOString()`）との比較
 2. ❌ データ更新時にLocalStorageがリセットされない状態
 3. ❌ 古い日付のクリック状態が残り続ける問題
+4. ❌ バージョン管理なしのシステム（ブラウザキャッシュ問題が再発する）
 
-### 🔒 **復活防止保証**
-- **darkHorseData.json基準**: サーバー側データの日付を基準に判定
+### 🔒 **復活防止保証（二重チェックシステム）**
+- **第1防護: バージョン番号チェック**: ブラウザキャッシュを無視して強制リセット
+- **第2防護: 日付チェック**: darkHorseData.json基準の日付判定
 - **自動リセット**: データ更新時に自動的にLocalStorageをクリア
-- **デバッグログ**: 日付変更検出時にコンソールログ出力
+- **デバッグログ**: バージョン・日付変更検出時にコンソールログ出力
 
 ### 📋 **実装ファイル**
-- `src/pages/dark-horse-picks.astro`: LocalStorage管理ロジック修正（361-393行目）
+- `src/pages/dark-horse-picks.astro`: LocalStorage管理ロジック修正（361-417行目）
 - **復活防止コメント**: コード内に詳細な説明・理由を記録
+- **バージョン管理**: STORAGE_VERSION変数で強制リセット実現
+
+### ⚠️ **重要：darkHorseData更新時の手順**
+```bash
+# 1. darkHorseData.json更新
+# 2. dark-horse-picks.astro内のSTORAGE_VERSION更新（2箇所）
+const STORAGE_VERSION = '2025-10-23'; // この日付を更新
+# 3. コミット・プッシュ
+```
 
 ---
 
