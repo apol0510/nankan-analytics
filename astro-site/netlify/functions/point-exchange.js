@@ -1,6 +1,6 @@
 // ポイント交換申請処理
 // Airtableに申請データ保存 + オプションでメール通知
-// 最終更新: 2025-10-23 0:15 RequestDate形式修正（Airtable Date型対応）
+// 最終更新: 2025-10-23 0:45 Plan値正規化追加（premium→Premium統一）
 
 const Airtable = require('airtable');
 
@@ -72,10 +72,17 @@ exports.handler = async (event, context) => {
       // Airtable Date型フィールド対応: YYYY-MM-DD形式で送信
       const today = new Date().toISOString().split('T')[0];
 
+      // Plan値を正規化（大文字始まりに統一: free→Free, premium→Premium, standard→Standard）
+      const normalizePlan = (plan) => {
+        if (!plan) return 'Free';
+        const normalized = plan.charAt(0).toUpperCase() + plan.slice(1).toLowerCase();
+        return normalized;
+      };
+
       const record = await base('PointExchangeRequests').create({
         Email: userEmail,
         Name: userName || '',
-        Plan: userPlan || 'Free',
+        Plan: normalizePlan(userPlan),
         CurrentPoints: currentPoints,
         RequiredPoints: requiredPoints,
         RewardName: rewardName,
