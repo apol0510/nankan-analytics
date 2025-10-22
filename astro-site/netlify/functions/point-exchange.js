@@ -1,5 +1,6 @@
 // ポイント交換申請処理
 // Airtableに申請データ保存 + オプションでメール通知
+// 最終更新: 2025-10-22 環境変数反映用デプロイ
 
 const Airtable = require('airtable');
 
