@@ -3626,44 +3626,47 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         let currentExchangeData = null;
 
         // ポイント交換申請関数（ボタンから呼ばれる）
-        async function requestExchange(requiredPoints, rewardName) {
-            // 既存のgetCustomerData()関数を使用
-            const userData = await getCustomerData();
+        // 同期関数でラップしてonclick属性から呼び出し可能にする
+        window.requestExchange = function(requiredPoints, rewardName) {
+            (async function() {
+                // 既存のgetCustomerData()関数を使用
+                const userData = await getCustomerData();
 
-            if (!userData || !userData.email) {
-                alert('ログインが必要です。再度ログインしてください。');
-                window.location.href = '/';
-                return;
-            }
+                if (!userData || !userData.email) {
+                    alert('ログインが必要です。再度ログインしてください。');
+                    window.location.href = '/';
+                    return;
+                }
 
-            const currentPoints = userData.points || 0;
+                const currentPoints = userData.points || 0;
 
-            // ポイント不足チェック
-            if (currentPoints < requiredPoints) {
-                alert(`ポイントが不足しています。\n\n必要: ${requiredPoints}pt\n現在: ${currentPoints}pt\n不足: ${requiredPoints - currentPoints}pt`);
-                return;
-            }
+                // ポイント不足チェック
+                if (currentPoints < requiredPoints) {
+                    alert(`ポイントが不足しています。\n\n必要: ${requiredPoints}pt\n現在: ${currentPoints}pt\n不足: ${requiredPoints - currentPoints}pt`);
+                    return;
+                }
 
-            // 交換データ保存
-            currentExchangeData = {
-                userEmail: userData.email,
-                userName: userData.name || '',
-                userPlan: userData.plan || 'Free',
-                currentPoints: currentPoints,
-                requiredPoints: requiredPoints,
-                rewardName: rewardName
-            };
+                // 交換データ保存
+                currentExchangeData = {
+                    userEmail: userData.email,
+                    userName: userData.name || '',
+                    userPlan: userData.plan || 'Free',
+                    currentPoints: currentPoints,
+                    requiredPoints: requiredPoints,
+                    rewardName: rewardName
+                };
 
-            // モーダルに情報表示
-            document.getElementById('modal-reward-name').textContent = rewardName;
-            document.getElementById('modal-required-points').textContent = requiredPoints;
-            document.getElementById('modal-current-points').textContent = currentPoints;
-            document.getElementById('modal-after-points').textContent = currentPoints - requiredPoints;
+                // モーダルに情報表示
+                document.getElementById('modal-reward-name').textContent = rewardName;
+                document.getElementById('modal-required-points').textContent = requiredPoints;
+                document.getElementById('modal-current-points').textContent = currentPoints;
+                document.getElementById('modal-after-points').textContent = currentPoints - requiredPoints;
 
-            // モーダル表示
-            const exchangeModal = document.getElementById('exchangeModal');
-            exchangeModal.style.display = 'flex';
-        }
+                // モーダル表示
+                const exchangeModal = document.getElementById('exchangeModal');
+                exchangeModal.style.display = 'flex';
+            })();
+        };
 
         // ページ読み込み時にイベントリスナー設定
         document.addEventListener('DOMContentLoaded', function() {
