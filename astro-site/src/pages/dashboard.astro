@@ -1295,11 +1295,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             if (planLower === 'free') {
                 console.log('プラン管理を表示（無料会員）');
                 document.getElementById('plan-section').style.display = 'block';
-            } else {
-                // 有料会員はログアウトセクション表示
-                console.log('ログアウトセクション表示（有料会員）');
-                document.getElementById('logout-section-paid').style.display = 'block';
             }
+            // 有料会員（Standard/Premium）はログアウトボタン非表示
 
             // アップグレード促進の表示制御
             if (planLower !== 'premium') {
