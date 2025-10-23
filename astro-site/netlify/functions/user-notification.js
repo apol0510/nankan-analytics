@@ -128,6 +128,13 @@ export default async function handler(request, context) {
                     <strong>ログイン方法：</strong> メールアドレス「${email}」でログイン
                   </p>
                 </div>
+
+                <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 15px;">
+                  <p style="color: #92400e; margin: 0; font-size: 14px;">
+                    <strong>⚠️ 重要：有料プラン会員の方へ</strong><br>
+                    予想データが正しく表示されない場合は、<strong>一度ログアウトしていただき、再度ログインしてください</strong>。これにより最新のプラン情報が反映されます。
+                  </p>
+                </div>
               </div>
 
               <div style="text-align: center; margin-top: 20px; color: #64748b; font-size: 14px;">
