@@ -145,6 +145,78 @@ git push origin main
 
 ---
 
+## 🐎 **穴馬更新手順（2025-10-23新規追加）** ⚠️ **最重要**
+
+### 💡 **「穴馬更新コミットプッシュ」の意味**
+「穴馬更新コミットプッシュ」= darkHorseData.json + STORAGE_VERSION の両方を自動更新してコミット・プッシュする作業
+
+### 🚨 **絶対に忘れてはいけない：STORAGE_VERSION同期**
+
+**穴馬更新時は必ず以下の手順を厳守：**
+
+#### **1. darkHorseData.json の日付確認**
+```bash
+git diff src/data/darkHorseData.json | grep '"date"'
+```
+
+#### **2. 🔴 STORAGE_VERSION 同期（絶対必須・最重要）**
+```bash
+# dark-horse-picks.astro の2箇所を同じ日付に更新
+# 367行目: const STORAGE_VERSION = '2025-10-XX';
+# 406行目: const STORAGE_VERSION = '2025-10-XX';
+```
+
+#### **3. 同期確認**
+```bash
+# dark-horse-picks.astro を確認
+grep "STORAGE_VERSION = '2025" src/pages/dark-horse-picks.astro
+```
+**→ 両方が darkHorseData.json の日付と一致していることを確認**
+
+#### **4. 両方をコミット**
+```bash
+git add src/data/darkHorseData.json src/pages/dark-horse-picks.astro
+git commit -m "🐎 穴馬データ更新・[日付][競馬場名] + STORAGE_VERSION同期"
+git push origin main
+```
+
+### 🎯 **Claude（クロ）への厳守事項**
+
+**「穴馬更新」「穴馬更新コミットプッシュ」と言われたら：**
+
+1. ✅ darkHorseData.json の日付確認（git diff で取得）
+2. ✅ **必ず dark-horse-picks.astro の STORAGE_VERSION を同じ日付に更新（2箇所）**
+3. ✅ grep コマンドで同期確認
+4. ✅ **両方のファイル**を git add
+5. ✅ コミット・プッシュ
+
+### ⚠️ **絶対に忘れてはいけないこと**
+
+- ❌ darkHorseData.json だけをコミット → **NG**
+- ✅ darkHorseData.json + STORAGE_VERSION 両方を同期してコミット → **正解**
+- 🔴 **STORAGE_VERSION の更新を忘れると、ブラウザキャッシュ問題でボタンがリセットされない**
+
+### 📋 **確認チェックリスト**
+
+- [ ] darkHorseData.json の日付を確認
+- [ ] STORAGE_VERSION を同じ日付に更新（2箇所）
+- [ ] grep コマンドで同期確認
+- [ ] 両方のファイルを git add
+- [ ] コミットメッセージに「STORAGE_VERSION同期」を含める
+
+### 🛡️ **復活防止対策**
+
+#### **なぜこの手順が必要か**
+- darkHorseData.json を更新しても、STORAGE_VERSION が古いままだとブラウザキャッシュ問題が発生
+- ユーザーのブラウザに保存された古いバージョン番号と新しいバージョン番号が一致せず、LocalStorageがリセットされない
+- 結果：昨日のボタン状態が残り続け、「再確認する」ボタンが表示され続ける
+
+#### **二重チェックシステム**
+1. **第1チェック**: バージョン番号確認（ブラウザキャッシュ対策）
+2. **第2チェック**: 日付確認（データ更新時の確実なリセット）
+
+---
+
 ## プロジェクト概要
 
 ### サイト名
