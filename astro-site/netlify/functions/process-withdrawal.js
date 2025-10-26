@@ -157,8 +157,8 @@ export const handler = async (event, context) => {
                     <p><strong>⚠️ 今後の流れ:</strong></p>
                     <ul>
                         <li>Stripe定期支払いの停止処理を行います</li>
-                        <li>【有効期限】${new Date(validUntil).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}までプレミアムコンテンツをご利用いただけます</li>
-                        <li>※この日以降は自動的にFreeプランに切り替わります</li>
+                        <li>次回請求日までプレミアムコンテンツをご利用いただけます</li>
+                        <li>※有効期限以降は自動的にFreeプランに切り替わります</li>
                     </ul>
                 </div>
 
