@@ -498,8 +498,8 @@
     </div>
 
     <!-- 退会確認モーダル -->
-    <div id="withdrawalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
-      <div style="background: #1e293b; padding: 3rem; border-radius: 16px; max-width: 500px; margin: 2rem;">
+    <div id="withdrawalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999;">
+      <div style="background: #1e293b; padding: 3rem; border-radius: 16px; max-width: 500px; margin: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <h3 style="color: #f87171; font-size: 1.5rem; margin-bottom: 1rem;">本当に退会しますか？</h3>
         <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 2rem;">
           退会後は全てのプレミアムコンテンツにアクセスできなくなります。<br>
@@ -569,7 +569,7 @@
 
         proceedBtn.addEventListener('click', function() {
           console.log('[withdrawal-upsell] 退会手続きボタンがクリックされました');
-          modal.style.display = 'flex';
+          modal.style.display = 'block';
         });
 
         cancelBtn.addEventListener('click', function() {
