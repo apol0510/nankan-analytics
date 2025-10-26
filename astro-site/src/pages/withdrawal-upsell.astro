@@ -554,21 +554,29 @@
         tryLoadImage(0);
       })();
 
-      const modal = document.getElementById('withdrawalModal');
-      const proceedBtn = document.getElementById('proceedWithdrawal');
-      const confirmBtn = document.getElementById('confirmWithdrawal');
-      const cancelBtn = document.getElementById('cancelWithdrawal');
-      const reasonTextarea = document.getElementById('withdrawalReason');
+      // 退会モーダル制御（DOMContentLoaded内で実行）
+      document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('withdrawalModal');
+        const proceedBtn = document.getElementById('proceedWithdrawal');
+        const confirmBtn = document.getElementById('confirmWithdrawal');
+        const cancelBtn = document.getElementById('cancelWithdrawal');
+        const reasonTextarea = document.getElementById('withdrawalReason');
 
-      proceedBtn.addEventListener('click', function() {
-        modal.style.display = 'flex';
-      });
+        if (!proceedBtn || !confirmBtn || !cancelBtn) {
+          console.error('[withdrawal-upsell] 退会ボタンが見つかりません');
+          return;
+        }
 
-      cancelBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-      });
+        proceedBtn.addEventListener('click', function() {
+          console.log('[withdrawal-upsell] 退会手続きボタンがクリックされました');
+          modal.style.display = 'flex';
+        });
 
-      confirmBtn.addEventListener('click', async function() {
+        cancelBtn.addEventListener('click', function() {
+          modal.style.display = 'none';
+        });
+
+        confirmBtn.addEventListener('click', async function() {
         const reason = reasonTextarea.value || '理由未記入';
         const email = localStorage.getItem('userEmail') || '';
 
@@ -608,14 +616,15 @@
           confirmBtn.disabled = false;
           confirmBtn.textContent = '退会する';
         }
-      });
+        });
 
-      // モーダル外クリックで閉じる
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-          modal.style.display = 'none';
-        }
-      });
+        // モーダル外クリックで閉じる
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
+      }); // DOMContentLoaded の閉じカッコ
 
       // 割引コードコピー機能（より確実な実装）
       function copyPromoCode() {
