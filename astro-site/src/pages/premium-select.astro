@@ -43,6 +43,9 @@ function extractAndSortBets(bets, allHorses) {
         // 買い目展開
         firstNums.forEach(f => {
             secondNums.forEach(s => {
+                // 🛡️ 復活防止対策: 同じ馬番同士の買い目を除外（例: 1 → 1）
+                if (f === s) return;
+
                 const horse1 = allHorses.find(h => h.number === f);
                 const horse2 = allHorses.find(h => h.number === s);
                 const avgScore = ((horse1?.confidence || 0) + (horse2?.confidence || 0)) / 2;
