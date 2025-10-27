@@ -112,19 +112,23 @@ function generatePremiumSelectBets(raceData) {
         targetPoints = 5;
 
     } else if (mainScore === 88) {
-        // 88pt: 少点数型寄り → 上位7点
+        // 🛡️ 復活防止対策: 88pt少点数型寄りは、少点数戦略だけでは点数不足の場合がある
+        // 解決策: 少点数戦略 + バランス型戦略をミックスして確実に7点確保
         strategyType = '🎯 少点数型寄り（上位7点）';
         const safeBets = strategies.safe?.bets || [];
-        const sortedBets = extractAndSortBets(safeBets, allHorses);
-        selectedBets = sortedBets.slice(0, 7);
+        const balanceBets = strategies.balance?.bets || [];
+        const mixedBets = extractAndSortBets([...safeBets, ...balanceBets], allHorses);
+        selectedBets = mixedBets.slice(0, 7);
         targetPoints = 7;
 
     } else if (mainScore === 87) {
-        // 87pt: バランス型 → 上位10点
+        // 🛡️ 復活防止対策: 87ptバランス型も、戦略1つだけでは点数不足の場合がある
+        // 解決策: バランス型 + 少点数型戦略をミックスして確実に10点確保
         strategyType = '⚖️ バランス型（上位10点）';
         const balanceBets = strategies.balance?.bets || [];
-        const sortedBets = extractAndSortBets(balanceBets, allHorses);
-        selectedBets = sortedBets.slice(0, 10);
+        const safeBets = strategies.safe?.bets || [];
+        const mixedBets = extractAndSortBets([...balanceBets, ...safeBets], allHorses);
+        selectedBets = mixedBets.slice(0, 10);
         targetPoints = 10;
 
     } else if (mainScore === 86) {
@@ -137,11 +141,13 @@ function generatePremiumSelectBets(raceData) {
         targetPoints = 10;
 
     } else if (mainScore <= 85 && mainScore > 0) {
-        // 85pt以下: 高配当型 → 上位10点
+        // 🛡️ 復活防止対策: 85pt以下高配当型も、戦略1つだけでは点数不足の場合がある
+        // 解決策: 高配当型 + バランス型戦略をミックスして確実に10点確保
         strategyType = '🔥 高配当型（上位10点）';
         const aggressiveBets = strategies.aggressive?.bets || [];
-        const sortedBets = extractAndSortBets(aggressiveBets, allHorses);
-        selectedBets = sortedBets.slice(0, 10);
+        const balanceBets = strategies.balance?.bets || [];
+        const mixedBets = extractAndSortBets([...aggressiveBets, ...balanceBets], allHorses);
+        selectedBets = mixedBets.slice(0, 10);
         targetPoints = 10;
 
     } else {
