@@ -139,14 +139,30 @@ export const prerender = true;
             <p class="section-subtitle">狙い目の穴馬をレース別に抽出</p>
             <div class="races-grid">
                 {racesArray.map((raceGroup: any) => {
-                    // レース名から情報を抽出
+                    // 🛡️ 復活防止対策: レース名から情報を抽出（複数パターン対応）
                     const raceName = raceGroup.raceName;
-                    const distanceMatch = raceName.match(/ダ?([\d,]+)m/);
+
+                    // パターン1: 「ダ1,400m」形式
+                    let distanceMatch = raceName.match(/ダ([\d,]+)m/);
+                    // パターン2: 「800m」「1400m」等の数字のみ形式（「浦和８００ラウンド」対応）
+                    if (!distanceMatch) {
+                        distanceMatch = raceName.match(/(\d{3,4})m/);
+                    }
+                    // パターン3: レース名に距離が含まれる場合（「浦和８００」→「800」）
+                    if (!distanceMatch) {
+                        const nameDistanceMatch = raceName.match(/[０-９\d]{3,4}(?=ラウンド|レース|メートル|Ｒ)/);
+                        if (nameDistanceMatch) {
+                            // 全角数字を半角に変換
+                            const distance = nameDistanceMatch[0].replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+                            distanceMatch = [nameDistanceMatch[0], distance];
+                        }
+                    }
+
                     const horseCountMatch = raceName.match(/（(\d+)頭）/);
                     const timeMatch = raceName.match(/発走時刻(\d{2}):(\d{2})/);
                     const cleanRaceName = raceName.split('ダ')[0].replace(/（\d+頭）.*$/, '').trim();
 
-                    const distance = distanceMatch ? distanceMatch[1] : '';
+                    const distance = distanceMatch ? distanceMatch[1].replace(/,/g, '') : '';
                     const horseCount = horseCountMatch ? horseCountMatch[1] : '';
                     const startTime = timeMatch ? `${timeMatch[1]}:${timeMatch[2]}` : '';
 
