@@ -733,6 +733,165 @@ export function validateDataIntegrity(raceData) {
     return errors;
 }
 
+// ===============================
+// 三連複買い目生成システム（2025-10-30新規実装）
+// ===============================
+
+/**
+ * 三連複買い目生成関数
+ * マコさん仕様: 本命・対抗・単穴・連下・抑えから買い目を自動生成
+ *
+ * @param {Object} horses - { main, sub, hole1, hole2, allHorses }
+ * @returns {Object} { narrowed: [], compact: {}, total: Number }
+ */
+export function generateSanrenpukuBets(horses) {
+    const { main, sub, hole1, hole2, allHorses, connect, reserve } = horses;
+
+    // 馬番号を取得
+    const mainNumber = main?.number || null;
+    const subNumber = sub?.number || null;
+    const hole1Number = hole1?.number || null;
+    const hole2Number = hole2?.number || null;
+
+    console.log(`🐎 三連複生成開始:`);
+    console.log(`   本命: ${mainNumber}番, 対抗: ${subNumber}番, 単穴1: ${hole1Number}番, 単穴2: ${hole2Number}番`);
+
+    // 連下・抑え候補を抽出
+    let renkaCandidates = [];
+    let osaeCandidates = [];
+    let allHorsesArray = allHorses;
+
+    // allHorsesが存在しない場合は、connectとreserveから構築
+    if (!allHorsesArray && (connect || reserve)) {
+        allHorsesArray = [
+            ...(connect || []),
+            ...(reserve || [])
+        ];
+        console.log(`📋 allHorses構築: connect=${connect?.length || 0}頭, reserve=${reserve?.length || 0}頭`);
+    }
+
+    if (allHorsesArray && Array.isArray(allHorsesArray)) {
+        // 連下候補: type === "連下" の馬を抽出
+        renkaCandidates = allHorsesArray
+            .filter(h => h.type === '連下')
+            .map(h => h.number)
+            .filter(n => n);
+
+        // 押さえ候補: type === "押さえ" の馬を抽出
+        osaeCandidates = allHorsesArray
+            .filter(h => h.type === '押さえ')
+            .map(h => h.number)
+            .filter(n => n);
+
+        console.log(`🔍 JSON解析結果: 連下=${renkaCandidates.join(',')}番, 抑え=${osaeCandidates.join(',')}番`);
+    }
+
+    // 絞り込み買い目（10点）
+    const narrowedBets = [];
+
+    // 1段目: 本命-対抗-(単穴1,単穴2,連下全頭)
+    if (mainNumber && subNumber) {
+        // 3頭目候補: 単穴1, 単穴2, 連下全頭（本命・対抗を除く、番号順ソート）
+        const targets = [...new Set([hole1Number, hole2Number, ...renkaCandidates])]
+            .filter(n => n && n !== mainNumber && n !== subNumber)
+            .sort((a, b) => a - b)
+            .join(',');
+        if (targets) {
+            narrowedBets.push(`${mainNumber}-${subNumber}-${targets}`);
+        }
+    }
+
+    // 2段目: 本命-単穴1-(対抗,単穴2,連下全頭)
+    if (mainNumber && hole1Number) {
+        // 3頭目候補: 対抗, 単穴2, 連下全頭（本命・単穴1を除く、番号順ソート）
+        const targets = [...new Set([subNumber, hole2Number, ...renkaCandidates])]
+            .filter(n => n && n !== mainNumber && n !== hole1Number)
+            .sort((a, b) => a - b)
+            .join(',');
+        if (targets) {
+            narrowedBets.push(`${mainNumber}-${hole1Number}-${targets}`);
+        }
+    }
+
+    console.log(`✅ 絞り込み買い目: ${narrowedBets.join(' / ')}`);
+
+    // 連下最上位の馬を特定（スコアが最も高い連下馬）
+    let renkaTopHorse = null;
+    let renkaTopScore = 0;
+
+    if (renkaCandidates.length > 0 && allHorsesArray && Array.isArray(allHorsesArray)) {
+        renkaCandidates.forEach(num => {
+            const horse = allHorsesArray.find(h => h.number === num && h.type === '連下');
+            if (horse) {
+                const score = getHorseConfidenceFromMark(horse);
+                if (score > renkaTopScore) {
+                    renkaTopScore = score;
+                    renkaTopHorse = num;
+                }
+            }
+        });
+        console.log(`🏆 連下最上位: ${renkaTopHorse}番（スコア: ${renkaTopScore}pt）`);
+    }
+
+    // コンパクト表示用データ生成（2パターン：本命軸・対抗軸）
+
+    // 1段目のtargets生成（連下+軸候補、抑えを除く、重複除去、番号順ソート）
+    const mainTargets = [...new Set([...renkaCandidates, subNumber, hole1Number, hole2Number])]
+        .filter(n => n && n !== mainNumber)
+        .sort((a, b) => a - b);
+
+    // 2段目のtargets生成（連下+軸候補、抑え・本命・対抗を除く、重複除去、番号順ソート）
+    const subTargets = [...new Set([...renkaCandidates, hole1Number, renkaTopHorse, hole2Number])]
+        .filter(n => n && n !== mainNumber && n !== subNumber)
+        .sort((a, b) => a - b);
+
+    const compactDisplay = {
+        // 1段目：本命を軸にした買い目
+        main: {
+            number: mainNumber,
+            label: '本命',
+            axis: [subNumber, hole1Number, hole2Number].filter(n => n).sort((a, b) => a - b).join('.'),  // 対抗・単穴1・単穴2（番号順）
+            targets: mainTargets.join('.'),  // 連下+軸候補（重複除去、番号順）
+            osaeNumbers: osaeCandidates
+        },
+        // 2段目：対抗（subNumber）を軸にした買い目（連下最上位が繰り上がる）
+        sub: subNumber && renkaTopHorse ? {
+            number: subNumber,  // 対抗の11番を2段目の軸にする
+            label: '対抗',
+            axis: [hole1Number, renkaTopHorse, hole2Number].filter(n => n && n !== subNumber).sort((a, b) => a - b).join('.'),  // 単穴1・連下最上位・単穴2（番号順）
+            targets: subTargets.join('.'),  // 連下+軸候補（本命・対抗を除く、重複除去、番号順）
+            osaeNumbers: osaeCandidates
+        } : null
+    };
+
+    // 合計点数計算（実際の三連複買い目点数）
+    let totalPoints = 0;
+
+    // 1段目: 本命-対抗-(単穴1,単穴2,連下全頭)
+    if (mainNumber && subNumber) {
+        const thirdCount = [...new Set([hole1Number, hole2Number, ...renkaCandidates])]
+            .filter(n => n && n !== mainNumber && n !== subNumber).length;
+        totalPoints += thirdCount;
+        console.log(`📊 1段目点数: ${thirdCount}点（本命${mainNumber}-対抗${subNumber}-第3頭${thirdCount}頭）`);
+    }
+
+    // 2段目: 本命-単穴1-(対抗,単穴2,連下全頭)
+    if (mainNumber && hole1Number) {
+        const thirdCount = [...new Set([subNumber, hole2Number, ...renkaCandidates])]
+            .filter(n => n && n !== mainNumber && n !== hole1Number).length;
+        totalPoints += thirdCount;
+        console.log(`📊 2段目点数: ${thirdCount}点（本命${mainNumber}-単穴1 ${hole1Number}-第3頭${thirdCount}頭）`);
+    }
+
+    console.log(`📊 合計点数: ${totalPoints}点`);
+
+    return {
+        narrowed: narrowedBets,        // 絞り込み買い目（10点表示用）
+        compact: compactDisplay,        // コンパクト表示用
+        total: totalPoints              // 実際の合計点数
+    };
+}
+
 // 戦略別プログレスバー信頼値計算システム（新規）
 export function calculateProgressBarConfidence(strategyType, mainHorseScore, subHorseScore = null) {
     let baseScore;

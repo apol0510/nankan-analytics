@@ -1,7 +1,7 @@
 ---
 // アクセス制御コンポーネント
 export interface Props {
-    requiredPlan: 'free' | 'standard' | 'premium';
+    requiredPlan: 'free' | 'standard' | 'premium' | 'Premium Predictions' | 'Premium Sanrenpuku' | 'Premium Full' | 'Premium Plus';
     showUpgrade?: boolean;
 }
 
@@ -253,33 +253,53 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         return { user: null, plan: null };
     }
 
-    // プラン階層チェック
+    // プラン階層チェック（2025-10-30更新: 三連複プラン対応）
     function canAccessContent(userPlan, requiredPlan, user) {
         const planHierarchy = {
+            // 旧プラン（互換性維持）
             'free': 0,
             'Free': 0,
             'standard': 1,
             'Standard': 1,
             'premium': 2,
-            'Premium': 2
+            'Premium': 2,
+
+            // 新プラン（2025-10-30追加）
+            'Premium Predictions': 2,      // 馬単のみ（¥9,980）
+            'Premium Sanrenpuku': 2,       // 三連複のみ（¥19,820）
+            'Premium Full': 3,             // 馬単+三連複（¥24,800）
+            'Premium Plus': 4              // 1鞍超精密（¥68,000）
         };
-        
+
         const userLevel = planHierarchy[userPlan] || 0;
         const requiredLevel = planHierarchy[requiredPlan] || 0;
-        
+
         console.log(`🔍 アクセスチェック詳細:`, {
-            userPlan, requiredPlan, user, 
+            userPlan, requiredPlan, user,
             userLevel, requiredLevel,
             hasUser: user !== null
         });
-        
+
         // 無料プランが必要な場合 - 登録ユーザーのみアクセス可能
         if (requiredPlan === 'free') {
             const hasValidFreeUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
             console.log(`🆓 無料会員限定コンテンツ - 登録チェック:`, hasValidFreeUser, { user, plan });
             return hasValidFreeUser; // 登録済みユーザーのみアクセス許可
         }
-        
+
+        // 三連複専用ページの特殊処理
+        if (requiredPlan === 'Premium Sanrenpuku') {
+            const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
+            // Premium Sanrenpuku または Premium Full 以上でアクセス可能
+            const canAccess = hasValidUser && (
+                userPlan === 'Premium Sanrenpuku' ||
+                userPlan === 'Premium Full' ||
+                userLevel >= 3
+            );
+            console.log(`🐎 三連複アクセスチェック:`, canAccess, { userPlan, hasValidUser });
+            return canAccess;
+        }
+
         // 有料プランの場合は従来通りの階層チェック + 登録チェック
         const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
         const hasAccess = userLevel >= requiredLevel && hasValidUser;
@@ -287,15 +307,22 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         return hasAccess;
     }
 
-    // プラン表示名取得
+    // プラン表示名取得（2025-10-30更新）
     function getPlanDisplayName(plan) {
         const displayNames = {
+            // 旧プラン
             'free': '無料プラン',
             'Free': '無料プラン',
             'standard': 'スタンダードプラン',
             'Standard': 'スタンダードプラン',
             'premium': 'プレミアムプラン',
-            'Premium': 'プレミアムプラン'
+            'Premium': 'プレミアムプラン',
+
+            // 新プラン（2025-10-30追加）
+            'Premium Predictions': 'Premium Predictions（馬単）',
+            'Premium Sanrenpuku': 'Premium Sanrenpuku（三連複）',
+            'Premium Full': 'Premium Full（馬単+三連複）',
+            'Premium Plus': 'Premium Plus（1鞍超精密）'
         };
         return displayNames[plan] || '不明なプラン';
     }
