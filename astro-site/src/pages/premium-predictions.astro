@@ -3,7 +3,6 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
-import BettingSelectionQA from '../components/BettingSelectionQA.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
 
@@ -833,9 +832,6 @@ if (highConfidenceRaces.length >= 3) {
                 <a href="/premium-sanrenpuku" class="notice-link">詳細を見る →</a>
             </div>
         </div>
-
-        <!-- 買い目選択Q&Aセクション -->
-        <BettingSelectionQA />
 
     </AccessControl>
 </BaseLayout>

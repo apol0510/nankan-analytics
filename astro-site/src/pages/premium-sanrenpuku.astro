@@ -2,6 +2,7 @@
 export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
+import BettingSelectionQA from '../components/BettingSelectionQA.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, generateSanrenpukuBets, getHorseConfidenceFromMark } from '../lib/shared-prediction-logic.js';
 
@@ -385,6 +386,9 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
                     <a href="/premium-plus" class="notice-link">詳細を見る →</a>
                 </div>
             </div>
+
+            <!-- 買い目選択Q&Aセクション（premium-predictionsから移動） -->
+            <BettingSelectionQA />
         </div>
     </AccessControl>
 </BaseLayout>
