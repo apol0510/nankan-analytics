@@ -1,0 +1,402 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import archiveSanrenpukuResults from '../../data/archiveSanrenpukuResults.json';
+
+// 🔒 Premium会員認証チェック（無料会員はアクセス不可）
+// クライアントサイドでプラン判定を行う想定
+
+// 年別集計データを生成
+const years = Object.keys(archiveSanrenpukuResults).sort((a, b) => parseInt(b) - parseInt(a));
+
+const yearSummaries = years.map(year => {
+  const months = archiveSanrenpukuResults[year];
+  let yearTotalRaces = 0;
+  let yearHitRaces = 0;
+  let yearTotalPayout = 0;
+  let perfectDays = 0;
+
+  Object.values(months).forEach((monthData: any) => {
+    Object.values(monthData).forEach((dayData: any) => {
+      yearTotalRaces += dayData.totalRaces || 0;
+      yearHitRaces += dayData.hitRaces || 0;
+      yearTotalPayout += dayData.totalPayout || 0;
+      if (dayData.perfectHit) perfectDays++;
+    });
+  });
+
+  const hitRate = yearTotalRaces > 0 ? Math.round((yearHitRaces / yearTotalRaces) * 100) : 0;
+
+  return {
+    year,
+    totalRaces: yearTotalRaces,
+    hitRaces: yearHitRaces,
+    hitRate,
+    totalPayout: yearTotalPayout,
+    perfectDays,
+    months: Object.keys(months).length
+  };
+});
+
+// 最新の年の最新月を取得
+const latestYear = years[0];
+const latestMonths = Object.keys(archiveSanrenpukuResults[latestYear]).sort((a, b) => parseInt(b) - parseInt(a));
+const latestMonth = latestMonths[0];
+
+const title = '三連複的中実績アーカイブ | NANKANアナリティクス';
+const description = 'NANKANアナリティクスの三連複買い目的中実績を年別にご覧いただけます。AI予想による高精度な三連複予想の実績をご確認ください。';
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- 🔒 Premium会員認証チェック（クライアントサイドJavaScript） -->
+  <script is:inline>
+    // LocalStorageからプラン情報取得
+    const userEmail = localStorage.getItem('user_email');
+    const userPlan = localStorage.getItem('user_plan');
+
+    // Premium会員以外はアクセス不可
+    if (!userEmail || !userPlan || (userPlan !== 'Premium' && userPlan !== 'Premium Plus')) {
+      alert('この機能はPremium会員専用です。\n\nPremium会員にアップグレードすると、三連複的中実績をご覧いただけます。');
+      window.location.href = '/premium-predictions';
+    }
+  </script>
+
+  <div class="archive-container">
+    <!-- ヘッダーセクション -->
+    <div class="archive-header">
+      <div class="header-content">
+        <div class="premium-badge">
+          <span class="badge-icon">👑</span>
+          <span class="badge-text">Premium専用</span>
+        </div>
+        <h1 class="archive-title">三連複的中実績アーカイブ</h1>
+        <p class="archive-subtitle">
+          Premium Select Sanrenpukuの買い目による的中実績を公開しています
+        </p>
+      </div>
+    </div>
+
+    <!-- 年別アーカイブ一覧 -->
+    <div class="years-grid">
+      {yearSummaries.map(summary => (
+        <a href={`/archive-sanrenpuku/${summary.year}/${latestMonth}`} class="year-card">
+          <div class="year-card-header">
+            <h2 class="year-title">{summary.year}年</h2>
+            <div class="months-badge">{summary.months}ヶ月分</div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-label">的中率</div>
+              <div class="stat-value hit-rate">{summary.hitRate}%</div>
+              <div class="stat-detail">{summary.hitRaces}/{summary.totalRaces}R</div>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-label">合計配当</div>
+              <div class="stat-value payout">¥{summary.totalPayout.toLocaleString()}</div>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-label">完全的中日</div>
+              <div class="stat-value perfect">{summary.perfectDays}日</div>
+            </div>
+          </div>
+
+          <div class="view-details-btn">
+            <span>詳細を見る</span>
+            <span class="arrow">→</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- CTAセクション -->
+    <div class="cta-box">
+      <h2 class="cta-title">🎯 三連複買い目をお求めの方へ</h2>
+      <p class="cta-text">
+        これらの的中実績は、NANKANアナリティクスのPremium Select Sanrenpukuによるものです。<br>
+        AI予想から厳選された三連複買い目で、高い的中率を実現しています。
+      </p>
+      <a href="/premium-predictions" class="cta-button">
+        Premium会員専用ページへ
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .archive-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* ヘッダーセクション */
+  .archive-header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 32px 20px;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(59, 130, 246, 0.2) 100%);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      inset 0 0 0 0.5px rgba(96, 165, 250, 0.5),
+      0 4px 20px rgba(59, 130, 246, 0.15);
+  }
+
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.2) 100%);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 0 0 0.5px rgba(251, 191, 36, 0.5),
+      0 2px 10px rgba(251, 191, 36, 0.15);
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgb(251, 191, 36);
+  }
+
+  .badge-icon {
+    font-size: 1.1rem;
+  }
+
+  .archive-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgb(96, 165, 250);
+    margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
+  }
+
+  .archive-subtitle {
+    font-size: 1rem;
+    color: rgba(226, 232, 240, 0.8);
+    line-height: 1.6;
+  }
+
+  /* 年別グリッド */
+  .years-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .year-card {
+    display: block;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .year-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(59, 130, 246, 0.25);
+    border-color: rgba(96, 165, 250, 0.3);
+  }
+
+  .year-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  }
+
+  .year-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(96, 165, 250);
+    margin: 0;
+  }
+
+  .months-badge {
+    padding: 4px 12px;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(59, 130, 246, 0.2) 100%);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgb(96, 165, 250);
+    box-shadow: inset 0 0 0 0.5px rgba(96, 165, 250, 0.5);
+  }
+
+  /* 統計グリッド */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: rgba(226, 232, 240, 0.6);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .stat-value.hit-rate {
+    color: rgb(16, 185, 129);
+  }
+
+  .stat-value.payout {
+    color: rgb(251, 191, 36);
+  }
+
+  .stat-value.perfect {
+    color: rgb(96, 165, 250);
+  }
+
+  .stat-detail {
+    font-size: 0.8rem;
+    color: rgba(226, 232, 240, 0.7);
+  }
+
+  /* 詳細ボタン */
+  .view-details-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(234, 88, 12, 0.2) 100%);
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: inset 0 0 0 0.5px rgba(245, 158, 11, 0.5);
+    font-weight: 600;
+    color: rgb(245, 158, 11);
+    transition: all 0.3s ease;
+  }
+
+  .year-card:hover .view-details-btn {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(234, 88, 12, 0.3) 100%);
+  }
+
+  .arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .year-card:hover .arrow {
+    transform: translateX(5px);
+  }
+
+  /* CTAセクション */
+  .cta-box {
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(59, 130, 246, 0.2) 100%);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      inset 0 0 0 0.5px rgba(96, 165, 250, 0.5),
+      0 4px 20px rgba(59, 130, 246, 0.15);
+    text-align: center;
+  }
+
+  .cta-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(96, 165, 250);
+    margin-bottom: 16px;
+  }
+
+  .cta-text {
+    font-size: 1rem;
+    color: rgba(226, 232, 240, 0.8);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, rgb(96, 165, 250) 0%, rgb(59, 130, 246) 100%);
+    border-radius: 8px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  }
+
+  /* レスポンシブ */
+  @media (max-width: 768px) {
+    .archive-header {
+      padding: 24px 16px;
+      margin-bottom: 32px;
+    }
+
+    .archive-title {
+      font-size: 1.5rem;
+    }
+
+    .archive-subtitle {
+      font-size: 0.9rem;
+    }
+
+    .years-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .year-card {
+      padding: 20px;
+    }
+
+    .year-title {
+      font-size: 1.3rem;
+    }
+
+    .stats-grid {
+      gap: 12px;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+    }
+
+    .cta-box {
+      padding: 24px 16px;
+    }
+
+    .cta-title {
+      font-size: 1.2rem;
+    }
+
+    .cta-text {
+      font-size: 0.9rem;
+    }
+  }
+</style>
