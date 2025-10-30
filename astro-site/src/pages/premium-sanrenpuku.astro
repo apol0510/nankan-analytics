@@ -369,7 +369,21 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
             <div class="upgrade-notice">
                 <h3>💎 Premium Sanrenpuku アップグレード</h3>
                 <p>現在Premium会員の方は、管理者（nankan.analytics@gmail.com）までお問い合わせください。</p>
-                <p><strong>月額¥38,000</strong> で三連複厳選買い目をご利用いただけます。</p>
+                <p><strong>月額¥19,820</strong> で三連複厳選買い目をご利用いただけます。</p>
+            </div>
+
+            <!-- Premium Plusへの導線 -->
+            <div class="premium-plus-notice">
+                <div class="notice-content">
+                    <div class="notice-icon">✨</div>
+                    <div class="notice-text">
+                        <div class="notice-title">さらに精度を追求したい方へ</div>
+                        <p class="notice-description">
+                            1日1鞍限定の超精密AI予想「Premium Plus」もご用意しています。
+                        </p>
+                    </div>
+                    <a href="/premium-plus" class="notice-link">詳細を見る →</a>
+                </div>
             </div>
         </div>
     </AccessControl>
@@ -1185,6 +1199,70 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
         font-weight: 700;
     }
 
+    /* Premium Plusへの導線 */
+    .premium-plus-notice {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 40px auto 20px;
+        max-width: 800px;
+        transition: all 0.3s ease;
+    }
+
+    .premium-plus-notice:hover {
+        border-color: rgba(245, 158, 11, 0.4);
+        background: rgba(30, 41, 59, 0.7);
+    }
+
+    .notice-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .notice-icon {
+        font-size: 2rem;
+        flex-shrink: 0;
+    }
+
+    .notice-text {
+        flex: 1;
+    }
+
+    .notice-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fbbf24;
+        margin: 0 0 5px 0;
+    }
+
+    .notice-description {
+        font-size: 0.9rem;
+        color: #cbd5e1;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .notice-link {
+        color: #60a5fa;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 6px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .notice-link:hover {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.5);
+        color: #3b82f6;
+    }
+
     /* モバイル対応 */
     @media (max-width: 768px) {
         .header-section {
@@ -1223,6 +1301,21 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
 
         .horse-grid {
             grid-template-columns: 1fr;
+        }
+
+        .premium-plus-notice {
+            padding: 15px;
+        }
+
+        .notice-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .notice-link {
+            width: 100%;
+            text-align: center;
         }
     }
 </style>
