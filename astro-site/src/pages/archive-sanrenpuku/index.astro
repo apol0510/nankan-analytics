@@ -13,18 +13,21 @@ const yearSummaries = years.map(year => {
   let yearTotalRaces = 0;
   let yearHitRaces = 0;
   let yearTotalPayout = 0;
-  let perfectDays = 0;
+  let totalRecoveryRate = 0;
+  let daysCount = 0;
 
   Object.values(months).forEach((monthData: any) => {
     Object.values(monthData).forEach((dayData: any) => {
       yearTotalRaces += dayData.totalRaces || 0;
       yearHitRaces += dayData.hitRaces || 0;
       yearTotalPayout += dayData.totalPayout || 0;
-      if (dayData.perfectHit) perfectDays++;
+      totalRecoveryRate += dayData.recoveryRate || 0;
+      daysCount++;
     });
   });
 
   const hitRate = yearTotalRaces > 0 ? Math.round((yearHitRaces / yearTotalRaces) * 100) : 0;
+  const avgRecoveryRate = daysCount > 0 ? Math.round(totalRecoveryRate / daysCount) : 0;
 
   return {
     year,
@@ -32,7 +35,7 @@ const yearSummaries = years.map(year => {
     hitRaces: yearHitRaces,
     hitRate,
     totalPayout: yearTotalPayout,
-    perfectDays,
+    avgRecoveryRate,
     months: Object.keys(months).length
   };
 });
@@ -97,8 +100,8 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
             </div>
 
             <div class="stat-item">
-              <div class="stat-label">完全的中日</div>
-              <div class="stat-value perfect">{summary.perfectDays}日</div>
+              <div class="stat-label">平均回収率</div>
+              <div class="stat-value recovery">{summary.avgRecoveryRate}%</div>
             </div>
           </div>
 
@@ -132,7 +135,7 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
       </p>
       <div class="cta-price">
         <span class="cta-price-label">特別価格</span>
-        <span class="cta-price-value">¥19,800</span>
+        <span class="cta-price-value">¥19,820</span>
       </div>
       <a href="/premium-sanrenpuku" class="cta-button">
         AI三連複絞り込み機能を見る
@@ -285,7 +288,7 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
     color: rgb(251, 191, 36);
   }
 
-  .stat-value.perfect {
+  .stat-value.recovery {
     color: rgb(96, 165, 250);
   }
 
