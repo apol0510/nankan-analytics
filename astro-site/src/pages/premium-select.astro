@@ -1661,13 +1661,13 @@ const premiumSelectRaces = sortedRaces.map(raceData => {
                     this.classList.remove('filtered');
                     filterText.textContent = '絞り込み中...';
 
-                    // 1秒後に結果表示（フィルタリング演出）
+                    // 1.8秒後に結果表示（フィルタリング演出）
                     setTimeout(() => {
                         content.style.display = 'block';
                         this.classList.remove('filtering');
                         this.classList.add('filtered');
                         filterText.textContent = '✅ 絞り込み完了（クリックで閉じる）';
-                    }, 1000);
+                    }, 1800);
                 }
             });
         });
