@@ -134,17 +134,20 @@ if (highConfidenceRaces.length >= 3) {
                     <span class="new-badge">NEW</span>
                 </div>
                 <div class="upsell-content">
-                    <h3 class="upsell-title">買い目を絞りたい方へ</h3>
+                    <h3 class="upsell-title">馬単3戦略 → AI三連複絞り込み機能搭載</h3>
                     <p class="upsell-description">
-                        「3つの戦略から選ぶのが難しい」「もっとシンプルに楽しみたい」
+                        <strong>馬単の買い目が絞りきれない方へ</strong><br>
+                        AIが自動判定で買い目を絞り込む三連複がおすすめです！
                     </p>
-                    <p class="upsell-solution">
-                        <strong>→ AI厳選の三連複買い目</strong>をご用意しました
+                    <div class="upsell-stats">
+                        <span class="stat-highlight">📊 過去1年間：的中率78% 回収率178%</span>
+                        <span class="stat-highlight">🎯 買い目点数：わずか7〜9点の少点数！</span>
+                    </div>
+                    <p class="upsell-reason">
+                        <strong>なぜ三連複？</strong> 馬単（1〜2着順番）より三連複（1〜3着順不問）の方が当てやすい！
                     </p>
-                    <div class="upsell-features">
-                        <span class="feature-item">✓ 1レース1〜3点に絞り込み</span>
-                        <span class="feature-item">✓ 選択疲れゼロ</span>
-                        <span class="feature-item">✓ 高的中率維持</span>
+                    <div class="upsell-price">
+                        <span class="price-value">¥19,800</span>
                     </div>
                 </div>
                 <span class="upsell-arrow">→</span>
@@ -2275,23 +2278,43 @@ if (highConfidenceRaces.length >= 3) {
         margin-bottom: 8px;
     }
 
-    .upsell-solution {
+    .upsell-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 12px;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .stat-highlight {
+        color: rgb(16, 185, 129);
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    .upsell-reason {
         color: rgb(251, 191, 36);
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
         margin-bottom: 12px;
+        line-height: 1.5;
     }
 
-    .upsell-features {
-        display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
+    .upsell-price {
+        display: inline-block;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(234, 88, 12, 0.3));
+        border-radius: 8px;
+        border: 1px solid rgba(245, 158, 11, 0.5);
     }
 
-    .feature-item {
-        color: rgb(16, 185, 129);
-        font-size: 0.9rem;
-        font-weight: 600;
+    .price-value {
+        color: rgb(251, 191, 36);
+        font-size: 1.5rem;
+        font-weight: 700;
     }
 
     .upsell-arrow {
@@ -2351,16 +2374,24 @@ if (highConfidenceRaces.length >= 3) {
             font-size: 0.9rem;
         }
 
-        .upsell-solution {
-            font-size: 0.95rem;
+        .upsell-stats {
+            padding: 10px;
         }
 
-        .upsell-features {
-            gap: 12px;
-        }
-
-        .feature-item {
+        .stat-highlight {
             font-size: 0.85rem;
+        }
+
+        .upsell-reason {
+            font-size: 0.9rem;
+        }
+
+        .upsell-price {
+            padding: 6px 12px;
+        }
+
+        .price-value {
+            font-size: 1.3rem;
         }
 
         .upsell-arrow {

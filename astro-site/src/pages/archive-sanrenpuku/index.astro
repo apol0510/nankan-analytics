@@ -112,13 +112,30 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
 
     <!-- CTAセクション -->
     <div class="cta-box">
-      <h2 class="cta-title">🎯 三連複買い目をお求めの方へ</h2>
+      <h2 class="cta-title">🎯 AI三連複絞り込み機能搭載</h2>
       <p class="cta-text">
-        これらの的中実績は、NANKANアナリティクスのPremium Select Sanrenpukuによるものです。<br>
-        AI予想から厳選された三連複買い目で、高い的中率を実現しています。
+        <strong>馬単の買い目が絞りきれない方へ</strong><br>
+        AIが自動判定で買い目を絞り込む三連複がおすすめです！
       </p>
-      <a href="/premium-predictions" class="cta-button">
-        Premium会員専用ページへ
+      <div class="cta-stats">
+        <div class="cta-stat-item">
+          <span class="cta-stat-label">過去1年間実績</span>
+          <span class="cta-stat-value">的中率78% 回収率178%</span>
+        </div>
+        <div class="cta-stat-item">
+          <span class="cta-stat-label">買い目点数</span>
+          <span class="cta-stat-value">わずか7〜9点の少点数！</span>
+        </div>
+      </div>
+      <p class="cta-reason">
+        <strong>なぜ三連複？</strong> 馬単（1〜2着順番）より三連複（1〜3着順不問）の方が当てやすい！
+      </p>
+      <div class="cta-price">
+        <span class="cta-price-label">特別価格</span>
+        <span class="cta-price-value">¥19,800</span>
+      </div>
+      <a href="/premium-sanrenpuku" class="cta-button">
+        AI三連複絞り込み機能を見る
       </a>
     </div>
   </div>
@@ -331,7 +348,66 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
     font-size: 1rem;
     color: rgba(226, 232, 240, 0.8);
     line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .cta-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .cta-stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .cta-stat-label {
+    color: rgba(226, 232, 240, 0.7);
+    font-size: 0.85rem;
+  }
+
+  .cta-stat-value {
+    color: rgb(16, 185, 129);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .cta-reason {
+    color: rgb(251, 191, 36);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .cta-price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(234, 88, 12, 0.2));
+    border-radius: 12px;
+    border: 1px solid rgba(245, 158, 11, 0.4);
     margin-bottom: 24px;
+  }
+
+  .cta-price-label {
+    color: rgba(226, 232, 240, 0.7);
+    font-size: 0.85rem;
+  }
+
+  .cta-price-value {
+    color: rgb(251, 191, 36);
+    font-size: 2rem;
+    font-weight: 700;
   }
 
   .cta-button {
@@ -397,6 +473,39 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
 
     .cta-text {
       font-size: 0.9rem;
+    }
+
+    .cta-stats {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .cta-stat-item {
+      padding: 10px;
+    }
+
+    .cta-stat-label {
+      font-size: 0.8rem;
+    }
+
+    .cta-stat-value {
+      font-size: 0.95rem;
+    }
+
+    .cta-reason {
+      font-size: 0.9rem;
+    }
+
+    .cta-price {
+      padding: 10px 16px;
+    }
+
+    .cta-price-label {
+      font-size: 0.8rem;
+    }
+
+    .cta-price-value {
+      font-size: 1.6rem;
     }
   }
 </style>
