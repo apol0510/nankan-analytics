@@ -126,6 +126,31 @@ if (highConfidenceRaces.length >= 3) {
             </a>
         </div>
 
+        <!-- 三連複商品への導線セクション -->
+        <div class="sanrenpuku-upsell-section">
+            <a href="/premium-sanrenpuku/" class="sanrenpuku-upsell-btn">
+                <div class="upsell-icon-wrapper">
+                    <span class="upsell-icon">🎯</span>
+                    <span class="new-badge">NEW</span>
+                </div>
+                <div class="upsell-content">
+                    <h3 class="upsell-title">買い目を絞りたい方へ</h3>
+                    <p class="upsell-description">
+                        「3つの戦略から選ぶのが難しい」「もっとシンプルに楽しみたい」
+                    </p>
+                    <p class="upsell-solution">
+                        <strong>→ AI厳選の三連複買い目</strong>をご用意しました
+                    </p>
+                    <div class="upsell-features">
+                        <span class="feature-item">✓ 1レース1〜3点に絞り込み</span>
+                        <span class="feature-item">✓ 選択疲れゼロ</span>
+                        <span class="feature-item">✓ 高的中率維持</span>
+                    </div>
+                </div>
+                <span class="upsell-arrow">→</span>
+            </a>
+        </div>
+
         <!-- プレミアム会員バッジ -->
         <div class="premium-status">
             <span class="premium-icon">👑</span>
@@ -2179,6 +2204,108 @@ if (highConfidenceRaces.length >= 3) {
         transform: translateX(5px);
     }
 
+    /* 三連複商品への導線セクション */
+    .sanrenpuku-upsell-section {
+        margin-bottom: 30px;
+    }
+
+    .sanrenpuku-upsell-btn {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(234, 88, 12, 0.2) 100%);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 16px;
+        padding: 24px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .sanrenpuku-upsell-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(245, 158, 11, 0.3);
+        border-color: rgba(245, 158, 11, 0.5);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(234, 88, 12, 0.25) 100%);
+    }
+
+    .upsell-icon-wrapper {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .upsell-icon {
+        font-size: 3rem;
+        display: block;
+    }
+
+    .new-badge {
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
+
+    .upsell-content {
+        flex: 1;
+    }
+
+    .upsell-title {
+        color: rgb(245, 158, 11);
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        line-height: 1.2;
+    }
+
+    .upsell-description {
+        color: rgba(226, 232, 240, 0.8);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 8px;
+    }
+
+    .upsell-solution {
+        color: rgb(251, 191, 36);
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .upsell-features {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .feature-item {
+        color: rgb(16, 185, 129);
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .upsell-arrow {
+        color: rgb(245, 158, 11);
+        font-size: 1.8rem;
+        font-weight: 700;
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .sanrenpuku-upsell-btn:hover .upsell-arrow {
+        transform: translateX(5px);
+    }
+
     /* モバイル対応 */
     @media (max-width: 768px) {
         .dark-horse-link-btn {
@@ -2200,6 +2327,44 @@ if (highConfidenceRaces.length >= 3) {
 
         .dark-horse-arrow {
             font-size: 1.3rem;
+        }
+
+        .sanrenpuku-upsell-btn {
+            padding: 20px;
+            gap: 16px;
+        }
+
+        .upsell-icon {
+            font-size: 2.5rem;
+        }
+
+        .new-badge {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+        }
+
+        .upsell-title {
+            font-size: 1.1rem;
+        }
+
+        .upsell-description {
+            font-size: 0.9rem;
+        }
+
+        .upsell-solution {
+            font-size: 0.95rem;
+        }
+
+        .upsell-features {
+            gap: 12px;
+        }
+
+        .feature-item {
+            font-size: 0.85rem;
+        }
+
+        .upsell-arrow {
+            font-size: 1.5rem;
         }
     }
 </style>
