@@ -32,8 +32,69 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
     title={`プレミアム三連複予想 | ${track} ${formattedDate}`}
     description={`AI技術による${track}競馬の超厳選三連複予想。累積スコアに基づく少点数買い目で最適な組み合わせのみを提供。`}
 >
-    <AccessControl requiredPlan="Premium Sanrenpuku">
-        <div class="page-container">
+    <AccessControl requiredPlan="Premium">
+        <!-- 申し込みセクション（Premium Predictions会員向け） -->
+        <div id="sanrenpuku-order" class="order-section" style="display: none;">
+            <div class="order-container">
+                <div class="order-header">
+                    <div class="order-icon">🎯</div>
+                    <h1 class="order-title">Premium Sanrenpuku</h1>
+                    <p class="order-subtitle">AI三連複厳選予想 - 買い目を絞り込んで的中率アップ</p>
+                </div>
+
+                <div class="order-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>過去1年間の実績</h3>
+                        <div class="feature-stats">
+                            <span class="stat-value">的中率78%</span>
+                            <span class="stat-value">回収率178%</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>厳選買い目</h3>
+                        <p class="feature-text">わずか7〜9点の少点数で高確率的中を実現</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🏇</div>
+                        <h3>全レース対応</h3>
+                        <p class="feature-text">1R〜12R全レースの三連複買い目を提供</p>
+                    </div>
+                </div>
+
+                <div class="order-description">
+                    <h2>こんな方におすすめ</h2>
+                    <ul class="recommend-list">
+                        <li>馬単3戦略から買い目を絞りきれない</li>
+                        <li>オッズ確認して戦略を選ぶのが面倒</li>
+                        <li>もっとシンプルな買い目がほしい</li>
+                        <li>三連複で的中率を安定させたい</li>
+                    </ul>
+                </div>
+
+                <div class="order-price-section">
+                    <div class="price-card">
+                        <div class="price-label">月額料金</div>
+                        <div class="price-value">¥19,820<span class="price-unit">/月</span></div>
+                        <div class="price-note">※ Premium Predictions会員様向けアップグレードプラン</div>
+                    </div>
+
+                    <a href="https://buy.stripe.com/STRIPE_PAYMENT_LINK_HERE" class="order-btn" target="_blank" rel="noopener noreferrer">
+                        今すぐ申し込む →
+                    </a>
+                    <p class="order-note">
+                        ※ Stripeの安全な決済ページに移動します<br>
+                        ※ お申し込み後、すぐに三連複予想をご利用いただけます
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 三連複予想コンテンツ（Premium Sanrenpuku / Premium Full会員向け） -->
+        <div id="sanrenpuku-content" class="page-container" style="display: none;">
             <!-- ヘッダーセクション -->
             <div class="header-section">
                 <div class="ai-badge premium-select-badge">
@@ -390,6 +451,102 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
             <!-- 買い目選択Q&Aセクション（premium-predictionsから移動） -->
             <BettingSelectionQA />
         </div>
+
+        <!-- プラン判定スクリプト -->
+        <script is:inline>
+            (function() {
+                console.log('🔍 Premium Sanrenpuku - プラン判定開始');
+
+                // プラン情報取得
+                function getCurrentUserPlan() {
+                    // 1. デモモード
+                    const demoKeys = Object.keys(localStorage).filter(key => key.startsWith('demo_subscription_'));
+                    if (demoKeys.length > 0) {
+                        try {
+                            const demoData = JSON.parse(localStorage.getItem(demoKeys[0]));
+                            return demoData.planType;
+                        } catch (error) {
+                            console.error('Demo data parsing error:', error);
+                        }
+                    }
+
+                    // 2. 旧形式のtest_subscription_
+                    const testKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
+                    if (testKeys.length > 0) {
+                        try {
+                            const testData = JSON.parse(localStorage.getItem(testKeys[0]));
+                            return testData.planType;
+                        } catch (error) {
+                            console.error('Test subscription parsing error:', error);
+                        }
+                    }
+
+                    // 3. user-plan
+                    const userPlanData = localStorage.getItem('user-plan');
+                    if (userPlanData) {
+                        try {
+                            const userData = JSON.parse(userPlanData);
+                            return userData.plan || 'free';
+                        } catch (error) {
+                            console.error('User plan parsing error:', error);
+                        }
+                    }
+
+                    // 4. nankan_user
+                    const nankanUser = localStorage.getItem('nankan_user');
+                    if (nankanUser) {
+                        try {
+                            const userData = JSON.parse(nankanUser);
+                            return userData.plan || 'free';
+                        } catch (error) {
+                            console.error('Nankan user parsing error:', error);
+                        }
+                    }
+
+                    return null;
+                }
+
+                // プラン判定と表示切り替え
+                function checkPlanAndDisplay() {
+                    const userPlan = getCurrentUserPlan();
+                    console.log('📋 現在のプラン:', userPlan);
+
+                    const orderSection = document.getElementById('sanrenpuku-order');
+                    const contentSection = document.getElementById('sanrenpuku-content');
+
+                    if (!orderSection || !contentSection) {
+                        console.error('❌ セクション要素が見つかりません');
+                        return;
+                    }
+
+                    // Premium Sanrenpuku または Premium Full 会員の場合 → 予想表示
+                    if (userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Full') {
+                        console.log('✅ Premium Sanrenpuku/Full会員 → 三連複予想表示');
+                        orderSection.style.display = 'none';
+                        contentSection.style.display = 'block';
+                    }
+                    // Premium Predictions または Premium 会員の場合 → 申し込み表示
+                    else if (userPlan === 'Premium Predictions' || userPlan === 'Premium' || userPlan === 'premium') {
+                        console.log('🎯 Premium Predictions会員 → 申し込みページ表示');
+                        orderSection.style.display = 'block';
+                        contentSection.style.display = 'none';
+                    }
+                    // その他の場合（AccessControlで弾かれるはずだが念のため）
+                    else {
+                        console.log('❌ プラン不明 → デフォルト申し込み表示');
+                        orderSection.style.display = 'block';
+                        contentSection.style.display = 'none';
+                    }
+                }
+
+                // DOM読み込み完了後に実行
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', checkPlanAndDisplay);
+                } else {
+                    checkPlanAndDisplay();
+                }
+            })();
+        </script>
     </AccessControl>
 </BaseLayout>
 
@@ -1320,6 +1477,235 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
         .notice-link {
             width: 100%;
             text-align: center;
+        }
+    }
+
+    /* 申し込みセクションスタイル */
+    .order-section {
+        min-height: 100vh;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .order-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 20px;
+        padding: 50px 40px;
+    }
+
+    .order-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .order-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    .order-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        margin-bottom: 15px;
+        background: linear-gradient(to right, #3b82f6, #8b5cf6);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .order-subtitle {
+        font-size: 1.2rem;
+        color: #94a3b8;
+        margin-bottom: 0;
+    }
+
+    .order-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+
+    .feature-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .feature-card h3 {
+        font-size: 1.2rem;
+        color: #e2e8f0;
+        margin-bottom: 15px;
+    }
+
+    .feature-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #10b981;
+    }
+
+    .feature-text {
+        color: #cbd5e1;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .order-description {
+        background: rgba(15, 23, 42, 0.4);
+        border-left: 4px solid #f59e0b;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 50px;
+    }
+
+    .order-description h2 {
+        color: #fbbf24;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .recommend-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .recommend-list li {
+        color: #cbd5e1;
+        font-size: 1.1rem;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .recommend-list li:last-child {
+        border-bottom: none;
+    }
+
+    .recommend-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #10b981;
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+
+    .order-price-section {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .price-card {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        border: 2px solid rgba(59, 130, 246, 0.4);
+        border-radius: 15px;
+        padding: 40px;
+        margin-bottom: 30px;
+    }
+
+    .price-label {
+        color: #94a3b8;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .price-value {
+        font-size: 4rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        margin-bottom: 10px;
+    }
+
+    .price-unit {
+        font-size: 1.5rem;
+        color: #94a3b8;
+    }
+
+    .price-note {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .order-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+        color: white;
+        font-size: 1.3rem;
+        font-weight: 700;
+        padding: 18px 60px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(245, 158, 11, 0.5);
+        margin-bottom: 20px;
+    }
+
+    .order-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(245, 158, 11, 0.4);
+        border-color: #f59e0b;
+    }
+
+    .order-note {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+        .order-container {
+            padding: 30px 20px;
+        }
+
+        .order-title {
+            font-size: 2rem;
+        }
+
+        .order-subtitle {
+            font-size: 1rem;
+        }
+
+        .order-features {
+            grid-template-columns: 1fr;
+        }
+
+        .price-value {
+            font-size: 3rem;
+        }
+
+        .order-btn {
+            font-size: 1.1rem;
+            padding: 15px 40px;
         }
     }
 </style>
