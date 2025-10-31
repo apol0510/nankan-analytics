@@ -131,10 +131,13 @@ if (highConfidenceRaces.length >= 3) {
             <span class="premium-status-text">プレミアム会員限定コンテンツ</span>
         </div>
 
-        <!-- 買い目モデルの選び方ガイド -->
-        <div class="betting-guide-card">
-            <h3 class="guide-title">📚 買い目モデルの選び方について</h3>
-            <div class="guide-content">
+        <!-- 買い目モデルの選び方ガイド（アコーディオン） -->
+        <div class="betting-guide-card accordion">
+            <button class="guide-title accordion-toggle" id="guideToggle">
+                <span>📚 買い目モデルの選び方について</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="guide-content accordion-content" id="guideContent" style="display: none;">
                 <p class="guide-intro">
                     当サイトでは「<strong>少点数的中型</strong>」「<strong>バランス型</strong>」「<strong>高配当追求型</strong>」の3種類の買い目をご提示しています。
                     ただし、すべてを購入する必要はありません。オッズ状況に応じて選択・組み合わせることが重要です。
@@ -1700,10 +1703,37 @@ if (highConfidenceRaces.length >= 3) {
         color: #60a5fa;
         font-size: 1.3rem;
         font-weight: 700;
-        margin: 0 0 16px 0;
+        margin: 0;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 8px;
+        width: 100%;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        text-align: left;
+        transition: color 0.3s ease;
+    }
+
+    .guide-title:hover {
+        color: #93c5fd;
+    }
+
+    .toggle-icon {
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+    }
+
+    .accordion-toggle.active .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .accordion-content {
+        margin-top: 16px;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
     }
 
     .guide-content {
@@ -2787,3 +2817,27 @@ if (highConfidenceRaces.length >= 3) {
         }
     }
 </style>
+
+<script is:inline>
+    // 買い目モデルの選び方アコーディオン
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('guideToggle');
+        const content = document.getElementById('guideContent');
+
+        if (toggle && content) {
+            toggle.addEventListener('click', function() {
+                const isActive = toggle.classList.contains('active');
+
+                if (isActive) {
+                    // 閉じる
+                    toggle.classList.remove('active');
+                    content.style.display = 'none';
+                } else {
+                    // 開く
+                    toggle.classList.add('active');
+                    content.style.display = 'block';
+                }
+            });
+        }
+    });
+</script>
