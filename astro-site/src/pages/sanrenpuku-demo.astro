@@ -3,10 +3,10 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 
-const title = '三連複絞り込み機能 体験ページ | NANKANアナリティクス';
-const description = '購入前に体験！AI三連複絞り込み機能のサンプル。累積スコアベースの自動戦略選択で、わずか7-9点の少点数買い目を実現。';
+const title = '三連複絞り込み機能 デモ体験 | NANKANアナリティクス';
+const description = '購入前に実際の的中レースで体験！AI三連複絞り込み機能のデモ。累積スコアベースの自動戦略選択で、わずか7-9点の少点数買い目を実現。';
 
-// サンプルとして11Rを使用（メインレース）
+// デモとして11Rを使用（メインレース）
 const sampleRace = allRacesData.races.find(r => r.raceNumber === 11) || allRacesData.races[0];
 const raceDate = allRacesData.raceDate;
 const track = allRacesData.track;
@@ -98,16 +98,16 @@ const selectedBets = allBets.slice(0, selectedBetCount);
     <div class="sample-page-container">
         <!-- ヘッダー -->
         <div class="sample-header">
-            <div class="badge-new">🎯 無料体験</div>
-            <h1>AI三連複絞り込み機能 体験ページ</h1>
+            <div class="badge-new">🎯 無料デモ体験</div>
+            <h1>AI三連複絞り込み機能 デモ体験</h1>
             <p class="header-description">
-                購入前にお試し！Premium Sanrenpukuの絞り込み機能を実際のレースデータで体験できます。
+                購入前にお試し！実際の的中レースでPremium Sanrenpukuの絞り込み機能を体験できます。
             </p>
         </div>
 
-        <!-- サンプルレース情報 -->
+        <!-- デモレース情報 -->
         <div class="sample-race-info">
-            <h2>📅 サンプルレース情報</h2>
+            <h2>📅 デモレース情報</h2>
             <div class="race-meta">
                 <span class="meta-item">🏇 {track} {sampleRace.raceNumber}R</span>
                 <span class="meta-item">📏 {sampleRace.raceInfo.distance}</span>
