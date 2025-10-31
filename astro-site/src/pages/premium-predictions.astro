@@ -872,7 +872,7 @@ if (highConfidenceRaces.length >= 3) {
                         <div class="plan-option-subtitle">高性能AI三連複自動絞り込みのみ</div>
                         <div class="plan-option-price">¥19,820<span>/月</span></div>
                         <ul class="plan-option-features">
-                            <li>✅ <strong>高性能AI三連複絞り込み機能</strong>を利用</li>
+                            <li>✅ <strong>高性能AI三連複絞り込み機能</strong>を利用できます</li>
                             <li>✅ 的中率78% 回収率178%</li>
                             <li>✅ 買い目点数7-9点の少点数</li>
                             <li class="warning-feature">❌ 馬単3戦略は閲覧できません</li>
@@ -2519,6 +2519,19 @@ if (highConfidenceRaces.length >= 3) {
         color: rgb(251, 191, 36);
     }
 
+    /* プランバッジ（おすすめ） */
+    .recommended-badge {
+        background: rgba(16, 185, 129, 0.15);
+        color: rgb(16, 185, 129);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 12px;
+        border: 2px solid rgba(16, 185, 129, 0.4);
+    }
+
     /* プランバッジ（通常） */
     .plan-badge-normal {
         background: rgba(59, 130, 246, 0.2);
@@ -2576,7 +2589,7 @@ if (highConfidenceRaces.length >= 3) {
     }
 
     .recommended::before {
-        content: '🎯 おすすめ';
+        content: 'お得';
         position: absolute;
         top: -12px;
         right: 20px;
