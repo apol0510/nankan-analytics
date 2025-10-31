@@ -820,65 +820,79 @@ if (highConfidenceRaces.length >= 3) {
           </div>
         </div>
 
-        <!-- プラン選択モーダル -->
+        <!-- プラン変更モーダル -->
         <div id="planSelectionModal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <button class="modal-close" id="closePlanModal">&times;</button>
 
-                <h2 class="modal-title">🎯 三連複プラン選択</h2>
+                <h2 class="modal-title">🔄 プラン変更のご案内</h2>
                 <p class="modal-subtitle">
-                    既存Premium会員の方は、運営側で既存プランを手動キャンセルいたします（二重課金なし）
+                    現在のPremium（馬単）プランから、三連複プランへの変更はこちらから
                 </p>
 
-                <!-- 重要なお知らせ -->
-                <div class="modal-warning">
-                    <h3>⚠️ 重要事項</h3>
+                <!-- 安心メッセージ -->
+                <div class="modal-info">
+                    <h3>✅ ご安心ください</h3>
                     <ul>
-                        <li>購入後1-2営業日以内に既存のPremiumプランをキャンセルいたします</li>
-                        <li>二重課金はされませんのでご安心ください</li>
+                        <li>💰 <strong>二重課金なし</strong> - 変更後1-2営業日以内に旧プランをキャンセル</li>
+                        <li>🔄 <strong>即座に利用開始</strong> - プラン変更後すぐに三連複予想を閲覧可能</li>
+                        <li>📧 <strong>確認メール送信</strong> - 変更完了後、詳細をメールでご案内</li>
                     </ul>
+                </div>
+
+                <!-- プラン変更の質問形式 -->
+                <div class="plan-question">
+                    <h3>🤔 馬単の3戦略も引き続き使いますか？</h3>
                 </div>
 
                 <!-- プラン選択 -->
                 <div class="plan-options">
-                    <!-- Premium Sanrenpuku -->
-                    <div class="plan-option">
-                        <h3 class="plan-option-name">Premium Sanrenpuku（三連複のみ）</h3>
-                        <div class="plan-option-price">¥19,820<span>/月</span></div>
-                        <ul class="plan-option-features">
-                            <li>✅ AI三連複絞り込み予想（全レース）</li>
-                            <li>✅ 的中率78% 回収率178%</li>
-                            <li>✅ 買い目点数7-9点の少点数</li>
-                            <li class="warning-feature">⚠️ 馬単3戦略は閲覧不可</li>
-                        </ul>
-                        <a href="https://buy.stripe.com/28EcN5fpf58k8O734vdby0P" class="btn-plan sanrenpuku" target="_blank" rel="noopener">
-                            プラン変更する
-                        </a>
-                    </div>
-
                     <!-- Premium Combo -->
                     <div class="plan-option recommended">
-                        <div class="recommended-badge">おすすめ</div>
-                        <h3 class="plan-option-name">Premium Combo（馬単+三連複）</h3>
+                        <div class="recommended-badge">馬単も使う方</div>
+                        <h3 class="plan-option-name">Premium Combo</h3>
+                        <div class="plan-option-subtitle">馬単3戦略 + AI三連複絞り込み</div>
                         <div class="plan-option-price">¥24,800<span>/月</span></div>
                         <div class="plan-option-discount">通常¥29,800 → ¥5,000 OFF！</div>
                         <ul class="plan-option-features">
-                            <li>✅ 馬単3戦略予想（全レース）</li>
-                            <li>✅ AI三連複絞り込み予想（全レース）</li>
-                            <li>✅ 全ての予想データにアクセス可能</li>
-                            <li>✅ 最もコストパフォーマンスが高い</li>
+                            <li>✅ <strong>馬単3戦略</strong>そのまま利用可能</li>
+                            <li>✅ <strong>AI三連複絞り込み</strong>が追加されます</li>
+                            <li>✅ 的中率78% 回収率178%</li>
+                            <li>✅ 買い目点数7-9点の少点数</li>
                         </ul>
                         <a href="https://buy.stripe.com/6oU28r90R1W8c0jbB1dby0Q" class="btn-plan combo" target="_blank" rel="noopener">
-                            プラン変更する
+                            このプランに変更する
                         </a>
+                        <p class="plan-note">変更前: Premium ¥9,980/月 → 変更後: Combo ¥24,800/月</p>
+                    </div>
+
+                    <!-- Premium Sanrenpuku -->
+                    <div class="plan-option">
+                        <div class="plan-badge-normal">三連複のみの方</div>
+                        <h3 class="plan-option-name">Premium Sanrenpuku</h3>
+                        <div class="plan-option-subtitle">AI三連複絞り込みのみ</div>
+                        <div class="plan-option-price">¥19,820<span>/月</span></div>
+                        <ul class="plan-option-features">
+                            <li>✅ <strong>AI三連複絞り込み</strong>のみ利用</li>
+                            <li>✅ 的中率78% 回収率178%</li>
+                            <li>✅ 買い目点数7-9点の少点数</li>
+                            <li class="warning-feature">❌ 馬単3戦略は閲覧できません</li>
+                        </ul>
+                        <a href="https://buy.stripe.com/28EcN5fpf58k8O734vdby0P" class="btn-plan sanrenpuku" target="_blank" rel="noopener">
+                            このプランに変更する
+                        </a>
+                        <p class="plan-note">変更前: Premium ¥9,980/月 → 変更後: Sanrenpuku ¥19,820/月</p>
                     </div>
                 </div>
 
-                <!-- 詳細リンク -->
-                <div class="modal-footer">
-                    <a href="/plan-upgrade-guide" class="link-detail" target="_blank">
-                        📖 詳細なプランガイドを見る
-                    </a>
+                <!-- プラン変更後の流れ -->
+                <div class="modal-flow">
+                    <h3>📋 プラン変更後の流れ</h3>
+                    <ol>
+                        <li><strong>今すぐ利用開始</strong> - 変更後すぐに三連複予想を閲覧できます</li>
+                        <li><strong>旧プランキャンセル</strong> - 1-2営業日以内に運営側で手動キャンセル</li>
+                        <li><strong>確認メール送信</strong> - キャンセル完了後、メールでご案内</li>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -2426,18 +2440,113 @@ if (highConfidenceRaces.length >= 3) {
         margin-bottom: 30px;
     }
 
-    .modal-warning {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
+    /* 安心メッセージ（緑） */
+    .modal-info {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
         border-radius: 12px;
         padding: 20px;
-        margin-bottom: 30px;
+        margin-bottom: 25px;
     }
 
-    .modal-warning h4 {
-        color: rgb(248, 113, 113);
+    .modal-info h3 {
+        color: rgb(16, 185, 129);
         font-size: 1.1rem;
         font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .modal-info ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .modal-info li {
+        color: rgba(226, 232, 240, 0.9);
+        font-size: 0.95rem;
+        line-height: 1.8;
+        margin-bottom: 8px;
+    }
+
+    .modal-info li strong {
+        color: rgb(251, 191, 36);
+    }
+
+    /* プラン変更の質問 */
+    .plan-question {
+        text-align: center;
+        margin-bottom: 25px;
+        padding: 20px;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 12px;
+    }
+
+    .plan-question h3 {
+        color: rgb(96, 165, 250);
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* プラン変更後の流れ */
+    .modal-flow {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 25px;
+    }
+
+    .modal-flow h3 {
+        color: rgb(96, 165, 250);
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .modal-flow ol {
+        padding-left: 20px;
+        margin: 0;
+    }
+
+    .modal-flow li {
+        color: rgba(226, 232, 240, 0.9);
+        font-size: 0.95rem;
+        line-height: 1.8;
+        margin-bottom: 8px;
+    }
+
+    .modal-flow li strong {
+        color: rgb(251, 191, 36);
+    }
+
+    /* プランバッジ（通常） */
+    .plan-badge-normal {
+        background: rgba(59, 130, 246, 0.2);
+        color: rgb(96, 165, 250);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    /* プラン変更前後の表示 */
+    .plan-note {
+        text-align: center;
+        color: rgba(148, 163, 184, 0.8);
+        font-size: 0.85rem;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* プランサブタイトル */
+    .plan-option-subtitle {
+        color: rgba(148, 163, 184, 0.9);
+        font-size: 0.9rem;
         margin-bottom: 12px;
     }
 
