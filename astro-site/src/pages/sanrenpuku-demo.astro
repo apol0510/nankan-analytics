@@ -310,8 +310,15 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
             </div>
         </div>
 
-        <!-- AI絞り込み買い目 -->
-        <div class="filtered-bets">
+        <!-- AI絞り込みボタン -->
+        <button class="demo-filter-btn" id="demoFilterBtn">
+            <span class="filter-icon">🎯</span>
+            <span class="filter-text">AI三連複 絞り込む</span>
+            <span class="filter-arrow">▼</span>
+        </button>
+
+        <!-- AI絞り込み買い目（初期非表示） -->
+        <div class="filtered-bets" id="demoContent" style="display: none;">
             <h2>🎯 AI自動絞り込み買い目</h2>
             <div class="bet-strategy-info">
                 <span class="strategy-badge">{actualStrategy}</span>
@@ -332,10 +339,9 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
                     <span class="total-count">{demoData.betCount}点</span>
                 </div>
             </div>
-        </div>
 
-        <!-- 的中結果 -->
-        {demoData.result.isHit && (
+            <!-- 的中結果 -->
+            {demoData.result.isHit && (
             <div class="result-section hit">
                 <div class="result-header">
                     <h2>🎊 的中結果</h2>
@@ -1010,6 +1016,57 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
         border-color: rgba(59, 130, 246, 0.5);
     }
 
+    /* AI絞り込みボタン */
+    .demo-filter-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 18px 25px;
+        color: #000;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+        margin-bottom: 40px;
+    }
+
+    .demo-filter-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+    }
+
+    .demo-filter-btn.filtering {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        animation: pulse 1s ease-in-out infinite;
+    }
+
+    .demo-filter-btn.filtered {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .filter-icon {
+        font-size: 1.5rem;
+    }
+
+    .filter-arrow {
+        transition: transform 0.3s ease;
+    }
+
+    .demo-filter-btn.filtered .filter-arrow {
+        transform: rotate(180deg);
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
     /* レスポンシブ */
     @media (max-width: 768px) {
         .sample-header h1 {
@@ -1036,5 +1093,47 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
         .btn-secondary {
             width: 100%;
         }
+
+        .demo-filter-btn {
+            padding: 16px 20px;
+            font-size: 1rem;
+        }
     }
 </style>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtn = document.getElementById('demoFilterBtn');
+    const demoContent = document.getElementById('demoContent');
+
+    if (filterBtn && demoContent) {
+        filterBtn.addEventListener('click', function() {
+            const filterText = this.querySelector('.filter-text');
+
+            if (demoContent.style.display === 'none') {
+                // 段階1: 絞り込む → 絞り込み中（青・pulse）
+                this.classList.add('filtering');
+                filterText.textContent = 'AI三連複 絞り込み中';
+
+                // 段階2: 1.6秒後に 絞り込み中 → 絞り込み完了（緑）
+                setTimeout(() => {
+                    this.classList.remove('filtering');
+                    this.classList.add('filtered');
+                    filterText.textContent = 'AI三連複 絞り込み完了';
+                    demoContent.style.display = 'block';
+
+                    // スムーズスクロール
+                    setTimeout(() => {
+                        demoContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }, 1600);
+            } else {
+                // 閉じる処理
+                demoContent.style.display = 'none';
+                this.classList.remove('filtered');
+                filterText.textContent = 'AI三連複 絞り込む';
+            }
+        });
+    }
+});
+</script>
