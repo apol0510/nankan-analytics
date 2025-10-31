@@ -1,7 +1,7 @@
 ---
 // アクセス制御コンポーネント
 export interface Props {
-    requiredPlan: 'free' | 'standard' | 'premium' | 'Premium Predictions' | 'Premium Sanrenpuku' | 'Premium Full' | 'Premium Plus';
+    requiredPlan: 'free' | 'standard' | 'premium' | 'Premium Predictions' | 'Premium Sanrenpuku' | 'Premium Combo' | 'Premium Plus';
     showUpgrade?: boolean;
 }
 
@@ -264,10 +264,10 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             'premium': 2,
             'Premium': 2,
 
-            // 新プラン（2025-10-30追加）
+            // 新プラン（2025-10-31更新）
             'Premium Predictions': 2,      // 馬単のみ（¥9,980）
             'Premium Sanrenpuku': 2,       // 三連複のみ（¥19,820）
-            'Premium Full': 3,             // 馬単+三連複（¥24,800）
+            'Premium Combo': 3,            // 馬単+三連複（¥24,800）
             'Premium Plus': 4              // 1鞍超精密（¥68,000）
         };
 
@@ -290,10 +290,10 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         // 三連複専用ページの特殊処理
         if (requiredPlan === 'Premium Sanrenpuku') {
             const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
-            // Premium Sanrenpuku または Premium Full 以上でアクセス可能
+            // Premium Sanrenpuku または Premium Combo 以上でアクセス可能
             const canAccess = hasValidUser && (
                 userPlan === 'Premium Sanrenpuku' ||
-                userPlan === 'Premium Full' ||
+                userPlan === 'Premium Combo' ||
                 userLevel >= 3
             );
             console.log(`🐎 三連複アクセスチェック:`, canAccess, { userPlan, hasValidUser });
@@ -321,7 +321,7 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             // 新プラン（2025-10-30追加）
             'Premium Predictions': 'Premium Predictions（馬単）',
             'Premium Sanrenpuku': 'Premium Sanrenpuku（三連複）',
-            'Premium Full': 'Premium Full（馬単+三連複）',
+            'Premium Combo': 'Premium Combo（馬単+三連複）',
             'Premium Plus': 'Premium Plus（1鞍超精密）'
         };
         return displayNames[plan] || '不明なプラン';

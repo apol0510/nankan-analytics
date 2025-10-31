@@ -1,0 +1,477 @@
+---
+const title = 'プランアップグレードガイド | NANKANアナリティクス';
+const description = 'Premium Sanrenpuku・Premium Comboプラン選択時の詳細ガイド。既存Premiumプランの扱い、料金体系、注意事項を詳しく解説します。';
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      line-height: 1.8;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      color: #94a3b8;
+    }
+
+    .section {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(10px);
+    }
+
+    .section h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: #3b82f6;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 30px 0 15px;
+      color: #60a5fa;
+    }
+
+    .plan-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 25px;
+    }
+
+    .plan-card.sanrenpuku {
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .plan-card.combo {
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .plan-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-name.sanrenpuku {
+      color: #f59e0b;
+    }
+
+    .plan-name.combo {
+      color: #8b5cf6;
+    }
+
+    .plan-price {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .plan-description {
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin: 15px 0;
+    }
+
+    .feature-list li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+      color: #e2e8f0;
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #10b981;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .feature-list li.warning::before {
+      content: '⚠';
+      color: #f59e0b;
+    }
+
+    .warning-box {
+      background: rgba(245, 158, 11, 0.1);
+      border: 2px solid rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+    }
+
+    .warning-box h4 {
+      color: #f59e0b;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-box {
+      background: rgba(59, 130, 246, 0.1);
+      border: 2px solid rgba(59, 130, 246, 0.4);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+    }
+
+    .info-box h4 {
+      color: #3b82f6;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-list {
+      counter-reset: step-counter;
+      list-style: none;
+      margin: 20px 0;
+    }
+
+    .step-list li {
+      counter-increment: step-counter;
+      padding: 15px 0 15px 50px;
+      position: relative;
+      color: #e2e8f0;
+    }
+
+    .step-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 15px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .comparison-table th {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+      font-weight: 700;
+    }
+
+    .comparison-table td:first-child {
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .highlight {
+      color: #fbbf24;
+      font-weight: 700;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .section {
+        padding: 25px;
+      }
+
+      .section h2 {
+        font-size: 1.5rem;
+      }
+
+      .plan-card {
+        padding: 20px;
+      }
+
+      .comparison-table {
+        font-size: 0.9rem;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎯 プランアップグレードガイド</h1>
+      <p>Premium Sanrenpuku・Premium Comboプラン選択時の詳細説明</p>
+    </div>
+
+    <!-- 重要なお知らせ -->
+    <div class="section">
+      <h2>⚠️ 既存Premium会員の皆様へ重要なお知らせ</h2>
+      <div class="warning-box">
+        <h4>⚠️ 既存Premiumプランについて</h4>
+        <p>現在Premium（馬単のみ ¥9,980/月）をご利用中の方が、Premium Sanrenpuku または Premium Combo を購入された場合：</p>
+        <ul class="feature-list">
+          <li><strong>既存のPremiumプランは運営側で手動キャンセルいたします</strong></li>
+          <li>二重課金を防ぐため、<strong>購入後1-2営業日以内</strong>にキャンセル処理を行います</li>
+          <li>キャンセル後は<strong>新しいプランのみ</strong>の課金となります</li>
+          <li>ご安心ください：<strong>二重課金はされません</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- プラン比較 -->
+    <div class="section">
+      <h2>📊 プラン詳細比較</h2>
+
+      <!-- Premium Sanrenpuku -->
+      <div class="plan-card sanrenpuku">
+        <div class="plan-name sanrenpuku">🎯 Premium Sanrenpuku（三連複のみ）</div>
+        <div class="plan-price">¥19,820<span style="font-size: 1rem; color: #94a3b8;">/月</span></div>
+        <div class="plan-description">
+          AI三連複絞り込み機能に特化したプラン。馬単の買い目が絞れない方におすすめ。
+        </div>
+
+        <h3>✅ 利用できる機能</h3>
+        <ul class="feature-list">
+          <li><strong>premium-sanrenpuku.astro</strong>：AI三連複絞り込み予想（全レース）</li>
+          <li>過去1年間の的中率78%・回収率178%</li>
+          <li>買い目点数わずか7-9点の少点数買い目</li>
+          <li>三連複アーカイブ（過去実績）</li>
+        </ul>
+
+        <div class="warning-box">
+          <h4>⚠️ 重要な注意事項</h4>
+          <ul class="feature-list">
+            <li class="warning"><strong>premium-predictions.astro（馬単3戦略）は閲覧不可</strong>になります</li>
+            <li class="warning">三連複のみのプランのため、馬単予想は見られません</li>
+            <li class="warning">馬単も必要な方は<strong>Premium Combo</strong>をご検討ください</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Premium Combo -->
+      <div class="plan-card combo">
+        <div class="plan-name combo">💎 Premium Combo（馬単+三連複）</div>
+        <div class="plan-price">¥24,800<span style="font-size: 1rem; color: #94a3b8;">/月</span></div>
+        <div class="plan-description">
+          馬単3戦略とAI三連複の両方を利用できる最もお得なプラン。
+          <span class="highlight">通常¥29,800 → ¥5,000 OFF！</span>
+        </div>
+
+        <h3>✅ 利用できる機能（全て）</h3>
+        <ul class="feature-list">
+          <li><strong>premium-predictions.astro</strong>：馬単3戦略予想（全レース）</li>
+          <li><strong>premium-sanrenpuku.astro</strong>：AI三連複絞り込み予想（全レース）</li>
+          <li>馬単アーカイブ + 三連複アーカイブ（過去実績）</li>
+          <li>全ての予想データにアクセス可能</li>
+        </ul>
+
+        <div class="info-box">
+          <h4>💡 こんな方におすすめ</h4>
+          <ul class="feature-list">
+            <li>馬単3戦略も使いたいが、三連複の絞り込みも欲しい</li>
+            <li>馬単と三連複を組み合わせて購入したい</li>
+            <li>最もコストパフォーマンスの高いプランを選びたい</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 購入フロー -->
+    <div class="section">
+      <h2>🔄 購入後のフロー（既存Premium会員の場合）</h2>
+
+      <h3>Premium Sanrenpuku購入の場合</h3>
+      <ol class="step-list">
+        <li>お客様がStripe Payment Linkから<strong>Premium Sanrenpuku（¥19,820/月）</strong>を購入</li>
+        <li>Zapier → Airtableに「Premium Sanrenpuku」として自動登録</li>
+        <li><strong>運営側が既存の「Premium」をStripeで手動キャンセル</strong>（1-2営業日以内）</li>
+        <li>お客様は三連複のみ利用可能・<strong>馬単は閲覧不可</strong>（¥19,820のみ課金）</li>
+      </ol>
+
+      <h3>Premium Combo購入の場合</h3>
+      <ol class="step-list">
+        <li>お客様がStripe Payment Linkから<strong>Premium Combo（¥24,800/月）</strong>を購入</li>
+        <li>Zapier → Airtableに「Premium Combo」として自動登録</li>
+        <li><strong>運営側が既存の「Premium」をStripeで手動キャンセル</strong>（1-2営業日以内）</li>
+        <li>お客様は<strong>馬単+三連複の両方</strong>を利用可能（¥24,800のみ課金）</li>
+      </ol>
+    </div>
+
+    <!-- 料金比較 -->
+    <div class="section">
+      <h2>💰 料金比較表</h2>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>プラン名</th>
+            <th>月額料金</th>
+            <th>馬単予想</th>
+            <th>三連複予想</th>
+            <th>おすすめ度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Premium Predictions</td>
+            <td>¥9,980</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td>Premium Sanrenpuku</td>
+            <td>¥19,820</td>
+            <td>❌</td>
+            <td>✅</td>
+            <td>⭐⭐⭐⭐</td>
+          </tr>
+          <tr style="background: rgba(139, 92, 246, 0.1);">
+            <td><strong>Premium Combo</strong></td>
+            <td><strong>¥24,800</strong> <span style="color: #10b981;">（¥5,000 OFF）</span></td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td>Premium Plus</td>
+            <td>¥68,000</td>
+            <td>1日1鞍超精密</td>
+            <td>❌</td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- よくある質問 -->
+    <div class="section">
+      <h2>❓ よくある質問</h2>
+
+      <h3>Q1. 既存のPremiumプランはいつキャンセルされますか？</h3>
+      <div class="info-box">
+        <p>新しいプラン購入後、<strong>1-2営業日以内</strong>に運営側で手動キャンセルいたします。キャンセル完了後、メールでお知らせします。</p>
+      </div>
+
+      <h3>Q2. 二重課金されることはありますか？</h3>
+      <div class="info-box">
+        <p>いいえ、<strong>二重課金はされません</strong>。既存のPremiumプランを速やかにキャンセルいたしますので、ご安心ください。</p>
+      </div>
+
+      <h3>Q3. Premium Sanrenpukuを購入したが、やはり馬単も見たい場合は？</h3>
+      <div class="info-box">
+        <p>お問い合わせいただければ、<strong>Premium Comboへのプラン変更</strong>を承ります。差額¥5,000で馬単予想もご利用いただけます。</p>
+      </div>
+
+      <h3>Q4. Premium Comboが最もお得なのはなぜですか？</h3>
+      <div class="info-box">
+        <p>通常、Premium Predictions（¥9,980）+ Premium Sanrenpuku（¥19,820）= <strong>¥29,800</strong>ですが、
+        Premium Comboなら<strong>¥24,800</strong>で両方利用可能。<span class="highlight">¥5,000もお得</span>です！</p>
+      </div>
+    </div>
+
+    <!-- 戻るリンク -->
+    <div style="text-align: center;">
+      <a href="/premium-predictions" class="back-link">← 予想ページに戻る</a>
+    </div>
+  </div>
+</body>
+</html>
