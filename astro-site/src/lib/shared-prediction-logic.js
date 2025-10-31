@@ -850,7 +850,10 @@ export function generateSanrenpukuBets(horses) {
         main: {
             number: mainNumber,
             label: '本命',
-            axis: [subNumber, hole1Number, hole2Number].filter(n => n).sort((a, b) => a - b).join('.'),  // 対抗・単穴1・単穴2（番号順）
+            // 🔄 2025-10-31修正: 連下最上位を2段目に追加（マコさん要望）
+            // 変更前: 対抗・単穴1・単穴2のみ
+            // 変更後: 対抗・単穴1・連下最上位・単穴2（連下最上位を追加）
+            axis: [subNumber, hole1Number, renkaTopHorse, hole2Number].filter(n => n && n !== mainNumber).sort((a, b) => a - b).join('.'),
             targets: mainTargets.join('.'),  // 連下+軸候補（重複除去、番号順）
             osaeNumbers: osaeCandidates
         },
