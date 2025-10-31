@@ -49,38 +49,41 @@ const { safe, balance, aggressive } = strategies;
 const allBets = [];
 
 // 少点数型
-if (safe?.bets) {
-    safe.bets.forEach(betStr => {
-        const horses = betStr.match(/\d+/g) || [];
+if (safe?.bets && Array.isArray(safe.bets)) {
+    safe.bets.forEach(bet => {
+        const betString = typeof bet === 'string' ? bet : String(bet);
+        const horses = betString.match(/\d+/g) || [];
         const avgScore = horses.reduce((sum, num) => {
             const horse = allHorses.find(h => h.number === parseInt(num));
             return sum + (horse?.confidence || 0);
         }, 0) / (horses.length || 1);
-        allBets.push({ betStr, score: avgScore, type: '少点数型' });
+        allBets.push({ betStr: betString, score: avgScore, type: '少点数型' });
     });
 }
 
 // バランス型
-if (balance?.bets) {
-    balance.bets.forEach(betStr => {
-        const horses = betStr.match(/\d+/g) || [];
+if (balance?.bets && Array.isArray(balance.bets)) {
+    balance.bets.forEach(bet => {
+        const betString = typeof bet === 'string' ? bet : String(bet);
+        const horses = betString.match(/\d+/g) || [];
         const avgScore = horses.reduce((sum, num) => {
             const horse = allHorses.find(h => h.number === parseInt(num));
             return sum + (horse?.confidence || 0);
         }, 0) / (horses.length || 1);
-        allBets.push({ betStr, score: avgScore, type: 'バランス型' });
+        allBets.push({ betStr: betString, score: avgScore, type: 'バランス型' });
     });
 }
 
 // 高配当型
-if (aggressive?.bets) {
-    aggressive.bets.forEach(betStr => {
-        const horses = betStr.match(/\d+/g) || [];
+if (aggressive?.bets && Array.isArray(aggressive.bets)) {
+    aggressive.bets.forEach(bet => {
+        const betString = typeof bet === 'string' ? bet : String(bet);
+        const horses = betString.match(/\d+/g) || [];
         const avgScore = horses.reduce((sum, num) => {
             const horse = allHorses.find(h => h.number === parseInt(num));
             return sum + (horse?.confidence || 0);
         }, 0) / (horses.length || 1);
-        allBets.push({ betStr, score: avgScore, type: '高配当型' });
+        allBets.push({ betStr: betString, score: avgScore, type: '高配当型' });
     });
 }
 
