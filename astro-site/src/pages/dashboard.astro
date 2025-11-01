@@ -587,6 +587,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         function showDashboard(customerData) {
             console.log('🎨 showDashboard 開始, customerData:', customerData);
 
+            // 🔴 LocalStorageにユーザープランデータを保存（プラン変更ボタン用）
+            localStorage.setItem('user-plan', JSON.stringify(customerData));
+            console.log('💾 LocalStorageにuser-planデータ保存完了:', customerData);
+
             // セクション切り替え
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('dashboard-section').style.display = 'block';
