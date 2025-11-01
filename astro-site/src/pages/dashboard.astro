@@ -3850,87 +3850,85 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             location.reload();
         };
 
-        // プラン変更モーダル制御
-        document.addEventListener('DOMContentLoaded', function() {
-            const planChangeBtn = document.getElementById('plan-change-btn');
-            const premiumModal = document.getElementById('premiumPlanModal');
-            const standardModal = document.getElementById('standardPlanModal');
-            const closePremiumBtn = document.getElementById('closePremiumModal');
-            const closeStandardBtn = document.getElementById('closeStandardModal');
+        // プラン変更モーダル制御（退会ボタンと同じ方式・DOMContentLoaded不使用）
+        const planChangeBtn = document.getElementById('plan-change-btn');
+        const premiumModal = document.getElementById('premiumPlanModal');
+        const standardModal = document.getElementById('standardPlanModal');
+        const closePremiumBtn = document.getElementById('closePremiumModal');
+        const closeStandardBtn = document.getElementById('closeStandardModal');
 
-            console.log('🔄 プラン変更モーダル初期化', {
-                planChangeBtn: !!planChangeBtn,
-                premiumModal: !!premiumModal,
-                standardModal: !!standardModal
-            });
-
-            // プラン変更ボタンクリック
-            if (planChangeBtn) {
-                console.log('✅ プラン変更ボタンイベントリスナー登録');
-                planChangeBtn.addEventListener('click', function() {
-                    console.log('🖱️ プラン変更ボタンクリック');
-                    // 現在のプランを取得
-                    const userPlanData = localStorage.getItem('user-plan');
-                    if (!userPlanData) {
-                        console.warn('⚠️ user-plan データがありません');
-                        return;
-                    }
-
-                    try {
-                        const userData = JSON.parse(userPlanData);
-                        const plan = userData.plan.toLowerCase();
-                        console.log('📊 現在のプラン:', plan);
-
-                        if (plan === 'premium') {
-                            console.log('💎 Premium会員モーダル表示');
-                            // Premium会員：三連複2択モーダル表示
-                            if (premiumModal) premiumModal.style.display = 'flex';
-                        } else if (plan === 'standard') {
-                            console.log('⚡ Standard会員モーダル表示');
-                            // Standard会員：全プラン3択モーダル表示
-                            if (standardModal) standardModal.style.display = 'flex';
-                        } else {
-                            console.log('🆓 Free会員 → /pricing/ へリダイレクト');
-                            // Free会員：/pricing/へ遷移
-                            window.location.href = '/pricing/';
-                        }
-                    } catch (error) {
-                        console.error('❌ プラン判定エラー:', error);
-                    }
-                });
-            }
-
-            // Premium用モーダル閉じる
-            if (closePremiumBtn) {
-                closePremiumBtn.addEventListener('click', function() {
-                    if (premiumModal) premiumModal.style.display = 'none';
-                });
-            }
-
-            // Standard用モーダル閉じる
-            if (closeStandardBtn) {
-                closeStandardBtn.addEventListener('click', function() {
-                    if (standardModal) standardModal.style.display = 'none';
-                });
-            }
-
-            // モーダル外クリックで閉じる
-            if (premiumModal) {
-                premiumModal.addEventListener('click', function(e) {
-                    if (e.target === premiumModal) {
-                        premiumModal.style.display = 'none';
-                    }
-                });
-            }
-
-            if (standardModal) {
-                standardModal.addEventListener('click', function(e) {
-                    if (e.target === standardModal) {
-                        standardModal.style.display = 'none';
-                    }
-                });
-            }
+        console.log('🔄 プラン変更モーダル初期化', {
+            planChangeBtn: !!planChangeBtn,
+            premiumModal: !!premiumModal,
+            standardModal: !!standardModal
         });
+
+        // プラン変更ボタンクリック
+        if (planChangeBtn) {
+            console.log('✅ プラン変更ボタンイベントリスナー登録');
+            planChangeBtn.addEventListener('click', function() {
+                console.log('🖱️ プラン変更ボタンクリック');
+                // 現在のプランを取得
+                const userPlanData = localStorage.getItem('user-plan');
+                if (!userPlanData) {
+                    console.warn('⚠️ user-plan データがありません');
+                    return;
+                }
+
+                try {
+                    const userData = JSON.parse(userPlanData);
+                    const plan = userData.plan.toLowerCase();
+                    console.log('📊 現在のプラン:', plan);
+
+                    if (plan === 'premium') {
+                        console.log('💎 Premium会員モーダル表示');
+                        // Premium会員：三連複2択モーダル表示
+                        if (premiumModal) premiumModal.style.display = 'flex';
+                    } else if (plan === 'standard') {
+                        console.log('⚡ Standard会員モーダル表示');
+                        // Standard会員：全プラン3択モーダル表示
+                        if (standardModal) standardModal.style.display = 'flex';
+                    } else {
+                        console.log('🆓 Free会員 → /pricing/ へリダイレクト');
+                        // Free会員：/pricing/へ遷移
+                        window.location.href = '/pricing/';
+                    }
+                } catch (error) {
+                    console.error('❌ プラン判定エラー:', error);
+                }
+            });
+        }
+
+        // Premium用モーダル閉じる
+        if (closePremiumBtn) {
+            closePremiumBtn.addEventListener('click', function() {
+                if (premiumModal) premiumModal.style.display = 'none';
+            });
+        }
+
+        // Standard用モーダル閉じる
+        if (closeStandardBtn) {
+            closeStandardBtn.addEventListener('click', function() {
+                if (standardModal) standardModal.style.display = 'none';
+            });
+        }
+
+        // モーダル外クリックで閉じる
+        if (premiumModal) {
+            premiumModal.addEventListener('click', function(e) {
+                if (e.target === premiumModal) {
+                    premiumModal.style.display = 'none';
+                }
+            });
+        }
+
+        if (standardModal) {
+            standardModal.addEventListener('click', function(e) {
+                if (e.target === standardModal) {
+                    standardModal.style.display = 'none';
+                }
+            });
+        }
 
         console.log('💡 テスト用: setTestAuth("premium"), setTestAuth("standard"), setTestAuth("free") が利用可能です');
     </script>
