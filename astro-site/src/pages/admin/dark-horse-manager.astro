@@ -64,6 +64,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <h3>💡 入力形式例</h3>
             <div class="format-grid">
                 <div class="format-example">
+                    <h4>✨ 新形式: 1行複数頭対応（推奨）</h4>
+                    <pre>1R 8番 33% 3番 32%
+2R 4番 29% 11番 28%
+3R 2番 30%</pre>
+                    <small>※ 1行に複数頭をまとめて入力可能！</small>
+                </div>
+                <div class="format-example">
                     <h4>形式1: 基本形式</h4>
                     <pre>川崎1R 3番 ダークホース 前走好走・騎手変更で今回期待 85%
 川崎2R 7番 サプライズ 血統妙味・距離適性◎ 70%</pre>
@@ -72,11 +79,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     <h4>形式2: コロン形式</h4>
                     <pre>1R: 3番 ダークホース (前走好走・騎手変更で今回期待) 85%
 2R: 7番 サプライズ (血統妙味・距離適性◎) 70%</pre>
-                </div>
-                <div class="format-example">
-                    <h4>形式3: 括弧形式</h4>
-                    <pre>1R 【3】ダークホース 前走好走 85%
-2R 【7】サプライズ 血統妙味 70%</pre>
                 </div>
             </div>
             <p class="note">※ レース名は自動検出されます（省略可）。信頼度は%値で指定（例: 85% = 高信頼度、70% = 中信頼度、55% = 低信頼度）</p>
@@ -131,7 +133,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                     id="simpleInput"
                     placeholder="簡略形式で入力（馬名は自動取得されます）
 
-例:
+📝 新形式（1行に複数頭対応）:
+1R 8番 33% 3番 32%
+2R 4番 29% 11番 28%
+3R 2番 30%
+
+📝 従来形式（1行に1頭）:
 1R 3
 前走好走・騎手変更で今回期待
 85
@@ -139,10 +146,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 2R 7
 血統妙味・距離適性◎
 70
-
-3R 11
-前走2着好走・今回距離短縮
-80
 ..."></textarea>
                 <div class="button-group">
                     <button id="parseSimpleBtn" class="primary-btn">🚀 簡略入力を解析</button>
@@ -1213,65 +1216,59 @@ function parseSimpleInput() {
 
     const lines = input.split('\n').filter(line => line.trim());
     const horses = [];
-    let currentHorse = null;
 
     for (const line of lines) {
-        // レース番号と馬番（例: 1R 3）
-        const raceMatch = line.match(/^(\d+)R?\s+(\d+)$/);
-        if (raceMatch) {
-            if (currentHorse) horses.push(currentHorse);
+        // 新形式: 1R 8番 33% 3番 32%
+        // パターン: レース番号 馬番 %値 [馬番 %値] ...
+        const newFormatMatch = line.match(/^(\d+)R?\s+(.+)$/);
+        if (newFormatMatch) {
+            const raceNumber = `${newFormatMatch[1]}R`;
+            const horseDataStr = newFormatMatch[2];
 
-            const raceNumber = `${raceMatch[1]}R`;
-            const horseNumber = raceMatch[2];
+            // 馬番と%値のペアを抽出
+            const horsePattern = /(\d+)番\s+(\d+)%/g;
+            let match;
 
-            // 馬名を予想データから取得
-            const race = predictionData.races.find(r => r.raceNumber === raceNumber);
+            while ((match = horsePattern.exec(horseDataStr)) !== null) {
+                const horseNumber = match[1];
+                const confidence = match[2];
 
-            // horsesオブジェクトから指定された馬番の馬を検索
-            let horse = null;
-            if (race && race.horses) {
-                const allHorses = [];
-                if (race.horses.main) allHorses.push(race.horses.main);
-                if (race.horses.sub) allHorses.push(race.horses.sub);
-                if (race.horses.hole1) allHorses.push(race.horses.hole1);
-                if (race.horses.hole2) allHorses.push(race.horses.hole2);
-                if (race.horses.connect && Array.isArray(race.horses.connect)) {
-                    allHorses.push(...race.horses.connect);
+                // 馬名を予想データから取得
+                const race = predictionData.races.find(r => r.raceNumber === raceNumber);
+
+                // horsesオブジェクトから指定された馬番の馬を検索
+                let horse = null;
+                if (race && race.horses) {
+                    const allHorses = [];
+                    if (race.horses.main) allHorses.push(race.horses.main);
+                    if (race.horses.sub) allHorses.push(race.horses.sub);
+                    if (race.horses.hole1) allHorses.push(race.horses.hole1);
+                    if (race.horses.hole2) allHorses.push(race.horses.hole2);
+                    if (race.horses.connect && Array.isArray(race.horses.connect)) {
+                        allHorses.push(...race.horses.connect);
+                    }
+                    if (race.horses.reserve && Array.isArray(race.horses.reserve)) {
+                        allHorses.push(...race.horses.reserve);
+                    }
+                    horse = allHorses.find(h => String(h.number) === String(horseNumber));
                 }
-                if (race.horses.reserve && Array.isArray(race.horses.reserve)) {
-                    allHorses.push(...race.horses.reserve);
+
+                if (!horse) {
+                    console.warn(`${raceNumber} ${horseNumber}番の馬が見つかりません`);
+                    continue;
                 }
-                horse = allHorses.find(h => String(h.number) === String(horseNumber));
-            }
 
-            if (!horse) {
-                alert(`${raceNumber} ${horseNumber}番の馬が見つかりません`);
-                continue;
+                horses.push({
+                    raceNumber: raceNumber,
+                    raceName: race.raceName || '',
+                    horseNumber: horseNumber,
+                    horseName: horse.name,
+                    reason: '',
+                    confidence: `${confidence}%`
+                });
             }
-
-            currentHorse = {
-                raceNumber: raceNumber,
-                raceName: race.raceName || '',
-                horseNumber: horseNumber,
-                horseName: horse.name,
-                reason: '',
-                confidence: '50%'
-            };
-        }
-        // %値（例: 85, 85%）
-        else if (line.match(/^\d+%?$/)) {
-            if (currentHorse) {
-                const confidence = line.trim().replace('%', '');
-                currentHorse.confidence = `${confidence}%`;
-            }
-        }
-        // 理由（それ以外のテキスト）
-        else if (currentHorse && line.trim()) {
-            currentHorse.reason += (currentHorse.reason ? ' ' : '') + line.trim();
         }
     }
-
-    if (currentHorse) horses.push(currentHorse);
 
     if (horses.length === 0) {
         alert('有効なデータが見つかりませんでした');
