@@ -297,27 +297,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const userPlanData = localStorage.getItem('user-plan');
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             const userPlan = localStorage.getItem('userPlan');
-            
-            return !!(userPlanData || isLoggedIn || userPlan);
+            const userPlanUnderscore = localStorage.getItem('user_plan'); // アンダースコア版追加
+            const userEmail = localStorage.getItem('user_email'); // メールアドレスチェック追加
+
+            return !!(userPlanData || isLoggedIn || userPlan || userPlanUnderscore || userEmail);
         }
         
         async function getCustomerData() {
             console.log('🔍 getCustomerData 開始');
-            
+
             // 新しい決済システムのデータを最優先
             const userPlanData = localStorage.getItem('user-plan');
             console.log('📦 user-plan データ:', userPlanData);
-            
+
             if (userPlanData) {
                 try {
                     const userData = JSON.parse(userPlanData);
                     console.log('📋 解析したuserData:', userData);
-                    
+
                     // 実際のポイントをFunctionsから取得
                     console.log('🚀 fetchUserPoints 呼び出し開始:', userData.email);
                     const realPoints = await fetchUserPoints(userData.email);
                     console.log('🎯 取得したrealPoints:', realPoints);
-                    
+
                     const result = {
                         email: userData.email,
                         plan: userData.plan || 'free',
@@ -332,11 +334,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     console.warn('user-plan解析エラー:', e);
                 }
             }
-            
+
+            // アンダースコア版のキーをチェック（user_email, user_plan）
+            const emailUnderscore = localStorage.getItem('user_email');
+            const planUnderscore = localStorage.getItem('user_plan');
+            console.log('📦 user_email データ:', emailUnderscore);
+            console.log('📦 user_plan データ:', planUnderscore);
+
+            if (emailUnderscore || planUnderscore) {
+                const realPoints = await fetchUserPoints(emailUnderscore);
+                const result = {
+                    email: emailUnderscore || 'member@example.com',
+                    plan: planUnderscore || 'Free',
+                    points: realPoints,
+                    hasClaimedReward: localStorage.getItem('hasClaimedReward') === 'true',
+                    name: 'お客様'
+                };
+                console.log('✅ getCustomerData 返却値（アンダースコア版）:', result);
+                return result;
+            }
+
             // 古いシステムのデータをフォールバック
             const email = localStorage.getItem('userEmail');
             const plan = localStorage.getItem('userPlan') || 'free';
-            
+
             if (email || plan !== 'free') {
                 // 実際のポイントをFunctionsから取得
                 const realPoints = await fetchUserPoints(email);
@@ -348,7 +369,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     name: 'お客様'
                 };
             }
-            
+
             return null;
         }
 
