@@ -427,22 +427,47 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
                 })}
             </div>
 
-            <!-- Premium Plusへの導線 -->
-            <div class="premium-plus-notice">
-                <div class="notice-content">
-                    <div class="notice-icon">✨</div>
-                    <div class="notice-text">
-                        <div class="notice-title">さらに精度を追求したい方へ</div>
-                        <p class="notice-description">
-                            1日1鞍限定の超精密AI予想「Premium Plus」もご用意しています。
-                        </p>
+            <!-- Premium Plus CTAセクション -->
+            <div class="premium-plus-cta-section">
+                <div class="premium-plus-cta-card">
+                    <div class="cta-header">
+                        <div class="cta-icon">✨</div>
+                        <h2 class="cta-title">さらなる的中精度を求める方へ</h2>
+                        <p class="cta-subtitle">AIが導く"最高確率の1鞍"を、あなたに。</p>
                     </div>
-                    <a href="/premium-plus" class="notice-link">詳細を見る →</a>
+
+                    <div class="cta-features">
+                        <div class="cta-feature">
+                            <span class="feature-icon">🎯</span>
+                            <div class="feature-content">
+                                <h3>1日1鞍限定</h3>
+                                <p>数万通りの組み合わせから厳選された、たった1つの答え。</p>
+                            </div>
+                        </div>
+                        <div class="cta-feature">
+                            <span class="feature-icon">📊</span>
+                            <div class="feature-content">
+                                <h3>直近12戦9鞍的中</h3>
+                                <p>実績が証明する高精度AI予想システム。</p>
+                            </div>
+                        </div>
+                        <div class="cta-feature">
+                            <span class="feature-icon">💰</span>
+                            <div class="feature-content">
+                                <h3>月額¥98,000</h3>
+                                <p>1鞍で投資額の約3倍回収を目指す超精密予想。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-action">
+                        <a href="/premium-plus" class="btn-premium-plus">
+                            Premium Plus 詳細を見る
+                            <span class="arrow">→</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-
-            <!-- 買い目選択Q&Aセクション（premium-predictionsから移動） -->
-            <BettingSelectionQA />
         </div>
 
         <!-- プラン判定スクリプト -->
@@ -1352,68 +1377,117 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
         font-weight: 700;
     }
 
-    /* Premium Plusへの導線 */
-    .premium-plus-notice {
-        background: rgba(30, 41, 59, 0.5);
-        border: 1px solid rgba(245, 158, 11, 0.2);
-        border-radius: 12px;
-        padding: 20px;
-        margin: 40px auto 20px;
-        max-width: 800px;
+    /* Premium Plus CTAセクション */
+    .premium-plus-cta-section {
+        margin: 60px auto 40px;
+        max-width: 900px;
+    }
+
+    .premium-plus-cta-card {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(234, 88, 12, 0.2) 100%);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         transition: all 0.3s ease;
     }
 
-    .premium-plus-notice:hover {
-        border-color: rgba(245, 158, 11, 0.4);
-        background: rgba(30, 41, 59, 0.7);
+    .premium-plus-cta-card:hover {
+        border-color: rgba(245, 158, 11, 0.5);
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
     }
 
-    .notice-content {
-        display: flex;
-        align-items: center;
-        gap: 20px;
+    .cta-header {
+        text-align: center;
+        margin-bottom: 40px;
     }
 
-    .notice-icon {
+    .cta-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .cta-title {
         font-size: 2rem;
-        flex-shrink: 0;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
     }
 
-    .notice-text {
-        flex: 1;
+    .cta-subtitle {
+        font-size: 1.1rem;
+        color: #cbd5e1;
+        font-weight: 400;
     }
 
-    .notice-title {
-        font-size: 1rem;
-        font-weight: 600;
+    .cta-features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .cta-feature {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .cta-feature .feature-icon {
+        font-size: 2.5rem;
+    }
+
+    .cta-feature h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
         color: #fbbf24;
         margin: 0 0 5px 0;
     }
 
-    .notice-description {
+    .cta-feature p {
         font-size: 0.9rem;
         color: #cbd5e1;
         margin: 0;
         line-height: 1.5;
     }
 
-    .notice-link {
-        color: #60a5fa;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        padding: 8px 16px;
-        border-radius: 6px;
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        transition: all 0.3s ease;
-        white-space: nowrap;
+    .cta-action {
+        text-align: center;
     }
 
-    .notice-link:hover {
-        background: rgba(59, 130, 246, 0.2);
-        border-color: rgba(59, 130, 246, 0.5);
-        color: #3b82f6;
+    .btn-premium-plus {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: #000;
+        padding: 18px 40px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-premium-plus:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-premium-plus .arrow {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-premium-plus:hover .arrow {
+        transform: translateX(5px);
     }
 
     /* モバイル対応 */
@@ -1456,19 +1530,28 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
             grid-template-columns: 1fr;
         }
 
-        .premium-plus-notice {
-            padding: 15px;
+        .premium-plus-cta-card {
+            padding: 30px 20px;
         }
 
-        .notice-content {
-            flex-direction: column;
-            text-align: center;
-            gap: 15px;
+        .cta-title {
+            font-size: 1.5rem;
         }
 
-        .notice-link {
+        .cta-subtitle {
+            font-size: 1rem;
+        }
+
+        .cta-features {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .btn-premium-plus {
             width: 100%;
-            text-align: center;
+            justify-content: center;
+            font-size: 1rem;
+            padding: 16px 30px;
         }
     }
 
