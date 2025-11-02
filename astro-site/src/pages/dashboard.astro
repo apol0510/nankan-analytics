@@ -196,7 +196,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <!-- Premium Sanrenpuku予想（Premium Sanrenpuku/Combo会員専用） -->
                     <div id="sanrenpuku-predictions" class="prediction-card sanrenpuku" style="display: none;">
                         <div class="card-header">
-                            <h3>💎 Premium予想（三連複AI絞り込み）</h3>
+                            <h3>💎 Premium三連複予想 <span class="method-badge">AI絞り込み</span></h3>
                             <span class="plan-badge sanrenpuku">PREMIUM 三連複</span>
                         </div>
                         <div class="race-info">
@@ -209,7 +209,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <!-- Premium Combo用：馬単予想カード -->
                     <div id="combo-umatan-predictions" class="prediction-card premium" style="display: none;">
                         <div class="card-header">
-                            <h3>💎 Premium予想（馬単3戦略）</h3>
+                            <h3>💎 Premium馬単予想 <span class="method-badge">3戦略</span></h3>
                         </div>
                         <div class="race-info">
                             <div class="race-title">全レース（1R-12R）</div>
@@ -2502,6 +2502,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .plan-badge.premium {
             background: rgba(139, 92, 246, 0.2);
             color: #8b5cf6;
+        }
+
+        .plan-badge.sanrenpuku {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            margin-left: 0.25rem;
         }
 
         .race-info {
