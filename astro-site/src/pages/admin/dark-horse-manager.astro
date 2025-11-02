@@ -1219,7 +1219,10 @@ function parseSimpleInput() {
     let currentHorse = null;
 
     for (const line of lines) {
-        const trimmedLine = line.trim();
+        // 全角数字・全角スペースを半角に変換
+        const trimmedLine = line.trim()
+            .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+            .replace(/　/g, ' ');
 
         // 新形式チェック: 1R 8番 33% 3番 32%
         // 馬番と%値のペアが含まれているか確認
