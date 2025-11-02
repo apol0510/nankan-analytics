@@ -525,11 +525,10 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
                         orderSection.style.display = 'none';
                         contentSection.style.display = 'block';
                     }
-                    // Premium Predictions または Premium 会員の場合 → 申し込み表示
+                    // Premium Predictions または Premium 会員の場合 → sanrenpuku-demoへリダイレクト
                     else if (userPlan === 'Premium Predictions' || userPlan === 'Premium' || userPlan === 'premium') {
-                        console.log('🎯 Premium Predictions会員 → 申し込みページ表示');
-                        orderSection.style.display = 'block';
-                        contentSection.style.display = 'none';
+                        console.log('🎯 Premium会員 → sanrenpuku-demoへリダイレクト');
+                        window.location.href = '/sanrenpuku-demo/';
                     }
                     // その他の場合（AccessControlで弾かれるはずだが念のため）
                     else {
