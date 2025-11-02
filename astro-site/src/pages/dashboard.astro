@@ -210,7 +210,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <div id="combo-umatan-predictions" class="prediction-card premium" style="display: none;">
                         <div class="card-header">
                             <h3>💎 Premium予想（馬単3戦略）</h3>
-                            <span class="plan-badge premium">併用プラン</span>
                         </div>
                         <div class="race-info">
                             <div class="race-title">全レース（1R-12R）</div>
@@ -2465,6 +2464,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         .prediction-card.premium {
             border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .prediction-card.sanrenpuku {
+            border-color: rgba(245, 158, 11, 0.5);
         }
 
         .card-header {
