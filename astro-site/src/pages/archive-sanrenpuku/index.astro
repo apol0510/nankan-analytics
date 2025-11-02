@@ -50,16 +50,17 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
 ---
 
 <BaseLayout title={title} description={description}>
-  <!-- 🔒 Standard以上会員専用認証チェック（クライアントサイドJavaScript） -->
+  <!-- 🔒 Standard/Premium会員専用認証チェック（クライアントサイドJavaScript） -->
   <script is:inline>
     // LocalStorageからプラン情報取得
     const userEmail = localStorage.getItem('user_email');
     const userPlan = localStorage.getItem('user_plan');
 
-    // Standard・Premium・Premium Plus会員のみアクセス可能
+    // Standard・Premium会員のみアクセス可能
     // Premium Combo・Premium Sanrenpukuはアクセス不可
-    if (!userEmail || !userPlan || (userPlan !== 'Standard' && userPlan !== 'Premium' && userPlan !== 'Premium Plus')) {
-      alert('この機能はStandard会員以上専用です。\n\nStandard会員以上にアップグレードすると、三連複的中実績をご覧いただけます。');
+    // ※Premium Plusは単発商品（会員プランではない）のため判定不要
+    if (!userEmail || !userPlan || (userPlan !== 'Standard' && userPlan !== 'Premium')) {
+      alert('この機能はStandard/Premium会員専用です。\n\nStandard会員以上にアップグレードすると、三連複的中実績をご覧いただけます。');
       window.location.href = '/premium-predictions';
     }
   </script>
