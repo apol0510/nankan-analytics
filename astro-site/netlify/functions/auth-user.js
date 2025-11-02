@@ -165,7 +165,13 @@ exports.handler = async (event, context) => {
       'standard': 10,
       'Standard': 10,
       'premium': 30,
-      'Premium': 30
+      'Premium': 30,
+      'Premium Combo': 30,
+      'premium combo': 30,
+      'Premium Sanrenpuku': 30,
+      'premium sanrenpuku': 30,
+      'Premium Plus': 30,
+      'premium plus': 30
     };
 
     // 通常のログインポイント（1日1回）

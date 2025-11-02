@@ -180,10 +180,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <a href="/standard-predictions/" class="view-btn">予想を見る</a>
                     </div>
 
-                    <!-- Premium予想 -->
+                    <!-- Premium予想（Premium会員専用） -->
                     <div id="premium-predictions" class="prediction-card premium" style="display: none;">
                         <div class="card-header">
-                            <h3>💎 Premium予想</h3>
+                            <h3>💎 Premium予想（馬単3戦略）</h3>
                             <span class="plan-badge premium">PREMIUM</span>
                         </div>
                         <div class="race-info">
@@ -191,6 +191,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div class="confidence">AI分析完了！</div>
                         </div>
                         <a href="/premium-predictions/" class="view-btn">予想を見る</a>
+                    </div>
+
+                    <!-- Premium Sanrenpuku予想（Premium Sanrenpuku/Combo会員専用） -->
+                    <div id="sanrenpuku-predictions" class="prediction-card sanrenpuku" style="display: none;">
+                        <div class="card-header">
+                            <h3>🎯 Premium三連複予想（AI絞り込み）</h3>
+                            <span class="plan-badge sanrenpuku">PREMIUM 三連複</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">全レース（1R-12R）</div>
+                            <div class="confidence">7-9点少点数買い目！</div>
+                        </div>
+                        <a href="/premium-sanrenpuku/" class="view-btn primary">予想を見る（おすすめ）</a>
+                    </div>
+
+                    <!-- Premium Combo用：馬単予想カード -->
+                    <div id="combo-umatan-predictions" class="prediction-card premium" style="display: none;">
+                        <div class="card-header">
+                            <h3>💎 Premium予想（馬単3戦略）</h3>
+                            <span class="plan-badge premium">併用プラン</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">全レース（1R-12R）</div>
+                            <div class="confidence">AI分析完了！</div>
+                        </div>
+                        <a href="/premium-predictions/" class="view-btn">馬単予想を見る</a>
                     </div>
                 </div>
             </div>
@@ -1346,9 +1372,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('standard-predictions').style.display = 'none';
             }
 
-            // Premium予想の表示制御（Premium, Premium Combo, Premium Plusが対象）
-            if (planLower === 'premium' || planLower === 'premium combo' || planLower === 'premium plus') {
-                console.log('Premium予想を表示:', plan);
+            // Premium予想の表示制御（プラン別）
+            if (planLower === 'premium') {
+                // Premium会員：馬単予想のみ
+                console.log('Premium予想を表示（馬単のみ）');
+                document.getElementById('premium-predictions').style.display = 'block';
+            } else if (planLower === 'premium sanrenpuku') {
+                // Premium Sanrenpuku会員：三連複予想のみ
+                console.log('Premium Sanrenpuku予想を表示');
+                document.getElementById('sanrenpuku-predictions').style.display = 'block';
+            } else if (planLower === 'premium combo') {
+                // Premium Combo会員：三連複優先＋馬単も表示
+                console.log('Premium Combo予想を表示（三連複優先）');
+                document.getElementById('sanrenpuku-predictions').style.display = 'block';
+                document.getElementById('combo-umatan-predictions').style.display = 'block';
+            } else if (planLower === 'premium plus') {
+                // Premium Plus会員：Premium予想表示
+                console.log('Premium Plus予想を表示');
                 document.getElementById('premium-predictions').style.display = 'block';
             }
 
@@ -1360,7 +1400,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // 有料会員（Standard/Premium）はログアウトボタン非表示
 
             // アップグレード促進の表示制御（Premium系以外）
-            if (planLower !== 'premium' && planLower !== 'premium combo' && planLower !== 'premium plus') {
+            if (planLower !== 'premium' && planLower !== 'premium combo' && planLower !== 'premium plus' && planLower !== 'premium sanrenpuku') {
                 console.log('アップグレード促進を表示');
                 document.getElementById('upgrade-promotion').style.display = 'block';
             }
