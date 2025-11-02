@@ -112,7 +112,10 @@ try {
                 if (plan === 'standard' || plan === 'スタンダード') {
                     customerStats.standard++;
                     console.log(`Standard判定: "${planValue}"`);
-                } else if (plan === 'premium' || plan === 'プレミアム') {
+                } else if (plan === 'premium' || plan === 'プレミアム' ||
+                           plan === 'premium combo' || plan === 'premiumcombo' || plan === 'プレミアムコンボ' ||
+                           plan === 'premium sanrenpuku' || plan === 'premiumsanrenpuku' || plan === 'プレミアム三連複' ||
+                           plan === 'premium plus' || plan === 'premiumplus' || plan === 'プレミアムプラス') {
                     customerStats.premium++;
                     console.log(`Premium判定: "${planValue}"`);
                 } else if (plan === 'test' || plan === 'テスト') {
