@@ -519,9 +519,9 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
                         return;
                     }
 
-                    // Premium Sanrenpuku または Premium Full 会員の場合 → 予想表示
-                    if (userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Full') {
-                        console.log('✅ Premium Sanrenpuku/Full会員 → 三連複予想表示');
+                    // Premium Sanrenpuku または Premium Combo または Premium Full 会員の場合 → 予想表示
+                    if (userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Combo' || userPlan === 'Premium Full') {
+                        console.log('✅ Premium Sanrenpuku/Combo/Full会員 → 三連複予想表示');
                         orderSection.style.display = 'none';
                         contentSection.style.display = 'block';
                     }
