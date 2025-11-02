@@ -55,18 +55,18 @@ AIが自動判定で買い目を絞り込む三連複がおすすめです！
 ✅ 馬単より的中しやすい券種で安心
 ```
 
-**新価格体系（2025-10-31最終確定）:**
+**新価格体系（2025-11-02最終確定）:**
 ```
-【単独プラン】
+【月額会員プラン】
 - Premium Predictions 馬単のみ: ¥9,980/月
 - Premium Sanrenpuku 三連複のみ: ¥19,820/月
-
-【併用プラン】
 - Premium Combo 馬単+三連複: ¥24,800/月
   （通常¥29,800 → ¥5,000 OFF！）
 
-【超精密1日1鞍プラン】
-- Premium Plus: ¥68,000/月
+【単発商品（会員プランではない）】
+- Premium Plus 三連単1回: ¥68,000/単発
+  ※手動メール配信のみ・専用ページなし
+  ※購入者のPlanは「Premium Sanrenpuku」のまま維持
 ```
 
 **段階的価格設定の実現:**
@@ -115,25 +115,39 @@ AIが自動判定で買い目を絞り込む三連複がおすすめです！
 
 ### 📊 **プラン管理（Airtable）**
 
-**Airtable "Plan" フィールドの値:**
+**Airtable "Plan" フィールドの値（月額会員プランのみ）:**
 ```
 - Free (無料会員)
+- Standard (後半3レース - ¥5,980/月)
 - Premium (馬単のみ - ¥9,980/月)
 - Premium Sanrenpuku (三連複のみ - ¥19,820/月)
 - Premium Combo (馬単+三連複 - ¥24,800/月)
-- Premium Plus (1日1鞍超精密 - ¥68,000/月)
+```
+
+**⚠️ 重要：Premium Plusは会員プランではない**
+```
+Premium Plus（¥68,000/単発）は「Plan」フィールドには入りません。
+- 購入者のPlan: Premium Sanrenpuku
+- 購入履歴: 別フィールド「PremiumPlusPurchased」等で管理
+- 配信方法: 手動メール配信のみ（専用ページなし）
 ```
 
 **アクセス制御ロジック:**
 ```javascript
 // 馬単アクセス判定
-if (plan === 'Premium' || plan === 'Premium Combo' || plan === 'Premium Plus') {
+if (plan === 'Premium' || plan === 'Premium Combo') {
   // premium-predictions.astro アクセス可能
 }
 
 // 三連複アクセス判定
 if (plan === 'Premium Sanrenpuku' || plan === 'Premium Combo') {
   // premium-sanrenpuku.astro アクセス可能
+}
+
+// 三連複アーカイブアクセス判定
+if (plan === 'Standard' || plan === 'Premium') {
+  // archive-sanrenpuku アクセス可能
+  // ※Premium Combo・Premium Sanrenpukuはアクセス不可
 }
 ```
 
@@ -179,12 +193,30 @@ if (plan === 'Premium Sanrenpuku' || plan === 'Premium Combo') {
 4. お客様は購入した商品のみ利用可能
 ```
 
-#### **📋 手動キャンセルチェックリスト**
+**ケース4: Premium Plus（三連単1回 ¥68,000/単発）を購入**
+```
+1. Premium Sanrenpuku会員がStripe Payment Linkから購入
+   ↓
+2. 【マコさんの手動作業】⚠️ Airtableで購入履歴記録
+   - Plan: Premium Sanrenpuku（変更なし）
+   - 別フィールド「PremiumPlusPurchased」等に購入記録
+   - 購入日・購入金額等を記録
+   ↓
+3. 【マコさんの手動作業】⚠️ 三連単買い目を手動メール配信
+   - 専用ページなし（手動メール配信のみ）
+   - 配信後、配信完了フラグを記録
+   ↓
+4. お客様のPlanは「Premium Sanrenpuku」のまま維持
+   - premium-sanrenpuku.astroアクセス継続可能
+```
+
+#### **📋 手動作業チェックリスト**
 マコさんが確認すること：
 - [ ] 新規購入通知を受信
 - [ ] Airtableで既存プラン確認（Premiumがあるか？）
 - [ ] Premiumがある場合 → Stripeで手動キャンセル
 - [ ] Airtableでプラン更新確認（自動更新されているか）
+- [ ] **Premium Plus購入の場合 → 購入履歴記録 + 手動メール配信**
 
 ---
 
@@ -2268,16 +2300,17 @@ const avgRecoveryRate = daysCount > 0 ? Math.round(totalRecoveryRate / daysCount
 
 ---
 
-**📅 最終更新日**: 2025-11-01
-**🏁 Project Phase**: 🎉 **三連複月額商品システム完全稼働！** 🎉
+**📅 最終更新日**: 2025-11-02
+**🏁 Project Phase**: 🎉 **三連複月額商品システム完全稼働！Premium Plus位置付け確定！** 🎉
 **🎯 Next Priority**: 本番運用・マーケティング強化・ユーザー獲得施策
-**📊 価格体系**: Premium ¥9,980 / Sanrenpuku ¥19,820 / Combo ¥24,800 / Plus ¥68,000
+**📊 価格体系**:
+  - 月額会員: Premium ¥9,980 / Sanrenpuku ¥19,820 / Combo ¥24,800
+  - 単発商品: Plus ¥68,000（三連単1回・手動メール配信）
 **✨ 本日の成果**:
-  - ✅ **dashboardプラン変更ボタン完全実装**（Premium 2択・Standard 3択モーダル）
-  - ✅ **Stripe Payment Links作成完了**（¥19,820・¥24,800・¥68,000）
-  - ✅ **Airtableプラン追加完了**（Premium Sanrenpuku・Premium Combo）
-  - ✅ **Zapier設定確認完了**
-  - ✅ 三連複買い目ロジック改善・オッズ基準3パターン化
-  - ✅ 実績数値72%/156%統一・UI改善完了
+  - ✅ **Premium Plus位置付け確定**（会員プランではなく単発商品）
+  - ✅ **Airtable設定整理**（Planフィールドに Premium Plusを含めない）
+  - ✅ **archive-sanrenpukuアクセス制御修正**（Standard/Premiumのみ）
+  - ✅ **運用フロー文書化**（Premium Plus購入時の手順明記）
+  - ✅ **CLAUDE.md完全更新**（正しいプラン定義・アクセス制御）
 
-**🎊 マコさん、三連複月額商品システムが完全稼働しました！素晴らしい成果です！** 💪✨🚀
+**🎊 マコさん、Premium Plusの位置付けが明確になりました！運用フローも完璧です！** 💪✨🚀
