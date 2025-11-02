@@ -1216,22 +1216,31 @@ function parseSimpleInput() {
 
     const lines = input.split('\n').filter(line => line.trim());
     const horses = [];
+    let currentHorse = null;
 
     for (const line of lines) {
-        // 新形式: 1R 8番 33% 3番 32%
-        // パターン: レース番号 馬番 %値 [馬番 %値] ...
-        const newFormatMatch = line.match(/^(\d+)R?\s+(.+)$/);
-        if (newFormatMatch) {
-            const raceNumber = `${newFormatMatch[1]}R`;
-            const horseDataStr = newFormatMatch[2];
+        const trimmedLine = line.trim();
 
-            // 馬番と%値のペアを抽出
-            const horsePattern = /(\d+)番\s+(\d+)%/g;
-            let match;
+        // 新形式チェック: 1R 8番 33% 3番 32%
+        // 馬番と%値のペアが含まれているか確認
+        if (/^\d+R?\s+\d+番\s+\d+%/.test(trimmedLine)) {
+            // 新形式として処理
+            const newFormatMatch = trimmedLine.match(/^(\d+)R?\s+(.+)$/);
+            if (newFormatMatch) {
+                const raceNumber = `${newFormatMatch[1]}R`;
+                const horseDataStr = newFormatMatch[2];
 
-            while ((match = horsePattern.exec(horseDataStr)) !== null) {
-                const horseNumber = match[1];
-                const confidence = match[2];
+                console.log(`🔍 新形式処理: ${raceNumber}, データ: ${horseDataStr}`);
+
+                // 馬番と%値のペアを抽出
+                const horsePattern = /(\d+)番\s+(\d+)%/g;
+                let match;
+
+                while ((match = horsePattern.exec(horseDataStr)) !== null) {
+                    const horseNumber = match[1];
+                    const confidence = match[2];
+
+                    console.log(`  ✅ 抽出: ${horseNumber}番 ${confidence}%`);
 
                 // 馬名を予想データから取得
                 const race = predictionData.races.find(r => r.raceNumber === raceNumber);
@@ -1258,17 +1267,78 @@ function parseSimpleInput() {
                     continue;
                 }
 
-                horses.push({
+                    horses.push({
+                        raceNumber: raceNumber,
+                        raceName: race.raceName || '',
+                        horseNumber: horseNumber,
+                        horseName: horse.name,
+                        reason: '',
+                        confidence: `${confidence}%`
+                    });
+                }
+            }
+        } else {
+            // 従来形式の処理
+            // レース番号と馬番（例: 1R 3）
+            const raceMatch = trimmedLine.match(/^(\d+)R?\s+(\d+)$/);
+            if (raceMatch) {
+                if (currentHorse) horses.push(currentHorse);
+
+                const raceNumber = `${raceMatch[1]}R`;
+                const horseNumber = raceMatch[2];
+
+                console.log(`🔍 従来形式処理: ${raceNumber} ${horseNumber}番`);
+
+                // 馬名を予想データから取得
+                const race = predictionData.races.find(r => r.raceNumber === raceNumber);
+
+                // horsesオブジェクトから指定された馬番の馬を検索
+                let horse = null;
+                if (race && race.horses) {
+                    const allHorses = [];
+                    if (race.horses.main) allHorses.push(race.horses.main);
+                    if (race.horses.sub) allHorses.push(race.horses.sub);
+                    if (race.horses.hole1) allHorses.push(race.horses.hole1);
+                    if (race.horses.hole2) allHorses.push(race.horses.hole2);
+                    if (race.horses.connect && Array.isArray(race.horses.connect)) {
+                        allHorses.push(...race.horses.connect);
+                    }
+                    if (race.horses.reserve && Array.isArray(race.horses.reserve)) {
+                        allHorses.push(...race.horses.reserve);
+                    }
+                    horse = allHorses.find(h => String(h.number) === String(horseNumber));
+                }
+
+                if (!horse) {
+                    alert(`${raceNumber} ${horseNumber}番の馬が見つかりません`);
+                    continue;
+                }
+
+                currentHorse = {
                     raceNumber: raceNumber,
                     raceName: race.raceName || '',
                     horseNumber: horseNumber,
                     horseName: horse.name,
                     reason: '',
-                    confidence: `${confidence}%`
-                });
+                    confidence: '50%'
+                };
+            }
+            // %値（例: 85, 85%）
+            else if (trimmedLine.match(/^\d+%?$/)) {
+                if (currentHorse) {
+                    const confidence = trimmedLine.replace('%', '');
+                    currentHorse.confidence = `${confidence}%`;
+                }
+            }
+            // 理由（それ以外のテキスト）
+            else if (currentHorse && trimmedLine) {
+                currentHorse.reason += (currentHorse.reason ? ' ' : '') + trimmedLine;
             }
         }
     }
+
+    // 最後の馬を追加
+    if (currentHorse) horses.push(currentHorse);
 
     if (horses.length === 0) {
         alert('有効なデータが見つかりませんでした');
@@ -1409,19 +1479,42 @@ function getRaceNameFromNumber(raceNumber, track) {
 // プレビュー表示
 function displayPreview(races) {
     const previewContent = document.getElementById('previewContent');
-    previewContent.innerHTML = races.map(race => `
-        <div class="race-preview">
-            <div class="race-preview-header">
-                <span class="race-number-badge">${race.raceNumber}</span>
-                <span class="confidence-badge">${race.confidence}</span>
+
+    // レース番号でグループ化
+    const groupedByRace = {};
+    races.forEach(horse => {
+        if (!groupedByRace[horse.raceNumber]) {
+            groupedByRace[horse.raceNumber] = [];
+        }
+        groupedByRace[horse.raceNumber].push(horse);
+    });
+
+    // グループごとに表示
+    const sortedRaceNumbers = Object.keys(groupedByRace).sort((a, b) => {
+        const numA = parseInt(a.replace('R', ''));
+        const numB = parseInt(b.replace('R', ''));
+        return numA - numB;
+    });
+
+    previewContent.innerHTML = sortedRaceNumbers.map(raceNumber => {
+        const horses = groupedByRace[raceNumber];
+        return `
+            <div class="race-preview">
+                <div class="race-preview-header">
+                    <span class="race-number-badge">${raceNumber}</span>
+                    <span style="color: #94a3b8; font-size: 0.9rem;">${horses.length}頭</span>
+                </div>
+                ${horses.map(horse => `
+                    <div class="horse-info" style="margin-bottom: 8px;">
+                        <span class="horse-number">${horse.horseNumber}番</span>
+                        <span class="horse-name">${horse.horseName}</span>
+                        <span class="confidence-badge">${horse.confidence}</span>
+                    </div>
+                    ${horse.reason ? `<div class="reason-text">💡 ${horse.reason}</div>` : ''}
+                `).join('')}
             </div>
-            <div class="horse-info">
-                <span class="horse-number">${race.horseNumber}番</span>
-                <span class="horse-name">${race.horseName}</span>
-            </div>
-            ${race.reason ? `<div class="reason-text">💡 ${race.reason}</div>` : ''}
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // JSON生成
