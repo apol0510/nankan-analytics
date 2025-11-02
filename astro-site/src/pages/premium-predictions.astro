@@ -5,6 +5,7 @@ import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, processUnifiedRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
+import { convertToSanrenpukuYesterdayResults, getLatestSanrenpukuDayData } from '../lib/archive-utils.js';
 
 // 共有ロジックを使用してデータを処理（元のデータを直接使用）
 const { mainRace, race12R, sortedRaces } = processRaceData(allRacesData);
@@ -81,6 +82,10 @@ if (highConfidenceRaces.length >= 3) {
     autoInsight = '本日はバランスの取れたレース構成です。各レースのAI信頼度を確認しながら、適切な戦略モデルをお選びください。';
 }
 
+// ✅ 三連複昨日の的中結果データ取得（Premium会員のみ表示）
+const sanrenpukuYesterdayResults = convertToSanrenpukuYesterdayResults();
+const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
+
 ---
 
 <BaseLayout title={`プレミアム予想 | ${raceInfo.title}`} description={`AI技術による${raceInfo.track}競馬${raceInfo.raceName}の詳細分析。機械学習モデルによる高精度予想の有料版を提供中。`}>
@@ -130,6 +135,85 @@ if (highConfidenceRaces.length >= 3) {
             <span class="premium-icon">👑</span>
             <span class="premium-status-text">プレミアム会員限定コンテンツ</span>
         </div>
+
+        <!-- 三連複昨日の結果セクション（Premium会員のみ表示） -->
+        <div id="sanrenpuku-yesterday-results" style="display: none;">
+            {sanrenpukuYesterdayResults && sanrenpukuLatestResult && (
+                <section style="padding: 60px 20px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); margin-bottom: 60px;">
+                    <div class="container" style="max-width: 1200px; margin: 0 auto;">
+                        <div style="text-align: center; margin-bottom: 40px;">
+                            <h2 style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px;">
+                                🏆 三連複 昨日の的中結果
+                            </h2>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                                <p style="color: #fbbf24; font-size: 1.5rem; font-weight: 600; margin: 0;">
+                                    {sanrenpukuYesterdayResults.date} {sanrenpukuYesterdayResults.track}
+                                </p>
+                                {sanrenpukuYesterdayResults.hitRate === 100 && (
+                                    <div style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">
+                                        🏆 {sanrenpukuYesterdayResults.hitCount}/{sanrenpukuYesterdayResults.totalCount}的中
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <!-- 的中サマリー -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 30px;">
+                            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 15px 25px;">
+                                <span style="color: #94a3b8; font-size: 0.9rem;">📊 的中率:</span>
+                                <span style="color: #60a5fa; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">{sanrenpukuYesterdayResults.hitRate}%</span>
+                            </div>
+                            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 15px 25px;">
+                                <span style="color: #94a3b8; font-size: 0.9rem;">📈 回収率:</span>
+                                <span style="color: #a78bfa; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">{sanrenpukuYesterdayResults.recoveryRate}%</span>
+                            </div>
+                            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px 25px;">
+                                <span style="color: #94a3b8; font-size: 0.9rem;">🎯 合計購入点数:</span>
+                                <span style="color: #10b981; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">{sanrenpukuYesterdayResults.totalBetPoints}点</span>
+                            </div>
+                            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 15px 25px;">
+                                <span style="color: #94a3b8; font-size: 0.9rem;">💰 合計配当:</span>
+                                <span style="color: #fbbf24; font-weight: bold; font-size: 1.1rem; margin-left: 8px;">¥{sanrenpukuYesterdayResults.totalPayout.toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        <!-- レース一覧 -->
+                        <div style="display: grid; gap: 12px;">
+                            {sanrenpukuLatestResult?.races?.map((raceDetail) =>
+                                raceDetail.hit ? (
+                                    <div class="yesterday-race-card">
+                                        <div class="yesterday-race-info">
+                                            <div class="yesterday-race-number">{raceDetail.raceNumber}</div>
+                                            <div class="yesterday-race-name">{raceDetail.raceName}</div>
+                                        </div>
+                                        <div class="yesterday-race-result">
+                                            <div class="yesterday-hit-badge">✅ 的中</div>
+                                            <div class="yesterday-bet-info">{raceDetail.betType}{raceDetail.betPoints}点</div>
+                                            <div class="yesterday-payout">¥{raceDetail.payout.toLocaleString()}</div>
+                                        </div>
+                                    </div>
+                                ) : null
+                            )}
+                        </div>
+                    </div>
+                </section>
+            )}
+        </div>
+
+        <script is:inline>
+            // Premium会員のみ三連複昨日の結果を表示
+            (function() {
+                const userPlan = localStorage.getItem('user_plan');
+                const sanrenpukuSection = document.getElementById('sanrenpuku-yesterday-results');
+
+                if (sanrenpukuSection) {
+                    // Premium会員のみ表示（Premium Sanrenpuku・Premium Comboは非表示）
+                    if (userPlan === 'Premium') {
+                        sanrenpukuSection.style.display = 'block';
+                    }
+                }
+            })();
+        </script>
 
         <!-- 買い目モデルの選び方ガイド（アコーディオン） -->
         <div class="betting-guide-card accordion">

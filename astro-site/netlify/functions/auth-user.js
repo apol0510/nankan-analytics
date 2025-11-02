@@ -244,17 +244,29 @@ function normalizePlan(planValue) {
   switch (planLower) {
     case 'premium':
     case 'プレミアム':
-      return 'premium';
+      return 'Premium';
+    case 'premium combo':
+    case 'premiumcombo':
+    case 'プレミアムコンボ':
+      return 'Premium Combo';
+    case 'premium sanrenpuku':
+    case 'premiumsanrenpuku':
+    case 'プレミアム三連複':
+      return 'Premium Sanrenpuku';
+    case 'premium plus':
+    case 'premiumplus':
+    case 'プレミアムプラス':
+      return 'Premium Plus';
     case 'standard':
     case 'スタンダード':
-      return 'standard';
+      return 'Standard';
     case 'free':
     case 'フリー':
     case '無料':
-      return 'free';
+      return 'Free';
     default:
-      console.warn(`⚠️ 未知のプラン値: "${planValue}" -> デフォルト 'free'`);
-      return 'free';
+      console.warn(`⚠️ 未知のプラン値: "${planValue}" -> デフォルト 'Free'`);
+      return 'Free';
   }
 }
 

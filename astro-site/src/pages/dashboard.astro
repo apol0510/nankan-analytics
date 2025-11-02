@@ -711,25 +711,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 'standard': '⚡ Standard会員',
                 'Standard': '⚡ Standard会員',
                 'premium': '💎 Premium会員',
-                'Premium': '💎 Premium会員'
+                'Premium': '💎 Premium会員',
+                'Premium Combo': '🌟 Premium Combo会員',
+                'premium combo': '🌟 Premium Combo会員',
+                'Premium Sanrenpuku': '🎯 Premium Sanrenpuku会員',
+                'premium sanrenpuku': '🎯 Premium Sanrenpuku会員',
+                'Premium Plus': '👑 Premium Plus会員',
+                'premium plus': '👑 Premium Plus会員'
             };
-            
+
             const planIcons = {
                 'free': '🎁',
                 'Free': '🎁',
                 'standard': '⚡',
                 'Standard': '⚡',
                 'premium': '💎',
-                'Premium': '💎'
+                'Premium': '💎',
+                'Premium Combo': '🌟',
+                'premium combo': '🌟',
+                'Premium Sanrenpuku': '🎯',
+                'premium sanrenpuku': '🎯',
+                'Premium Plus': '👑',
+                'premium plus': '👑'
             };
-            
+
             const planBadgeTexts = {
                 'free': 'FREE',
                 'Free': 'FREE',
                 'standard': 'STANDARD',
                 'Standard': 'STANDARD',
                 'premium': 'PREMIUM',
-                'Premium': 'PREMIUM'
+                'Premium': 'PREMIUM',
+                'Premium Combo': 'PREMIUM COMBO',
+                'premium combo': 'PREMIUM COMBO',
+                'Premium Sanrenpuku': 'PREMIUM 三連複',
+                'premium sanrenpuku': 'PREMIUM 三連複',
+                'Premium Plus': 'PREMIUM PLUS',
+                'premium plus': 'PREMIUM PLUS'
             };
             
             // メインステータス更新
@@ -1307,9 +1325,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // プラン別コンテンツ表示
         function showPlanContent(plan) {
             console.log('showPlanContent 呼び出し:', plan);
-            
+
             const planLower = (plan || '').toLowerCase();
-            
+
             // 無料予想の表示制御
             if (planLower === 'free' || planLower === '' || !planLower) {
                 console.log('無料予想を表示（Free会員）');
@@ -1318,7 +1336,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 console.log('無料予想を非表示（有料会員）');
                 document.getElementById('free-predictions').style.display = 'none';
             }
-            
+
             // Standard予想の表示制御（Standard会員のみ）
             if (planLower === 'standard') {
                 console.log('Standard予想を表示');
@@ -1327,13 +1345,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 console.log('Standard予想を非表示');
                 document.getElementById('standard-predictions').style.display = 'none';
             }
-            
-            // Premium予想の表示制御
-            if (planLower === 'premium') {
-                console.log('Premium予想を表示');
+
+            // Premium予想の表示制御（Premium, Premium Combo, Premium Plusが対象）
+            if (planLower === 'premium' || planLower === 'premium combo' || planLower === 'premium plus') {
+                console.log('Premium予想を表示:', plan);
                 document.getElementById('premium-predictions').style.display = 'block';
             }
-            
+
             // プラン管理の表示制御（無料会員のみ）
             if (planLower === 'free') {
                 console.log('プラン管理を表示（無料会員）');
@@ -1341,8 +1359,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             }
             // 有料会員（Standard/Premium）はログアウトボタン非表示
 
-            // アップグレード促進の表示制御
-            if (planLower !== 'premium') {
+            // アップグレード促進の表示制御（Premium系以外）
+            if (planLower !== 'premium' && planLower !== 'premium combo' && planLower !== 'premium plus') {
                 console.log('アップグレード促進を表示');
                 document.getElementById('upgrade-promotion').style.display = 'block';
             }

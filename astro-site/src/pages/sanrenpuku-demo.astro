@@ -100,6 +100,35 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
 ---
 
 <BaseLayout title={title} description={description}>
+    <script is:inline>
+        // アクセス制御: Free・Premium Sanrenpuku・Premium Comboは閲覧不可
+        (function() {
+            const userEmail = localStorage.getItem('user_email');
+            const userPlan = localStorage.getItem('user_plan');
+
+            // ログインチェック
+            if (!userEmail || !userPlan) {
+                alert('ログインが必要です');
+                window.location.href = '/';
+                return;
+            }
+
+            // Free・Premium Sanrenpuku・Premium Comboは閲覧不可
+            if (userPlan === 'Free' || userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Combo') {
+                alert('このページはPremium会員またはStandard会員専用です');
+                window.location.href = '/dashboard';
+                return;
+            }
+
+            // Premium・Standardのみアクセス可能
+            if (userPlan !== 'Premium' && userPlan !== 'Standard') {
+                alert('アクセス権限がありません');
+                window.location.href = '/dashboard';
+                return;
+            }
+        })();
+    </script>
+
     <div class="sample-page-container">
         <!-- ヘッダー -->
         <div class="sample-header">

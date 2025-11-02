@@ -5,9 +5,9 @@ import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
-import { convertToYesterdayResults } from '../lib/archive-utils.js';
+import { convertToSanrenpukuYesterdayResults, getLatestSanrenpukuDayData } from '../lib/archive-utils.js';
 import { getRaceTier, PLAN_ACCESS } from '../lib/race-config.js';
-import archiveResults from '../data/archiveResults.json';
+import archiveSanrenpukuResults from '../data/archiveSanrenpukuResults.json';
 
 // 🛡️ 復活防止対策: processRaceDataのエラーハンドリング強化
 let mainRace, race12R, sortedRaces;
@@ -50,34 +50,11 @@ const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(rac
     return standardRaceNumbers.includes(raceNum);
 });
 
-// ✅ archiveResults.jsonから自動取得するyesterdayResults
-export const yesterdayResults = convertToYesterdayResults();
+// ✅ archiveSanrenpukuResults.jsonから自動取得するyesterdayResults（三連複）
+export const yesterdayResults = convertToSanrenpukuYesterdayResults();
 
-// archiveResults.jsonから最新日の詳細データを取得
-function getLatestDayData() {
-    const years = Object.keys(archiveResults).sort().reverse();
-    if (years.length === 0) return null;
-
-    const latestYear = years[0];
-    const months = Object.keys(archiveResults[latestYear]).sort().reverse();
-    if (months.length === 0) return null;
-
-    const latestMonth = months[0];
-    const days = Object.keys(archiveResults[latestYear][latestMonth]).sort().reverse();
-    if (days.length === 0) return null;
-
-    const latestDay = days[0];
-    const dayData = archiveResults[latestYear][latestMonth][latestDay];
-
-    return {
-        year: latestYear,
-        month: latestMonth,
-        day: latestDay,
-        ...dayData
-    };
-}
-
-const latestResult = getLatestDayData();
+// archiveSanrenpukuResults.jsonから最新日の詳細データを取得
+const latestResult = getLatestSanrenpukuDayData();
 
 
 
