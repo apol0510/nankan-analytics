@@ -103,13 +103,25 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
     <script is:inline>
         // アクセス制御: Premium Sanrenpuku・Premium Comboは既に購入済みのため閲覧不可
         (function() {
-            const userPlan = localStorage.getItem('user_plan');
+            // LocalStorageからuser-planデータ取得（JSON形式）
+            const userPlanData = localStorage.getItem('user-plan');
 
-            // Premium Sanrenpuku・Premium Comboは閲覧不可（既に三連複を購入済み）
-            if (userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Combo') {
-                alert('既に三連複をご利用中のため、このページは表示できません');
-                window.location.href = '/premium-sanrenpuku';
-                return;
+            if (userPlanData) {
+                try {
+                    const userData = JSON.parse(userPlanData);
+                    const userPlan = userData.plan;
+
+                    console.log('🔍 sanrenpuku-demo アクセスチェック:', userPlan);
+
+                    // Premium Sanrenpuku・Premium Comboは閲覧不可（既に三連複を購入済み）
+                    if (userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Combo') {
+                        alert('既に三連複をご利用中のため、このページは表示できません');
+                        window.location.href = '/premium-sanrenpuku';
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('user-plan解析エラー:', e);
+                }
             }
 
             // Free・Standard・Premium・未ログインはアクセス可能（購入前の体験として）
