@@ -1154,7 +1154,7 @@ function addHorseFromDropdown() {
         raceNumber: raceNumber,
         raceName: race.raceName || '',
         horseNumber: horse.number,
-        horseName: horse.name,
+        horseName: horse.name.trim(),
         reason: reason,
         confidence: `${confidenceValue}%`
     };
@@ -1271,7 +1271,7 @@ function parseSimpleInput() {
                         raceNumber: raceNumber,
                         raceName: race.raceName || '',
                         horseNumber: horseNumber,
-                        horseName: horse.name,
+                        horseName: horse.name.trim(),
                         reason: '',
                         confidence: `${confidence}%`
                     });
@@ -1318,7 +1318,7 @@ function parseSimpleInput() {
                     raceNumber: raceNumber,
                     raceName: race.raceName || '',
                     horseNumber: horseNumber,
-                    horseName: horse.name,
+                    horseName: horse.name.trim(),
                     reason: '',
                     confidence: '50%'
                 };
