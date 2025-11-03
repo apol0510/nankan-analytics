@@ -1035,25 +1035,21 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
                         </div>
 
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                            {sanrenpukuLatestResult.races && sanrenpukuLatestResult.races.map(race => (
-                                <div class="yesterday-race-card">
-                                    <div class="yesterday-race-info">
-                                        <div class="yesterday-race-number">{race.raceNumber}</div>
-                                        <div class="yesterday-race-name">{race.raceName}</div>
+                            {sanrenpukuLatestResult.races && sanrenpukuLatestResult.races.map(race =>
+                                race.isHit ? (
+                                    <div class="yesterday-race-card">
+                                        <div class="yesterday-race-info">
+                                            <div class="yesterday-race-number">{race.raceNumber}</div>
+                                            <div class="yesterday-race-name">{race.raceName}</div>
+                                        </div>
+                                        <div class="yesterday-race-result">
+                                            <div class="yesterday-bet-info">三連複 {race.betPoints}点</div>
+                                            <div class="yesterday-hit-badge">✅ 的中</div>
+                                            <div class="yesterday-payout">¥{race.payout?.toLocaleString()}</div>
+                                        </div>
                                     </div>
-                                    <div class="yesterday-race-result">
-                                        <div class="yesterday-bet-info">三連複 {race.betPoints}点</div>
-                                        {race.isHit ? (
-                                            <>
-                                                <div class="yesterday-hit-badge">✅ 的中</div>
-                                                <div class="yesterday-payout">¥{race.payout?.toLocaleString()}</div>
-                                            </>
-                                        ) : (
-                                            <div style="color: #94a3b8; font-size: 0.9rem;">不的中</div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
+                                ) : null
+                            )}
                         </div>
                     </>
                 )}
