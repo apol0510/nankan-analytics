@@ -1749,6 +1749,100 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         border-radius: 10px;
         background: rgba(255, 255, 255, 0.05);
     }
+
+    /* 昨日の的中結果レースカード用スタイル（archive統一デザイン） */
+    .yesterday-race-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(100, 116, 139, 0.3);
+        border-radius: 8px;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s;
+    }
+
+    .yesterday-race-card:hover {
+        border-color: rgba(16, 185, 129, 0.5);
+        background: rgba(15, 23, 42, 0.8);
+    }
+
+    .yesterday-race-info {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex: 1;
+        flex-wrap: wrap;
+    }
+
+    .yesterday-race-number {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #fbbf24;
+        min-width: 3rem;
+    }
+
+    .yesterday-race-name {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 400;
+        opacity: 0.8;
+    }
+
+    .yesterday-race-result {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .yesterday-bet-info {
+        color: #8b5cf6;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .yesterday-hit-badge {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .yesterday-payout {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #fbbf24;
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+        .yesterday-race-card {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 12px 15px;
+        }
+
+        .yesterday-race-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .yesterday-race-name {
+            grid-column: 1 / -1;
+        }
+
+        .yesterday-race-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
 </style>
 
 <script is:inline>
