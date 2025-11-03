@@ -257,6 +257,45 @@ AccessControl.astroに'Premium Plus'を追加 → 三連複全予想が見えて
 - Zapier設定で「Update existing record」→「Add field value」に変更
 - 定期的にAirtable Planフィールドの整合性チェック
 
+---
+
+#### **🚨 プラン別アクセス制御問題と修正（2025-11-03追加対応）**
+
+**問題報告2:**
+- Premium Sanrenpuku会員（三連複のみ ¥19,820）が馬単（premium-predictions）を閲覧できてしまう
+- 期待動作：三連複のみ閲覧可能、馬単は閲覧不可
+
+**根本原因:**
+- AccessControl.astroの馬単アクセス制御で`userLevel >= 2`を使用
+- Premium Sanrenpuku（level 2）も馬単にアクセスできてしまった
+- 三連複アクセス制御で`userLevel >= 3`を使用（これも不正確）
+
+**修正完了（2025-11-03）:**
+```javascript
+// ❌ 修正前：userLevelで判定（不正確）
+userLevel >= 2  // Premium Sanrenpuku（level 2）も含まれてしまう
+
+// ✅ 修正後：明示的なプラン名で判定（正確）
+userPlan === 'Premium' ||
+userPlan === 'premium' ||
+userPlan === 'Premium Predictions' ||
+userPlan === 'Premium Combo'
+// Premium Sanrenpukuは含まれない
+```
+
+**正しいアクセス制御（最終確定）:**
+```
+【馬単（premium-predictions.astro）】
+- Premium / Premium Predictions: アクセス可能
+- Premium Combo: アクセス可能
+- Premium Sanrenpuku: アクセス不可 ✅
+
+【三連複（premium-sanrenpuku.astro）】
+- Premium Sanrenpuku: アクセス可能
+- Premium Combo: アクセス可能
+- Premium / Premium Predictions: アクセス不可 ✅
+```
+
 #### **📋 手動作業チェックリスト**
 マコさんが確認すること：
 - [ ] 新規購入通知を受信
