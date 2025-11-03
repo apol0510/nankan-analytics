@@ -333,7 +333,7 @@ const yearSummaries = years.map(year => {
     <!-- 年別アーカイブ -->
     <div class="years-grid">
       {yearSummaries.map(summary => (
-        <a href={`/archive/${summary.year}/${summary.latestMonth}/`} class="year-card">
+        <a href={`/archive/${summary.year}/`} class="year-card">
           <div class="year-header">
             <h2 class="year-title">{summary.year}年</h2>
             {summary.hitRate === 100 && (
