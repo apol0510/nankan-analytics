@@ -1100,11 +1100,48 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         // 🔒 三連複昨日の結果・アクセス制御（Standard/Premium会員のみ表示）
         const sanrenpukuResultsSection = document.getElementById('sanrenpuku-yesterday-results');
         if (sanrenpukuResultsSection) {
-            const userPlan = localStorage.getItem('user-plan');
+            // AccessControlコンポーネントと同じロジックでプラン取得
+            let userPlan = null;
+
+            // 1. test_subscription_*（本番で実際に使用中）
+            const testSubscriptionKeys = Object.keys(localStorage).filter(key => key.startsWith('test_subscription_'));
+            if (testSubscriptionKeys.length > 0) {
+                try {
+                    const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
+                    userPlan = testData.planType;
+                    console.log('📦 プラン検出（test_subscription）:', userPlan);
+                } catch (error) {
+                    console.error('Test subscription parsing error:', error);
+                }
+            }
+
+            // 2. user-plan（新形式・JSON）
+            if (!userPlan) {
+                const userPlanData = localStorage.getItem('user-plan');
+                if (userPlanData) {
+                    try {
+                        const userData = JSON.parse(userPlanData);
+                        userPlan = userData.plan;
+                        console.log('📦 プラン検出（user-plan）:', userPlan);
+                    } catch (error) {
+                        // JSON parseに失敗したら文字列として扱う
+                        userPlan = userPlanData;
+                        console.log('📦 プラン検出（user-plan・文字列）:', userPlan);
+                    }
+                }
+            }
+
+            // 3. userPlan（旧形式互換）
+            if (!userPlan) {
+                userPlan = localStorage.getItem('userPlan');
+                console.log('📦 プラン検出（userPlan）:', userPlan);
+            }
+
+            console.log('🔍 最終プラン判定:', userPlan);
 
             // Standard または Premium 会員のみ表示
             // ※Premium Combo・Premium Sanrenpukuは非表示（アーカイブアクセス不可）
-            if (userPlan === 'Standard' || userPlan === 'Premium') {
+            if (userPlan === 'Standard' || userPlan === 'Premium' || userPlan === 'premium') {
                 sanrenpukuResultsSection.style.display = 'block';
                 console.log('✅ 三連複昨日の結果表示: ' + userPlan + '会員');
             } else {
