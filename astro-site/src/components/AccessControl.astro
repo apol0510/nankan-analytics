@@ -290,12 +290,10 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         // 三連複専用ページの特殊処理
         if (requiredPlan === 'Premium Sanrenpuku') {
             const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
-            // Premium Sanrenpuku または Premium Combo または Premium Plus でアクセス可能
-            // ⚠️ Premium Plus は本来単発商品だが、誤ってPlanに設定された場合のフォールバック
+            // Premium Sanrenpuku または Premium Combo でアクセス可能
             const canAccess = hasValidUser && (
                 userPlan === 'Premium Sanrenpuku' ||
                 userPlan === 'Premium Combo' ||
-                userPlan === 'Premium Plus' ||
                 userLevel >= 3
             );
             console.log(`🐎 三連複アクセスチェック:`, canAccess, { userPlan, hasValidUser });
@@ -305,14 +303,12 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         // 馬単専用ページの特殊処理（premium, Premium, Premium Predictions）
         if (requiredPlan === 'premium' || requiredPlan === 'Premium' || requiredPlan === 'Premium Predictions') {
             const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
-            // Premium Predictions または Premium Combo または Premium Plus でアクセス可能
-            // ⚠️ Premium Plus は本来単発商品だが、誤ってPlanに設定された場合のフォールバック
+            // Premium Predictions または Premium Combo でアクセス可能
             const canAccess = hasValidUser && (
                 userPlan === 'Premium' ||
                 userPlan === 'premium' ||
                 userPlan === 'Premium Predictions' ||
                 userPlan === 'Premium Combo' ||
-                userPlan === 'Premium Plus' ||
                 userLevel >= 2
             );
             console.log(`🏇 馬単アクセスチェック:`, canAccess, { userPlan, hasValidUser });
