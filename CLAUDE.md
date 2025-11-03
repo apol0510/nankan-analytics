@@ -210,6 +210,43 @@ if (plan === 'Standard' || plan === 'Premium') {
    - premium-sanrenpuku.astroアクセス継続可能
 ```
 
+#### **🚨 Premium Plus誤設定問題と対応（2025-11-03）**
+
+**問題報告:**
+- Premium Combo会員がPremium Plusを購入
+- AirtableのPlanが「Premium Plus」に上書きされた
+- 結果：馬単・三連複の両方が閲覧できなくなった
+
+**根本原因:**
+- Zapierが Premium Plus購入時にPlanを「Premium Plus」に変更
+- Premium Plusは「単発商品」であり、Planフィールドに入れるべきではない
+- 本来は元のプラン（Premium Combo等）を維持すべき
+
+**緊急対応完了（2025-11-03）:**
+```
+1. ✅ AccessControl.astro修正
+   - 三連複アクセス制御に'Premium Plus'を明示的に追加
+   - 馬単アクセス制御に'Premium Plus'を明示的に追加
+   - → Premium Plus会員も馬単・三連複にアクセス可能に
+
+2. ✅ premium-sanrenpuku.astro修正
+   - requiredPlanを"Premium"→"Premium Sanrenpuku"に変更
+   - → 正しいアクセス制御に修正
+```
+
+**根本対応手順（マコさんの作業）:**
+```
+1. Airtableで該当お客様のレコードを検索
+2. Planフィールドを「Premium Combo」に戻す
+3. 新規フィールド「PremiumPlusPurchased」を作成・購入日記録
+4. Zapier設定を確認・Premium Plus購入時にPlan上書きしないように設定
+```
+
+**今後の防止策:**
+- Premium Plus購入時はPlanを変更せず、別フィールドに記録
+- Zapier設定で「Update if exists」ではなく「Create new field」を使用
+- 定期的にAirtable Planフィールドの整合性チェック
+
 #### **📋 手動作業チェックリスト**
 マコさんが確認すること：
 - [ ] 新規購入通知を受信
