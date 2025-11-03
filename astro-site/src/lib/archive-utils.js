@@ -102,7 +102,7 @@ export function getLatestSanrenpukuDayData() {
         year: latestYear,
         month: latestMonth,
         day: latestDay,
-        date: `${latestMonth}/${latestDay}`,  // HTML template用の日付文字列
+        date: `${parseInt(latestMonth)}月${parseInt(latestDay)}日`,  // HTML template用の日付文字列（例: 11月3日）
         hitRate: hitRate,  // 的中率（%）
         totalBetPoints: totalBetPoints,  // 合計購入点数
         ...dayData,
