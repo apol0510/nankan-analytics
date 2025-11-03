@@ -88,11 +88,25 @@ export function getLatestSanrenpukuDayData() {
     const latestDay = days[0];
     const dayData = archiveSanrenpukuResults[latestYear][latestMonth][latestDay];
 
+    // HTML template用に必要なプロパティを追加
+    const totalBetPoints = dayData.races ? dayData.races.reduce((sum, race) => sum + (race.betPoints || 0), 0) : 0;
+    const hitRate = dayData.totalRaces > 0 ? Math.round((dayData.hitRaces / dayData.totalRaces) * 100) : 0;
+
+    // races配列にisHitプロパティを追加（hitと同じ値）
+    const racesWithIsHit = dayData.races ? dayData.races.map(race => ({
+        ...race,
+        isHit: race.hit  // HTMLテンプレートはisHitを期待している
+    })) : [];
+
     return {
         year: latestYear,
         month: latestMonth,
         day: latestDay,
-        ...dayData
+        date: `${latestMonth}/${latestDay}`,  // HTML template用の日付文字列
+        hitRate: hitRate,  // 的中率（%）
+        totalBetPoints: totalBetPoints,  // 合計購入点数
+        ...dayData,
+        races: racesWithIsHit  // isHitプロパティを追加したraces配列
     };
 }
 
