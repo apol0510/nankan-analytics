@@ -1,0 +1,913 @@
+---
+export const prerender = true;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="三連複結果管理システム" description="三連複の的中結果を入力してarchiveSanrenpukuResults.json用データを自動生成">
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🎯 三連複結果管理システム</h1>
+            <p style="font-size: 1.1rem; margin-bottom: 25px;">昨日の三連複的中結果をアーカイブシステムに自動登録するツールです</p>
+
+            <!-- 使い方手順 -->
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 30px; text-align: left;">
+                <h2 style="color: #10b981; margin-bottom: 15px; font-size: 1.3rem;">📖 使い方手順</h2>
+
+                <div style="display: grid; gap: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
+                        <div>
+                            <strong style="color: #10b981; font-size: 1rem;">昨日の結果データを貼り付け</strong>
+                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
+                                三連複結果データ（例：１Ｒ 三連複　2.490円 的中！　２Ｒ 三連複　不的中...）を下の「昨日の的中結果入力」欄に貼り付け
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</div>
+                        <div>
+                            <strong style="color: #10b981; font-size: 1rem;">「📈 解析実行」ボタンをクリック</strong>
+                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
+                                データが自動解析され、プレビューが表示されます
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</div>
+                        <div>
+                            <strong style="color: #10b981; font-size: 1rem;">レース名を一括入力</strong>
+                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
+                                premium-sanrenpukuページから全レース名をコピーして、「⚡ 一括入力」欄に貼り付け →「⚡ 一括適用」ボタンをクリック
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">4</div>
+                        <div>
+                            <strong style="color: #10b981; font-size: 1rem;">点数を確認・調整</strong>
+                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
+                                各レースの三連複点数（デフォルト9点）を確認・必要に応じて7-9点の範囲で調整
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">5</div>
+                        <div>
+                            <strong style="color: #10b981; font-size: 1rem;">アーカイブJSON生成 → コピー</strong>
+                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
+                                「🏆 アーカイブJSON生成」ボタンをクリック → 生成されたJSONコードを「📋 コピー」
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">6</div>
+                        <div style="flex: 1;">
+                            <strong style="color: #8b5cf6; font-size: 1rem;">GitHubで編集して本番反映</strong>
+                            <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem; margin-bottom: 10px;">
+                                下の「🌐 GitHubで編集（本番反映）」ボタンをクリック → archiveSanrenpukuResults.jsonが開きます → 該当月のデータ内に貼り付け → 下部の「Commit changes」で本番反映完了！
+                            </p>
+                            <a href="https://github.com/apol0510/nankan-analytics/edit/main/astro-site/src/data/archiveSanrenpukuResults.json"
+                               target="_blank"
+                               style="display: inline-block; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; margin-top: 5px;">
+                                🌐 GitHubで編集（本番反映）
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 8px;">
+                    <strong style="color: #8b5cf6;">💡 重要ポイント（JSONエラー防止）</strong>
+                    <ul style="margin-top: 10px; padding-left: 20px; color: var(--accent-text-color); font-size: 0.9rem;">
+                        <li style="margin-bottom: 8px;"><strong style="color: #8b5cf6;">✅ カンマ確認:</strong> 既存の最新データの } の後に <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">,</code>（カンマ）があることを必ず確認</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #8b5cf6;">✅ インデント:</strong> 2スペース統一（タブNG）・生成されたJSONをそのまま貼り付け</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #8b5cf6;">✅ 括弧確認:</strong> 貼り付け後、{ } の開閉が正しいか目視確認</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #8b5cf6;">✅ プレビュー:</strong> GitHubエディタ上部の「Preview」タブでシンタックスエラーを確認</li>
+                        <li style="margin-bottom: 5px;">編集後、ページ下部の「Commit changes」ボタンをクリックすると本番反映されます（1-2分後）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 昨日の結果入力 -->
+        <div class="input-section">
+            <h2>📊 昨日の三連複的中結果入力</h2>
+            <div class="input-group">
+                <label for="dailyData">三連複結果データを貼り付けてください：</label>
+                <textarea
+                    id="dailyData"
+                    placeholder="１１/３船橋競馬　三連複結果
+１Ｒ 三連複　2.490円 的中！
+２Ｒ 三連複　不的中
+３Ｒ 三連複　280円 的中！
+..."
+                    rows="15"
+                ></textarea>
+                <button onclick="parseDailyData()" class="parse-btn">📈 解析実行</button>
+            </div>
+        </div>
+
+        <!-- プレビューセクション -->
+        <div class="preview-section">
+            <h2>👀 プレビュー</h2>
+            <div id="daily-stats" class="stats-display"></div>
+            <div id="daily-results" class="results-display"></div>
+        </div>
+
+        <!-- アーカイブJSON生成セクション -->
+        <div class="output-section" style="margin-top: 30px;">
+            <h2>🏆 アーカイブJSON生成</h2>
+            <p>昨日の結果から <code>archiveSanrenpukuResults.json</code> 用のデータを生成します</p>
+
+            <!-- 追加情報入力フォーム -->
+            <div class="archive-input-section">
+                <h3 style="color: var(--primary-color); margin-bottom: 15px;">📝 レース詳細情報を入力</h3>
+
+                <!-- 一括入力セクション -->
+                <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                    <h4 style="color: #8b5cf6; margin-bottom: 10px; font-size: 1rem;">⚡ 一括入力（推奨）</h4>
+                    <p style="color: var(--accent-text-color); font-size: 0.9rem; margin-bottom: 15px;">
+                        premium-sanrenpukuページから全レース名をコピーして貼り付けてください
+                    </p>
+                    <textarea
+                        id="bulkRaceNames"
+                        placeholder="premium-sanrenpukuページから全レース名をコピーしてそのまま貼り付けてください
+
+【対応形式1】複数行形式:
+1R
+２歳(六) 未受賞
+第1レース
+▼
+2R
+２歳(五)
+第2レース
+...
+
+【対応形式2】1行形式:
+1R ３歳(六)
+2R ローズデビュー
+3R ローズデビュー
+4R Ｃ２(四)(五)
+..."
+                        rows="8"
+                        style="width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 6px; padding: 12px; color: var(--body-text-color); font-family: monospace; font-size: 0.9rem;"
+                    ></textarea>
+                    <button onclick="applyBulkRaceNames()" class="parse-btn" style="margin-top: 10px; background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        ⚡ 一括適用
+                    </button>
+                </div>
+
+                <p style="color: var(--accent-text-color); margin-bottom: 20px; font-size: 0.9rem;">
+                    各レースの詳細情報（券種は三連複固定、点数はデフォルト9点）
+                </p>
+
+                <div id="raceDetailsForm" class="race-details-grid">
+                    <!-- JavaScriptで動的生成 -->
+                </div>
+
+                <button onclick="generateArchiveJSON()" class="parse-btn" style="margin-top: 20px;">
+                    🏆 アーカイブJSON生成
+                </button>
+            </div>
+
+            <div class="code-output" style="margin-top: 20px;">
+                <pre id="archiveCode">// 昨日の結果を解析後、レース情報を入力してアーカイブJSON生成ボタンを押してください</pre>
+                <button onclick="copyArchiveToClipboard()" class="copy-btn">📋 コピー</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: var(--body-text-color);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+
+        .input-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .input-section h2 {
+            color: #10b981;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            color: var(--body-text-color);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .parse-btn, .copy-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .parse-btn:hover, .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .preview-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .preview-section h2 {
+            color: #10b981;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .preview-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--body-text-color);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.3) 100%);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--body-text-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .results-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            max-width: 800px;
+        }
+
+        .race-result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .race-result.win {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .race-result.lose {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .race-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .race-icon {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+
+        .race-payout {
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .output-section {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .output-section h2 {
+            color: #8b5cf6;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .code-output {
+            position: relative;
+        }
+
+        .code-output pre {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        code {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* アーカイブセクション追加スタイル */
+        .archive-input-section {
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .race-details-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .race-detail-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .race-detail-item.hit {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .race-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--body-text-color);
+        }
+
+        .race-detail-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-field label {
+            font-size: 0.85rem;
+            color: var(--accent-text-color);
+            font-weight: 500;
+        }
+
+        .input-field input,
+        .input-field select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--body-text-color);
+            font-size: 0.9rem;
+        }
+
+        .input-field input:focus,
+        .input-field select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .admin-header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .results-display {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .race-detail-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script is:inline>
+        let dailyData = null;
+
+        // 全角・半角数字の正規化
+        function normalizeText(text) {
+            return text
+                .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                .replace(/[Ｒｒ]/g, 'R')
+                .replace(/[，、]/g, ',')
+                .replace(/[．。]/g, '.')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // 金額抽出（2.490円 → 2490）
+        function extractPayout(text) {
+            const match = text.match(/([0-9,]+(?:\.[0-9]+)?)円/);
+            if (match) {
+                return parseInt(match[1].replace(/[,\.]/g, ''));
+            }
+            return 0;
+        }
+
+        // レース番号抽出（１Ｒ → 1）
+        function extractRaceNumber(text) {
+            const normalized = normalizeText(text);
+            const match = normalized.match(/(\d+)R/);
+            return match ? parseInt(match[1]) : null;
+        }
+
+        // 日付抽出（１１/３船橋競馬 → 11/3）
+        function extractDate(text) {
+            const normalized = normalizeText(text);
+            const match = normalized.match(/(\d+)\/(\d+)/);
+            if (match) {
+                return `${parseInt(match[1])}/${parseInt(match[2])}`;
+            }
+            return null;
+        }
+
+        // 競馬場抽出（１１/３船橋競馬 → 船橋）
+        function extractTrack(text) {
+            const match = text.match(/(川崎|大井|船橋|浦和)競馬/);
+            if (match) {
+                return match[1]; // 「競馬」を除いた競馬場名
+            }
+            const trackMatch = text.match(/(川崎|大井|船橋|浦和)/);
+            return trackMatch ? trackMatch[1] : '船橋'; // デフォルト船橋
+        }
+
+        // 昨日データ解析
+        function parseDailyData() {
+            const input = document.getElementById('dailyData').value;
+            if (!input.trim()) {
+                alert('データを入力してください');
+                return;
+            }
+
+            const lines = input.split('\n').filter(line => line.trim());
+            const headerLine = lines[0];
+
+            const date = extractDate(headerLine);
+            const track = extractTrack(headerLine);
+
+            if (!date) {
+                alert('日付を正しく認識できませんでした');
+                return;
+            }
+
+            // 12レース分の結果を初期化
+            const results = [];
+            for (let i = 1; i <= 12; i++) {
+                results.push({ race: `${i}R`, result: 'lose', payout: 0 });
+            }
+
+            let totalPayout = 0;
+            let hitCount = 0;
+
+            // 的中レースを解析
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                const raceNum = extractRaceNumber(line);
+                const payout = extractPayout(line);
+
+                if (raceNum && raceNum >= 1 && raceNum <= 12 && line.includes('的中')) {
+                    results[raceNum - 1] = {
+                        race: `${raceNum}R`,
+                        result: 'win',
+                        payout: payout
+                    };
+                    totalPayout += payout;
+                    hitCount++;
+                }
+            }
+
+            const hitRate = ((hitCount / 12) * 100).toFixed(1);
+
+            dailyData = {
+                date: date,
+                track: track,
+                hitRate: parseFloat(hitRate),
+                hitCount: hitCount,
+                totalCount: 12,
+                totalPayout: totalPayout,
+                results: results
+            };
+
+            displayDailyPreview();
+        }
+
+
+        // 昨日プレビュー表示
+        function displayDailyPreview() {
+            if (!dailyData) return;
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value">${dailyData.hitRate}%</div>
+                    <div class="stat-label">的中率 (${dailyData.hitCount}/${dailyData.totalCount})</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">¥${dailyData.totalPayout.toLocaleString()}</div>
+                    <div class="stat-label">配当合計</div>
+                </div>
+                <div class="stat-card" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
+                    <div class="stat-value" style="color: #f59e0b;">--</div>
+                    <div class="stat-label">回収率（点数入力後に計算）</div>
+                </div>
+            `;
+
+            const resultsHtml = dailyData.results.map(result => `
+                <div class="race-result ${result.result}">
+                    <div class="race-number">${result.race}</div>
+                    <div class="race-icon">${result.result === 'win' ? '⭕' : '❌'}</div>
+                    ${result.result === 'win' ? `<div class="race-payout">¥${result.payout.toLocaleString()}</div>` : ''}
+                </div>
+            `).join('');
+
+            document.getElementById('daily-stats').innerHTML = statsHtml;
+            document.getElementById('daily-results').innerHTML = resultsHtml;
+
+            // アーカイブ用のレース詳細フォームを生成
+            generateRaceDetailsForm();
+        }
+
+        // ========== アーカイブJSON生成機能 ==========
+
+        // レース詳細入力フォームの生成
+        function generateRaceDetailsForm() {
+            if (!dailyData) return;
+
+            const formHTML = dailyData.results.map((r, index) => {
+                const raceNum = index + 1;
+                const isHit = r.result === 'win';
+
+                return `
+                    <div class="race-detail-item ${isHit ? 'hit' : ''}">
+                        <div class="race-detail-header">
+                            <span>${isHit ? '✅' : '❌'}</span>
+                            <span>${raceNum}R</span>
+                            ${isHit ? `<span style="color: #10b981;">的中 ¥${r.payout.toLocaleString()}</span>` : '<span style="color: #64748b;">不的中</span>'}
+                        </div>
+                        <div class="race-detail-inputs">
+                            ${isHit ? `
+                                <div class="input-field">
+                                    <label>レース名 *</label>
+                                    <input type="text" id="raceName_${raceNum}" placeholder="例：２歳新馬" style="width: 100%;" />
+                                </div>
+                            ` : ''}
+                            <div class="input-field">
+                                <label>三連複点数 *</label>
+                                <input type="number" id="betPoints_${raceNum}" value="9" placeholder="7-9点" min="7" max="9" />
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('raceDetailsForm').innerHTML = formHTML;
+        }
+
+        // 一括レース名適用
+        function applyBulkRaceNames() {
+            const bulkInput = document.getElementById('bulkRaceNames').value;
+            if (!bulkInput.trim()) {
+                alert('レース名を入力してください');
+                return;
+            }
+
+            const lines = bulkInput.split('\n').map(line => line.trim()).filter(line => line);
+            let appliedCount = 0;
+            let currentRaceNum = null;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+
+                // 🆕 新形式対応: 1行形式（例: "1R ３歳(六)"）
+                const oneLineMatch = line.match(/^(\d+)R\s+(.+)$/);
+                if (oneLineMatch) {
+                    const raceNum = parseInt(oneLineMatch[1]);
+                    const raceName = oneLineMatch[2].trim();
+                    const input = document.getElementById(`raceName_${raceNum}`);
+                    if (input && raceName) {
+                        input.value = raceName;
+                        appliedCount++;
+                        console.log(`✅ ${raceNum}R: ${raceName}`);
+                    }
+                    continue;
+                }
+
+                // 既存形式対応: 複数行形式（1R改行、レース名改行...）
+                const raceNumMatch = line.match(/^(\d+)R$/);
+                if (raceNumMatch) {
+                    currentRaceNum = parseInt(raceNumMatch[1]);
+                    continue;
+                }
+
+                // 「第Xレース」「メインレース」「▼」などをスキップ
+                if (line.match(/^第\d+レース$/) ||
+                    line === 'メインレース' ||
+                    line === '▼' ||
+                    line.includes('▼')) {
+                    continue;
+                }
+
+                // レース名として認識（レース番号の直後の有効な行）
+                if (currentRaceNum && line) {
+                    const input = document.getElementById(`raceName_${currentRaceNum}`);
+                    if (input) {
+                        // 全角数字・記号をそのまま保持
+                        input.value = line;
+                        appliedCount++;
+                        console.log(`✅ ${currentRaceNum}R: ${line}`);
+                    }
+                    currentRaceNum = null; // 次のレースへ
+                }
+            }
+
+            if (appliedCount > 0) {
+                alert(`✅ ${appliedCount}レースのレース名を適用しました`);
+            } else {
+                alert('⚠️ レース名を適用できませんでした。\n\npremium-sanrenpukuページからレース名をそのままコピーしてください。');
+            }
+        }
+
+        // アーカイブJSON生成
+        function generateArchiveJSON() {
+            if (!dailyData) {
+                alert('まず昨日の結果を解析してください');
+                return;
+            }
+
+            // 日付を年/月/日に分解
+            const dateParts = dailyData.date.split('/');
+            const year = '2025';  // 固定（必要に応じて変更）
+            const month = dateParts[0].padStart(2, '0');
+            const day = dateParts[1].padStart(2, '0');
+
+            // 競馬場名（既に「競馬」なし）
+            const venue = dailyData.track;
+
+            // レース配列を生成
+            const races = [];
+            let hasError = false;
+            let totalBetPoints = 0; // 🔧 購入点数合計を計算
+
+            for (let i = 0; i < dailyData.results.length; i++) {
+                const raceNum = i + 1;
+                const result = dailyData.results[i];
+
+                const betPoints = document.getElementById(`betPoints_${raceNum}`)?.value;
+
+                if (!betPoints) {
+                    alert(`${raceNum}Rの買い目点数を入力してください`);
+                    hasError = true;
+                    break;
+                }
+
+                totalBetPoints += parseInt(betPoints); // 🔧 点数を累積
+
+                if (result.result === 'win') {
+                    // 的中レースはレース名も必須
+                    const raceName = document.getElementById(`raceName_${raceNum}`)?.value;
+
+                    if (!raceName) {
+                        alert(`${raceNum}Rのレース名を入力してください`);
+                        hasError = true;
+                        break;
+                    }
+
+                    races.push({
+                        raceNumber: `${raceNum}R`,
+                        raceName: raceName,
+                        betType: "三連複",
+                        betPoints: parseInt(betPoints),
+                        hit: true,
+                        payout: result.payout
+                    });
+                } else {
+                    // 不的中レースも点数を保存
+                    races.push({
+                        raceNumber: `${raceNum}R`,
+                        raceName: "-",
+                        betType: "三連複",
+                        betPoints: parseInt(betPoints),
+                        hit: false,
+                        payout: 0
+                    });
+                }
+            }
+
+            if (hasError) return;
+
+            // パーフェクト的中判定
+            const perfectHit = dailyData.hitCount === dailyData.totalCount;
+
+            // 🔧 購入金額と回収率を計算（実際の点数合計から）
+            const purchaseAmount = totalBetPoints * 100; // 100円単位
+            const recoveryRate = Math.round((dailyData.totalPayout / purchaseAmount) * 100);
+
+            // JSON構造生成（日付データのみ、余分な括弧なし）
+            const dayData = {
+                venue: venue,
+                totalRaces: dailyData.totalCount,
+                hitRaces: dailyData.hitCount,
+                perfectHit: perfectHit,
+                totalPayout: dailyData.totalPayout,
+                recoveryRate: recoveryRate, // 🔧 回収率を追加
+                races: races
+            };
+
+            // 日付データのみを整形（2スペースインデント）
+            const dayDataString = JSON.stringify(dayData, null, 2);
+
+            // 各行に適切なインデントを追加（archiveSanrenpukuResults.json内での配置用）
+            const indentedLines = dayDataString.split('\n').map((line, index) => {
+                if (index === 0) return `        "${day}": ${line}`; // 最初の行: "04": {
+                if (line === '}') return '        ' + line; // 最後の行: }
+                return '        ' + line; // 他の行: 8スペース追加
+            }).join('\n');
+
+            const jsonWithoutComma = indentedLines;
+
+            const output = `// ========================================
+// 📋 GitHubエディタでの貼り付け手順
+// ========================================
+//
+// ✅ ステップ1: archiveSanrenpukuResults.jsonで "2025" > "${month}" を探す
+// ✅ ステップ2: 既存の最新日付データの } の後に ,（カンマ）を追加
+// ✅ ステップ3: 以下のJSONを貼り付け
+// ✅ ステップ4: インデントを確認（2スペース統一）
+//
+// ⚠️ 重要: 既存データの } の後に ,（カンマ）を先に追加してください！
+// ⚠️ 以下のJSONには先頭にカンマはありません（正しい構文）
+// ========================================
+
+${jsonWithoutComma}
+
+// ========================================
+// 📝 貼り付け例（"${month}": { の中）
+// ========================================
+//
+// "${month}": {
+//   "03": {              ← 既存の最新データ
+//     "venue": "船橋",
+//     ...
+//   },                   ← まずここにカンマを追加！
+//   "${day}": {          ← 次に新しいデータを貼り付け
+//     "venue": "${venue}",
+//     ...
+//   }
+// }
+//
+// 📌 手順: ①既存データの}の後に , 追加 → ②生成JSONを貼り付け
+// ========================================`;
+
+            document.getElementById('archiveCode').textContent = output;
+        }
+
+        // アーカイブJSONコピー
+        async function copyArchiveToClipboard() {
+            const code = document.getElementById('archiveCode').textContent;
+            if (code && !code.includes('昨日の結果を解析後')) {
+                try {
+                    await navigator.clipboard.writeText(code);
+                    alert('アーカイブJSONをクリップボードにコピーしました！');
+                } catch (err) {
+                    console.error('コピーに失敗しました:', err);
+                    alert('コピーに失敗しました。手動でコピーしてください。');
+                }
+            } else {
+                alert('生成されたJSONがありません。まずアーカイブJSON生成を実行してください。');
+            }
+        }
+
+    </script>
+</BaseLayout>
