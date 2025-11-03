@@ -999,42 +999,42 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
                     🏆 三連複 昨日の的中結果
                 </h2>
 
-                {sanrenpukuYesterday && sanrenpukuYesterday.date && (
+                {sanrenpukuLatestResult && sanrenpukuLatestResult.date && (
                     <>
                         <div style="text-align: center; margin-bottom: 1.5rem;">
-                            <p style="font-size: 1.1rem; color: #cbd5e1; margin-bottom: 0.5rem;">{sanrenpukuYesterday.date}</p>
-                            <p style="font-size: 0.95rem; color: #94a3b8;">{sanrenpukuYesterday.venue}</p>
+                            <p style="font-size: 1.1rem; color: #cbd5e1; margin-bottom: 0.5rem;">{sanrenpukuLatestResult.date}</p>
+                            <p style="font-size: 0.95rem; color: #94a3b8;">{sanrenpukuLatestResult.venue}</p>
                         </div>
 
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                             <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
                                 <div style="font-size: 1.8rem; font-weight: 700; color: #10b981; margin-bottom: 0.5rem;">
-                                    {sanrenpukuYesterday.hitRate}%
+                                    {sanrenpukuLatestResult.hitRate}%
                                 </div>
                                 <div style="font-size: 0.85rem; color: #94a3b8;">的中率</div>
                             </div>
                             <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
                                 <div style="font-size: 1.8rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">
-                                    {sanrenpukuYesterday.recoveryRate}%
+                                    {sanrenpukuLatestResult.recoveryRate}%
                                 </div>
                                 <div style="font-size: 0.85rem; color: #94a3b8;">回収率</div>
                             </div>
                             <div style="background: rgba(139, 92, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
                                 <div style="font-size: 1.8rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.5rem;">
-                                    {sanrenpukuYesterday.totalBetPoints}点
+                                    {sanrenpukuLatestResult.totalBetPoints}点
                                 </div>
                                 <div style="font-size: 0.85rem; color: #94a3b8;">合計購入点数</div>
                             </div>
                             <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
                                 <div style="font-size: 1.8rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.5rem;">
-                                    ¥{sanrenpukuYesterday.totalPayout?.toLocaleString()}
+                                    ¥{sanrenpukuLatestResult.totalPayout?.toLocaleString()}
                                 </div>
                                 <div style="font-size: 0.85rem; color: #94a3b8;">合計配当</div>
                             </div>
                         </div>
 
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                            {sanrenpukuYesterday.races && sanrenpukuYesterday.races.map(race => (
+                            {sanrenpukuLatestResult.races && sanrenpukuLatestResult.races.map(race => (
                                 <div class="yesterday-race-card">
                                     <div class="yesterday-race-info">
                                         <div class="yesterday-race-number">{race.raceNumber}R</div>
