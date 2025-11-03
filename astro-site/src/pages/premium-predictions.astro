@@ -234,7 +234,7 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
 
         <script is:inline>
             // Premium Combo・Premium Sanrenpuku会員は三連複CTAを非表示
-            (function() {
+            document.addEventListener('DOMContentLoaded', function() {
                 // user-plan（ハイフン）からJSON取得
                 const userPlanData = localStorage.getItem('user-plan');
                 let userPlan = null;
@@ -256,17 +256,20 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
                 console.log('🔍 CTA制御: userPlan =', userPlan);
 
                 const sanrenpukuCta = document.getElementById('sanrenpuku-cta-section');
+                console.log('📍 sanrenpuku-cta-section要素:', sanrenpukuCta);
 
                 // Premium Combo・Premium Sanrenpuku会員はCTA非表示
                 if (userPlan === 'Premium Combo' || userPlan === 'Premium Sanrenpuku') {
                     if (sanrenpukuCta) {
                         sanrenpukuCta.style.display = 'none';
                         console.log('✅ 三連複CTA非表示完了');
+                    } else {
+                        console.error('❌ sanrenpuku-cta-section要素が見つかりません');
                     }
                 } else {
                     console.log('ℹ️ 三連複CTA表示（プラン:', userPlan, ')');
                 }
-            })();
+            });
         </script>
 
         <!-- 買い目モデルの選び方ガイド（アコーディオン） -->
