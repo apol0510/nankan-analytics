@@ -215,6 +215,21 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
             })();
         </script>
 
+        <script is:inline>
+            // Premium Combo・Premium Sanrenpuku会員は三連複CTAを非表示
+            (function() {
+                const userPlan = localStorage.getItem('user_plan');
+                const sanrenpukuCta = document.getElementById('sanrenpuku-cta-section');
+
+                // Premium Combo・Premium Sanrenpuku会員はCTA非表示
+                if (userPlan === 'Premium Combo' || userPlan === 'Premium Sanrenpuku') {
+                    if (sanrenpukuCta) {
+                        sanrenpukuCta.style.display = 'none';
+                    }
+                }
+            })();
+        </script>
+
         <!-- 買い目モデルの選び方ガイド（アコーディオン） -->
         <div class="betting-guide-card accordion">
             <button class="guide-title accordion-toggle" id="guideToggle">
@@ -897,7 +912,7 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         </div>
 
         <!-- 三連複商品への導線セクション -->
-        <div class="sanrenpuku-upsell-section">
+        <div class="sanrenpuku-upsell-section" id="sanrenpuku-cta-section">
           <div class="sanrenpuku-upsell-card">
             <div class="upsell-icon-wrapper">
               <span class="new-badge">NEW</span>
