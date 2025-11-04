@@ -135,6 +135,23 @@
 - クロが新しいページで「AI」だけ使用
 - **対策**: 必ず「高性能AI」を使用する
 
+#### **事例4: 三連複アーカイブアクセス制御問題（2025-11-04復活）** 🔒
+- **問題**: Premium会員が三連複アーカイブにアクセスできない問題が繰り返し発生
+- **根本原因**: プラン名のバリエーション対応不足
+  - `'Premium'` のみチェック → `'Premium Predictions'` でログインした会員は弾かれる
+- **復活理由**: 修正しても、次回の更新時にシンプルな判定に戻ってしまう
+- **完全対策** (2025-11-04実装):
+  ```javascript
+  // ❌ 不完全な判定（復活させない）
+  if (planLower === 'premium')
+
+  // ✅ 正しい判定（Premiumのバリエーション完全対応）
+  const isPremium = planLower === 'premium' || planLower === 'premium predictions';
+  const isStandard = planLower === 'standard';
+  if (!isStandard && !isPremium) // アクセス拒否
+  ```
+- **対策**: archive-sanrenpuku/index.astroの復活防止コメント・明示的なバリエーション判定を絶対維持
+
 ---
 
 ## 🔥 **【最優先ミッション】三連複月額商品システム構築プロジェクト** 🔥
