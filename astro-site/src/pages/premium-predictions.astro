@@ -909,6 +909,9 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
                 <a href="/sanrenpuku-demo" class="btn-sample">
                   ✨ 絞り込み機能を実体験する
                 </a>
+                <a href="/archive-sanrenpuku/" class="btn-archive">
+                  📊 三連複の実績を見る
+                </a>
                 <button class="btn-purchase-modal" id="openPlanModal">
                   🔄 プラン変更
                 </button>
@@ -2583,6 +2586,7 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
     }
 
     .btn-sample,
+    .btn-archive,
     .btn-purchase-modal {
         flex: 1;
         padding: 14px 20px;
@@ -2608,6 +2612,19 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         border-color: rgba(59, 130, 246, 0.6);
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-archive {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+        color: #10b981;
+        border: 2px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-archive:hover {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+        border-color: rgba(16, 185, 129, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
     }
 
     .btn-purchase-modal {
