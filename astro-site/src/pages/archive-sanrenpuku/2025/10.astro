@@ -558,7 +558,8 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       const hitRate = dayData.totalRaces > 0 ? Math.round((dayData.hitRaces / dayData.totalRaces) * 100) : 0;
       const totalBetPoints = dayData.races.reduce((sum, race) => sum + (race.betPoints || 0), 0);
       const totalInvestment = totalBetPoints * 100; // 1点=100円
-      const recoveryRate = totalInvestment > 0 ? Math.round((dayData.totalPayout / totalInvestment) * 100) : 0;
+      // JSONに回収率データがあればそれを使用、なければ計算（フォールバック）
+      const recoveryRate = dayData.recoveryRate || (totalInvestment > 0 ? Math.round((dayData.totalPayout / totalInvestment) * 100) : 0);
       return (
         <div class="day-section">
           <div class="day-header">
