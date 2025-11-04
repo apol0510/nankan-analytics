@@ -141,13 +141,25 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
           <span class="cta-stat-value">わずか7〜9点の少点数！</span>
         </div>
       </div>
-      <div class="cta-price">
-        <span class="cta-price-label">特別価格</span>
-        <span class="cta-price-value">¥19,820</span>
+      <!-- プラン選択ボタン -->
+      <div class="cta-plans">
+        <a href="/premium-sanrenpuku" class="cta-plan-card">
+          <div class="plan-header">
+            <span class="plan-name">三連複のみ</span>
+          </div>
+          <div class="plan-price">¥19,820<span class="plan-period">/月</span></div>
+          <div class="plan-description">高性能AI三連複絞り込み買い目</div>
+        </a>
+
+        <a href="/dashboard" class="cta-plan-card cta-plan-recommended">
+          <div class="recommended-badge">おすすめ</div>
+          <div class="plan-header">
+            <span class="plan-name">馬単+三連複セット</span>
+          </div>
+          <div class="plan-price">¥24,800<span class="plan-period">/月</span></div>
+          <div class="plan-description">通常¥29,800 → ¥5,000お得！</div>
+        </a>
       </div>
-      <a href="/premium-sanrenpuku" class="cta-button">
-        高性能AI三連複絞り込み機能を見る
-      </a>
     </div>
   </div>
 </BaseLayout>
@@ -438,6 +450,95 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
   }
 
+  /* プラン選択カード */
+  .cta-plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+  }
+
+  .cta-plan-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(59, 130, 246, 0.15) 100%);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .cta-plan-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(96, 165, 250, 0.5);
+    box-shadow: 0 8px 20px rgba(96, 165, 250, 0.2);
+  }
+
+  .cta-plan-recommended {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.2) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+  }
+
+  .cta-plan-recommended:hover {
+    border-color: rgba(251, 191, 36, 0.6);
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+  }
+
+  .recommended-badge {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, rgb(251, 191, 36), rgb(245, 158, 11));
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+  }
+
+  .plan-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .plan-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgb(226, 232, 240);
+  }
+
+  .plan-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgb(96, 165, 250);
+    text-align: center;
+  }
+
+  .cta-plan-recommended .plan-price {
+    color: rgb(251, 191, 36);
+  }
+
+  .plan-period {
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(226, 232, 240, 0.7);
+  }
+
+  .plan-description {
+    font-size: 0.9rem;
+    color: rgba(226, 232, 240, 0.8);
+    text-align: center;
+    line-height: 1.5;
+  }
+
   /* レスポンシブ */
   @media (max-width: 768px) {
     .archive-header {
@@ -493,6 +594,19 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
 
     .cta-stat-item {
       padding: 10px;
+    }
+
+    .cta-plans {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .cta-plan-card {
+      padding: 20px;
+    }
+
+    .plan-price {
+      font-size: 1.8rem;
     }
 
     .cta-stat-label {
