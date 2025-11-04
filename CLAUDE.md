@@ -137,20 +137,33 @@
 
 #### **事例4: 三連複アーカイブアクセス制御問題（2025-11-04復活）** 🔒
 - **問題**: Premium会員が三連複アーカイブにアクセスできない問題が繰り返し発生
-- **根本原因**: プラン名のバリエーション対応不足
+- **根本原因1**: プラン名のバリエーション対応不足
   - `'Premium'` のみチェック → `'Premium Predictions'` でログインした会員は弾かれる
+- **根本原因2**: LocalStorageキャッシュ問題（重要）
+  - 修正後も、古い`'Premium Predictions'`がLocalStorageに残り続ける
+  - 別ブラウザでは問題なし（新規ログインで正規化された値が保存される）
+  - 同じブラウザでは制限がかかる（古いキャッシュが使われ続ける）
 - **復活理由**: 修正しても、次回の更新時にシンプルな判定に戻ってしまう
 - **完全対策** (2025-11-04実装):
   ```javascript
-  // ❌ 不完全な判定（復活させない）
-  if (planLower === 'premium')
+  // ✅ 対策1: auth-user.jsで正規化
+  case 'premium':
+  case 'premium predictions':  // 追加
+    return 'Premium';
 
-  // ✅ 正しい判定（Premiumのバリエーション完全対応）
+  // ✅ 対策2: archive-sanrenpuku/index.astroで判定
   const isPremium = planLower === 'premium' || planLower === 'premium predictions';
   const isStandard = planLower === 'standard';
   if (!isStandard && !isPremium) // アクセス拒否
+
+  // ✅ 対策3: LocalStorageキャッシュ問題対策（最重要）
+  if (userPlan && userPlan.toLowerCase() === 'premium predictions') {
+    localStorage.setItem('userPlan', 'Premium');
+    console.log('🔄 プラン正規化: "Premium Predictions" → "Premium"');
+    userPlan = 'Premium';
+  }
   ```
-- **対策**: archive-sanrenpuku/index.astroの復活防止コメント・明示的なバリエーション判定を絶対維持
+- **対策**: archive-sanrenpuku/index.astroの自動正規化ロジック・復活防止コメント・明示的なバリエーション判定を絶対維持
 
 ---
 
