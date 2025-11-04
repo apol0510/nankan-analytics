@@ -808,17 +808,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         raceNumber: `${raceNum}R`,
                         raceName: raceName,
                         betType: "三連複",
-                        betPoints: parseInt(betPoints),
                         hit: true,
                         payout: result.payout
                     });
                 } else {
-                    // 不的中レースも点数を保存
+                    // 不的中レースも記録（betPointsは各レースでは不要・トータルのみ）
                     races.push({
                         raceNumber: `${raceNum}R`,
                         raceName: "-",
                         betType: "三連複",
-                        betPoints: parseInt(betPoints),
                         hit: false,
                         payout: 0
                     });
