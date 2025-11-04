@@ -54,7 +54,23 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
   <script is:inline>
     // LocalStorageからプラン情報取得（正しいキー名：キャメルケース）
     const userEmail = localStorage.getItem('userEmail');
-    const userPlan = localStorage.getItem('userPlan');
+    let userPlan = localStorage.getItem('userPlan');
+
+    // 🔴 LocalStorageキャッシュ問題対策（2025-11-04）
+    // 問題: 古い'Premium Predictions'がLocalStorageに残り続ける
+    // 解決: クライアントサイドで自動正規化してLocalStorageを更新
+    if (userPlan) {
+      const planLowerOriginal = userPlan.toLowerCase();
+      let normalizedPlan = userPlan;
+
+      // Premium Predictionsを自動的にPremiumに正規化
+      if (planLowerOriginal === 'premium predictions') {
+        normalizedPlan = 'Premium';
+        localStorage.setItem('userPlan', normalizedPlan);
+        console.log('🔄 プラン正規化: "Premium Predictions" → "Premium"');
+        userPlan = normalizedPlan;
+      }
+    }
 
     // デバッグログ
     console.log('🔍 Archive Sanrenpuku アクセスチェック');
