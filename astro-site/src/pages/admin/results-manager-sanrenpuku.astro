@@ -49,7 +49,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                         <div>
                             <strong style="color: #10b981; font-size: 1rem;">点数を確認・調整</strong>
                             <p style="color: var(--accent-text-color); margin-top: 5px; font-size: 0.9rem;">
-                                各レースの三連複点数（デフォルト9点）を確認・必要に応じて7-9点の範囲で調整
+                                各レースの三連複点数（デフォルト9点）を確認・必要に応じて3-15点の範囲で調整
                             </p>
                         </div>
                     </div>
@@ -685,7 +685,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                             ` : ''}
                             <div class="input-field">
                                 <label>三連複点数 *</label>
-                                <input type="number" id="betPoints_${raceNum}" value="9" placeholder="7-9点" min="7" max="9" />
+                                <input type="number" id="betPoints_${raceNum}" value="9" placeholder="3-15点" min="3" max="15" />
                             </div>
                         </div>
                     </div>
