@@ -249,6 +249,7 @@ function normalizePlan(planValue) {
   // 正規化マッピング
   switch (planLower) {
     case 'premium':
+    case 'premium predictions':
     case 'プレミアム':
       return 'Premium';
     case 'premium combo':
