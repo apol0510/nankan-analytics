@@ -86,9 +86,9 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
 
   <!-- 🔒 Standard/Premium会員専用認証チェック（クライアントサイドJavaScript） -->
   <script is:inline>
-    // LocalStorageからプラン情報取得
-    const userEmail = localStorage.getItem('user_email');
-    const userPlan = localStorage.getItem('user-plan');
+    // LocalStorageからプラン情報取得（正しいキー名：キャメルケース）
+    const userEmail = localStorage.getItem('userEmail');
+    const userPlan = localStorage.getItem('userPlan');
 
     // デバッグログ
     console.log('🔍 Archive Sanrenpuku 10月 アクセスチェック');
