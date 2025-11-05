@@ -1052,6 +1052,18 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
             </div>
         </div>
 
+        <!-- お問い合わせセクション -->
+        <div class="contact-section">
+            <div class="contact-card">
+                <div class="contact-icon">📧</div>
+                <h3 class="contact-title">ご質問・お問い合わせ</h3>
+                <p class="contact-description">予想内容・買い目・AI分析について、お気軽にお問い合わせください</p>
+                <button class="contact-button" onclick="openContactModal()">
+                    お問い合わせフォーム
+                </button>
+            </div>
+        </div>
+
     </AccessControl>
 
 <script>
@@ -1141,7 +1153,143 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
             }
         }
     });
+
+    // お問い合わせモーダル制御
+    const contactModal = document.getElementById('contactModal');
+    const contactForm = document.getElementById('contactForm');
+    const contactSubmitButton = document.getElementById('contactSubmitButton');
+    const contactFormMessage = document.getElementById('contactFormMessage');
+
+    // モーダルを開く
+    window.openContactModal = function() {
+        contactModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    // モーダルを閉じる
+    window.closeContactModal = function() {
+        contactModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        contactForm.reset();
+        contactFormMessage.style.display = 'none';
+    };
+
+    // モーダル外クリックで閉じる
+    contactModal.addEventListener('click', function(e) {
+        if (e.target === contactModal) {
+            closeContactModal();
+        }
+    });
+
+    // Escapeキーで閉じる
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && contactModal.style.display === 'flex') {
+            closeContactModal();
+        }
+    });
+
+    // フォーム送信処理
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // ボタンを無効化・ローディング表示
+            contactSubmitButton.disabled = true;
+            contactSubmitButton.querySelector('.submit-text').style.display = 'none';
+            contactSubmitButton.querySelector('.submit-loading').style.display = 'inline';
+
+            const formData = {
+                name: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                subject: document.getElementById('contactSubject').value,
+                message: document.getElementById('contactMessage').value,
+                formType: 'premium-predictions-contact',
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/premium-plus-contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // 成功メッセージ表示
+                    contactFormMessage.textContent = '✅ ' + (result.message || 'お問い合わせを受け付けました。確認メールをお送りしましたのでご確認ください。');
+                    contactFormMessage.style.display = 'block';
+                    contactFormMessage.style.color = '#10b981';
+                    contactForm.reset();
+                } else {
+                    throw new Error(result.error || '送信に失敗しました');
+                }
+            } catch (error) {
+                console.error('Contact form error:', error);
+                contactFormMessage.textContent = '❌ 送信に失敗しました。もう一度お試しいただくか、nankan.analytics@keiba.link までご連絡ください。';
+                contactFormMessage.style.display = 'block';
+                contactFormMessage.style.color = '#ef4444';
+            } finally {
+                // ボタンを有効化・通常表示に戻す
+                contactSubmitButton.disabled = false;
+                contactSubmitButton.querySelector('.submit-text').style.display = 'inline';
+                contactSubmitButton.querySelector('.submit-loading').style.display = 'none';
+            }
+        });
+    }
 </script>
+
+<!-- お問い合わせモーダル -->
+<div id="contactModal" class="contact-modal">
+    <div class="contact-modal-content">
+        <button class="contact-modal-close" onclick="closeContactModal()">×</button>
+        <h2 class="contact-modal-title">📧 プレミアム会員お問い合わせ</h2>
+        <p class="contact-modal-subtitle">予想内容・買い目・その他のご質問はこちらからお気軽にお問い合わせください</p>
+
+        <div class="contact-form-section">
+            <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                    <label for="contactName" class="form-label">お名前 <span class="required">*</span></label>
+                    <input type="text" id="contactName" name="contactName" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactEmail" class="form-label">メールアドレス <span class="required">*</span></label>
+                    <input type="email" id="contactEmail" name="contactEmail" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactSubject" class="form-label">件名 <span class="required">*</span></label>
+                    <select id="contactSubject" name="contactSubject" class="form-input" required>
+                        <option value="">選択してください</option>
+                        <option value="予想内容について">予想内容について</option>
+                        <option value="買い目について">買い目について</option>
+                        <option value="AI分析について">AI分析について</option>
+                        <option value="戦略モデルについて">戦略モデルについて</option>
+                        <option value="的中実績について">的中実績について</option>
+                        <option value="その他のお問い合わせ">その他のお問い合わせ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactMessage" class="form-label">お問い合わせ内容 <span class="required">*</span></label>
+                    <textarea id="contactMessage" name="contactMessage" class="form-textarea" rows="6" required></textarea>
+                </div>
+
+                <div class="form-submit-section">
+                    <button type="submit" class="form-submit-button" id="contactSubmitButton">
+                        <span class="submit-text">📧 送信する</span>
+                        <span class="submit-loading" style="display: none;">送信中...</span>
+                    </button>
+                </div>
+
+                <div class="form-message" id="contactFormMessage" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
 </BaseLayout>
 
 <style>
@@ -3131,6 +3279,244 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         .plan-option-price {
             font-size: 1.6rem;
         }
+
+        .contact-section {
+            margin-top: 30px;
+        }
+
+        .contact-card {
+            padding: 30px;
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+        }
+
+        .contact-title {
+            font-size: 1.3rem;
+        }
+
+        .contact-description {
+            font-size: 0.9rem;
+        }
+
+        .contact-button {
+            padding: 12px 28px;
+            font-size: 0.95rem;
+        }
+
+        .contact-modal-content {
+            padding: 24px;
+            max-height: 95vh;
+        }
+
+        .contact-modal-title {
+            font-size: 1.5rem;
+        }
+
+        .contact-modal-subtitle {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* お問い合わせセクション */
+    .contact-section {
+        margin-top: 60px;
+        margin-bottom: 40px;
+    }
+
+    .contact-card {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+
+    .contact-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+
+    .contact-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        margin-bottom: 12px;
+    }
+
+    .contact-description {
+        color: #94a3b8;
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
+
+    .contact-button {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .contact-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    /* お問い合わせモーダル */
+    .contact-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .contact-modal-content {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 600px;
+        width: 100%;
+        position: relative;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .contact-modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #ef4444;
+        font-size: 28px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .contact-modal-close:hover {
+        background: rgba(239, 68, 68, 0.3);
+        transform: scale(1.1);
+    }
+
+    .contact-modal-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        margin-bottom: 8px;
+    }
+
+    .contact-modal-subtitle {
+        color: #94a3b8;
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
+
+    .contact-form-section {
+        margin-top: 20px;
+    }
+
+    .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        color: #e2e8f0;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .required {
+        color: #ef4444;
+        margin-left: 4px;
+    }
+
+    .form-input,
+    .form-textarea {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        padding: 12px;
+        color: #e2e8f0;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+    }
+
+    .form-submit-section {
+        margin-top: 8px;
+    }
+
+    .form-submit-button {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .form-submit-button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .form-submit-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .form-message {
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 16px;
+        text-align: center;
+        font-weight: 600;
     }
 </style>
 
