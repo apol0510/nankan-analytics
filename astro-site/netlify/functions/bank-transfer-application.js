@@ -63,7 +63,7 @@ exports.handler = async (event, context) => {
 
     // SendGrid API設定
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-    const FROM_EMAIL = 'noreply@nankan-analytics.keiba.link';
+    const FROM_EMAIL = 'noreply@keiba.link';  // 既存の検証済みアドレスを使用
     const ADMIN_EMAIL = 'nankan.analytics@keiba.link';
 
     if (!SENDGRID_API_KEY) {
