@@ -1860,11 +1860,26 @@ export const prerender = true;
         }
       }
 
+      // お問い合わせモーダル制御
+      function openContactModal() {
+        document.getElementById('contactModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeContactModal() {
+        document.getElementById('contactModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+
       // モーダル外クリックで閉じる
       document.addEventListener('click', (e) => {
-        const modal = document.getElementById('bankModal');
-        if (e.target === modal) {
+        const bankModal = document.getElementById('bankModal');
+        const contactModal = document.getElementById('contactModal');
+        if (e.target === bankModal) {
           closeBankModal();
+        }
+        if (e.target === contactModal) {
+          closeContactModal();
         }
       });
 
@@ -1872,6 +1887,7 @@ export const prerender = true;
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           closeBankModal();
+          closeContactModal();
         }
       });
 
@@ -1934,6 +1950,72 @@ export const prerender = true;
         } catch (error) {
           console.error('Form submission error:', error);
           formMessage.textContent = '❌ 送信に失敗しました。もう一度お試しいただくか、nankan-analytics@keiba.link までご連絡ください。';
+          formMessage.className = 'form-message error';
+          formMessage.style.display = 'block';
+        } finally {
+          // ボタン復元
+          submitButton.disabled = false;
+          submitText.style.display = 'inline';
+          submitLoading.style.display = 'none';
+        }
+      });
+
+      // お問い合わせフォーム送信処理
+      document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitButton = document.getElementById('contactSubmitButton');
+        const submitText = submitButton.querySelector('.submit-text');
+        const submitLoading = submitButton.querySelector('.submit-loading');
+        const formMessage = document.getElementById('contactFormMessage');
+
+        // ボタン無効化・ローディング表示
+        submitButton.disabled = true;
+        submitText.style.display = 'none';
+        submitLoading.style.display = 'inline';
+        formMessage.style.display = 'none';
+
+        // フォームデータ取得
+        const formData = {
+          name: document.getElementById('contactName').value,
+          email: document.getElementById('contactEmail').value,
+          subject: document.getElementById('contactSubject').value,
+          message: document.getElementById('contactMessage').value,
+          formType: 'premium-plus-contact',
+          timestamp: new Date().toISOString()
+        };
+
+        try {
+          const response = await fetch('/.netlify/functions/premium-plus-contact', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            // 成功メッセージ表示
+            formMessage.textContent = '✅ お問い合わせを受け付けました。確認メールをお送りしましたのでご確認ください。';
+            formMessage.className = 'form-message success';
+            formMessage.style.display = 'block';
+
+            // フォームリセット
+            document.getElementById('contactForm').reset();
+
+            // 3秒後にモーダルを閉じる
+            setTimeout(() => {
+              closeContactModal();
+              formMessage.style.display = 'none';
+            }, 3000);
+          } else {
+            throw new Error(result.error || '送信に失敗しました');
+          }
+        } catch (error) {
+          console.error('Contact form submission error:', error);
+          formMessage.textContent = '❌ 送信に失敗しました。もう一度お試しいただくか、nankan.analytics@keiba.link までご連絡ください。';
           formMessage.className = 'form-message error';
           formMessage.style.display = 'block';
         } finally {
@@ -2051,14 +2133,69 @@ export const prerender = true;
           上記以外のご質問がある方は、お気軽にお問い合わせください。<br>
           AI開発者が直接対応いたします。
         </p>
-        <a href="/contact" class="faq-contact-link">
+        <button class="faq-contact-link" onclick="openContactModal()">
           📧 お問い合わせはこちら
-        </a>
+        </button>
       </div>
     </div>
 
     <div class="back-link">
       <a href="/premium-predictions/">← プレミアム予想に戻る</a>
+    </div>
+  </div>
+
+  <!-- お問い合わせモーダル -->
+  <div id="contactModal" class="bank-modal">
+    <div class="bank-modal-content">
+      <button class="bank-modal-close" onclick="closeContactModal()">×</button>
+
+      <h2 class="bank-modal-title">📧 Premium Plus お問い合わせ</h2>
+      <p style="text-align: center; color: #94a3b8; margin-bottom: 2rem;">
+        AI開発者が直接対応いたします。お気軽にご質問ください。
+      </p>
+
+      <!-- お問い合わせフォーム -->
+      <div class="bank-form-section">
+        <div class="bank-form-title">💬 お問い合わせフォーム</div>
+
+        <form id="contactForm" class="bank-form">
+          <div class="form-group">
+            <label for="contactName" class="form-label">お名前 <span class="required">*</span></label>
+            <input type="text" id="contactName" name="contactName" class="form-input" required placeholder="山田 太郎">
+          </div>
+
+          <div class="form-group">
+            <label for="contactEmail" class="form-label">メールアドレス <span class="required">*</span></label>
+            <input type="email" id="contactEmail" name="contactEmail" class="form-input" required placeholder="example@example.com">
+          </div>
+
+          <div class="form-group">
+            <label for="contactSubject" class="form-label">件名 <span class="required">*</span></label>
+            <select id="contactSubject" name="contactSubject" class="form-input" required>
+              <option value="">選択してください</option>
+              <option value="サービス内容について">サービス内容について</option>
+              <option value="購入前の質問">購入前の質問</option>
+              <option value="買い目・配信について">買い目・配信について</option>
+              <option value="支払い方法について">支払い方法について</option>
+              <option value="その他のお問い合わせ">その他のお問い合わせ</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="contactMessage" class="form-label">お問い合わせ内容 <span class="required">*</span></label>
+            <textarea id="contactMessage" name="contactMessage" class="form-textarea" rows="6" required placeholder="お問い合わせ内容をご記入ください"></textarea>
+          </div>
+
+          <div class="form-submit-section">
+            <button type="submit" class="form-submit-button" id="contactSubmitButton">
+              <span class="submit-text">📧 送信する</span>
+              <span class="submit-loading" style="display: none;">送信中...</span>
+            </button>
+          </div>
+
+          <div class="form-message" id="contactFormMessage" style="display: none;"></div>
+        </form>
+      </div>
     </div>
   </div>
 
