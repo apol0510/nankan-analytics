@@ -1871,28 +1871,27 @@ export const prerender = true;
         document.body.style.overflow = 'auto';
       }
 
-      // モーダル外クリックで閉じる
-      document.addEventListener('click', (e) => {
-        const bankModal = document.getElementById('bankModal');
-        const contactModal = document.getElementById('contactModal');
-        if (e.target === bankModal) {
-          closeBankModal();
-        }
-        if (e.target === contactModal) {
-          closeContactModal();
-        }
-      });
-
-      // Escapeキーで閉じる
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeBankModal();
-          closeContactModal();
-        }
-      });
-
       // DOMContentLoaded後にフォーム処理を登録
       document.addEventListener('DOMContentLoaded', () => {
+        // モーダル外クリックで閉じる
+        document.addEventListener('click', (e) => {
+          const bankModal = document.getElementById('bankModal');
+          const contactModal = document.getElementById('contactModal');
+          if (e.target === bankModal) {
+            closeBankModal();
+          }
+          if (e.target === contactModal) {
+            closeContactModal();
+          }
+        });
+
+        // Escapeキーで閉じる
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            closeBankModal();
+            closeContactModal();
+          }
+        });
         // 銀行振込フォーム送信処理
         const bankTransferForm = document.getElementById('bankTransferForm');
         if (bankTransferForm) {

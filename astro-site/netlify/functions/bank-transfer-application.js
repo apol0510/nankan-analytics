@@ -3,8 +3,6 @@
  * Premium Plus (¥68,000) の銀行振込申請を受け付け、確認メールを送信
  */
 
-const fetch = require('node-fetch');
-
 exports.handler = async (event, context) => {
   // CORSヘッダー設定
   const headers = {

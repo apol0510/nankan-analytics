@@ -3,8 +3,6 @@
  * Premium Plus専用のお問い合わせを受け付け、確認メールを送信
  */
 
-const fetch = require('node-fetch');
-
 exports.handler = async (event, context) => {
   // CORSヘッダー設定
   const headers = {
