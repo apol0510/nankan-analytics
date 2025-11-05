@@ -1891,8 +1891,12 @@ export const prerender = true;
         }
       });
 
-      // フォーム送信処理
-      document.getElementById('bankTransferForm').addEventListener('submit', async (e) => {
+      // DOMContentLoaded後にフォーム処理を登録
+      document.addEventListener('DOMContentLoaded', () => {
+        // 銀行振込フォーム送信処理
+        const bankTransferForm = document.getElementById('bankTransferForm');
+        if (bankTransferForm) {
+          bankTransferForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const submitButton = document.getElementById('submitButton');
@@ -1958,10 +1962,13 @@ export const prerender = true;
           submitText.style.display = 'inline';
           submitLoading.style.display = 'none';
         }
-      });
+          });
+        }
 
-      // お問い合わせフォーム送信処理
-      document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        // お問い合わせフォーム送信処理
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+          contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const submitButton = document.getElementById('contactSubmitButton');
@@ -2023,6 +2030,8 @@ export const prerender = true;
           submitButton.disabled = false;
           submitText.style.display = 'inline';
           submitLoading.style.display = 'none';
+        }
+          });
         }
       });
     </script>
