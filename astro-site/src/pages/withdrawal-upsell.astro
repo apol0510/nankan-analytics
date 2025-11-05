@@ -520,10 +520,35 @@
       // 画像自動設定（クライアントサイドで今日の日付計算）
       (function() {
         const img = document.getElementById('hitImage');
-        // 🔒 一時的に固定値を使用（2025-11-05のみ）
-        const imagePath = `/upsell-images/upsell-20251104.png`;
-        img.src = imagePath;
-        console.log(`[withdrawal-upsell] 固定画像表示: ${imagePath}`);
+        const now = new Date();
+        const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+        // jst.setDate(jst.getDate() - 1); // 昨日 → 今日に変更
+
+        function tryLoadImage(daysBack) {
+          const testDate = new Date(jst);
+          testDate.setDate(testDate.getDate() - daysBack);
+          const year = testDate.getFullYear();
+          const month = String(testDate.getMonth() + 1).padStart(2, '0');
+          const day = String(testDate.getDate()).padStart(2, '0');
+          const dateStr = `${year}${month}${day}`;
+          const imagePath = `/upsell-images/upsell-${dateStr}.png`;
+
+          img.src = imagePath;
+          console.log(`[withdrawal-upsell] 画像読み込み試行: ${imagePath}`);
+
+          if (daysBack < 10) {
+            img.onerror = function() {
+              console.log(`[withdrawal-upsell] 画像なし、${daysBack + 1}日前を試行`);
+              tryLoadImage(daysBack + 1);
+            };
+          } else {
+            img.onerror = function() {
+              console.error('[withdrawal-upsell] 10日前まで画像が見つかりませんでした');
+            };
+          }
+        }
+
+        tryLoadImage(0);
       })();
 
       // 退会モーダル制御（DOMContentLoaded内で実行）
