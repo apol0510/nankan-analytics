@@ -373,6 +373,14 @@ export const prerender = true;
       margin-bottom: 2rem;
     }
 
+    .payment-methods {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
     .cta-button {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #fff;
@@ -383,7 +391,9 @@ export const prerender = true;
       border-radius: 12px;
       cursor: pointer;
       text-decoration: none;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
       transition: all 0.3s;
       box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
     }
@@ -391,6 +401,195 @@ export const prerender = true;
     .cta-button:hover {
       transform: translateY(-5px);
       box-shadow: 0 15px 40px rgba(16, 185, 129, 0.7);
+    }
+
+    .bank-transfer-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
+    }
+
+    .bank-transfer-button:hover {
+      box-shadow: 0 15px 40px rgba(59, 130, 246, 0.7);
+    }
+
+    /* 銀行振込モーダル */
+    .bank-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .bank-modal.active {
+      display: flex;
+    }
+
+    .bank-modal-content {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 2px solid rgba(59, 130, 246, 0.5);
+      border-radius: 16px;
+      padding: 2.5rem;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .bank-modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #ef4444;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .bank-modal-close:hover {
+      background: rgba(239, 68, 68, 0.3);
+      transform: rotate(90deg);
+    }
+
+    .bank-modal-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #60a5fa;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .bank-info-box {
+      background: rgba(59, 130, 246, 0.1);
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .bank-info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .bank-info-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .bank-info-label {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .bank-info-value {
+      color: #e2e8f0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .bank-steps {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .bank-steps-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #10b981;
+      margin-bottom: 1rem;
+    }
+
+    .bank-step {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .bank-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .bank-step-number {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .bank-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .bank-warning-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fbbf24;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bank-warning-text {
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .copy-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-left: 8px;
+    }
+
+    .copy-button:hover {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      transform: translateY(-2px);
     }
 
     .back-link {
@@ -845,9 +1044,45 @@ export const prerender = true;
         font-size: 2.5rem;
       }
 
+      .payment-methods {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
       .cta-button {
         font-size: 1.2rem;
         padding: 1.5rem 2.5rem;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .bank-modal-content {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+      }
+
+      .bank-modal-title {
+        font-size: 1.5rem;
+      }
+
+      .bank-info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .bank-info-value {
+        text-align: left;
+        font-size: 1rem;
+      }
+
+      .copy-button {
+        margin-left: 0;
+        margin-top: 8px;
+      }
+
+      .bank-step {
+        font-size: 0.9rem;
       }
 
       .solution-stats {
@@ -1306,10 +1541,156 @@ export const prerender = true;
       <h2 class="cta-title">今すぐプレミアムプラスに参加する</h2>
       <div class="cta-price">¥68,000</div>
       <p class="cta-note">※本日の超勝負レース1鞍 AI精密買い目提供</p>
-      <a href="https://buy.stripe.com/aFa4gz4KBcAM9SbgVldby0R" class="cta-button">
-        🚀 今すぐ参加する
-      </a>
+
+      <div class="payment-methods">
+        <a href="https://buy.stripe.com/aFa4gz4KBcAM9SbgVldby0R" class="cta-button">
+          💳 クレジットカードで購入
+        </a>
+        <button class="cta-button bank-transfer-button" onclick="openBankModal()">
+          🏦 銀行振込で購入
+        </button>
+      </div>
     </div>
+
+    <!-- 銀行振込モーダル -->
+    <div class="bank-modal" id="bankModal">
+      <div class="bank-modal-content">
+        <button class="bank-modal-close" onclick="closeBankModal()">×</button>
+
+        <h2 class="bank-modal-title">💰 銀行振込でのお申し込み</h2>
+
+        <div class="bank-info-box">
+          <div class="bank-info-item">
+            <span class="bank-info-label">振込先銀行</span>
+            <span class="bank-info-value">三井住友銀行
+              <button class="copy-button" onclick="copyToClipboard('三井住友銀行')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">支店名</span>
+            <span class="bank-info-value">洲本支店
+              <button class="copy-button" onclick="copyToClipboard('洲本支店')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座種別</span>
+            <span class="bank-info-value">普通</span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座番号</span>
+            <span class="bank-info-value">5338892
+              <button class="copy-button" onclick="copyToClipboard('5338892')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座名義</span>
+            <span class="bank-info-value" style="font-size: 0.95rem;">ﾏ-ｸｱﾂﾌﾟｴ-ｱｲｻ-ﾋﾞｽ ｱｻｲ ﾄｼﾋﾛ
+              <button class="copy-button" onclick="copyToClipboard('ﾏ-ｸｱﾂﾌﾟｴ-ｱｲｻ-ﾋﾞｽ ｱｻｲ ﾄｼﾋﾛ')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
+            <span class="bank-info-label">振込金額</span>
+            <span class="bank-info-value" style="color: #10b981; font-size: 1.3rem;">¥68,000</span>
+          </div>
+        </div>
+
+        <div class="bank-steps">
+          <div class="bank-steps-title">📝 お申し込み手順</div>
+          <div class="bank-step">
+            <span class="bank-step-number">1</span>
+            <span>上記の口座情報に <strong>¥68,000</strong> をお振込みください</span>
+          </div>
+          <div class="bank-step">
+            <span class="bank-step-number">2</span>
+            <span>振込完了後、以下のメールアドレスにご連絡ください：<br>
+              <strong style="color: #60a5fa;">nankan-analytics@keiba.link</strong>
+              <button class="copy-button" onclick="copyToClipboard('nankan-analytics@keiba.link')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-step">
+            <span class="bank-step-number">3</span>
+            <span>メールには以下の情報を記載してください：<br>
+              ・お名前<br>
+              ・振込日時<br>
+              ・振込金額<br>
+              ・ご登録のメールアドレス
+            </span>
+          </div>
+          <div class="bank-step">
+            <span class="bank-step-number">4</span>
+            <span>入金確認取れ次第、ご連絡させていただきます</span>
+          </div>
+        </div>
+
+        <div class="bank-warning">
+          <div class="bank-warning-title">⚠️ ご注意事項</div>
+          <div class="bank-warning-text">
+            ・振込手数料はお客様負担となります<br>
+            ・土日祝日の場合、確認が翌営業日となる場合がございます<br>
+            ・振込名義人とお申し込み者が異なる場合は、必ずメールにてお知らせください<br>
+            ・ご入金後のキャンセル・返金は承っておりません
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      function openBankModal() {
+        document.getElementById('bankModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeBankModal() {
+        document.getElementById('bankModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+
+      function copyToClipboard(text) {
+        // テキストエリアを使った確実なコピー方法
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        try {
+          const successful = document.execCommand('copy');
+          document.body.removeChild(textarea);
+
+          if (successful) {
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'コピー完了！';
+            button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            setTimeout(() => {
+              button.textContent = originalText;
+              button.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+            }, 2000);
+          } else {
+            alert('コピーに失敗しました。手動でコピーしてください。');
+          }
+        } catch (err) {
+          document.body.removeChild(textarea);
+          alert('コピーに失敗しました。手動でコピーしてください。');
+        }
+      }
+
+      // モーダル外クリックで閉じる
+      document.addEventListener('click', (e) => {
+        const modal = document.getElementById('bankModal');
+        if (e.target === modal) {
+          closeBankModal();
+        }
+      });
+
+      // Escapeキーで閉じる
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeBankModal();
+        }
+      });
+    </script>
 
     <!-- FAQ -->
     <div class="section">
