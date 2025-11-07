@@ -73,6 +73,10 @@
   status = 200
   headers = {X-Frame-Options = "DENY"}
 
+[[edge_functions]]
+  function = "admin-auth"
+  path = "/admin/*"
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
