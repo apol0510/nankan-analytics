@@ -28,9 +28,9 @@ export default async (request: Request) => {
 
   // Verify credentials
   // Username: nankan-admin
-  // Password: NANKANsecure2024!
+  // Password: NANKANsecure2025!
   const validUsername = 'nankan-admin';
-  const validPassword = 'NANKANsecure2024!';
+  const validPassword = 'NANKANsecure2025!';
 
   if (username === validUsername && password === validPassword) {
     // Authentication successful - allow access
