@@ -1,7 +1,18 @@
 // ユーザー認証関数（メールアドレスでシンプル認証）
 const Airtable = require('airtable');
+const {
+  checkBlacklist,
+  checkLoginAttempt,
+  resetLoginAttempts,
+  recordLoginFailure
+} = require('./login-rate-limiter');
 
 exports.handler = async (event, context) => {
+  // IPアドレス抽出
+  const ipAddress = event.headers['x-forwarded-for']?.split(',')[0].trim() ||
+                    event.headers['x-real-ip'] ||
+                    event.requestContext?.identity?.sourceIp ||
+                    'unknown';
   const request = {
     method: event.httpMethod,
     json: () => JSON.parse(event.body || '{}')
@@ -40,12 +51,42 @@ exports.handler = async (event, context) => {
     // リクエストボディ取得
     const { email } = JSON.parse(event.body || '{}');
     console.log('🔍 Parsed email:', email);
+    console.log('🔍 IP Address:', ipAddress);
 
     if (!email) {
       return {
         statusCode: 400,
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: 'Email is required' })
+      };
+    }
+
+    // 🔒 ブラックリストチェック（IPアドレスベース）
+    const isBlacklisted = await checkBlacklist(ipAddress);
+    if (isBlacklisted) {
+      console.log(`🚨 ブラックリスト登録済みIP: ${ipAddress}`);
+      return {
+        statusCode: 403,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: '複数回のログイン失敗により、このIPアドレスはブロックされています。',
+          message: 'お問い合わせください: nankan.analytics@gmail.com'
+        })
+      };
+    }
+
+    // 🔒 ログイン試行回数チェック（認証前）
+    const attemptCheck = checkLoginAttempt(ipAddress);
+    if (!attemptCheck.allowed) {
+      console.log(`🚨 ログイン試行制限: ${ipAddress} - 残り${attemptCheck.remainingMinutes}分`);
+      return {
+        statusCode: 429,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: 'ログイン試行回数が上限に達しました。',
+          message: `15分後に再度お試しください。（残り${attemptCheck.remainingMinutes}分）`,
+          remainingMinutes: attemptCheck.remainingMinutes
+        })
       };
     }
 
@@ -65,6 +106,10 @@ exports.handler = async (event, context) => {
       .firstPage();
 
     if (records.length === 0) {
+      // ❌ ユーザーが見つからない = ログイン失敗
+      // ※ただし、新規ユーザー登録は許可するため、失敗記録はしない
+      // （実際のプロジェクトでは新規登録とログインを分離することを推奨）
+
       // 新規ユーザーとして登録
       const newRecord = await base('Customers').create({
         'Email': email,
@@ -95,6 +140,9 @@ exports.handler = async (event, context) => {
       } catch (notificationError) {
         console.error('⚠️ 新規ユーザー通知エラー（処理は継続）:', notificationError.message);
       }
+
+      // ✅ 新規登録成功 → ログイン試行カウンターリセット
+      resetLoginAttempts(ipAddress);
 
       return {
         statusCode: 200,
@@ -191,6 +239,9 @@ exports.handler = async (event, context) => {
       // Airtable更新
       await base('Customers').update(user.id, updateData);
     }
+
+    // ✅ ログイン成功 → ログイン試行カウンターリセット
+    resetLoginAttempts(ipAddress);
 
     // 通常ユーザーのレスポンス
     let message = '';
