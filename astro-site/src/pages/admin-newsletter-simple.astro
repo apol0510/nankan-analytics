@@ -987,24 +987,24 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                     premium: customerStats.premium
                 };
 
-                detailsDiv.innerHTML = \`
+                detailsDiv.innerHTML = `
 <strong>📊 現在の配信対象者数:</strong><br>
-全体配信: \${stats.all}名<br>
-無料会員: \${stats.free}名<br>
-Standard会員: \${stats.standard}名<br>
-Premium会員: \${stats.premium}名<br><br>
+全体配信: ${stats.all}名<br>
+無料会員: ${stats.free}名<br>
+Standard会員: ${stats.standard}名<br>
+Premium会員: ${stats.premium}名<br><br>
 
 <strong>📧 注意:</strong><br>
 • 配信停止ユーザーは自動除外されます<br>
 • ブラックリストユーザーは自動除外されます<br>
 • 実際の配信数は若干異なる場合があります
-                \`;
+                `;
 
             } catch (error) {
-                detailsDiv.innerHTML = \`
+                detailsDiv.innerHTML = `
 <span style="color: #dc2626;">❌ エラー:</span><br>
-\${error.message}
-                \`;
+${error.message}
+                `;
             } finally {
                 this.disabled = false;
                 this.textContent = '📧 最新配信数を確認';
