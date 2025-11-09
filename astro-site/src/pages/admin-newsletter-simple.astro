@@ -571,17 +571,12 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                 <h2>✉️ メール作成</h2>
 
                 <div class="form-group">
-                    <label>配信対象（MailingListグループ選択）</label>
-                    <select id="targetMailingList" class="form-control">
+                    <label>配信対象（プラン選択）</label>
+                    <select id="targetPlan" class="form-control">
                         <option value="all">全員</option>
-                        <option value="未登録">未登録</option>
-                        <option value="無料会員">無料会員</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Premium">Premium</option>
-                        <option value="Premium Sanrenpuku">Premium Sanrenpuku</option>
-                        <option value="Premium Combo">Premium Combo</option>
-                        <option value="Premium Plus">Premium Plus</option>
-                        <option value="退会者">退会者（有効期限切れ + 退会申請済み）</option>
+                        <option value="free">Free（無料会員）</option>
+                        <option value="standard">Standard</option>
+                        <option value="premium">Premium</option>
                         <option value="test">🧪 テスト用</option>
                     </select>
                     <small style="display: block; margin-top: 8px; color: #6b7280; font-size: 13px;">
@@ -1601,18 +1596,18 @@ ${error.message}
                 content = document.getElementById('content').value;
             }
             
-            const targetMailingList = document.getElementById('targetMailingList').value;
+            const targetPlan = document.getElementById('targetPlan').value;
             const isScheduled = document.getElementById('scheduleCheck').checked;
             const scheduleTime = document.getElementById('scheduleTime').value;
-            
+
             if (!subject || !content) {
                 showMessage('件名と本文を入力してください', 'error');
                 return;
             }
-            
+
             this.disabled = true;
             showMessage('配信処理中...', 'info');
-            
+
             try {
                 let htmlContent;
                 if (activeType === 'html' || activeType === 'template') {
@@ -1620,19 +1615,19 @@ ${error.message}
                 } else {
                     htmlContent = `<div style="white-space: pre-wrap; font-family: sans-serif;">${content}</div>`;
                 }
-                
+
                 // 画像がある場合はHTMLに含める（Base64埋め込み）
                 if (uploadedImages.length > 0) {
-                    const imagesHtml = uploadedImages.map(img => 
+                    const imagesHtml = uploadedImages.map(img =>
                         `<div style="margin: 10px 0;"><img src="${img.data}" alt="${img.name}" style="max-width: 100%; height: auto;"></div>`
                     ).join('');
                     htmlContent += '<div style="margin-top: 20px;">' + imagesHtml + '</div>';
                 }
-                
+
                 const payload = {
                     subject,
                     htmlContent,
-                    targetMailingList
+                    targetPlan
                 };
                 
                 if (isScheduled) {
