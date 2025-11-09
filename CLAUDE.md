@@ -2157,14 +2157,146 @@ public/upsell-images/upsell-20251007.png を配置
 
 ---
 
-**📅 最終更新日**: 2025-10-27
-**🏁 Project Phase**: premium-select.astro完全実装・グラスモーフィズムデザイン統一 ★★★★★
-**🎯 Next Priority**: 本番運用・マーケティング強化・ユーザー体験向上
-**✨ 本日の成果**: 累積スコアベース戦略ミックスシステム・自動買い目生成・premium-predictions.astroデザイン完全統一！
+**📅 最終更新日**: 2025-11-09
+**🏁 Project Phase**: standard-predictions三連複導線実装・昨日の結果データソース変更完了 ★★★★★
+**🎯 Next Priority**: 本番運用・三連複システム完全稼働・ユーザー体験向上
+**✨ 本日の成果**: Standard予想ページ三連複導線実装・昨日の結果を馬単→三連複に変更・回収率バグ修正完了！
 
 ---
 
-## 🎊 **本日完了タスク（2025-10-27）**
+## 🎊 **本日完了タスク（2025-11-09）** 🔥
+
+### ✅ **standard-predictions.astro 三連複導線実装完了**
+
+#### **1. Premium CTA削除 → 三連複導線実装**
+- **❌ 削除**: Premium会員への導線（「プレミアム会員で収益最大化」セクション）
+- **✅ 追加**: 三連複絞り込み機能への導線（premium-predictions.astroと同じ構成）
+- **理由**: Standard会員には馬単のPremiumではなく、三連複商品への誘導に変更
+
+#### **2. 三連複アップセルカード実装**
+- **タイトル**: 「馬単の買い目が絞りきれない方へ」
+- **訴求内容**: 「馬単3戦略 → 絞り込み機能搭載」
+- **実績表示**: 過去1年間的中率72% 回収率156%
+- **買い目訴求**: わずか7〜9点の少点数買い目
+- **3つのボタン**:
+  - ✨ 絞り込み機能を実体験する（/sanrenpuku-demo）
+  - 📊 三連複の実績を見る（/archive-sanrenpuku）
+  - 🔄 プラン変更（モーダル表示）
+
+#### **3. モーダル式プラン変更実装**
+- **Standard会員用**: 2プラン選択モーダル
+  - **Premium Sanrenpuku**: ¥19,820/月
+  - **Premium Combo**: ¥24,800/月（おすすめバッジ）
+- **直接Stripe決済リンク**: ワンクリックで購入画面へ
+
+### ✅ **昨日の的中結果データソース変更（最重要）** ⚠️
+
+#### **🔴 重要変更：馬単結果 → 三連複結果**
+```javascript
+// ❌ 変更前（馬単結果を表示）
+export const yesterdayResults = convertToYesterdayResults();  // archiveResults.json（馬単）
+
+// ✅ 変更後（三連複結果を表示）
+export const yesterdayResults = convertToSanrenpukuYesterdayResults();  // archiveSanrenpukuResults.json（三連複）
+```
+
+**⚠️ 次回から絶対に注意すること:**
+- standard-predictions.astroの「昨日の的中結果」は**三連複の結果**を表示
+- データソースは `archiveSanrenpukuResults.json`（三連複専用）
+- `archiveResults.json`（馬単）は使用しない
+- 回収率等の計算は `convertToSanrenpukuYesterdayResults()` を使用
+
+#### **データフロー確認**
+```
+admin/results-manager（三連複結果入力）
+  ↓
+archiveSanrenpukuResults.json（三連複データ保存）
+  ↓
+convertToSanrenpukuYesterdayResults()（変換関数）
+  ↓
+standard-predictions.astro「昨日の的中結果」セクション表示
+```
+
+### ✅ **回収率0%バグ修正完了**
+
+#### **1. 問題の原因**
+- **archiveSanrenpukuResults.jsonの構造**:
+  - ✅ `recoveryRate: 474` は保存されている
+  - ❌ 各レースに `betPoints` フィールドがない
+- **従来のロジックの問題**: betPointsが0なので回収率が0になる
+
+#### **2. 修正内容（archive-utils.js）**
+```javascript
+// ✅ 三連複用: convertToSanrenpukuYesterdayResults()修正
+let recoveryRate = latestData.recoveryRate || 0;  // JSONの値を最優先
+
+// フォールバック: JSONにrecoveryRateがない場合のみ計算
+if (!latestData.recoveryRate && totalBetPoints > 0) {
+    const totalInvestment = totalBetPoints * 100;
+    recoveryRate = Math.round((latestData.totalPayout / totalInvestment) * 100);
+}
+
+// ✅ 馬単用: convertToYesterdayResults()も同様に修正
+```
+
+#### **3. 修正効果**
+- **三連複**: archiveSanrenpukuResults.jsonの `recoveryRate: 474` が正しく表示（474%）
+- **馬単**: archiveResults.jsonの `recoveryRate: 189` が正しく表示（189%）
+- **両方**: JSONに回収率が保存されていればそれを使用、なければbetPointsから計算
+
+### ✅ **archive-sanrenpuku アクセス制御修正**
+
+#### **1. アクセス可能プラン**
+- ✅ Standard会員: アクセス可能
+- ✅ Premium会員: アクセス可能
+- ✅ Premium Predictions会員: アクセス可能（バリエーション対応）
+- ❌ Premium Sanrenpuku会員: アクセス不可（既に三連複購入済み）
+- ❌ Premium Combo会員: アクセス不可（既に三連複購入済み）
+- ❌ Free会員: アクセス不可
+
+#### **2. 詳細ログ実装**
+```javascript
+console.log('🔍 三連複アーカイブアクセス判定:');
+console.log('  userPlan:', userPlan);
+console.log('  planLower:', planLower);
+console.log('  isStandard:', isStandard);
+console.log('  isPremium:', isPremium);
+console.log('  isAllowed:', isAllowed);
+```
+
+### 📋 **技術的成果**
+- **HTML**: 三連複アップセルカード + モーダルHTML（98行追加）
+- **JavaScript**: モーダル制御イベントリスナー（27行追加）
+- **CSS**: 完全スタイリング実装（381行追加）
+- **データソース変更**: archiveResults.json → archiveSanrenpukuResults.json
+- **回収率バグ修正**: JSONの値優先使用ロジック実装
+- **合計**: +500行追加、-43行削除
+
+### 🎯 **ビジネス価値向上**
+- **Standard会員導線**: Premium会員ではなく三連複商品への誘導に変更
+- **選択肢明確化**: 2プラン並列表示で比較検討可能
+- **データ正確性**: 回収率474%等の正確な実績表示
+- **アクセス制御**: 適切な会員への三連複アーカイブ提供
+
+### 🔧 **実装ファイル**
+- `src/pages/standard-predictions.astro`: 三連複導線実装・データソース変更（54行目）
+- `src/lib/archive-utils.js`: 回収率計算ロジック修正（両関数対応）
+- `src/pages/archive-sanrenpuku/index.astro`: アクセス制御・詳細ログ追加
+
+### 💡 **復活防止対策（最重要）** ⚠️
+- ✅ **standard-predictions.astroの昨日の結果は三連複データ**: 絶対に馬単に戻さない
+- ✅ **convertToSanrenpukuYesterdayResults()使用**: 三連複専用関数を必ず使用
+- ✅ **archiveSanrenpukuResults.json参照**: 馬単のarchiveResults.jsonは使用しない
+- ✅ **回収率JSONデータ優先**: betPointsではなくJSONのrecoveryRateを最優先
+
+### 📅 **コミット履歴**
+- `a87ff15`: Standard予想ページ三連複導線実装・プレミアムCTA削除・モーダル式プラン変更
+- `b06586a`: 三連複アーカイブStandard会員アクセス制御修正・詳細ログ追加
+- `ed2aa66`: 昨日の的中結果・回収率0%バグ修正（三連複・馬単両対応）
+
+---
+
+## 🎊 **過去完了タスク（2025-10-27）**
 
 ### ✅ **premium-select.astro完全実装・グラスモーフィズムデザイン統一完了**
 
