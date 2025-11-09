@@ -5,7 +5,7 @@ import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
 import allRacesData from '../data/allRacesPrediction.json';
 import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
-import { convertToSanrenpukuYesterdayResults, getLatestSanrenpukuDayData } from '../lib/archive-utils.js';
+import { convertToYesterdayResults, getLatestDayData, convertToSanrenpukuYesterdayResults, getLatestSanrenpukuDayData } from '../lib/archive-utils.js';
 import { getRaceTier, PLAN_ACCESS } from '../lib/race-config.js';
 import archiveSanrenpukuResults from '../data/archiveSanrenpukuResults.json';
 
