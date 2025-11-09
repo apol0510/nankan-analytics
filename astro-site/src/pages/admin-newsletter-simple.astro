@@ -137,6 +137,9 @@ try {
 } catch (error) {
     debugInfo.errorMessage = error.message;
 }
+
+// ✅ Set を配列に変換（JSON シリアライズ可能にする）
+debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
 ---
 
 <BaseLayout title="メルマガ配信 - NANKANアナリティクス">
