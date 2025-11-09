@@ -956,8 +956,13 @@ try {
                 document.getElementById('premiumCountOption').textContent = `${customerStats.premium}名`;
             }
         }
-        
-        
+
+        // ✅ DOMContentLoaded イベントリスナーで全てのコードをラップ（UI bugs修正 2025-11-09）
+        // 問題: DOM要素が読み込まれる前にイベントリスナーを追加しようとしていた
+        // 解決: DOMContentLoadedで確実にDOM要素が存在してからイベントリスナーを登録
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📧 admin-newsletter-simple 初期化開始');
+
         // プラン選択（セレクトボックス対応）
 
         // 配信確認ボタン
@@ -1932,5 +1937,8 @@ Premium会員: \${stats.premium}名<br><br>
         // ドメイン保護データの初期読み込み
         loadBlacklistData();
         loadDomainStats();
+
+            console.log('✅ admin-newsletter-simple 初期化完了');
+        }); // DOMContentLoaded終了
     </script>
 </BaseLayout>
