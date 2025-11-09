@@ -56,5 +56,5 @@ export default async function handler(request, context) {
 
 // Netlify Scheduled Functions設定
 export const config = {
-  schedule: "*/5 * * * *" // 5分毎に実行
+  schedule: "*/15 * * * *" // 15分毎に実行（送信数削減のため5分→15分に変更 2025-11-09）
 };
