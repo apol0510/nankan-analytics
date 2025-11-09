@@ -41,10 +41,17 @@ export function convertToYesterdayResults() {
     const latestData = getLatestDayData();
     if (!latestData) return null;
 
-    // 回収率計算
+    // 🔴 回収率: JSONに保存されている値を優先使用、なければ計算（2025-11-09修正）
+    // 問題: betPointsから再計算すると、JSONの回収率（189%等）が無視される
+    // 解決: latestData.recoveryRateを優先使用（三連複と同じロジック）
+    let recoveryRate = latestData.recoveryRate || 0;
     const totalBetPoints = latestData.races.reduce((sum, race) => sum + (race.betPoints || 0), 0);
-    const totalInvestment = totalBetPoints * 100; // 1点=100円
-    const recoveryRate = totalInvestment > 0 ? Math.round((latestData.totalPayout / totalInvestment) * 100) : 0;
+
+    // betPointsがあってJSONに回収率がない場合のみ計算（フォールバック）
+    if (totalBetPoints > 0 && !latestData.recoveryRate) {
+        const totalInvestment = totalBetPoints * 100; // 1点=100円
+        recoveryRate = Math.round((latestData.totalPayout / totalInvestment) * 100);
+    }
 
     // 的中率計算
     const hitRate = latestData.totalRaces > 0 ? Math.round((latestData.hitRaces / latestData.totalRaces) * 100) : 0;
@@ -118,10 +125,17 @@ export function convertToSanrenpukuYesterdayResults() {
     const latestData = getLatestSanrenpukuDayData();
     if (!latestData) return null;
 
-    // 回収率計算
-    const totalBetPoints = latestData.races.reduce((sum, race) => sum + (race.betPoints || 0), 0);
-    const totalInvestment = totalBetPoints * 100; // 1点=100円
-    const recoveryRate = totalInvestment > 0 ? Math.round((latestData.totalPayout / totalInvestment) * 100) : 0;
+    // 🔴 回収率: JSONに保存されている値を最優先使用（2025-11-09修正）
+    // 問題: betPointsがない場合、recoveryRateが0になってしまう
+    // 解決: latestData.recoveryRateが存在すればそれを使用（betPoints不要）
+    let recoveryRate = latestData.recoveryRate || 0;
+    let totalBetPoints = latestData.races.reduce((sum, race) => sum + (race.betPoints || 0), 0);
+
+    // ⚠️ JSONにrecoveryRateがない場合のみ、betPointsから計算（フォールバック）
+    if (!latestData.recoveryRate && totalBetPoints > 0) {
+        const totalInvestment = totalBetPoints * 100;
+        recoveryRate = Math.round((latestData.totalPayout / totalInvestment) * 100);
+    }
 
     // 的中率計算
     const hitRate = latestData.totalRaces > 0 ? Math.round((latestData.hitRaces / latestData.totalRaces) * 100) : 0;
