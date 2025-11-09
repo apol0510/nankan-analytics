@@ -981,10 +981,10 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
             try {
                 // 各プランの現在の配信対象者数を確認
                 const stats = {
-                    all: ${customerStats.total},
-                    free: ${customerStats.free},
-                    standard: ${customerStats.standard},
-                    premium: ${customerStats.premium}
+                    all: customerStats.total,
+                    free: customerStats.free,
+                    standard: customerStats.standard,
+                    premium: customerStats.premium
                 };
 
                 detailsDiv.innerHTML = \`
