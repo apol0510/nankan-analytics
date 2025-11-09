@@ -50,11 +50,11 @@ const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(rac
     return standardRaceNumbers.includes(raceNum);
 });
 
-// ✅ archiveResults.jsonから自動取得するyesterdayResults（馬単）
-export const yesterdayResults = convertToYesterdayResults();
+// ✅ archiveSanrenpukuResults.jsonから自動取得するyesterdayResults（三連複）
+export const yesterdayResults = convertToSanrenpukuYesterdayResults();
 
-// archiveResults.jsonから最新日の詳細データを取得
-const latestResult = getLatestDayData();
+// archiveSanrenpukuResults.jsonから最新日の詳細データを取得
+const latestResult = getLatestSanrenpukuDayData();
 
 
 
