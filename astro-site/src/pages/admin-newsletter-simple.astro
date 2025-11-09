@@ -568,14 +568,21 @@ try {
                 <h2>✉️ メール作成</h2>
 
                 <div class="form-group">
-                    <label>配信対象</label>
-                    <select id="targetPlan" class="form-control">
-                        <option value="all">全員 (${customerStats.total}名)</option>
-                        <option value="free">Free会員 (${customerStats.free}名)</option>
-                        <option value="standard">Standard会員 (${customerStats.standard}名)</option>
-                        <option value="premium">Premium会員 (${customerStats.premium}名)</option>
+                    <label>配信対象（MailingListグループ選択）</label>
+                    <select id="targetMailingList" class="form-control">
+                        <option value="all">全員</option>
+                        <option value="未登録">未登録</option>
+                        <option value="無料会員">無料会員</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Premium Sanrenpuku">Premium Sanrenpuku</option>
+                        <option value="Premium Combo">Premium Combo</option>
+                        <option value="退会者">退会者（有効期限切れ + 退会申請済み）</option>
                         <option value="test">🧪 テスト用</option>
                     </select>
+                    <small style="display: block; margin-top: 8px; color: #6b7280; font-size: 13px;">
+                        💡 MailingListフィールドに基づいてグループ配信します
+                    </small>
                 </div>
 
                 <div class="form-group">
@@ -1585,7 +1592,7 @@ Premium会員: \${stats.premium}名<br><br>
                 content = document.getElementById('content').value;
             }
             
-            const targetPlan = document.getElementById('targetPlan').value;
+            const targetMailingList = document.getElementById('targetMailingList').value;
             const isScheduled = document.getElementById('scheduleCheck').checked;
             const scheduleTime = document.getElementById('scheduleTime').value;
             
@@ -1616,7 +1623,7 @@ Premium会員: \${stats.premium}名<br><br>
                 const payload = {
                     subject,
                     htmlContent,
-                    targetPlan
+                    targetMailingList
                 };
                 
                 if (isScheduled) {

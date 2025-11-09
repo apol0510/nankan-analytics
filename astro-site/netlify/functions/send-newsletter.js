@@ -33,12 +33,13 @@ export default async function handler(request, context) {
     const requestBody = await request.text();
     console.log('Received request body:', requestBody);
 
-    const { subject, htmlContent, scheduledAt, targetPlan = 'all', retryEmails } = JSON.parse(requestBody);
+    const { subject, htmlContent, scheduledAt, targetPlan = 'all', targetMailingList = 'all', retryEmails } = JSON.parse(requestBody);
 
     // 🔍 デバッグログ追加
     console.log('🎯 パラメータ詳細確認:', {
       subject,
       targetPlan,
+      targetMailingList,
       scheduledAt,
       hasRetryEmails: !!retryEmails
     });
@@ -60,8 +61,8 @@ export default async function handler(request, context) {
     if (isScheduledRequest) {
       console.log('📅 予約配信リクエスト - 自作スケジューラーに転送');
 
-      // 配信リスト取得
-      const recipients = await getRecipientsList(targetPlan);
+      // 配信リスト取得（MailingListフィールドベース）
+      const recipients = await getRecipientsList(targetPlan, targetMailingList);
       if (recipients.length === 0) {
         return new Response(
           JSON.stringify({ error: 'No recipients found for scheduling' }),
@@ -119,7 +120,7 @@ export default async function handler(request, context) {
       console.log('再送信モード:', retryEmails.length + '件');
       recipients = retryEmails;
     } else {
-      recipients = await getRecipientsList(targetPlan);
+      recipients = await getRecipientsList(targetPlan, targetMailingList);
     }
 
     if (recipients.length === 0) {
@@ -250,8 +251,8 @@ export default async function handler(request, context) {
 }
 
 // Airtableから受信者リストを取得
-async function getRecipientsList(targetPlan) {
-  console.log('配信対象プラン:', targetPlan);
+async function getRecipientsList(targetPlan, targetMailingList = 'all') {
+  console.log('配信対象:', { targetPlan, targetMailingList });
 
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
@@ -264,30 +265,54 @@ async function getRecipientsList(targetPlan) {
   try {
     let filterFormula = '';
 
-    // プランに基づくフィルタリング + 配信停止ユーザー除外
-    let planFilter = '';
-    if (targetPlan === 'free') {
-      planFilter = "{プラン} = 'Free'";
-    } else if (targetPlan === 'standard') {
-      planFilter = "OR({プラン} = 'Standard', {プラン} = 'Premium')";
-    } else if (targetPlan === 'premium') {
-      planFilter = "{プラン} = 'Premium'";
-    } else if (targetPlan === 'test') {
-      planFilter = "{プラン} = 'Test'"; // バウンス管理テスト専用
+    // 🆕 MailingListフィールドベースのフィルタリング（優先使用）
+    let mailingListFilter = '';
+
+    if (targetMailingList && targetMailingList !== 'all') {
+      if (targetMailingList === '退会者') {
+        // 退会者 = 有効期限切れ OR 退会申請済み
+        const today = new Date().toISOString().split('T')[0];
+        mailingListFilter = `OR(
+          IS_BEFORE({有効期限}, '${today}'),
+          IS_BEFORE({ValidUntil}, '${today}'),
+          IS_BEFORE({ExpiryDate}, '${today}'),
+          {WithdrawalRequested} = 1
+        )`;
+      } else {
+        // 通常のMailingListフィルタ
+        mailingListFilter = `{MailingList} = '${targetMailingList}'`;
+      }
     }
 
     // 配信停止ユーザーを除外する条件（メール配信フィールドがOFF/UNSUBSCRIBEDでない）
     const unsubscribeFilter = "AND({メール配信} != 'OFF', {メール配信} != 'UNSUBSCRIBED')";
 
-    if (planFilter) {
-      filterFormula = `AND(${planFilter}, ${unsubscribeFilter})`;
-    } else if (targetPlan === 'all') {
+    // 最終的なフィルタ式の構築
+    if (mailingListFilter) {
+      // MailingListフィルタ優先
+      filterFormula = `AND(${mailingListFilter}, {Email} != '', ${unsubscribeFilter})`;
+    } else if (targetPlan && targetPlan !== 'all' && targetPlan !== 'test') {
+      // 旧プランフィルタ（後方互換性のため維持）
+      let planFilter = '';
+      if (targetPlan === 'free') {
+        planFilter = "{プラン} = 'Free'";
+      } else if (targetPlan === 'standard') {
+        planFilter = "OR({プラン} = 'Standard', {プラン} = 'Premium')";
+      } else if (targetPlan === 'premium') {
+        planFilter = "{プラン} = 'Premium'";
+      }
+      if (planFilter) {
+        filterFormula = `AND(${planFilter}, ${unsubscribeFilter})`;
+      }
+    } else if (targetPlan === 'test') {
+      filterFormula = "{プラン} = 'Test'"; // バウンス管理テスト専用
+    } else {
       // 'all'の場合は配信停止ユーザーのみ除外
       filterFormula = unsubscribeFilter;
     }
 
-    console.log('🔍 配信停止フィルター適用:', {
-      planFilter,
+    console.log('🔍 フィルター適用:', {
+      mailingListFilter,
       unsubscribeFilter,
       finalFormula: filterFormula
     });
