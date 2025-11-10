@@ -577,10 +577,12 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                         <option value="free">Free（無料会員）</option>
                         <option value="standard">Standard</option>
                         <option value="premium">Premium</option>
+                        <option value="expired">退会者（有効期限切れ）</option>
                         <option value="test">🧪 テスト用</option>
                     </select>
                     <small style="display: block; margin-top: 8px; color: #6b7280; font-size: 13px;">
-                        💡 MailingListフィールドに基づいてグループ配信します
+                        💡 MailingListフィールドに基づいてグループ配信します<br>
+                        📧 退会者：Airtableの「有効期限」が切れたPremium/Standard会員
                     </small>
                 </div>
 

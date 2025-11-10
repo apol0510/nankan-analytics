@@ -291,6 +291,28 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
     if (mailingListFilter) {
       // MailingListフィルタ優先
       filterFormula = `AND(${mailingListFilter}, {Email} != '', ${unsubscribeFilter})`;
+    } else if (targetPlan === 'expired') {
+      // 🆕 2025-11-10追加: 退会者（有効期限切れ）フィルタ
+      // 有効期限が切れているPremium/Standard会員を抽出
+      const today = new Date().toISOString().split('T')[0];
+      const expiredFilter = `AND(
+        OR(
+          IS_BEFORE({有効期限}, '${today}'),
+          IS_BEFORE({ValidUntil}, '${today}'),
+          IS_BEFORE({ExpiryDate}, '${today}')
+        ),
+        OR(
+          {プラン} = 'Premium',
+          {プラン} = 'Standard',
+          {プラン} = 'Premium Predictions',
+          {プラン} = 'Premium Sanrenpuku',
+          {プラン} = 'Premium Combo'
+        ),
+        {Email} != '',
+        ${unsubscribeFilter}
+      )`;
+      filterFormula = expiredFilter;
+      console.log('🔧 退会者フィルタ適用:', { today, expiredFilter });
     } else if (targetPlan && targetPlan !== 'all' && targetPlan !== 'test') {
       // 旧プランフィルタ（後方互換性のため維持）
       let planFilter = '';
