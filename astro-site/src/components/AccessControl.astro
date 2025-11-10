@@ -253,8 +253,23 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         return { user: null, plan: null };
     }
 
-    // プラン階層チェック（2025-10-30更新: 三連複プラン対応）
+    // プラン階層チェック（2025-11-10更新: 有効期限チェック追加）
     function canAccessContent(userPlan, requiredPlan, user) {
+        // 🔧 2025-11-10追加: 有効期限チェック
+        // 有効期限が切れている場合、プランをFreeに降格してチェック
+        const validUntil = localStorage.getItem('validUntil');
+        let effectivePlan = userPlan;
+
+        if (validUntil && validUntil !== 'null') {
+            const expiry = new Date(validUntil);
+            const now = new Date();
+
+            if (expiry < now) {
+                console.log(`⚠️ 有効期限切れ検出: ${validUntil} - プランを一時的にFreeとして扱います`);
+                effectivePlan = 'Free';  // 有効期限切れの場合、Freeとして扱う
+            }
+        }
+
         const planHierarchy = {
             // 旧プラン（互換性維持）
             'free': 0,
@@ -271,13 +286,14 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             'Premium Plus': 4              // 1鞍超精密（¥68,000）
         };
 
-        const userLevel = planHierarchy[userPlan] || 0;
+        const userLevel = planHierarchy[effectivePlan] || 0;  // effectivePlanを使用
         const requiredLevel = planHierarchy[requiredPlan] || 0;
 
         console.log(`🔍 アクセスチェック詳細:`, {
-            userPlan, requiredPlan, user,
+            userPlan, effectivePlan, requiredPlan, user,
             userLevel, requiredLevel,
-            hasUser: user !== null
+            hasUser: user !== null,
+            validUntil: validUntil
         });
 
         // 無料プランが必要な場合 - 登録ユーザーのみアクセス可能
@@ -287,31 +303,33 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             return hasValidFreeUser; // 登録済みユーザーのみアクセス許可
         }
 
-        // 三連複専用ページの特殊処理
+        // 三連複専用ページの特殊処理（有効期限考慮）
         if (requiredPlan === 'Premium Sanrenpuku') {
             const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
             // Premium Sanrenpuku または Premium Combo でアクセス可能
             // ⚠️ userLevelは使わない（Premium Predictions等が誤ってアクセスできてしまうため）
-            const canAccess = hasValidUser && (
-                userPlan === 'Premium Sanrenpuku' ||
-                userPlan === 'Premium Combo'
+            // 🔧 有効期限切れの場合はアクセス不可
+            const canAccess = hasValidUser && effectivePlan !== 'Free' && (
+                effectivePlan === 'Premium Sanrenpuku' ||
+                effectivePlan === 'Premium Combo'
             );
-            console.log(`🐎 三連複アクセスチェック:`, canAccess, { userPlan, hasValidUser });
+            console.log(`🐎 三連複アクセスチェック:`, canAccess, { userPlan, effectivePlan, hasValidUser });
             return canAccess;
         }
 
-        // 馬単専用ページの特殊処理（premium, Premium, Premium Predictions）
+        // 馬単専用ページの特殊処理（premium, Premium, Premium Predictions）（有効期限考慮）
         if (requiredPlan === 'premium' || requiredPlan === 'Premium' || requiredPlan === 'Premium Predictions') {
             const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
             // Premium / Premium Predictions または Premium Combo でアクセス可能
             // ⚠️ userLevelは使わない（Premium Sanrenpuku等が誤ってアクセスできてしまうため）
-            const canAccess = hasValidUser && (
-                userPlan === 'Premium' ||
-                userPlan === 'premium' ||
-                userPlan === 'Premium Predictions' ||
-                userPlan === 'Premium Combo'
+            // 🔧 有効期限切れの場合はアクセス不可
+            const canAccess = hasValidUser && effectivePlan !== 'Free' && (
+                effectivePlan === 'Premium' ||
+                effectivePlan === 'premium' ||
+                effectivePlan === 'Premium Predictions' ||
+                effectivePlan === 'Premium Combo'
             );
-            console.log(`🏇 馬単アクセスチェック:`, canAccess, { userPlan, hasValidUser });
+            console.log(`🏇 馬単アクセスチェック:`, canAccess, { userPlan, effectivePlan, hasValidUser });
             return canAccess;
         }
 

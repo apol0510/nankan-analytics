@@ -189,17 +189,9 @@ exports.handler = async (event, context) => {
       if (expiry < now) {
         isExpired = true;
         console.log(`⚠️ ユーザー ${email} は期限切れです（${validUntil}）`);
-
-        // PremiumまたはStandardの場合のみFreeに自動降格
-        const normalizedCurrentPlan = normalizePlan(currentPlan);
-        if (normalizedCurrentPlan === 'premium' || normalizedCurrentPlan === 'standard') {
-          console.log(`🔽 プラン自動降格: ${currentPlan} → Free`);
-          await base('Customers').update(user.id, {
-            'プラン': 'Free'
-          });
-          currentPlan = 'Free';
-          wasDowngraded = true;
-        }
+        // 🔧 2025-11-10修正: Free自動降格を削除
+        // 理由: 退会者メルマガ配信のため、プラン名を維持する必要がある
+        // 有効期限切れでもプランは変更せず、クライアントサイドで制御
       }
     }
 
@@ -250,8 +242,8 @@ exports.handler = async (event, context) => {
 
     // 通常ユーザーのレスポンス
     let message = '';
-    if (wasDowngraded) {
-      message = '有効期限が切れたため、Freeプランに変更されました。';
+    if (isExpired) {
+      message = '有効期限が切れています。無料会員としてご利用いただけます。';
     } else if (pointsAdded > 0) {
       message = `ログイン成功！本日のポイント${pointsAdded}pt付与`;
     } else {
@@ -264,15 +256,14 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         success: true,
         isNewUser: false,
-        isExpired: false,
-        wasDowngraded: wasDowngraded,
+        isExpired: isExpired,  // 🔧 有効期限切れフラグを正確に返す
         user: {
           email,
-          plan: normalizedPlan,
+          plan: normalizedPlan,  // プランはそのまま（Premiumなど）
           points: newPoints,
           pointsAdded,
           lastLogin: today,
-          validUntil: validUntil || null,
+          validUntil: validUntil || null,  // 🔧 有効期限をレスポンスに含める
           registeredAt: user.get('登録日')
         },
         message: message

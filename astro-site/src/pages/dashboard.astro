@@ -636,6 +636,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             localStorage.setItem('user-plan', JSON.stringify(customerData));
             console.log('💾 LocalStorageにuser-planデータ保存完了:', customerData);
 
+            // 🔧 2025-11-10追加: 有効期限をLocalStorageに保存
+            if (customerData.validUntil) {
+                localStorage.setItem('validUntil', customerData.validUntil);
+                console.log('📅 有効期限保存:', customerData.validUntil);
+            }
+
             // セクション切り替え
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('dashboard-section').style.display = 'block';
