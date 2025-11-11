@@ -497,10 +497,6 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
                 🚫 配信停止はこちら
               </a>
             </p>
-            <p style="margin: 15px 0 5px 0; color: #9ca3af; font-size: 11px;">
-              〒123-4567 東京都〇〇区〇〇1-2-3<br>
-              NANKANアナリティクス運営事務局
-            </p>
           </div>
         `;
       } else {
