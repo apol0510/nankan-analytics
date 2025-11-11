@@ -1934,9 +1934,18 @@ ${error.message}
                 });
 
                 if (response.ok) {
-                    const message = isScheduled ?
-                        `予約完了: ${result.data?.scheduledTime || scheduleTime}` :
-                        `配信完了: ${result.recipientCount || 0}件`;
+                    let message;
+                    if (isScheduled) {
+                        if (result.processing === 'background') {
+                            // バックグラウンド処理の場合
+                            message = `📧 予約配信を受け付けました！\n配信時刻: ${result.data?.scheduledTime || scheduleTime}\nバックグラウンドで受信者リストを処理中です。`;
+                        } else {
+                            // 通常の予約処理の場合
+                            message = `予約完了: ${result.data?.scheduledTime || scheduleTime}`;
+                        }
+                    } else {
+                        message = `配信完了: ${result.recipientCount || 0}件`;
+                    }
                     showMessage(message, 'success');
 
                     // フォームをクリア

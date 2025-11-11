@@ -61,52 +61,110 @@ export default async function handler(request, context) {
     if (isScheduledRequest) {
       console.log('📅 予約配信リクエスト - 自作スケジューラーに転送');
 
-      // 配信リスト取得（MailingListフィールドベース）
-      const recipients = await getRecipientsList(targetPlan, targetMailingList);
-      if (recipients.length === 0) {
+      // ⚡ 大量配信対策: 即座に成功レスポンスを返し、バックグラウンドで処理
+      // 受信者数の事前確認（簡易版）
+      const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+      const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+
+      // Airtableから簡易カウント取得（1ページのみ）
+      let quickFilterFormula = "";
+      if (targetPlan === 'all') {
+        quickFilterFormula = "{Email} != ''";
+      } else if (targetPlan === 'free') {
+        quickFilterFormula = "AND({プラン} = 'Free', {Email} != '')";
+      } else if (targetPlan === 'standard') {
+        quickFilterFormula = "AND(OR({プラン} = 'Standard', {プラン} = 'Premium'), {Email} != '')";
+      } else if (targetPlan === 'premium') {
+        quickFilterFormula = "AND({プラン} = 'Premium', {Email} != '')";
+      }
+
+      const quickCheckUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?pageSize=1&filterByFormula=${encodeURIComponent(quickFilterFormula)}`;
+      const quickResponse = await fetch(quickCheckUrl, {
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!quickResponse.ok) {
+        throw new Error('Failed to check recipients count');
+      }
+
+      const quickData = await quickResponse.json();
+      if (!quickData.records || quickData.records.length === 0) {
         return new Response(
           JSON.stringify({ error: 'No recipients found for scheduling' }),
           { status: 400, headers }
         );
       }
 
-      // 自作スケジューラーにジョブを登録
-      const baseUrl = request.url.substring(0, request.url.lastIndexOf('/'));
-      const scheduleResponse = await fetch(`${baseUrl}/schedule-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          subject,
-          content: htmlContent,
-          recipients: recipients,
-          scheduledFor: scheduledAt,
-          createdBy: 'admin',
-          targetPlan,
-          includeUnsubscribe
-        })
+      console.log(`✅ 受信者存在確認完了 - バックグラウンドで処理開始`);
+
+      // 🚀 バックグラウンドで処理（waitUntilを使用）
+      context.waitUntil((async () => {
+        try {
+          console.log('🔄 バックグラウンド処理開始: 受信者リスト取得');
+
+          // 配信リスト取得（MailingListフィールドベース）
+          const recipients = await getRecipientsList(targetPlan, targetMailingList);
+          console.log(`📧 取得完了: ${recipients.length}件`);
+
+          if (recipients.length === 0) {
+            console.error('❌ バックグラウンド処理エラー: 受信者が0件');
+            return;
+          }
+
+          // 自作スケジューラーにジョブを登録
+          const baseUrl = request.url.substring(0, request.url.lastIndexOf('/'));
+          const scheduleResponse = await fetch(`${baseUrl}/schedule-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              subject,
+              content: htmlContent,
+              recipients: recipients,
+              scheduledFor: scheduledAt,
+              createdBy: 'admin',
+              targetPlan,
+              includeUnsubscribe
+            })
+          });
+
+          if (!scheduleResponse.ok) {
+            const errorText = await scheduleResponse.text();
+            console.error(`❌ スケジューラー登録失敗: ${scheduleResponse.status} - ${errorText}`);
+            return;
+          }
+
+          const scheduleResult = await scheduleResponse.json();
+          console.log(`✅ バックグラウンド処理完了: JobID ${scheduleResult.jobId}`);
+        } catch (bgError) {
+          console.error('❌ バックグラウンド処理エラー:', bgError);
+        }
+      })());
+
+      // 即座に成功レスポンスを返す（バックグラウンド処理中）
+      const scheduledTime = new Date(scheduledAt).toLocaleString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
       });
-
-      if (!scheduleResponse.ok) {
-        const errorText = await scheduleResponse.text();
-        throw new Error(`スケジューラー登録失敗: ${scheduleResponse.status} - ${errorText}`);
-      }
-
-      const scheduleResult = await scheduleResponse.json();
 
       return new Response(
         JSON.stringify({
           success: true,
+          message: `予約配信を受け付けました。受信者リストの取得と登録をバックグラウンドで処理中です。`,
+          processing: 'background',
           isScheduled: true,
-          jobId: scheduleResult.jobId,
-          scheduledFor: scheduledAt,
-          message: `メール予約完了: ${subject}`,
           data: {
             subject,
-            recipientCount: recipients.length,
-            scheduledTime: scheduleResult.data.scheduledTime,
-            note: '自作スケジューラーで確実配信予定'
+            scheduledTime,
+            note: 'バックグラウンドで受信者リスト取得後、自作スケジューラーに登録されます'
           },
           timestamp: new Date().toISOString()
         }),
