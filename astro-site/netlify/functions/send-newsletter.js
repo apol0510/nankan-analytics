@@ -285,14 +285,15 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
       }
     }
 
-    // 配信停止ユーザーを除外する条件（メール配信フィールドがOFF/UNSUBSCRIBEDでない）
-    // 🔧 2025-11-11修正: 空白フィールドも配信対象に含める（OR条件で空白を許可）
-    const unsubscribeFilter = "OR({メール配信} = BLANK(), AND({メール配信} != 'OFF', {メール配信} != 'UNSUBSCRIBED'))";
+    // 🔧 2025-11-11修正: {メール配信}フィールドが存在しないため、フィルタを無効化
+    // Customersテーブルに{メール配信}フィールドが存在しないことを確認
+    // 全ての顧客に配信するため、unsubscribeFilterは空文字列に設定
+    const unsubscribeFilter = "";
 
     // 最終的なフィルタ式の構築
     if (mailingListFilter) {
       // MailingListフィルタ優先
-      filterFormula = `AND(${mailingListFilter}, {Email} != '', ${unsubscribeFilter})`;
+      filterFormula = `AND(${mailingListFilter}, {Email} != '')`;
     } else if (targetPlan === 'expired') {
       // 🆕 2025-11-10追加: 退会者（有効期限切れ）フィルタ
       // 有効期限が切れているPremium/Standard会員を抽出
@@ -310,8 +311,7 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
           {プラン} = 'Premium Sanrenpuku',
           {プラン} = 'Premium Combo'
         ),
-        {Email} != '',
-        ${unsubscribeFilter}
+        {Email} != ''
       )`;
       filterFormula = expiredFilter;
       console.log('🔧 退会者フィルタ適用:', { today, expiredFilter });
@@ -326,13 +326,13 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
         planFilter = "{プラン} = 'Premium'";
       }
       if (planFilter) {
-        filterFormula = `AND(${planFilter}, ${unsubscribeFilter})`;
+        filterFormula = `AND(${planFilter}, {Email} != '')`;
       }
     } else if (targetPlan === 'test') {
       filterFormula = "{プラン} = 'Test'"; // バウンス管理テスト専用
     } else {
-      // 'all'の場合は配信停止ユーザーのみ除外
-      filterFormula = unsubscribeFilter;
+      // 🔧 2025-11-11修正: 'all'の場合はEmailが存在するレコードのみ取得
+      filterFormula = "{Email} != ''";
     }
 
     console.log('🔍 フィルター適用:', {
