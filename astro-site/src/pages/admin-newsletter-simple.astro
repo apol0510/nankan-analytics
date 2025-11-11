@@ -2273,10 +2273,10 @@ ${error.message}
                 }
 
                 // 予約配信待ちを取得（PENDING）
-                const pendingResponse = await fetch('/.netlify/functions/get-scheduled-jobs?status=pending');
+                const pendingResponse = await fetch('/.netlify/functions/get-scheduled-jobs?status=PENDING');
                 if (pendingResponse.ok) {
                     const pendingData = await pendingResponse.json();
-                    document.getElementById('pendingJobs').textContent = pendingData.records?.length || 0;
+                    document.getElementById('pendingJobs').textContent = pendingData.stats?.pending || pendingData.jobs?.length || 0;
                 }
 
                 console.log('✅ サマリーデータ読み込み完了');
