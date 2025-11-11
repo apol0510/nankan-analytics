@@ -1908,7 +1908,16 @@ ${error.message}
                 if (isScheduled) {
                     payload.scheduledAt = new Date(scheduleTime).toISOString();
                 }
-                
+
+                // 🔍 デバッグ: 送信ペイロードをログ出力
+                console.log('📧 送信ペイロード:', {
+                    subject: payload.subject,
+                    targetPlan: payload.targetPlan,
+                    isScheduled: isScheduled,
+                    scheduledAt: payload.scheduledAt,
+                    includeUnsubscribe: payload.includeUnsubscribe
+                });
+
                 const response = await fetch('/.netlify/functions/send-newsletter', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1916,13 +1925,20 @@ ${error.message}
                 });
                 
                 const result = await response.json();
-                
+
+                // 🔍 デバッグ: レスポンス詳細をログ出力
+                console.log('📧 send-newsletter レスポンス:', {
+                    status: response.status,
+                    ok: response.ok,
+                    result: result
+                });
+
                 if (response.ok) {
-                    const message = isScheduled ? 
+                    const message = isScheduled ?
                         `予約完了: ${result.data?.scheduledTime || scheduleTime}` :
                         `配信完了: ${result.recipientCount || 0}件`;
                     showMessage(message, 'success');
-                    
+
                     // フォームをクリア
                     document.getElementById('subject').value = '';
                     document.getElementById('content').value = '';
@@ -1933,6 +1949,7 @@ ${error.message}
                     uploadedImages = [];
                     displayImagePreview();
                 } else {
+                    console.error('❌ send-newsletter エラー詳細:', result);
                     showMessage(`エラー: ${result.error || '配信に失敗しました'}`, 'error');
                 }
             } catch (error) {
