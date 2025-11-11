@@ -253,7 +253,7 @@ export default async function handler(request, context) {
 
 // Airtableから受信者リストを取得
 async function getRecipientsList(targetPlan, targetMailingList = 'all') {
-  console.log('配信対象:', { targetPlan, targetMailingList });
+  console.log('📧 getRecipientsList開始:', { targetPlan, targetMailingList });
 
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
@@ -400,7 +400,8 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
       .map(record => record.fields.Email)
       .filter(email => email && email.includes('@'));
 
-    console.log(`📧 取得した受信者数: ${recipients.length}`, recipients);
+    console.log(`📧 取得した受信者数: ${recipients.length}`);
+    console.log(`📧 受信者リスト（最初5件）:`, recipients.slice(0, 5));
 
     // バウンス管理: 無効なメールアドレスをフィルタリング
     const validRecipients = await filterValidEmails(recipients);

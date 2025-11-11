@@ -37,16 +37,45 @@ export default async function handler(request, context) {
       includeUnsubscribe = true
     } = body;
 
+    // 🔍 デバッグログ: 受信データ確認
+    console.log('📧 schedule-email受信データ:', {
+      subject: subject?.substring(0, 50),
+      contentLength: content?.length,
+      recipientsType: Array.isArray(recipients) ? 'Array' : typeof recipients,
+      recipientsLength: Array.isArray(recipients) ? recipients.length : recipients?.length,
+      recipientsFirst3: Array.isArray(recipients) ? recipients.slice(0, 3) : 'Not Array',
+      scheduledFor
+    });
+
     // 必須項目チェック
     if (!subject || !content || !recipients || !scheduledFor) {
+      console.error('❌ 必須項目不足:', { subject: !!subject, content: !!content, recipients: !!recipients, scheduledFor: !!scheduledFor });
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Missing required fields: subject, content, recipients, scheduledFor',
           success: false
         }),
         { status: 400, headers }
       );
     }
+
+    // 🔍 受信者数チェック
+    const recipientsCount = Array.isArray(recipients) ? recipients.length : (recipients.split(',').length || 0);
+    if (recipientsCount === 0) {
+      console.error('❌ 受信者数が0です');
+      return new Response(
+        JSON.stringify({
+          error: 'No recipients found for scheduling',
+          success: false,
+          debug: {
+            recipientsType: typeof recipients,
+            recipientsValue: recipients
+          }
+        }),
+        { status: 400, headers }
+      );
+    }
+    console.log(`✅ 受信者数確認: ${recipientsCount}件`);
 
     // 過去の時刻チェック
     const scheduledTime = new Date(scheduledFor);
