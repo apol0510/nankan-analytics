@@ -28,12 +28,13 @@ export default async function handler(request, context) {
     }
 
     const body = await request.json();
-    const { 
-      subject, 
-      content, 
+    const {
+      subject,
+      content,
       recipients,
       scheduledFor, // ISO string
-      createdBy = 'admin'
+      createdBy = 'admin',
+      includeUnsubscribe = true
     } = body;
 
     // 必須項目チェック
@@ -74,7 +75,8 @@ export default async function handler(request, context) {
         ScheduledFor: scheduledTime.toISOString(),
         Status: 'PENDING',
         CreatedBy: createdBy,
-        JobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        JobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        IncludeUnsubscribe: includeUnsubscribe ? 'Yes' : 'No'
         // CreatedAtは削除 - 計算フィールドのため
       }
     };

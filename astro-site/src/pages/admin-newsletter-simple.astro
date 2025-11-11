@@ -772,6 +772,15 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                     <input type="datetime-local" class="form-control" id="scheduleTime">
                 </div>
 
+                <div class="checkbox-group">
+                    <input type="checkbox" id="includeUnsubscribe" checked>
+                    <label for="includeUnsubscribe" style="margin: 0; cursor: pointer;">配信解除セクションを追加する</label>
+                </div>
+                <small style="display: block; margin: 8px 0 15px 28px; color: #6b7280; font-size: 13px;">
+                    ✅ 推奨：法令遵守のため、通常はチェックを入れておいてください<br>
+                    ⚠️ チェックを外すと配信解除リンクが含まれません
+                </small>
+
                 <div class="action-buttons">
                     <button class="btn btn-primary" id="sendBtn">
                         <span id="sendBtnText">配信する</span>
@@ -1634,6 +1643,7 @@ ${error.message}
             const targetPlan = document.getElementById('targetPlan').value;
             const isScheduled = document.getElementById('scheduleCheck').checked;
             const scheduleTime = document.getElementById('scheduleTime').value;
+            const includeUnsubscribe = document.getElementById('includeUnsubscribe').checked;
 
             if (!subject || !content) {
                 showMessage('件名と本文を入力してください', 'error');
@@ -1662,9 +1672,10 @@ ${error.message}
                 const payload = {
                     subject,
                     htmlContent,
-                    targetPlan
+                    targetPlan,
+                    includeUnsubscribe
                 };
-                
+
                 if (isScheduled) {
                     payload.scheduledAt = new Date(scheduleTime).toISOString();
                 }

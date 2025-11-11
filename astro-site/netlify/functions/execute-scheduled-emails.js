@@ -71,10 +71,13 @@ export default async function handler(request, context) {
     // 各メールを順次実行
     for (const emailRecord of emailsToSend) {
       const { id: recordId, fields } = emailRecord;
-      const { Subject, Content, Recipients, JobId } = fields;
+      const { Subject, Content, Recipients, JobId, IncludeUnsubscribe } = fields;
+
+      // 配信解除セクション追加フラグ（デフォルトはtrue）
+      const includeUnsubscribe = IncludeUnsubscribe !== 'No';
 
       try {
-        console.log(`📤 送信開始: ${Subject} (${JobId})`);
+        console.log(`📤 送信開始: ${Subject} (${JobId}) - 配信解除: ${includeUnsubscribe ? 'あり' : 'なし'}`);
 
         // ステータスを実行中に更新
         await updateEmailStatus(recordId, 'EXECUTING', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
@@ -88,6 +91,33 @@ export default async function handler(request, context) {
 
         for (const email of recipientList) {
           try {
+            // 配信停止リンクを条件付きで追加
+            let htmlContent;
+
+            if (includeUnsubscribe) {
+              const unsubscribeLink = `https://nankan-analytics.netlify.app/.netlify/functions/unsubscribe?email=${encodeURIComponent(email)}`;
+              htmlContent = `
+                ${Content}
+
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                <div style="text-align: center; padding: 20px; background-color: #f9fafb; font-size: 12px; color: #6b7280; font-family: Arial, sans-serif;">
+                  <p style="margin: 0 0 10px 0;">このメールは NANKANアナリティクス からお送りしています</p>
+                  <p style="margin: 10px 0;">
+                    <a href="${unsubscribeLink}" style="color: #dc2626; text-decoration: underline;">
+                      🚫 配信停止はこちら
+                    </a>
+                  </p>
+                  <p style="margin: 15px 0 5px 0; color: #9ca3af; font-size: 11px;">
+                    〒123-4567 東京都〇〇区〇〇1-2-3<br>
+                    NANKANアナリティクス運営事務局
+                  </p>
+                </div>
+              `;
+            } else {
+              // 配信解除セクションなし（本文のみ）
+              htmlContent = Content;
+            }
+
             const emailData = {
               personalizations: [
                 {
@@ -102,7 +132,7 @@ export default async function handler(request, context) {
               content: [
                 {
                   type: "text/html",
-                  value: Content
+                  value: htmlContent
                 }
               ],
               // 🚨 重要：SendGridトラッキング完全無効化（復活防止対策 2025-09-29）

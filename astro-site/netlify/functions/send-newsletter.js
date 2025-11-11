@@ -33,7 +33,7 @@ export default async function handler(request, context) {
     const requestBody = await request.text();
     console.log('Received request body:', requestBody);
 
-    const { subject, htmlContent, scheduledAt, targetPlan = 'all', targetMailingList = 'all', retryEmails } = JSON.parse(requestBody);
+    const { subject, htmlContent, scheduledAt, targetPlan = 'all', targetMailingList = 'all', retryEmails, includeUnsubscribe = true } = JSON.parse(requestBody);
 
     // 🔍 デバッグログ追加
     console.log('🎯 パラメータ詳細確認:', {
@@ -83,7 +83,8 @@ export default async function handler(request, context) {
           recipients: recipients,
           scheduledFor: scheduledAt,
           createdBy: 'admin',
-          targetPlan
+          targetPlan,
+          includeUnsubscribe
         })
       });
 
@@ -480,25 +481,32 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
     }
 
     try {
-      // 配信停止リンクを自動追加
-      const unsubscribeLink = `https://nankan-analytics.netlify.app/.netlify/functions/unsubscribe?email=${encodeURIComponent(recipient)}`;
-      const htmlWithUnsubscribe = `
-        ${htmlContent}
+      // 配信停止リンクを条件付きで追加
+      let htmlWithUnsubscribe;
 
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
-        <div style="text-align: center; padding: 20px; background-color: #f9fafb; font-size: 12px; color: #6b7280; font-family: Arial, sans-serif;">
-          <p style="margin: 0 0 10px 0;">このメールは NANKANアナリティクス からお送りしています</p>
-          <p style="margin: 10px 0;">
-            <a href="${unsubscribeLink}" style="color: #dc2626; text-decoration: underline;">
-              🚫 配信停止はこちら
-            </a>
-          </p>
-          <p style="margin: 15px 0 5px 0; color: #9ca3af; font-size: 11px;">
-            〒123-4567 東京都〇〇区〇〇1-2-3<br>
-            NANKANアナリティクス運営事務局
-          </p>
-        </div>
-      `;
+      if (includeUnsubscribe) {
+        const unsubscribeLink = `https://nankan-analytics.netlify.app/.netlify/functions/unsubscribe?email=${encodeURIComponent(recipient)}`;
+        htmlWithUnsubscribe = `
+          ${htmlContent}
+
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <div style="text-align: center; padding: 20px; background-color: #f9fafb; font-size: 12px; color: #6b7280; font-family: Arial, sans-serif;">
+            <p style="margin: 0 0 10px 0;">このメールは NANKANアナリティクス からお送りしています</p>
+            <p style="margin: 10px 0;">
+              <a href="${unsubscribeLink}" style="color: #dc2626; text-decoration: underline;">
+                🚫 配信停止はこちら
+              </a>
+            </p>
+            <p style="margin: 15px 0 5px 0; color: #9ca3af; font-size: 11px;">
+              〒123-4567 東京都〇〇区〇〇1-2-3<br>
+              NANKANアナリティクス運営事務局
+            </p>
+          </div>
+        `;
+      } else {
+        // 配信解除セクションなし（本文のみ）
+        htmlWithUnsubscribe = htmlContent;
+      }
 
       const emailData = {
         personalizations: [
