@@ -527,6 +527,153 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
             padding-top: 20px;
             border-top: 1px solid #e5e7eb;
         }
+
+        /* サマリーダッシュボード */
+        .summary-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .summary-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-metric {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin: 10px 0;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* アラート通知 */
+        .alert-container {
+            margin-bottom: 25px;
+        }
+
+        .alert-box {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 88, 12, 0.1));
+            border-left: 4px solid #f59e0b;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-left: 4px solid #ef4444;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+            border-left: 4px solid #3b82f6;
+        }
+
+        .alert-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* 配信履歴 */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .history-table th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        .history-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-sent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
     </style>
     
     <div class="newsletter-admin">
@@ -587,6 +734,88 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                     <div id="deliveryDetails" style="font-family: monospace; font-size: 14px; color: #1f2937;">
                         確認中...
                     </div>
+                </div>
+            </div>
+
+            <!-- 📊 サマリーダッシュボード -->
+            <div class="card">
+                <h2>📊 システムサマリー</h2>
+                <div class="summary-dashboard">
+                    <div class="summary-card">
+                        <h3>📧 今月の配信数</h3>
+                        <div class="summary-metric" id="monthlyDeliveries">-</div>
+                        <div class="summary-label">今月送信したメール数</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>🚫 今月のブロック数</h3>
+                        <div class="summary-metric" id="monthlyBlocks">-</div>
+                        <div class="summary-label">新規ブロックされたドメイン</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>⏱️ 予約配信待ち</h3>
+                        <div class="summary-metric" id="pendingJobs">-</div>
+                        <div class="summary-label">実行待ちのジョブ数</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" id="refreshSummaryBtn" style="width: 100%;">
+                    🔄 サマリー更新
+                </button>
+            </div>
+
+            <!-- 🔔 アラート・通知 -->
+            <div class="card">
+                <h2>🔔 アラート・通知</h2>
+                <div class="alert-container" id="alertContainer">
+                    <div class="alert-box alert-info">
+                        <div class="alert-icon">ℹ️</div>
+                        <div class="alert-content">
+                            <div class="alert-title">システム起動中</div>
+                            <div class="alert-message">アラートデータを読み込んでいます...</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="refreshAlertsBtn" style="width: 100%;">
+                    🔄 アラート更新
+                </button>
+            </div>
+
+            <!-- 📜 配信履歴 -->
+            <div class="card">
+                <h2>📜 配信履歴</h2>
+                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <select id="historyFilter" class="form-control" style="display: inline-block; width: auto;">
+                            <option value="all">全ての履歴</option>
+                            <option value="sent">送信済み</option>
+                            <option value="pending">実行待ち</option>
+                            <option value="failed">失敗</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary" id="refreshHistoryBtn">
+                        🔄 履歴更新
+                    </button>
+                </div>
+
+                <div style="max-height: 500px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <table class="history-table">
+                        <thead style="position: sticky; top: 0;">
+                            <tr>
+                                <th>日時</th>
+                                <th>件名</th>
+                                <th>配信数</th>
+                                <th>ステータス</th>
+                                <th>配信先</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
+                                    データを読み込み中...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1975,12 +2204,281 @@ ${error.message}
         // グローバル関数として定義
         window.quickWhitelist = quickWhitelist;
 
+        // ==========================================
+        // 📊 サマリーダッシュボード機能
+        // ==========================================
+
+        async function loadSummaryData() {
+            console.log('📊 サマリーデータ読み込み中...');
+
+            try {
+                // 今月の配信数を取得（ScheduledEmails SENT + EXECUTING）
+                const historyResponse = await fetch('/.netlify/functions/get-scheduled-jobs?status=all');
+                if (historyResponse.ok) {
+                    const historyData = await historyResponse.json();
+                    const now = new Date();
+                    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+                    const thisMonthJobs = historyData.records?.filter(record => {
+                        const sentAt = record.fields.SentAt || record.fields.CreatedAt;
+                        if (!sentAt) return false;
+                        const jobDate = new Date(sentAt);
+                        return jobDate >= thisMonthStart && (record.fields.Status === 'SENT' || record.fields.Status === 'EXECUTING');
+                    }) || [];
+
+                    document.getElementById('monthlyDeliveries').textContent = thisMonthJobs.length;
+                }
+
+                // 今月のブロック数を取得（EmailBlacklist）
+                const blacklistResponse = await fetch('/.netlify/functions/domain-protection?action=get-blacklist');
+                if (blacklistResponse.ok) {
+                    const blacklistData = await blacklistResponse.json();
+                    const now = new Date();
+                    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+                    const thisMonthBlocks = blacklistData.records?.filter(record => {
+                        const blockedAt = record.fields.BlockedAt;
+                        if (!blockedAt) return false;
+                        const blockDate = new Date(blockedAt);
+                        return blockDate >= thisMonthStart;
+                    }) || [];
+
+                    document.getElementById('monthlyBlocks').textContent = thisMonthBlocks.length;
+                }
+
+                // 予約配信待ちを取得（PENDING）
+                const pendingResponse = await fetch('/.netlify/functions/get-scheduled-jobs?status=pending');
+                if (pendingResponse.ok) {
+                    const pendingData = await pendingResponse.json();
+                    document.getElementById('pendingJobs').textContent = pendingData.records?.length || 0;
+                }
+
+                console.log('✅ サマリーデータ読み込み完了');
+            } catch (error) {
+                console.error('❌ サマリーデータ読み込みエラー:', error);
+                document.getElementById('monthlyDeliveries').textContent = 'エラー';
+                document.getElementById('monthlyBlocks').textContent = 'エラー';
+                document.getElementById('pendingJobs').textContent = 'エラー';
+            }
+        }
+
+        document.getElementById('refreshSummaryBtn').addEventListener('click', loadSummaryData);
+
+        // ==========================================
+        // 🔔 アラート・通知機能
+        // ==========================================
+
+        async function loadAlerts() {
+            console.log('🔔 アラート読み込み中...');
+
+            const container = document.getElementById('alertContainer');
+            const alerts = [];
+
+            try {
+                // 過去24時間のバウンス数チェック
+                const blacklistResponse = await fetch('/.netlify/functions/domain-protection?action=get-blacklist');
+                if (blacklistResponse.ok) {
+                    const blacklistData = await blacklistResponse.json();
+                    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+                    const recentBounces = blacklistData.records?.filter(record => {
+                        const lastBounce = record.fields.LastBounceDate;
+                        if (!lastBounce) return false;
+                        return new Date(lastBounce) >= oneDayAgo;
+                    }) || [];
+
+                    if (recentBounces.length >= 5) {
+                        alerts.push({
+                            type: 'warning',
+                            icon: '⚠️',
+                            title: `過去24時間で${recentBounces.length}件のバウンスが発生しました`,
+                            message: 'メールアドレスの品質を確認してください。'
+                        });
+                    }
+
+                    // 新規ブロックされたドメイン（過去7日間）
+                    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                    const newBlocks = blacklistData.records?.filter(record => {
+                        const blockedAt = record.fields.BlockedAt;
+                        if (!blockedAt) return false;
+                        return new Date(blockedAt) >= sevenDaysAgo;
+                    }) || [];
+
+                    if (newBlocks.length > 0) {
+                        const domainNames = newBlocks.map(r => r.fields.Domain).join(', ');
+                        alerts.push({
+                            type: 'error',
+                            icon: '🚨',
+                            title: `新規ブロックされたドメイン: ${newBlocks.length}件`,
+                            message: `${domainNames.substring(0, 50)}${domainNames.length > 50 ? '...' : ''}`
+                        });
+                    }
+                }
+
+                // 予約配信の確認
+                const pendingResponse = await fetch('/.netlify/functions/get-scheduled-jobs?status=pending');
+                if (pendingResponse.ok) {
+                    const pendingData = await pendingResponse.json();
+                    const now = new Date();
+                    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+
+                    const upcomingJobs = pendingData.records?.filter(record => {
+                        const scheduledFor = new Date(record.fields.ScheduledFor);
+                        return scheduledFor <= oneHourLater && scheduledFor > now;
+                    }) || [];
+
+                    if (upcomingJobs.length > 0) {
+                        alerts.push({
+                            type: 'info',
+                            icon: '📅',
+                            title: `1時間以内に${upcomingJobs.length}件の予約配信があります`,
+                            message: '配信内容に問題がないか確認してください。'
+                        });
+                    }
+                }
+
+                // アラート表示
+                if (alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="alert-box alert-info">
+                            <div class="alert-icon">✅</div>
+                            <div class="alert-content">
+                                <div class="alert-title">問題なし</div>
+                                <div class="alert-message">現在、注意すべきアラートはありません。</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = alerts.map(alert => `
+                        <div class="alert-box alert-${alert.type}">
+                            <div class="alert-icon">${alert.icon}</div>
+                            <div class="alert-content">
+                                <div class="alert-title">${alert.title}</div>
+                                <div class="alert-message">${alert.message}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                console.log('✅ アラート読み込み完了');
+            } catch (error) {
+                console.error('❌ アラート読み込みエラー:', error);
+                container.innerHTML = `
+                    <div class="alert-box alert-error">
+                        <div class="alert-icon">❌</div>
+                        <div class="alert-content">
+                            <div class="alert-title">エラー</div>
+                            <div class="alert-message">アラートデータの読み込みに失敗しました。</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('refreshAlertsBtn').addEventListener('click', loadAlerts);
+
+        // ==========================================
+        // 📜 配信履歴機能
+        // ==========================================
+
+        async function loadHistory(filterStatus = 'all') {
+            console.log('📜 配信履歴読み込み中...', filterStatus);
+
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">読み込み中...</td></tr>';
+
+            try {
+                const response = await fetch(`/.netlify/functions/get-scheduled-jobs?status=${filterStatus}`);
+                if (!response.ok) {
+                    throw new Error('履歴データの取得に失敗しました');
+                }
+
+                const data = await response.json();
+                const records = data.records || [];
+
+                if (records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">履歴データがありません</td></tr>';
+                    return;
+                }
+
+                // 日付順にソート（新しい順）
+                records.sort((a, b) => {
+                    const dateA = new Date(a.fields.ScheduledFor || a.fields.CreatedAt);
+                    const dateB = new Date(b.fields.ScheduledFor || b.fields.CreatedAt);
+                    return dateB - dateA;
+                });
+
+                tbody.innerHTML = records.slice(0, 50).map(record => {
+                    const fields = record.fields;
+                    const status = fields.Status || 'UNKNOWN';
+                    const scheduledFor = new Date(fields.ScheduledFor || fields.CreatedAt);
+                    const recipientCount = fields.Recipients ? fields.Recipients.split(',').length : 0;
+
+                    // ステータスバッジ
+                    let statusBadge = '';
+                    if (status === 'SENT') {
+                        statusBadge = '<span class="status-badge status-sent">送信済み</span>';
+                    } else if (status === 'PENDING' || status === 'EXECUTING') {
+                        statusBadge = '<span class="status-badge status-pending">実行待ち</span>';
+                    } else if (status === 'FAILED') {
+                        statusBadge = '<span class="status-badge status-failed">失敗</span>';
+                    }
+
+                    // 日時フォーマット
+                    const dateStr = scheduledFor.toLocaleString('ja-JP', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    return `
+                        <tr>
+                            <td>${dateStr}</td>
+                            <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${fields.Subject || '（件名なし）'}
+                            </td>
+                            <td style="text-align: center;">${recipientCount}名</td>
+                            <td>${statusBadge}</td>
+                            <td style="font-size: 12px; color: #6b7280;">${fields.JobId || '-'}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                console.log('✅ 配信履歴読み込み完了:', records.length, '件');
+            } catch (error) {
+                console.error('❌ 配信履歴読み込みエラー:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #ef4444;">
+                            エラー: ${error.message}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        document.getElementById('refreshHistoryBtn').addEventListener('click', () => {
+            const filter = document.getElementById('historyFilter').value;
+            loadHistory(filter);
+        });
+
+        document.getElementById('historyFilter').addEventListener('change', function() {
+            loadHistory(this.value);
+        });
+
         // 初期化
         initializeStatistics();
 
         // ドメイン保護データの初期読み込み
         loadBlacklistData();
         loadDomainStats();
+
+        // 新機能の初期読み込み
+        loadSummaryData();
+        loadAlerts();
+        loadHistory('all');
 
             console.log('✅ admin-newsletter-simple 初期化完了');
         }); // DOMContentLoaded終了
