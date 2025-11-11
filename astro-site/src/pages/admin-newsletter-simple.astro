@@ -10,6 +10,7 @@ let customerStats = {
     premium: 0,
     premiumSanrenpuku: 0,
     premiumCombo: 0,
+    paidTotal: 0,  // 有料版合計
     test: 0
 };
 
@@ -136,6 +137,11 @@ try {
                     customerStats.free++;
                 }
             });
+
+            // 有料版合計を計算
+            customerStats.paidTotal = customerStats.standard + customerStats.premium +
+                                      customerStats.premiumSanrenpuku + customerStats.premiumCombo;
+            console.log(`💰 有料版合計: ${customerStats.paidTotal}名 (Standard: ${customerStats.standard}, Premium: ${customerStats.premium}, Sanrenpuku: ${customerStats.premiumSanrenpuku}, Combo: ${customerStats.premiumCombo})`);
         }
     } else {
         debugInfo.errorMessage = 'Missing API credentials';
@@ -542,6 +548,10 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                         <div class="stat-label">Free会員</div>
                         <div class="stat-value" id="freeCount">{customerStats.free}</div>
                     </div>
+                    <div class="stat-box" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 88, 12, 0.15)); border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <div class="stat-label" style="color: #f59e0b; font-weight: 600;">💰 有料版合計</div>
+                        <div class="stat-value" id="paidTotalCount" style="color: #f59e0b;">{customerStats.paidTotal}</div>
+                    </div>
                     <div class="stat-box">
                         <div class="stat-label">Standard会員</div>
                         <div class="stat-value" id="standardCount">{customerStats.standard}</div>
@@ -589,6 +599,7 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                     <select id="targetPlan" class="form-control">
                         <option value="all">全員</option>
                         <option value="free">Free（無料会員）</option>
+                        <option value="paid" style="background: #fef3c7; font-weight: 600;">💰 有料版合計（Standard + 全Premium）</option>
                         <option value="standard">Standard</option>
                         <option value="premium">Premium（馬単のみ）</option>
                         <option value="premiumSanrenpuku">Premium Sanrenpuku（三連複のみ）</option>
@@ -996,6 +1007,7 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                 const stats = {
                     all: customerStats.total,
                     free: customerStats.free,
+                    paid: customerStats.paidTotal,
                     standard: customerStats.standard,
                     premium: customerStats.premium,
                     premiumSanrenpuku: customerStats.premiumSanrenpuku,
@@ -1006,6 +1018,7 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
 <strong>📊 現在の配信対象者数:</strong><br>
 全体配信: ${stats.all}名<br>
 無料会員: ${stats.free}名<br>
+<span style="color: #f59e0b; font-weight: 600;">💰 有料版合計: ${stats.paid}名</span><br>
 Standard会員: ${stats.standard}名<br>
 Premium会員: ${stats.premium}名<br>
 Premium Sanrenpuku: ${stats.premiumSanrenpuku}名<br>
