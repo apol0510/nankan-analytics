@@ -100,50 +100,33 @@ export default async function handler(request, context) {
 
       console.log(`✅ 受信者存在確認完了 - バックグラウンドで処理開始`);
 
-      // 🚀 バックグラウンドで処理（waitUntilを使用）
-      context.waitUntil((async () => {
-        try {
-          console.log('🔄 バックグラウンド処理開始: 受信者リスト取得');
+      // 🚀 受信者リストを取得せず、targetPlanのみをスケジューラーに保存
+      // 配信時にexecute-scheduled-emails.jsが受信者リストを取得する方式
+      const baseUrl = request.url.substring(0, request.url.lastIndexOf('/'));
+      const scheduleResponse = await fetch(`${baseUrl}/schedule-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          subject,
+          content: htmlContent,
+          recipients: 'LAZY_LOAD', // 特別な値：配信時に動的取得
+          scheduledFor: scheduledAt,
+          createdBy: 'admin',
+          targetPlan,
+          targetMailingList,
+          includeUnsubscribe
+        })
+      });
 
-          // 配信リスト取得（MailingListフィールドベース）
-          const recipients = await getRecipientsList(targetPlan, targetMailingList);
-          console.log(`📧 取得完了: ${recipients.length}件`);
+      if (!scheduleResponse.ok) {
+        const errorText = await scheduleResponse.text();
+        throw new Error(`スケジューラー登録失敗: ${scheduleResponse.status} - ${errorText}`);
+      }
 
-          if (recipients.length === 0) {
-            console.error('❌ バックグラウンド処理エラー: 受信者が0件');
-            return;
-          }
-
-          // 自作スケジューラーにジョブを登録
-          const baseUrl = request.url.substring(0, request.url.lastIndexOf('/'));
-          const scheduleResponse = await fetch(`${baseUrl}/schedule-email`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              subject,
-              content: htmlContent,
-              recipients: recipients,
-              scheduledFor: scheduledAt,
-              createdBy: 'admin',
-              targetPlan,
-              includeUnsubscribe
-            })
-          });
-
-          if (!scheduleResponse.ok) {
-            const errorText = await scheduleResponse.text();
-            console.error(`❌ スケジューラー登録失敗: ${scheduleResponse.status} - ${errorText}`);
-            return;
-          }
-
-          const scheduleResult = await scheduleResponse.json();
-          console.log(`✅ バックグラウンド処理完了: JobID ${scheduleResult.jobId}`);
-        } catch (bgError) {
-          console.error('❌ バックグラウンド処理エラー:', bgError);
-        }
-      })());
+      const scheduleResult = await scheduleResponse.json();
+      console.log(`✅ スケジューラー登録完了: JobID ${scheduleResult.jobId}`);
 
       // 即座に成功レスポンスを返す（バックグラウンド処理中）
       const scheduledTime = new Date(scheduledAt).toLocaleString('ja-JP', {

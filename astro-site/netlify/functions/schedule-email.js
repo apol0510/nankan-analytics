@@ -34,6 +34,8 @@ export default async function handler(request, context) {
       recipients,
       scheduledFor, // ISO string
       createdBy = 'admin',
+      targetPlan,
+      targetMailingList = 'all',
       includeUnsubscribe = true
     } = body;
 
@@ -42,8 +44,10 @@ export default async function handler(request, context) {
       subject: subject?.substring(0, 50),
       contentLength: content?.length,
       recipientsType: Array.isArray(recipients) ? 'Array' : typeof recipients,
-      recipientsLength: Array.isArray(recipients) ? recipients.length : recipients?.length,
-      recipientsFirst3: Array.isArray(recipients) ? recipients.slice(0, 3) : 'Not Array',
+      recipientsLength: Array.isArray(recipients) ? recipients.length : (recipients === 'LAZY_LOAD' ? 'LAZY_LOAD' : recipients?.length),
+      recipientsFirst3: Array.isArray(recipients) ? recipients.slice(0, 3) : recipients,
+      targetPlan,
+      targetMailingList,
       scheduledFor
     });
 
@@ -59,23 +63,27 @@ export default async function handler(request, context) {
       );
     }
 
-    // 🔍 受信者数チェック
-    const recipientsCount = Array.isArray(recipients) ? recipients.length : (recipients.split(',').length || 0);
-    if (recipientsCount === 0) {
-      console.error('❌ 受信者数が0です');
-      return new Response(
-        JSON.stringify({
-          error: 'No recipients found for scheduling',
-          success: false,
-          debug: {
-            recipientsType: typeof recipients,
-            recipientsValue: recipients
-          }
-        }),
-        { status: 400, headers }
-      );
+    // 🔍 受信者数チェック（LAZY_LOADの場合はスキップ）
+    if (recipients !== 'LAZY_LOAD') {
+      const recipientsCount = Array.isArray(recipients) ? recipients.length : (recipients.split(',').length || 0);
+      if (recipientsCount === 0) {
+        console.error('❌ 受信者数が0です');
+        return new Response(
+          JSON.stringify({
+            error: 'No recipients found for scheduling',
+            success: false,
+            debug: {
+              recipientsType: typeof recipients,
+              recipientsValue: recipients
+            }
+          }),
+          { status: 400, headers }
+        );
+      }
+      console.log(`✅ 受信者数確認: ${recipientsCount}件`);
+    } else {
+      console.log(`✅ LAZY_LOAD指定 - 配信時にtargetPlan="${targetPlan}"から取得`);
     }
-    console.log(`✅ 受信者数確認: ${recipientsCount}件`);
 
     // 過去の時刻チェック
     const scheduledTime = new Date(scheduledFor);
@@ -95,7 +103,7 @@ export default async function handler(request, context) {
 
     // Airtableにスケジュールジョブを作成
     const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/ScheduledEmails`;
-    
+
     const scheduleData = {
       fields: {
         Subject: subject,
@@ -105,7 +113,9 @@ export default async function handler(request, context) {
         Status: 'PENDING',
         CreatedBy: createdBy,
         JobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        IncludeUnsubscribe: includeUnsubscribe ? 'Yes' : 'No'
+        IncludeUnsubscribe: includeUnsubscribe ? 'Yes' : 'No',
+        TargetPlan: targetPlan || 'all',
+        TargetMailingList: targetMailingList || 'all'
         // CreatedAtは削除 - 計算フィールドのため
       }
     };
