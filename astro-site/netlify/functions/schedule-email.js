@@ -104,6 +104,7 @@ export default async function handler(request, context) {
     // Airtableにスケジュールジョブを作成
     const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/ScheduledEmails`;
 
+    // 🔧 Airtableフィールドを既存のもののみに限定
     const scheduleData = {
       fields: {
         Subject: subject,
@@ -112,13 +113,16 @@ export default async function handler(request, context) {
         ScheduledFor: scheduledTime.toISOString(),
         Status: 'PENDING',
         CreatedBy: createdBy,
-        JobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        IncludeUnsubscribe: includeUnsubscribe ? 'Yes' : 'No',
-        TargetPlan: targetPlan || 'all',
-        TargetMailingList: targetMailingList || 'all'
-        // CreatedAtは削除 - 計算フィールドのため
+        JobId: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        // IncludeUnsubscribe, TargetPlan, TargetMailingList は追加しない（Airtableに存在しないため）
+        // 代わりにContent内に情報を埋め込む、またはRecipientsに'LAZY_LOAD:targetPlan'形式で保存
       }
     };
+
+    // LAZY_LOADの場合はRecipientsフィールドに詳細情報を埋め込む
+    if (recipients === 'LAZY_LOAD') {
+      scheduleData.fields.Recipients = `LAZY_LOAD:${targetPlan}:${targetMailingList}:${includeUnsubscribe ? 'YES' : 'NO'}`;
+    }
 
     console.log('Creating scheduled email job:', scheduleData);
 

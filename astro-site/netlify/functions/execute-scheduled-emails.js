@@ -71,19 +71,33 @@ export default async function handler(request, context) {
     // 各メールを順次実行
     for (const emailRecord of emailsToSend) {
       const { id: recordId, fields } = emailRecord;
-      const { Subject, Content, Recipients, JobId, IncludeUnsubscribe } = fields;
-
-      // 配信解除セクション追加フラグ（デフォルトはtrue）
-      const includeUnsubscribe = IncludeUnsubscribe !== 'No';
+      const { Subject, Content, Recipients, JobId } = fields;
 
       try {
-        console.log(`📤 送信開始: ${Subject} (${JobId}) - 配信解除: ${includeUnsubscribe ? 'あり' : 'なし'}`);
+        // 🔍 LAZY_LOAD形式の解析
+        let recipientList = [];
+        let includeUnsubscribe = true;
+
+        if (Recipients && Recipients.startsWith('LAZY_LOAD:')) {
+          // LAZY_LOAD:targetPlan:targetMailingList:includeUnsubscribe 形式
+          const [, targetPlan, targetMailingList, unsubscribeFlag] = Recipients.split(':');
+          includeUnsubscribe = unsubscribeFlag === 'YES';
+
+          console.log(`🔄 LAZY_LOAD検出: targetPlan=${targetPlan}, targetMailingList=${targetMailingList}, includeUnsubscribe=${includeUnsubscribe}`);
+
+          // getRecipientsList関数を使用して受信者リストを取得
+          recipientList = await getRecipientsList(targetPlan, targetMailingList, AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
+
+          console.log(`✅ 受信者リスト取得完了: ${recipientList.length}件`);
+        } else {
+          // 通常の受信者リスト
+          recipientList = Recipients.split(',').map(email => email.trim()).filter(Boolean);
+        }
+
+        console.log(`📤 送信開始: ${Subject} (${JobId}) - 受信者: ${recipientList.length}件 - 配信解除: ${includeUnsubscribe ? 'あり' : 'なし'}`);
 
         // ステータスを実行中に更新
         await updateEmailStatus(recordId, 'EXECUTING', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
-
-        // 受信者リストを解析
-        const recipientList = Recipients.split(',').map(email => email.trim()).filter(Boolean);
 
         // 🔐 プライバシー保護個別配信（SendGrid API使用）
         let successCount = 0;
@@ -285,4 +299,75 @@ async function updateEmailStatus(recordId, status, apiKey, baseId, additionalFie
   }
   
   return response.ok;
+}
+
+// 受信者リストを取得するヘルパー関数
+async function getRecipientsList(targetPlan, targetMailingList, apiKey, baseId) {
+  console.log(`🔍 受信者リスト取得開始: targetPlan=${targetPlan}, targetMailingList=${targetMailingList}`);
+
+  let filterFormula = '';
+
+  // targetMailingListフィルタ
+  if (targetMailingList === 'expired') {
+    // 有効期限切れ会員（Standard/Premium）
+    filterFormula = `AND(
+      OR({Plan} = 'Standard', {Plan} = 'Premium'),
+      IS_BEFORE({有効期限}, NOW())
+    )`;
+  } else if (targetMailingList === 'test') {
+    // テスト用（nankan.analytics@gmail.com）
+    filterFormula = `{Email} = 'nankan.analytics@gmail.com'`;
+  } else {
+    // 通常配信（targetPlan基準）
+    if (targetPlan === 'all') {
+      filterFormula = "OR({Plan} = 'Free', {Plan} = 'Standard', {Plan} = 'Premium', {Plan} = 'Premium Sanrenpuku', {Plan} = 'Premium Combo')";
+    } else if (targetPlan === 'free') {
+      filterFormula = "{Plan} = 'Free'";
+    } else if (targetPlan === 'standard') {
+      filterFormula = "{Plan} = 'Standard'";
+    } else if (targetPlan === 'premium') {
+      filterFormula = "OR({Plan} = 'Premium', {Plan} = 'Premium Sanrenpuku', {Plan} = 'Premium Combo')";
+    }
+  }
+
+  console.log(`🔍 フィルタ条件: ${filterFormula}`);
+
+  let allRecipients = [];
+  let offset = null;
+
+  // Airtableページネーション（全件取得）
+  do {
+    let url = `https://api.airtable.com/v0/${baseId}/Customers?pageSize=100&filterByFormula=${encodeURIComponent(filterFormula)}`;
+    if (offset) {
+      url += `&offset=${offset}`;
+    }
+
+    console.log(`📄 ページ取得: offset=${offset || 'なし'}`);
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Airtable query failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const emails = data.records
+      .map(record => record.fields.Email)
+      .filter(email => email);
+
+    allRecipients.push(...emails);
+    offset = data.offset;
+
+    console.log(`✅ ${emails.length}件取得、累計: ${allRecipients.length}件`);
+
+  } while (offset);
+
+  console.log(`🎯 受信者リスト取得完了: 合計${allRecipients.length}件`);
+
+  return allRecipients;
 }
