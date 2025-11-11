@@ -165,6 +165,18 @@ export const handler = async (event, context) => {
                 <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0;">
                     <p>今後ともNANKANアナリティクスをご利用いただける日を心よりお待ちしております。</p>
                     <p>ご不明な点がございましたら、お気軽にお問い合わせください。</p>
+
+                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
+                    <p style="font-size: 14px; color: #6b7280;">
+                        <strong>📧 メルマガについて：</strong><br>
+                        メルマガは引き続き配信されます。<br>
+                        配信停止をご希望の場合は、
+                        <a href="https://nankan-analytics.keiba.link/.netlify/functions/unsubscribe?email=${email}"
+                           style="color: #dc2626; text-decoration: underline;">
+                            こちらから配信停止手続き
+                        </a>
+                        を行ってください。
+                    </p>
                 </div>
 
                 <hr style="margin: 30px 0;">
