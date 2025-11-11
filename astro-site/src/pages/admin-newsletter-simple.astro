@@ -8,6 +8,8 @@ let customerStats = {
     free: 0,
     standard: 0,
     premium: 0,
+    premiumSanrenpuku: 0,
+    premiumCombo: 0,
     test: 0
 };
 
@@ -112,9 +114,13 @@ try {
                 if (plan === 'standard' || plan === 'スタンダード') {
                     customerStats.standard++;
                     console.log(`Standard判定: "${planValue}"`);
-                } else if (plan === 'premium' || plan === 'プレミアム' ||
-                           plan === 'premium combo' || plan === 'premiumcombo' || plan === 'プレミアムコンボ' ||
-                           plan === 'premium sanrenpuku' || plan === 'premiumsanrenpuku' || plan === 'プレミアム三連複' ||
+                } else if (plan === 'premium combo' || plan === 'premiumcombo' || plan === 'プレミアムコンボ') {
+                    customerStats.premiumCombo++;
+                    console.log(`Premium Combo判定: "${planValue}"`);
+                } else if (plan === 'premium sanrenpuku' || plan === 'premiumsanrenpuku' || plan === 'プレミアム三連複') {
+                    customerStats.premiumSanrenpuku++;
+                    console.log(`Premium Sanrenpuku判定: "${planValue}"`);
+                } else if (plan === 'premium' || plan === 'プレミアム' || plan === 'premium predictions' ||
                            plan === 'premium plus' || plan === 'premiumplus' || plan === 'プレミアムプラス') {
                     customerStats.premium++;
                     console.log(`Premium判定: "${planValue}"`);
@@ -545,6 +551,14 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                         <div class="stat-value" id="premiumCount">{customerStats.premium}</div>
                     </div>
                     <div class="stat-box">
+                        <div class="stat-label">Premium Sanrenpuku</div>
+                        <div class="stat-value" id="premiumSanrenpukuCount">{customerStats.premiumSanrenpuku}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Premium Combo</div>
+                        <div class="stat-value" id="premiumComboCount">{customerStats.premiumCombo}</div>
+                    </div>
+                    <div class="stat-box">
                         <div class="stat-label">🧪 テスト会員</div>
                         <div class="stat-value" id="testCount">{customerStats.test}</div>
                     </div>
@@ -576,7 +590,9 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                         <option value="all">全員</option>
                         <option value="free">Free（無料会員）</option>
                         <option value="standard">Standard</option>
-                        <option value="premium">Premium</option>
+                        <option value="premium">Premium（馬単のみ）</option>
+                        <option value="premiumSanrenpuku">Premium Sanrenpuku（三連複のみ）</option>
+                        <option value="premiumCombo">Premium Combo（馬単+三連複）</option>
                         <option value="expired">退会者（有効期限切れ）</option>
                         <option value="test">🧪 テスト用</option>
                     </select>
@@ -981,7 +997,9 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
                     all: customerStats.total,
                     free: customerStats.free,
                     standard: customerStats.standard,
-                    premium: customerStats.premium
+                    premium: customerStats.premium,
+                    premiumSanrenpuku: customerStats.premiumSanrenpuku,
+                    premiumCombo: customerStats.premiumCombo
                 };
 
                 detailsDiv.innerHTML = `
@@ -989,7 +1007,9 @@ debugInfo.uniquePlanValues = Array.from(debugInfo.uniquePlanValues);
 全体配信: ${stats.all}名<br>
 無料会員: ${stats.free}名<br>
 Standard会員: ${stats.standard}名<br>
-Premium会員: ${stats.premium}名<br><br>
+Premium会員: ${stats.premium}名<br>
+Premium Sanrenpuku: ${stats.premiumSanrenpuku}名<br>
+Premium Combo: ${stats.premiumCombo}名<br><br>
 
 <strong>📧 注意:</strong><br>
 • 配信停止ユーザーは自動除外されます<br>
