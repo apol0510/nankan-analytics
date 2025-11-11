@@ -286,7 +286,8 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
     }
 
     // 配信停止ユーザーを除外する条件（メール配信フィールドがOFF/UNSUBSCRIBEDでない）
-    const unsubscribeFilter = "AND({メール配信} != 'OFF', {メール配信} != 'UNSUBSCRIBED')";
+    // 🔧 2025-11-11修正: 空白フィールドも配信対象に含める（OR条件で空白を許可）
+    const unsubscribeFilter = "OR({メール配信} = BLANK(), AND({メール配信} != 'OFF', {メール配信} != 'UNSUBSCRIBED'))";
 
     // 最終的なフィルタ式の構築
     if (mailingListFilter) {
