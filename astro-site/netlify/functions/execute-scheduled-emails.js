@@ -31,10 +31,25 @@ export default async function handler(request, context) {
     const now = new Date();
     console.log('🕐 スケジューラー実行開始:', now.toISOString());
 
+    // 10分前のタイムスタンプ（タイムアウト検出用）
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+
     // Airtableから実行対象のメールを取得
+    // 🔧 修正: PENDING または EXECUTING（10分以上経過）を検索
     const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/ScheduledEmails`;
-    const filterFormula = `AND({Status} = 'PENDING', IS_BEFORE({ScheduledFor}, '${now.toISOString()}'))`;
-    
+    const filterFormula = `AND(
+      OR(
+        {Status} = 'PENDING',
+        AND(
+          {Status} = 'EXECUTING',
+          IS_BEFORE({ScheduledFor}, '${tenMinutesAgo.toISOString()}')
+        )
+      ),
+      IS_BEFORE({ScheduledFor}, '${now.toISOString()}')
+    )`;
+
+    console.log(`🔍 検索条件: PENDING または EXECUTING(10分以上経過)`);
+
     const airtableResponse = await fetch(
       `${airtableUrl}?filterByFormula=${encodeURIComponent(filterFormula)}`,
       {
