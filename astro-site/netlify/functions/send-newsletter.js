@@ -207,7 +207,8 @@ export default async function handler(request, context) {
     const result = await sendNewsletterViaSendGrid({
       recipients: filteredRecipients.deliverable,
       subject,
-      htmlContent
+      htmlContent,
+      includeUnsubscribe
     });
 
     // 即時配信もAirtableに履歴を保存
@@ -459,7 +460,7 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
 }
 
 // SendGrid APIでメール送信
-async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent }) {
+async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent, includeUnsubscribe = true }) {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
   if (!SENDGRID_API_KEY) {
