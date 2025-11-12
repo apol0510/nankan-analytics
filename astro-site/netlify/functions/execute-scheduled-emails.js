@@ -111,14 +111,46 @@ export default async function handler(request, context) {
 
         console.log(`📤 送信開始: ${Subject} (${JobId}) - 受信者: ${recipientList.length}件 - 配信解除: ${includeUnsubscribe ? 'あり' : 'なし'}`);
 
+        // 🔄 進捗確認: 既に送信済みの件数を取得
+        let sentCount = fields.SentCount || 0;
+        let alreadySent = sentCount;
+
+        // 既に全件送信済みの場合はスキップ
+        if (sentCount >= recipientList.length) {
+          console.log(`✅ 既に送信完了済み: ${recipientList.length}件`);
+          await updateEmailStatus(recordId, 'SENT', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
+          results.push({
+            jobId: JobId,
+            subject: Subject,
+            recipientCount: recipientList.length,
+            status: 'ALREADY_SENT'
+          });
+          continue;
+        }
+
+        // 未送信分のみ抽出（送信済み件数から再開）
+        const remainingRecipients = recipientList.slice(sentCount);
+        console.log(`🔄 前回から再開: ${sentCount}件送信済み、残り${remainingRecipients.length}件`);
+
         // ステータスを実行中に更新
-        await updateEmailStatus(recordId, 'EXECUTING', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
+        await updateEmailStatus(recordId, 'EXECUTING', AIRTABLE_API_KEY, AIRTABLE_BASE_ID, {
+          SentCount: sentCount
+        });
 
         // 🔐 プライバシー保護個別配信（SendGrid API使用）
         let successCount = 0;
         let failedCount = 0;
 
-        for (const email of recipientList) {
+        // ⏱️ タイムアウト対策: 最大8分間のみ送信（2分のバッファ）
+        const startTime = Date.now();
+        const maxExecutionTime = 8 * 60 * 1000; // 8分
+
+        for (const email of remainingRecipients) {
+          // タイムアウトチェック
+          if (Date.now() - startTime > maxExecutionTime) {
+            console.log(`⏱️ タイムアウト接近: ${successCount}件送信完了、次回実行で続行`);
+            break;
+          }
           try {
             // 配信停止リンクを条件付きで追加
             let htmlContent;
@@ -213,25 +245,48 @@ export default async function handler(request, context) {
           }
         }
 
+        // 🔄 進捗保存: 送信済み件数を更新
+        const newSentCount = alreadySent + successCount;
+        const isComplete = newSentCount >= recipientList.length;
+
+        console.log(`📊 進捗: ${newSentCount}/${recipientList.length}件送信完了 (${Math.round(newSentCount / recipientList.length * 100)}%)`);
+
         // 送信結果に基づく処理
         if (successCount > 0) {
-          // 全部または一部成功
-          await updateEmailStatus(recordId, 'SENT', AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
-          
+          if (isComplete) {
+            // 🎉 全件送信完了
+            await updateEmailStatus(recordId, 'SENT', AIRTABLE_API_KEY, AIRTABLE_BASE_ID, {
+              SentCount: newSentCount,
+              CompletedAt: now.toISOString()
+            });
+            console.log(`✅ 全件送信完了: ${Subject} - ${newSentCount}件`);
+          } else {
+            // 🔄 一部送信完了（次回実行で続行）
+            await updateEmailStatus(recordId, 'EXECUTING', AIRTABLE_API_KEY, AIRTABLE_BASE_ID, {
+              SentCount: newSentCount
+            });
+            console.log(`🔄 一部送信完了: ${Subject} - ${newSentCount}/${recipientList.length}件、次回実行で続行`);
+          }
+
           results.push({
             jobId: JobId,
             subject: Subject,
             recipientCount: recipientList.length,
+            sentCount: newSentCount,
             successCount,
             failedCount,
-            status: failedCount === 0 ? 'SUCCESS' : 'PARTIAL_SUCCESS'
+            isComplete,
+            status: isComplete ? 'COMPLETED' : 'IN_PROGRESS'
           });
         } else {
           // 全て失敗
           throw new Error(`全受信者への送信に失敗`);
         }
 
-        console.log(`✅ 送信完了: ${Subject}`);
+        if (isComplete) {
+          console.log(`✅ 送信完了: ${Subject}`);
+        } else {
+          console.log(`🔄 送信継続中: ${Subject} - 次回実行を待機中`);
 
       } catch (sendError) {
         console.error(`❌ 送信失敗: ${Subject}`, sendError);
