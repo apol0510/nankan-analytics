@@ -310,9 +310,14 @@ async function getRecipientsList(targetPlan, targetMailingList, apiKey, baseId) 
   // targetMailingListフィルタ
   if (targetMailingList === 'expired') {
     // 有効期限切れ会員（Standard/Premium）
+    const today = new Date().toISOString().split('T')[0];
     filterFormula = `AND(
-      OR({Plan} = 'Standard', {Plan} = 'Premium'),
-      IS_BEFORE({有効期限}, NOW())
+      OR({プラン} = 'Standard', {プラン} = 'Premium', {プラン} = 'Premium Predictions', {プラン} = 'Premium Sanrenpuku', {プラン} = 'Premium Combo'),
+      OR(
+        IS_BEFORE({有効期限}, '${today}'),
+        IS_BEFORE({ValidUntil}, '${today}'),
+        IS_BEFORE({ExpiryDate}, '${today}')
+      )
     )`;
   } else if (targetMailingList === 'test') {
     // テスト用（nankan.analytics@gmail.com）
@@ -320,13 +325,13 @@ async function getRecipientsList(targetPlan, targetMailingList, apiKey, baseId) 
   } else {
     // 通常配信（targetPlan基準）
     if (targetPlan === 'all') {
-      filterFormula = "OR({Plan} = 'Free', {Plan} = 'Standard', {Plan} = 'Premium', {Plan} = 'Premium Sanrenpuku', {Plan} = 'Premium Combo')";
+      filterFormula = "OR({プラン} = 'Free', {プラン} = 'Standard', {プラン} = 'Premium', {プラン} = 'Premium Predictions', {プラン} = 'Premium Sanrenpuku', {プラン} = 'Premium Combo', {プラン} = 'Premium Plus')";
     } else if (targetPlan === 'free') {
-      filterFormula = "{Plan} = 'Free'";
+      filterFormula = "{プラン} = 'Free'";
     } else if (targetPlan === 'standard') {
-      filterFormula = "{Plan} = 'Standard'";
+      filterFormula = "{プラン} = 'Standard'";
     } else if (targetPlan === 'premium') {
-      filterFormula = "OR({Plan} = 'Premium', {Plan} = 'Premium Sanrenpuku', {Plan} = 'Premium Combo')";
+      filterFormula = "OR({プラン} = 'Premium', {プラン} = 'Premium Predictions', {プラン} = 'Premium Sanrenpuku', {プラン} = 'Premium Combo', {プラン} = 'Premium Plus')";
     }
   }
 

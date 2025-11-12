@@ -350,7 +350,8 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
           {プラン} = 'Standard',
           {プラン} = 'Premium Predictions',
           {プラン} = 'Premium Sanrenpuku',
-          {プラン} = 'Premium Combo'
+          {プラン} = 'Premium Combo',
+          {プラン} = 'Premium Plus'
         ),
         {Email} != ''
       )`;
@@ -362,18 +363,18 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
       if (targetPlan === 'free') {
         planFilter = "{プラン} = 'Free'";
       } else if (targetPlan === 'standard') {
-        planFilter = "OR({プラン} = 'Standard', {プラン} = 'Premium')";
+        planFilter = "{プラン} = 'Standard'";
       } else if (targetPlan === 'premium') {
-        planFilter = "{プラン} = 'Premium'";
+        planFilter = "OR({プラン} = 'Premium', {プラン} = 'Premium Predictions', {プラン} = 'Premium Sanrenpuku', {プラン} = 'Premium Combo', {プラン} = 'Premium Plus')";
       }
       if (planFilter) {
         filterFormula = `AND(${planFilter}, {Email} != '')`;
       }
     } else if (targetPlan === 'test') {
-      filterFormula = "{プラン} = 'Test'"; // バウンス管理テスト専用
+      filterFormula = "{Email} = 'nankan.analytics@gmail.com'"; // バウンス管理テスト専用
     } else {
-      // 🔧 2025-11-11修正: 'all'の場合はEmailが存在するレコードのみ取得
-      filterFormula = "{Email} != ''";
+      // 🔧 2025-11-12修正: 'all'の場合はEmailが存在する全プランを取得
+      filterFormula = "AND({Email} != '', OR({プラン} = 'Free', {プラン} = 'Standard', {プラン} = 'Premium', {プラン} = 'Premium Predictions', {プラン} = 'Premium Sanrenpuku', {プラン} = 'Premium Combo', {プラン} = 'Premium Plus'))";
     }
 
     console.log('🔍 フィルター適用:', {
