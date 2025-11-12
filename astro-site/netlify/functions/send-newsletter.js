@@ -373,8 +373,8 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
     } else if (targetPlan === 'test') {
       filterFormula = "{Email} = 'nankan.analytics@gmail.com'"; // バウンス管理テスト専用
     } else {
-      // 🔧 2025-11-12修正: 'all'の場合はEmailが存在する全プランを取得
-      filterFormula = "AND({Email} != '', OR({プラン} = 'Free', {プラン} = 'Standard', {プラン} = 'Premium', {プラン} = 'Premium Predictions', {プラン} = 'Premium Sanrenpuku', {プラン} = 'Premium Combo', {プラン} = 'Premium Plus'))";
+      // 🔧 2025-11-12修正: 'all'の場合はEmailが存在するレコードのみ取得（プラン制限なし）
+      filterFormula = "{Email} != ''";
     }
 
     console.log('🔍 フィルター適用:', {

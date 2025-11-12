@@ -325,7 +325,8 @@ async function getRecipientsList(targetPlan, targetMailingList, apiKey, baseId) 
   } else {
     // 通常配信（targetPlan基準）
     if (targetPlan === 'all') {
-      filterFormula = "OR({プラン} = 'Free', {プラン} = 'Standard', {プラン} = 'Premium', {プラン} = 'Premium Predictions', {プラン} = 'Premium Sanrenpuku', {プラン} = 'Premium Combo', {プラン} = 'Premium Plus')";
+      // 🔧 2025-11-12修正: シンプルなフィルタでEmailが存在する全レコード取得
+      filterFormula = "{Email} != ''";
     } else if (targetPlan === 'free') {
       filterFormula = "{プラン} = 'Free'";
     } else if (targetPlan === 'standard') {
