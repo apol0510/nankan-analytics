@@ -559,7 +559,7 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent, inc
         ],
         from: {
           name: "NANKANアナリティクス",
-          email: "nankan-analytics@keiba.link"  // 認証済みアドレス使用
+          email: "noreply@keiba.link"  // SendGrid認証済みアドレス（Single Sender Verification完了）
         },
         content: [
           {
