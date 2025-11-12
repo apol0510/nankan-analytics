@@ -598,6 +598,11 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent, inc
           sandbox_mode: {
             enable: false
           }
+        },
+        // RFC 8058準拠のList-Unsubscribeヘッダー（Gmail等が要求）
+        headers: {
+          "List-Unsubscribe": `<https://nankan-analytics.netlify.app/.netlify/functions/unsubscribe?email=${encodeURIComponent(recipient)}>, <mailto:unsubscribe@keiba.link?subject=Unsubscribe>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"
         }
       };
 
