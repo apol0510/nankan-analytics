@@ -250,8 +250,9 @@ async function getBlacklistStatus(request, headers) {
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
   try {
+    // 🔧 2025-11-12修正: LastBounceDateフィールドは存在しないためソート条件を削除
     const response = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist?sort[0][field]=LastBounceDate&sort[0][direction]=desc`,
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/EmailBlacklist`,
       {
         headers: {
           'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
@@ -272,7 +273,7 @@ async function getBlacklistStatus(request, headers) {
       bounceCount: record.fields.BounceCount || 0,
       bounceType: record.fields.BounceType || 'unknown',
       status: record.fields.Status || 'UNKNOWN',
-      lastBounce: record.fields.LastBounceDate,
+      lastBounce: record.fields.AddedAt, // 🔧 2025-11-12修正: LastBounceDateの代わりにAddedAtを使用
       notes: record.fields.Notes,
       canWhitelist: record.fields.BounceType === 'soft' && (record.fields.BounceCount || 0) < 5
     }));

@@ -268,7 +268,7 @@ const STORAGE_VERSION = '2025-10-23'; // この日付を更新
 - **決済**: Stripe Payment Links（ノーコード決済）
 - **顧客管理**: Airtable Pro（有料プラン）
 - **自動化**: Zapier Premium（有料プラン）+ AI Agents対応 **✅完全復活**
-- **メール配信**: SendGrid Marketing Campaigns Basic 5k ($15/月) **✅審査通過**
+- **メール配信**: SendGrid Marketing Campaigns エッセンシャル100 **✅審査通過**
 - **予約配信**: 自作スケジューラー（Netlify Functions + Airtable）
 - **ドメイン保護**: 5回失敗自動ブロックシステム
 - **顧客認証**: プレミアム会員認証問題完全解決
@@ -1500,7 +1500,7 @@ do {
 
 #### **1. SendGrid審査結果（完全通過）**
 - **審査通過通知**: Twilio SendGrid公式承認
-- **プラン選択完了**: Marketing Campaigns Basic 5k ($15/月)
+- **プラン選択完了**: Marketing Campaigns エッセンシャル100
 - **制限完全解除**: 月間5,000通まで送信可能
 - **即日復旧**: プラン変更即座に反映
 
