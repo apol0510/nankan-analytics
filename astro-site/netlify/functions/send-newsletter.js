@@ -371,7 +371,8 @@ async function getRecipientsList(targetPlan, targetMailingList = 'all') {
         filterFormula = `AND(${planFilter}, {Email} != '')`;
       }
     } else if (targetPlan === 'test') {
-      filterFormula = "{Email} = 'nankan.analytics@gmail.com'"; // バウンス管理テスト専用
+      // 🔧 2025-11-12修正: Testプラン会員全員を取得（6件）
+      filterFormula = "AND(OR({プラン} = 'Test', {プラン} = 'test', {プラン} = 'TEST', {プラン} = 'テスト'), {Email} != '')";
     } else {
       // 🔧 2025-11-12修正: 'all'の場合はEmailが存在するレコードのみ取得（プラン制限なし）
       filterFormula = "{Email} != ''";
