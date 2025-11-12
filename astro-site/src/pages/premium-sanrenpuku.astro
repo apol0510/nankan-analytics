@@ -323,13 +323,20 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
                                 </div>
 
                                 <div class="select-bets-list">
-                                    {sanrenpuku.narrowed && sanrenpuku.narrowed.map((bet, i) => (
-                                        <div class="select-bet-item">
-                                            <span class="bet-number">{i + 1}</span>
-                                            <span class="bet-display">三連複 {bet}</span>
-                                            <span class="bet-score">5点</span>
-                                        </div>
-                                    ))}
+                                    {sanrenpuku.narrowed && sanrenpuku.narrowed.map((bet, i) => {
+                                        // 各買い目の点数を計算（カンマで区切られた馬番号の数）
+                                        const parts = bet.split('-');
+                                        const thirdHorses = parts[2] ? parts[2].split(',') : [];
+                                        const points = thirdHorses.length;
+
+                                        return (
+                                            <div class="select-bet-item">
+                                                <span class="bet-number">{i + 1}</span>
+                                                <span class="bet-display">三連複 {bet}</span>
+                                                <span class="bet-score">{points}点</span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
 
                                 <div class="total-points-display">
