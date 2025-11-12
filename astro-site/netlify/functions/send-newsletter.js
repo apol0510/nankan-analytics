@@ -566,7 +566,35 @@ async function sendNewsletterViaSendGrid({ recipients, subject, htmlContent, inc
             type: "text/html",
             value: htmlWithUnsubscribe
           }
-        ]
+        ],
+        // 🚨 SendGridトラッキング完全無効化（リンク変換・配信問題防止）
+        tracking_settings: {
+          click_tracking: {
+            enable: false,
+            enable_text: false  // テキストメールでも無効化
+          },
+          open_tracking: {
+            enable: false,
+            substitution_tag: null
+          },
+          subscription_tracking: {
+            enable: false
+          },
+          ganalytics: {
+            enable: false
+          }
+        },
+        mail_settings: {
+          bypass_list_management: {
+            enable: false
+          },
+          footer: {
+            enable: false
+          },
+          sandbox_mode: {
+            enable: false
+          }
+        }
       };
 
       const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
