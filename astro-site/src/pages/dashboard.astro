@@ -516,6 +516,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     localStorage.setItem('userEmail', data.user.email);
                     localStorage.setItem('userPlan', data.user.plan);
 
+                    // 🚨 2025-11-26追加: 退会申請情報保存
+                    if (data.isWithdrawalRequested) {
+                        localStorage.setItem('isWithdrawalRequested', 'true');
+                    } else {
+                        localStorage.removeItem('isWithdrawalRequested');
+                    }
+
                     // 期限切れ情報保存
                     if (data.isExpired) {
                         localStorage.setItem('isExpired', 'true');

@@ -330,9 +330,22 @@ export const prerender = true;
                 // 本番システムは個別キーを使用（userPlan, isLoggedIn, userEmail）
                 const storedPlan = localStorage.getItem('userPlan');
                 const isLoggedIn = localStorage.getItem('isLoggedIn');
+                // 🚨 2025-11-26追加: 退会申請・有効期限チェック
+                const isWithdrawalRequested = localStorage.getItem('isWithdrawalRequested') === 'true';
+                const isExpired = localStorage.getItem('isExpired') === 'true';
 
                 console.log('📋 userPlan:', storedPlan);
                 console.log('📋 isLoggedIn:', isLoggedIn);
+                console.log('📋 isWithdrawalRequested:', isWithdrawalRequested);
+                console.log('📋 isExpired:', isExpired);
+
+                // 🚨 2025-11-26修正: 退会申請 or 有効期限切れ → 強制的にfree会員扱い
+                if (isWithdrawalRequested || isExpired) {
+                    userPlan = 'free';
+                    updatePlanBadge('free');
+                    console.log('🚫 退会申請 or 有効期限切れ → 無料会員として扱います');
+                    return;
+                }
 
                 if (storedPlan && isLoggedIn === 'true') {
                     const planName = storedPlan.toLowerCase();

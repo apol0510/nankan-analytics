@@ -100,7 +100,7 @@ exports.handler = async (event, context) => {
     const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
       .base(process.env.AIRTABLE_BASE_ID);
 
-    // ユーザー検索
+    // ユーザー検索（WithdrawalRequestedフィールドも取得）
     const records = await base('Customers')
       .select({
         filterByFormula: `{Email} = '${email}'`,
@@ -175,6 +175,9 @@ exports.handler = async (event, context) => {
     const jstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
     const today = jstDate.toISOString().split('T')[0];
 
+    // 🔍 退会申請チェック（2025-11-26追加）
+    const withdrawalRequested = user.get('WithdrawalRequested') === 1 || user.get('WithdrawalRequested') === true;
+
     // 🔍 有効期限チェック（PremiumまたはStandardで期限切れならFreeに自動降格）
     let isExpired = false;
     let wasDowngraded = false;
@@ -193,6 +196,11 @@ exports.handler = async (event, context) => {
         // 理由: 退会者メルマガ配信のため、プラン名を維持する必要がある
         // 有効期限切れでもプランは変更せず、クライアントサイドで制御
       }
+    }
+
+    // 🚨 2025-11-26追加: 退会申請済みの場合はログに記録
+    if (withdrawalRequested) {
+      console.log(`🚫 ユーザー ${email} は退会申請済みです`);
     }
 
     // 🔧 プラン値正規化: 大文字小文字混在問題解決
@@ -218,9 +226,17 @@ exports.handler = async (event, context) => {
       'premium plus': 30
     };
 
+    // 🚨 2025-11-26修正: 退会申請済み or 有効期限切れの場合はポイント付与なし
     // 通常のログインポイント（1日1回）
     if (lastLogin !== today) {
-      pointsAdded += POINTS_BY_PLAN[currentPlan] || 1;
+      if (withdrawalRequested || isExpired) {
+        // 退会申請済み or 有効期限切れ → ポイント付与なし
+        console.log(`🚫 ポイント付与停止: withdrawalRequested=${withdrawalRequested}, isExpired=${isExpired}`);
+        pointsAdded = 0;
+      } else {
+        // 通常ユーザー → プラン別ポイント付与
+        pointsAdded += POINTS_BY_PLAN[currentPlan] || 1;
+      }
       updateData['最終ポイント付与日'] = today;
     }
 
@@ -242,7 +258,9 @@ exports.handler = async (event, context) => {
 
     // 通常ユーザーのレスポンス
     let message = '';
-    if (isExpired) {
+    if (withdrawalRequested) {
+      message = '退会申請済みです。新規ポイント付与・プレミアム機能のご利用はできません。';
+    } else if (isExpired) {
       message = '有効期限が切れています。無料会員としてご利用いただけます。';
     } else if (pointsAdded > 0) {
       message = `ログイン成功！本日のポイント${pointsAdded}pt付与`;
@@ -257,6 +275,7 @@ exports.handler = async (event, context) => {
         success: true,
         isNewUser: false,
         isExpired: isExpired,  // 🔧 有効期限切れフラグを正確に返す
+        isWithdrawalRequested: withdrawalRequested,  // 🔧 2025-11-26追加: 退会申請フラグ
         user: {
           email,
           plan: normalizedPlan,  // プランはそのまま（Premiumなど）
