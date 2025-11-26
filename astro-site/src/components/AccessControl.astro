@@ -253,20 +253,31 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         return { user: null, plan: null };
     }
 
-    // プラン階層チェック（2025-11-10更新: 有効期限チェック追加）
+    // プラン階層チェック（2025-11-26更新: 退会申請・有効期限チェック強化）
     function canAccessContent(userPlan, requiredPlan, user) {
-        // 🔧 2025-11-10追加: 有効期限チェック
-        // 有効期限が切れている場合、プランをFreeに降格してチェック
+        // 🚨 2025-11-26追加: 退会申請チェック（最優先）
+        const isWithdrawalRequested = localStorage.getItem('isWithdrawalRequested') === 'true';
+        if (isWithdrawalRequested) {
+            console.log(`🚫 退会申請済み検出 - プランを強制的にFreeとして扱います`);
+            return requiredPlan === 'free' && user !== null; // 無料コンテンツのみアクセス可能
+        }
+
+        // 🔧 2025-11-26強化: 有効期限チェック（isExpiredフラグ優先）
+        const isExpired = localStorage.getItem('isExpired') === 'true';
         const validUntil = localStorage.getItem('validUntil');
         let effectivePlan = userPlan;
 
-        if (validUntil && validUntil !== 'null') {
+        // isExpiredフラグ または validUntil日付チェック
+        if (isExpired) {
+            console.log(`⚠️ 有効期限切れ検出（isExpiredフラグ） - プランを強制的にFreeとして扱います`);
+            effectivePlan = 'Free';
+        } else if (validUntil && validUntil !== 'null') {
             const expiry = new Date(validUntil);
             const now = new Date();
 
             if (expiry < now) {
-                console.log(`⚠️ 有効期限切れ検出: ${validUntil} - プランを一時的にFreeとして扱います`);
-                effectivePlan = 'Free';  // 有効期限切れの場合、Freeとして扱う
+                console.log(`⚠️ 有効期限切れ検出（validUntil日付）: ${validUntil} - プランを強制的にFreeとして扱います`);
+                effectivePlan = 'Free';
             }
         }
 
