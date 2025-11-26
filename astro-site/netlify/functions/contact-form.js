@@ -117,7 +117,8 @@ export const handler = async (event, context) => {
             to: email,
             subject: '【自動返信】お問い合わせを受け付けました - NANKANアナリティクス',
             html: autoReplyHtml,
-            fromName: 'NANKANアナリティクス'
+            replyTo: 'nankan.analytics@gmail.com',  // 🔧 2025-11-26追加: サポート窓口への返信設定
+            fromName: 'NANKANアナリティクス サポート'
         });
 
         return {
@@ -159,8 +160,8 @@ async function sendEmailViaSendGrid({ to, subject, html, replyTo, fromName }) {
             }
         ],
         from: {
-            name: fromName || "NANKANアナリティクス",
-            email: "noreply@keiba.link"
+            name: fromName || "NANKANアナリティクス サポート",
+            email: "support@keiba.link"  // 🔧 2025-11-26変更: 迷惑メール対策でsupportに変更
         },
         content: [
             {

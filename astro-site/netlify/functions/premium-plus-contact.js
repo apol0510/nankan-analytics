@@ -60,7 +60,7 @@ exports.handler = async (event, context) => {
 
     // SendGrid API設定
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-    const FROM_EMAIL = 'noreply@keiba.link';  // 既存の検証済みアドレスを使用
+    const FROM_EMAIL = 'support@keiba.link';  // 🔧 2025-11-26変更: 迷惑メール対策でsupportに変更
     const ADMIN_EMAIL = 'nankan.analytics@keiba.link';
 
     if (!SENDGRID_API_KEY) {
@@ -73,7 +73,7 @@ exports.handler = async (event, context) => {
         to: [{ email: ADMIN_EMAIL }],
         subject: `【Premium Plus お問い合わせ】${subject} - ${email}`
       }],
-      from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
+      from: { email: FROM_EMAIL, name: 'NANKANアナリティクス サポート' },
       reply_to: { email: email, name: name },  // 🔧 2025-11-26追加: ユーザーへの返信設定
       content: [{
         type: 'text/html',
@@ -146,7 +146,8 @@ exports.handler = async (event, context) => {
         to: [{ email: email }],
         subject: '【お問い合わせ受付】NANKANアナリティクス Premium Plus'
       }],
-      from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
+      from: { email: FROM_EMAIL, name: 'NANKANアナリティクス サポート' },
+      reply_to: { email: 'nankan.analytics@gmail.com', name: 'NANKANアナリティクス サポート' },  // 🔧 2025-11-26追加: ユーザー宛メールにも返信先設定
       content: [{
         type: 'text/html',
         value: `

@@ -130,7 +130,7 @@ export const handler = async (event, context) => {
             to: 'nankan.analytics@gmail.com',
             subject: `【退会申請】${email} - ${customerRecord.fields['プラン'] || customerRecord.fields.Plan || '会員'}`,
             html: adminEmailHtml,
-            replyTo: email,
+            replyTo: email,  // 🔧 既に設定済み（管理者向けメール）
             fromName: 'NANKANアナリティクス 退会管理'
         });
 
@@ -192,7 +192,8 @@ export const handler = async (event, context) => {
             to: email,
             subject: '【退会申請受付】NANKANアナリティクス',
             html: userEmailHtml,
-            fromName: 'NANKANアナリティクス'
+            replyTo: 'nankan.analytics@gmail.com',  // 🔧 2025-11-26追加: サポート窓口への返信設定
+            fromName: 'NANKANアナリティクス サポート'
         });
 
         console.log(`✅ 退会申請処理完了: ${email}`);
@@ -301,8 +302,8 @@ async function sendEmailViaSendGrid({ to, subject, html, replyTo, fromName }) {
             }
         ],
         from: {
-            name: fromName || "NANKANアナリティクス",
-            email: "noreply@keiba.link"
+            name: fromName || "NANKANアナリティクス サポート",
+            email: "support@keiba.link"  // 🔧 2025-11-26変更: 迷惑メール対策でsupportに変更
         },
         content: [
             {
