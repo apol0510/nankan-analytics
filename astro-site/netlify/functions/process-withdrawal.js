@@ -185,6 +185,11 @@ export const handler = async (event, context) => {
                     AI・機械学習で勝つ。南関競馬の次世代予想プラットフォーム<br>
                     ※このメールは自動送信されています
                 </p>
+                <p style="font-size:0.9rem;color:#64748b;margin-top:20px;">
+                    このメールは「NANKANアナリティクス 退会申請フォーム」に<br>
+                    ご入力いただいた内容の控えとして自動送信されています。<br>
+                    心当たりがない場合は、このメールを破棄してください。
+                </p>
             </div>
         `;
 
