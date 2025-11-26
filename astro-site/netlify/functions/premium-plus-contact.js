@@ -74,6 +74,7 @@ exports.handler = async (event, context) => {
         subject: `【Premium Plus お問い合わせ】${subject} - ${email}`
       }],
       from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
+      reply_to: { email: email, name: name },  // 🔧 2025-11-26追加: ユーザーへの返信設定
       content: [{
         type: 'text/html',
         value: `
