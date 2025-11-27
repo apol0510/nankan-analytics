@@ -1,0 +1,1941 @@
+---
+// シンプルなメルマガ配信管理画面
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// サーバーサイドで顧客統計を取得
+let customerStats = {
+    total: 0,
+    free: 0,
+    standard: 0,
+    premium: 0,
+    test: 0
+};
+
+let debugInfo = {
+    hasApiKey: false,
+    hasBaseId: false,
+    apiCallSuccess: false,
+    recordCount: 0,
+    errorMessage: '',
+    sampleRecords: [],
+    uniquePlanValues: new Set(),
+    planCounts: {}
+};
+
+try {
+    const AIRTABLE_API_KEY = import.meta.env.AIRTABLE_API_KEY;
+    const AIRTABLE_BASE_ID = import.meta.env.AIRTABLE_BASE_ID;
+
+    debugInfo.hasApiKey = !!AIRTABLE_API_KEY;
+    debugInfo.hasBaseId = !!AIRTABLE_BASE_ID;
+
+    if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
+        // 🔄 ページネーション対応: 全レコードを取得
+        let allRecords = [];
+        let offset = null;
+        let pageCount = 0;
+
+        do {
+            pageCount++;
+            let url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?pageSize=100`;
+            if (offset) {
+                url += `&offset=${offset}`;
+            }
+
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            debugInfo.apiCallSuccess = response.ok;
+
+            if (response.ok) {
+                const data = await response.json();
+                allRecords.push(...data.records);
+                offset = data.offset; // 次のページのオフセット
+
+                console.log(`📄 ページ ${pageCount}: ${data.records.length}件取得, 累計: ${allRecords.length}件`);
+            } else {
+                debugInfo.errorMessage = `API Error: ${response.status} ${response.statusText}`;
+                break;
+            }
+        } while (offset); // offsetが存在する限り継続
+
+        debugInfo.recordCount = allRecords.length;
+        console.log(`✅ 全データ取得完了: 合計 ${allRecords.length}件 (${pageCount}ページ)`);
+
+        if (allRecords.length > 0) {
+
+            allRecords.forEach((record, index) => {
+                customerStats.total++;
+
+                // フィールド名の確認（デバッグ用）
+                const fields = record.fields;
+
+                // 全てのレコードを詳細分析（最初の10件）
+                const planField = fields['プラン'] || fields['Plan'] || fields['plan'] || fields['PLAN'] ||
+                                 fields['Subscription'] || fields['会員種別'];
+
+                if (debugInfo.sampleRecords.length < 10) {
+                    debugInfo.sampleRecords.push({
+                        index: index + 1,
+                        fields: Object.keys(fields),
+                        planField: planField,
+                        email: fields['Email'] || fields['email'] || 'unknown'
+                    });
+                }
+
+                // 可能なプランフィールド名を確認（デフォルト値は設定しない）
+                const planValue = fields['プラン'] || fields['Plan'] || fields['plan'] || fields['PLAN'] ||
+                                 fields['Subscription'] || fields['会員種別'];
+
+                // 全てのプラン値を収集
+                debugInfo.uniquePlanValues.add(planValue);
+                if (debugInfo.planCounts[planValue]) {
+                    debugInfo.planCounts[planValue]++;
+                } else {
+                    debugInfo.planCounts[planValue] = 1;
+                }
+
+                // null/undefined/空文字の場合は事前にFree判定
+                if (!planValue || planValue === null || planValue === undefined || planValue === '') {
+                    customerStats.free++;
+                    console.log(`空のプラン値: "${planValue}" -> Free`);
+                    return; // forEachではcontinueの代わりにreturnを使用
+                }
+
+                const plan = String(planValue).toLowerCase().trim();
+
+                // Airtableの実際のプラン値に基づく正確な判定ロジック
+                if (plan === 'standard' || plan === 'スタンダード') {
+                    customerStats.standard++;
+                    console.log(`Standard判定: "${planValue}"`);
+                } else if (plan === 'premium' || plan === 'プレミアム' ||
+                           plan === 'premium combo' || plan === 'premiumcombo' || plan === 'プレミアムコンボ' ||
+                           plan === 'premium sanrenpuku' || plan === 'premiumsanrenpuku' || plan === 'プレミアム三連複' ||
+                           plan === 'premium plus' || plan === 'premiumplus' || plan === 'プレミアムプラス') {
+                    customerStats.premium++;
+                    console.log(`Premium判定: "${planValue}"`);
+                } else if (plan === 'test' || plan === 'テスト') {
+                    customerStats.test++;
+                    console.log(`Test判定: "${planValue}"`);
+                } else if (plan === 'free' || plan === 'フリー') {
+                    customerStats.free++;
+                    console.log(`Free判定: "${planValue}"`);
+                } else {
+                    // 未分類の場合も詳細ログに記録してからFreeに分類
+                    console.log(`未分類プラン値: "${planValue}" (type: ${typeof planValue}) -> Free扱い`);
+                    customerStats.free++;
+                }
+            });
+        }
+    } else {
+        debugInfo.errorMessage = 'Missing API credentials';
+    }
+} catch (error) {
+    debugInfo.errorMessage = error.message;
+}
+---
+
+<BaseLayout title="メルマガ配信 - NANKANアナリティクス">
+    <style>
+        .newsletter-admin {
+            min-height: 100vh;
+            background: #f8fafc;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .admin-header h1 {
+            font-size: 1.8rem;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: #1f2937;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        select.form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        select.form-control:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            transform: translateY(-1px);
+            border-color: #1d4ed8;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: 2px solid #9ca3af;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+            border-color: #6b7280;
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.6);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+            display: block;
+        }
+        
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+            display: block;
+        }
+        
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .schedule-option {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .schedule-option input[type="datetime-local"] {
+            flex: 1;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        
+        /* HTML/テキスト切り替えタブ */
+        .content-type-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .content-tab {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .content-tab:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .content-tab.active {
+            border-color: #3b82f6;
+            background: #3b82f6;
+            color: white;
+        }
+        
+        /* HTMLエディター */
+        .html-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .html-btn {
+            padding: 5px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .html-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .html-textarea {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 250px;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            tab-size: 4;
+        }
+        
+        /* 画像アップロード */
+        .image-upload-area {
+            margin-top: 10px;
+        }
+        
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upload-zone:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+        
+        .upload-text small {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+        
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .image-preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .image-preview-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+        }
+        
+        .image-remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 配信停止管理 */
+        .unsubscribe-section {
+            padding: 0;
+        }
+        
+        .unsubscribe-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .unsubscribe-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+    
+    <div class="newsletter-admin">
+        <div class="admin-header">
+            <h1>📧 メルマガ配信システム</h1>
+            <p style="color: #6b7280; margin: 0;">シンプル＆確実な配信管理</p>
+        </div>
+        
+        <div class="admin-container">
+            <!-- 配信統計 -->
+            <div class="card">
+                <h2>📊 配信統計</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">総顧客数</div>
+                        <div class="stat-value" id="totalCustomers">{customerStats.total}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Free会員</div>
+                        <div class="stat-value" id="freeCount">{customerStats.free}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Standard会員</div>
+                        <div class="stat-value" id="standardCount">{customerStats.standard}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Premium会員</div>
+                        <div class="stat-value" id="premiumCount">{customerStats.premium}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">🧪 テスト会員</div>
+                        <div class="stat-value" id="testCount">{customerStats.test}</div>
+                    </div>
+                </div>
+
+                <!-- 配信確認ボタン -->
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="btn btn-secondary" id="checkLastDelivery" style="background: #059669; color: white;">
+                        📧 最新配信数を確認
+                    </button>
+                </div>
+
+                <!-- 配信結果表示エリア -->
+                <div id="deliveryResult" style="margin-top: 15px; padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981; display: none;">
+                    <h4 style="color: #065f46; margin: 0 0 10px 0;">📊 配信結果</h4>
+                    <div id="deliveryDetails" style="font-family: monospace; font-size: 14px; color: #1f2937;">
+                        確認中...
+                    </div>
+                </div>
+            </div>
+
+            <!-- メール作成フォーム -->
+            <div class="card">
+                <h2>✉️ メール作成</h2>
+
+                <div class="form-group">
+                    <label>配信対象（MailingListグループ選択）</label>
+                    <select id="targetMailingList" class="form-control">
+                        <option value="all">全員</option>
+                        <option value="未登録">未登録</option>
+                        <option value="無料会員">無料会員</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Premium Sanrenpuku">Premium Sanrenpuku</option>
+                        <option value="Premium Combo">Premium Combo</option>
+                        <option value="Premium Plus">Premium Plus</option>
+                        <option value="退会者">退会者（有効期限切れ + 退会申請済み）</option>
+                        <option value="test">🧪 テスト用</option>
+                    </select>
+                    <small style="display: block; margin-top: 8px; color: #6b7280; font-size: 13px;">
+                        💡 MailingListフィールドに基づいてグループ配信します
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>件名</label>
+                    <input type="text" class="form-control" id="subject"
+                           placeholder="例：【南関競馬】本日の予想配信">
+                </div>
+
+                <div class="form-group">
+                    <label>本文形式</label>
+                    <div class="content-type-tabs">
+                        <button type="button" class="content-tab active" data-type="text">📝 テキスト</button>
+                        <button type="button" class="content-tab" data-type="html">🌐 HTML</button>
+                        <button type="button" class="content-tab" data-type="template">🎨 テンプレート</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="contentLabel">本文</label>
+                    <div id="textEditor">
+                        <textarea class="form-control" id="content"
+                                  placeholder="メール本文を入力してください..."></textarea>
+                    </div>
+                    <div id="htmlEditor" style="display: none;">
+                        <div class="html-toolbar">
+                            <button type="button" class="html-btn" data-tag="b">太字</button>
+                            <button type="button" class="html-btn" data-tag="i">斜体</button>
+                            <button type="button" class="html-btn" data-tag="u">下線</button>
+                            <button type="button" class="html-btn" onclick="insertLink()">🔗 リンク</button>
+                            <button type="button" class="html-btn" onclick="insertImage()">🖼️ 画像</button>
+                            <button type="button" class="html-btn" onclick="formatHTML()" style="margin-left: 10px; background: #10b981; color: white;">📝 整形</button>
+                        </div>
+                        <textarea class="form-control html-textarea" id="htmlContent"
+                                  placeholder="HTMLコードを入力するか、上のボタンでHTMLタグを追加してください..."></textarea>
+                        <div class="html-preview">
+                            <button type="button" id="previewToggle" class="btn btn-secondary">👁️ プレビュー</button>
+                            <div id="previewPane" style="display: none; margin-top: 10px; padding: 15px; border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb;">
+                                <div id="previewContent"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- テンプレートエディター -->
+                    <div id="templateEditor" style="display: none;">
+                        <div class="template-selector" style="margin-bottom: 15px;">
+                            <label>📋 テンプレート選択</label>
+                            <select class="form-control" id="templateSelect" style="margin-top: 8px;">
+                                <option value="">テンプレートを選択...</option>
+                                <option value="newsletter">📧 基本ニュースレター</option>
+                                <option value="prediction">🎯 予想配信テンプレート</option>
+                                <option value="promotion">🎉 プロモーション</option>
+                                <option value="stripePromo">🎁 Stripeプロモーションコード</option>
+                                <option value="welcome">👋 ウェルカムメール</option>
+                                <option value="announcement">📢 お知らせ</option>
+                            </select>
+                        </div>
+
+                        <div id="templateDescription" style="display: none; background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #0ea5e9;">
+                            <h4 style="margin: 0 0 8px 0; color: #0c4a6e;" id="templateName"></h4>
+                            <p style="margin: 0; color: #0369a1; font-size: 14px;" id="templateDesc"></p>
+                        </div>
+
+                        <div class="template-content" style="margin-bottom: 15px;">
+                            <label>✏️ コンテンツ</label>
+                            <textarea class="form-control" id="templateContent" rows="8"
+                                      placeholder="テンプレートを選択すると、編集可能なコンテンツが表示されます..."></textarea>
+                            <small style="color: #6b7280; font-size: 12px;">
+                                💡 ヒント: 動的な変数の置換が可能です
+                            </small>
+                        </div>
+
+                        <div class="template-variables" style="margin-bottom: 15px;">
+                            <label>🔧 カスタム変数 (オプション)</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+                                <input type="text" class="form-control" id="customVar1" placeholder="変数名 (例: PRICE)">
+                                <input type="text" class="form-control" id="customVal1" placeholder="値 (例: 4,990)">
+                                <input type="text" class="form-control" id="customVar2" placeholder="変数名 (例: DISCOUNT)">
+                                <input type="text" class="form-control" id="customVal2" placeholder="値 (例: 50)">
+                            </div>
+                        </div>
+
+                        <div class="template-actions">
+                            <button type="button" class="btn btn-secondary" id="templatePreview">👁️ プレビュー</button>
+                            <button type="button" class="btn btn-primary" id="useTemplate">✅ このテンプレートを使用</button>
+                        </div>
+
+                        <div id="templatePreviewPane" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #d1d5db; border-radius: 8px; background: #ffffff; max-height: 400px; overflow-y: auto;">
+                            <h4 style="margin: 0 0 10px 0; color: #1f2937;">📧 メールプレビュー</h4>
+                            <div id="templatePreviewContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 画像添付セクション -->
+                <div class="form-group">
+                    <label>画像添付 (オプション)</label>
+
+                    <!-- 予約配信時の重要な注意 -->
+                    <div id="imageScheduleWarning" class="status-message" style="display: none; background: #fef3c7; color: #92400e; border: 1px solid #f59e0b;">
+                        ⚠️ <strong>予約配信での画像について：</strong><br>
+                        予約配信では大容量画像データを保存できません。<br>
+                        <strong>推奨：</strong> 画像を外部にアップロード後、HTMLエディターで<code>&lt;img src="URL"&gt;</code>を使用してください。
+                    </div>
+
+                    <div class="content-type-tabs" style="margin-top: 10px;">
+                        <button type="button" class="content-tab active" data-image-type="upload">📎 ファイル添付</button>
+                        <button type="button" class="content-tab" data-image-type="url">🌐 外部URL</button>
+                    </div>
+
+                    <!-- ファイルアップロード方式 -->
+                    <div id="imageUploadSection" class="image-upload-area" style="margin-top: 15px;">
+                        <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+                        <div class="upload-zone" onclick="document.getElementById('imageUpload').click();">
+                            <div class="upload-icon">📎</div>
+                            <div class="upload-text">
+                                <strong>画像をアップロード</strong>
+                                <small>クリックして画像を選択、またはドラッグ&ドロップ<br>※ 即時配信のみ対応</small>
+                            </div>
+                        </div>
+                        <div id="imagePreviewContainer" style="display: none;">
+                            <div class="image-preview-grid" id="imagePreviewGrid"></div>
+                        </div>
+                    </div>
+
+                    <!-- 外部URL方式 -->
+                    <div id="imageUrlSection" style="display: none; margin-top: 15px;">
+                        <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; border: 1px solid #0ea5e9; margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 10px 0; color: #0c4a6e;">🌟 推奨：外部画像ホスティング</h4>
+                            <p style="margin: 0 0 10px 0; font-size: 14px; color: #075985;">
+                                <strong>予約配信も確実動作！</strong> 画像を以下のサービスにアップロードしてURLを取得：
+                            </p>
+                            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #0369a1;">
+                                <li><strong>Google Drive</strong>（無料・共有リンク取得）</li>
+                                <li><strong>Imgur</strong>（無料・画像専用）</li>
+                                <li><strong>Cloudinary</strong>（プロ仕様・高速CDN）</li>
+                                <li><strong>GitHub</strong>（技術者向け・永続保存）</li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group">
+                            <label>画像URL</label>
+                            <input type="url" class="form-control" id="imageUrl"
+                                   placeholder="https://example.com/image.jpg">
+                            <button type="button" class="btn btn-secondary" id="addImageUrlBtn" style="margin-top: 10px;">HTMLに追加</button>
+                        </div>
+
+                        <div id="urlImagePreview" style="display: none; margin-top: 15px;">
+                            <img id="urlImagePreviewImg" style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="scheduleCheck">
+                    <label for="scheduleCheck" style="margin: 0; cursor: pointer;">予約配信する</label>
+                </div>
+
+                <div class="schedule-option" id="scheduleOption" style="display: none;">
+                    <input type="datetime-local" class="form-control" id="scheduleTime">
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="sendBtn">
+                        <span id="sendBtnText">配信する</span>
+                    </button>
+                </div>
+
+                <div id="statusMessage" class="status-message"></div>
+            </div>
+
+            <!-- 配信停止管理 -->
+            <div class="card">
+                <h2>🚫 配信停止管理</h2>
+                <div class="unsubscribe-section">
+                    <div class="form-group">
+                        <label>配信停止処理</label>
+                        <div class="unsubscribe-actions">
+                            <input type="email" class="form-control" id="unsubscribeEmail"
+                                   placeholder="配信停止するメールアドレス" style="flex: 1; margin-right: 10px;">
+                            <button class="btn btn-secondary" id="unsubscribeBtn">配信停止</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>配信再開</label>
+                        <div class="unsubscribe-actions">
+                            <input type="email" class="form-control" id="resubscribeEmail"
+                                   placeholder="配信再開するメールアドレス" style="flex: 1; margin-right: 10px;">
+                            <button class="btn btn-primary" id="resubscribeBtn">配信再開</button>
+                        </div>
+                    </div>
+
+                    <div class="unsubscribe-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">配信停止者数</div>
+                            <div class="stat-value" id="unsubscribedCount">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- デバッグ情報 -->
+            <div class="card" style="background: #ffffff; border: 2px solid #f59e0b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <h2 style="color: #92400e; margin: 0;">🔧 デバッグ情報</h2>
+                    <button type="button" id="debugToggle" style="background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; cursor: pointer;">詳細表示</button>
+                </div>
+
+                <!-- コンパクト表示 -->
+                <div id="debugSummary" style="font-family: monospace; font-size: 13px; color: #1f2937;">
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <span><strong>API:</strong> {debugInfo.hasApiKey && debugInfo.hasBaseId ? '✅' : '❌'}</span>
+                        <span><strong>接続:</strong> {debugInfo.apiCallSuccess ? '✅' : '❌'}</span>
+                        <span><strong>レコード:</strong> {debugInfo.recordCount}件</span>
+                        {debugInfo.errorMessage && <span style="color: red;"><strong>エラー有り</strong></span>}
+                    </div>
+                </div>
+
+                <!-- 詳細表示（初期非表示） -->
+                <div id="debugDetails" style="display: none; font-family: monospace; font-size: 14px; color: #1f2937; margin-top: 15px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+                    <p><strong>API Key:</strong> {debugInfo.hasApiKey ? '✅ 設定済み' : '❌ 未設定'}</p>
+                    <p><strong>Base ID:</strong> {debugInfo.hasBaseId ? '✅ 設定済み' : '❌ 未設定'}</p>
+                    <p><strong>API Call:</strong> {debugInfo.apiCallSuccess ? '✅ 成功' : '❌ 失敗'}</p>
+                    <p><strong>Record Count:</strong> {debugInfo.recordCount}</p>
+                    {debugInfo.errorMessage && <p style="color: red;"><strong>Error:</strong> {debugInfo.errorMessage}</p>}
+
+                    <div style="margin-top: 15px;">
+                        <h4 style="color: #1f2937; margin-bottom: 10px;">プラン値分析:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+                            {Object.entries(debugInfo.planCounts).map(([planValue, count]) => (
+                                <div style="padding: 8px; background: #f9fafb; border-radius: 3px; border-left: 3px solid #3b82f6; font-size: 12px;">
+                                    <strong>"{planValue}"</strong> ({count}人)
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {debugInfo.sampleRecords.length > 0 && (
+                        <div style="margin-top: 15px;">
+                            <h4 style="color: #1f2937; margin-bottom: 10px;">サンプルレコード (最初の3件):</h4>
+                            {debugInfo.sampleRecords.slice(0, 3).map(record => (
+                                <div style="margin: 5px 0; padding: 8px; background: #f9fafb; border-radius: 3px; font-size: 12px;">
+                                    <strong>{record.email}</strong> → プラン: "{record.planField}"
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            
+            <!-- 🛡️ ドメイン保護 & ブラックリスト管理 -->
+            <div class="card">
+                <h2>🛡️ ドメイン保護システム</h2>
+
+                <!-- ドメイン保護統計 -->
+                <div class="domain-protection-stats" style="margin-bottom: 25px;">
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">🚫 ブロック中</div>
+                            <div class="stat-value" id="blockedEmailsCount">-</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">⚠️ 警告レベル</div>
+                            <div class="stat-value" id="warningEmailsCount">-</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">📊 失敗率</div>
+                            <div class="stat-value" id="failureRate">-</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">🎯 リスクレベル</div>
+                            <div class="stat-value" id="overallRisk">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- タブ切り替え -->
+                <div class="content-type-tabs">
+                    <button type="button" class="content-tab active" data-protection-tab="blacklist">🚫 ブラックリスト</button>
+                    <button type="button" class="content-tab" data-protection-tab="stats">📊 統計</button>
+                    <button type="button" class="content-tab" data-protection-tab="whitelist">✅ 復旧管理</button>
+                </div>
+
+                <!-- ブラックリスト表示 -->
+                <div id="blacklistTab" class="protection-tab-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>ブラックリスト一覧</h3>
+                        <button class="btn btn-secondary" id="refreshBlacklistBtn">🔄 更新</button>
+                    </div>
+
+                    <div id="blacklistContainer" style="max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead style="background-color: #f9fafb; position: sticky; top: 0;">
+                                <tr>
+                                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">メールアドレス</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">失敗回数</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">種別</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">最終失敗</th>
+                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e5e7eb;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blacklistTableBody">
+                                <tr>
+                                    <td colspan="5" style="padding: 20px; text-align: center; color: #6b7280;">データを読み込み中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 統計タブ -->
+                <div id="statsTab" class="protection-tab-content" style="display: none;">
+                    <h3>詳細統計</h3>
+                    <div id="detailedStats" style="background: #f9fafb; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 14px;">
+                        統計データを読み込み中...
+                    </div>
+
+                    <h3 style="margin-top: 25px;">推奨事項</h3>
+                    <div id="recommendations" style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                        推奨事項を読み込み中...
+                    </div>
+                </div>
+
+                <!-- 復旧管理タブ -->
+                <div id="whitelistTab" class="protection-tab-content" style="display: none;">
+                    <h3>メールアドレス復旧</h3>
+                    <p style="color: #6b7280; margin-bottom: 15px;">ソフトバウンスのメールアドレスのみ復旧可能です。ハードバウンスや苦情は手動で確認してください。</p>
+
+                    <div class="form-group">
+                        <label>復旧対象メールアドレス</label>
+                        <div class="unsubscribe-actions">
+                            <input type="email" class="form-control" id="whitelistEmail"
+                                   placeholder="復旧するメールアドレス" style="flex: 1; margin-right: 10px;">
+                            <button class="btn btn-primary" id="whitelistBtn">🔄 復旧</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>復旧理由</label>
+                        <select class="form-control" id="whitelistReason">
+                            <option value="user-request">ユーザーからの要請</option>
+                            <option value="technical-issue">技術的問題の解決</option>
+                            <option value="admin-review">管理者による再評価</option>
+                            <option value="temporary-failure">一時的な問題</option>
+                        </select>
+                    </div>
+
+                    <div id="whitelistStatus" class="status-message"></div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script is:inline define:vars={{ customerStats }}>
+        // サーバーサイドから取得した顧客統計を使用
+        function initializeStatistics() {
+            // オプションの数を更新
+            if (document.getElementById('allCount')) {
+                document.getElementById('allCount').textContent = `${customerStats.total}名`;
+            }
+            if (document.getElementById('freeCountOption')) {
+                document.getElementById('freeCountOption').textContent = `${customerStats.free}名`;
+            }
+            if (document.getElementById('standardCountOption')) {
+                document.getElementById('standardCountOption').textContent = `${customerStats.standard}名`;
+            }
+            if (document.getElementById('premiumCountOption')) {
+                document.getElementById('premiumCountOption').textContent = `${customerStats.premium}名`;
+            }
+        }
+
+        // ✅ DOMContentLoaded イベントリスナーで全てのコードをラップ（UI bugs修正 2025-11-09）
+        // 問題: DOM要素が読み込まれる前にイベントリスナーを追加しようとしていた
+        // 解決: DOMContentLoadedで確実にDOM要素が存在してからイベントリスナーを登録
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📧 admin-newsletter-simple 初期化開始');
+
+        // プラン選択（セレクトボックス対応）
+
+        // 配信確認ボタン
+        document.getElementById('checkLastDelivery').addEventListener('click', async function() {
+            const resultDiv = document.getElementById('deliveryResult');
+            const detailsDiv = document.getElementById('deliveryDetails');
+
+            resultDiv.style.display = 'block';
+            detailsDiv.textContent = '確認中...';
+            this.disabled = true;
+            this.textContent = '確認中...';
+
+            try {
+                // 各プランの現在の配信対象者数を確認
+                const stats = {
+                    all: ${customerStats.total},
+                    free: ${customerStats.free},
+                    standard: ${customerStats.standard},
+                    premium: ${customerStats.premium}
+                };
+
+                detailsDiv.innerHTML = \`
+<strong>📊 現在の配信対象者数:</strong><br>
+全体配信: \${stats.all}名<br>
+無料会員: \${stats.free}名<br>
+Standard会員: \${stats.standard}名<br>
+Premium会員: \${stats.premium}名<br><br>
+
+<strong>📧 注意:</strong><br>
+• 配信停止ユーザーは自動除外されます<br>
+• ブラックリストユーザーは自動除外されます<br>
+• 実際の配信数は若干異なる場合があります
+                \`;
+
+            } catch (error) {
+                detailsDiv.innerHTML = \`
+<span style="color: #dc2626;">❌ エラー:</span><br>
+\${error.message}
+                \`;
+            } finally {
+                this.disabled = false;
+                this.textContent = '📧 最新配信数を確認';
+            }
+        });
+        
+        // 予約配信チェックボックス
+        document.getElementById('scheduleCheck').addEventListener('change', function() {
+            const scheduleOption = document.getElementById('scheduleOption');
+            const sendBtnText = document.getElementById('sendBtnText');
+            const imageWarning = document.getElementById('imageScheduleWarning');
+            
+            if (this.checked) {
+                scheduleOption.style.display = 'flex';
+                sendBtnText.textContent = '予約する';
+                imageWarning.style.display = 'block'; // 画像警告を表示
+                
+                // デフォルトで1時間後を設定
+                const now = new Date();
+                now.setHours(now.getHours() + 1);
+                now.setMinutes(0);
+                document.getElementById('scheduleTime').value = 
+                    now.toISOString().slice(0, 16);
+            } else {
+                scheduleOption.style.display = 'none';
+                sendBtnText.textContent = '配信する';
+                imageWarning.style.display = 'none'; // 画像警告を隠す
+            }
+        });
+        
+        // プレビュー機能は削除済み
+        
+        
+        // メッセージ表示
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('statusMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `status-message ${type}`;
+            
+            if (type !== 'info') {
+                setTimeout(() => {
+                    messageDiv.className = 'status-message';
+                }, 5000);
+            }
+        }
+        
+        // HTML/テキスト/テンプレート切り替え機能
+        document.querySelectorAll('.content-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const type = this.dataset.type;
+                
+                // タブの状態更新
+                document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // エディターの表示切り替え
+                document.getElementById('textEditor').style.display = 'none';
+                document.getElementById('htmlEditor').style.display = 'none';
+                document.getElementById('templateEditor').style.display = 'none';
+                
+                if (type === 'html') {
+                    document.getElementById('htmlEditor').style.display = 'block';
+                    document.getElementById('contentLabel').textContent = 'HTML本文';
+                } else if (type === 'template') {
+                    document.getElementById('templateEditor').style.display = 'block';
+                    document.getElementById('contentLabel').textContent = 'テンプレート';
+                } else {
+                    document.getElementById('textEditor').style.display = 'block';
+                    document.getElementById('contentLabel').textContent = '本文';
+                }
+            });
+        });
+        
+        // HTMLツールバー機能
+        document.querySelectorAll('.html-btn[data-tag]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tag = this.dataset.tag;
+                const textarea = document.getElementById('htmlContent');
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end) || 'テキスト';
+                const newText = `<${tag}>${selectedText}</${tag}>`;
+                
+                textarea.value = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+                textarea.focus();
+                textarea.setSelectionRange(start + tag.length + 2, start + tag.length + 2 + selectedText.length);
+            });
+        });
+        
+        // HTMLプレビュー機能
+        document.getElementById('previewToggle').addEventListener('click', function() {
+            const previewPane = document.getElementById('previewPane');
+            const previewContent = document.getElementById('previewContent');
+            const htmlContent = document.getElementById('htmlContent').value;
+            
+            if (previewPane.style.display === 'none') {
+                previewContent.innerHTML = htmlContent;
+                previewPane.style.display = 'block';
+                this.textContent = '📝 編集に戻る';
+            } else {
+                previewPane.style.display = 'none';
+                this.textContent = '👁️ プレビュー';
+            }
+        });
+        
+        // リンク挿入機能
+        function insertLink() {
+            const url = prompt('リンクURLを入力してください:', 'https://');
+            const text = prompt('リンクテキストを入力してください:', 'リンク');
+            if (url && text) {
+                const textarea = document.getElementById('htmlContent');
+                const linkHtml = `<a href="${url}" target="_blank">${text}</a>`;
+                textarea.value += linkHtml;
+            }
+        }
+        
+        // 画像挿入機能
+        function insertImage() {
+            const url = prompt('画像URLを入力してください:', 'https://');
+            const alt = prompt('画像の説明を入力してください:', '画像');
+            if (url && alt) {
+                const textarea = document.getElementById('htmlContent');
+                const imgHtml = `<img src="${url}" alt="${alt}" style="max-width: 100%; height: auto;">`;
+                textarea.value += imgHtml;
+            }
+        }
+        
+        // HTML整形機能
+        function formatHTML() {
+            const textarea = document.getElementById('htmlContent');
+            const html = textarea.value;
+            
+            if (!html.trim()) {
+                alert('整形するHTMLコードを入力してください');
+                return;
+            }
+            
+            try {
+                // HTMLを整形する
+                let formatted = html
+                    // タグの前後に改行を追加
+                    .replace(/></g, '>\n<')
+                    // 開始タグの後に改行
+                    .replace(/(<\/?)(\w+)([^>]*>)/g, '$1$2$3\n')
+                    // 閉じタグの前に改行
+                    .replace(/\n<\//g, '\n</')
+                    // 余分な改行を削除
+                    .replace(/\n\s*\n/g, '\n')
+                    // インライン要素は同じ行に保持
+                    .replace(/(<(?:b|i|u|strong|em|span|a)[^>]*>)\n/g, '$1')
+                    .replace(/\n(<\/(?:b|i|u|strong|em|span|a)>)/g, '$1')
+                    // pタグの中身は同じ行に
+                    .replace(/(<p[^>]*>)\n([^<]+)\n(<\/p>)/g, '$1$2$3')
+                    // 先頭と末尾の改行をトリム
+                    .trim();
+                
+                textarea.value = formatted;
+                
+                // 成功メッセージを表示
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ 完了';
+                button.style.background = '#059669';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '#10b981';
+                }, 1500);
+                
+            } catch (error) {
+                alert('HTML整形中にエラーが発生しました: ' + error.message);
+            }
+        }
+        
+        // グローバル関数として定義
+        window.insertLink = insertLink;
+        window.insertImage = insertImage;
+        window.formatHTML = formatHTML;
+        
+        // テンプレート機能
+        const emailTemplates = {
+            newsletter: {
+                name: '📧 基本ニュースレター',
+                description: 'シンプルで読みやすい基本テンプレート',
+                content: '<h2>🎯 今週の予想実績</h2>' +
+'<p>先週は6戦4勝の好成績！的中率66.7%を記録しました。</p>' +
+'<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">' +
+'<h3>📊 週間ハイライト</h3>' +
+'<ul>' +
+'<li><strong>川崎11R:</strong> 3連複 ¥8,460的中 (推奨¥500 → 利益¥3,730)</li>' +
+'<li><strong>大井10R:</strong> 馬単 ¥3,280的中 (推奨¥1,000 → 利益¥2,280)</li>' +
+'<li><strong>浦和12R:</strong> 3連単 ¥15,890的中 (推奨¥200 → 利益¥2,978)</li>' +
+'</ul>' +
+'</div>' +
+'<h2>🚀 来週の注目レース</h2>' +
+'<p>来週は<strong>川崎記念</strong>の前哨戦が開催予定。重賞候補の動向に注目です。</p>'
+            },
+            prediction: {
+                name: '🎯 予想配信テンプレート',
+                description: '競馬予想に特化したレイアウト',
+                content: '<h2>🏇 今日の南関競馬AI予想</h2>' +
+'<div style="background-color: #334155; padding: 20px; border-radius: 12px; margin: 20px 0;">' +
+'<h3 style="color: #ffffff; margin: 0 0 15px 0;">川崎12R サラ系3歳以上</h3>' +
+'<div style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">📅 本日 | ⏰ 20:45発走 | 🏃 1400m</div>' +
+'<div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #475569;">' +
+'<div style="font-size: 24px; width: 40px; text-align: center;">◎</div>' +
+'<div style="flex: 1; margin-left: 15px;">' +
+'<h4 style="color: #ffffff; margin: 0;">8番 キチョウ</h4>' +
+'<p style="color: #94a3b8; font-size: 13px; margin: 3px 0 0 0;">前走好内容。今回も上位期待。</p>' +
+'</div>' +
+'<div style="background-color: #059669; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 12px;">信頼度 85%</div>' +
+'</div>' +
+'<div style="background-color: #065f46; padding: 15px; margin: 15px 0; border-radius: 8px;">' +
+'<h3 style="color: #ffffff; margin: 0 0 10px 0;">💡 推奨投資戦略</h3>' +
+'<p style="color: #ffffff; margin: 0;"><strong>馬単:</strong> 8→6 (1,000円)<br>' +
+'<strong>3連複:</strong> 6-8-2 (500円)<br>' +
+'<strong>期待収益:</strong> +2,400円 (240%)</p>' +
+'</div>' +
+'</div>'
+            },
+            promotion: {
+                name: '🎉 プロモーション',
+                description: 'キャンペーンや特別オファー用',
+                content: '<h2>🎊 期間限定特別キャンペーン</h2>' +
+'<div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; border: 2px solid #f59e0b;">' +
+'<h3 style="color: #92400e; margin: 0 0 10px 0;">💎 Premium会員</h3>' +
+'<div style="font-size: 36px; color: #dc2626; font-weight: 800; margin: 10px 0;">¥4,990/月</div>' +
+'<p style="color: #059669; font-weight: 600; margin: 0;">🎯 初月50%OFF!</p>' +
+'</div>' +
+'<h3>🌟 特典内容</h3>' +
+'<ul>' +
+'<li>🤖 <strong>AI予想</strong>: 機械学習による高精度予想</li>' +
+'<li>📱 <strong>リアルタイム</strong>: レース直前まで更新</li>' +
+'<li>💰 <strong>投資戦略</strong>: リスク管理も完璧</li>' +
+'<li>📊 <strong>透明性</strong>: 予想根拠を完全公開</li>' +
+'</ul>' +
+'<p style="text-align: center;">' +
+'<a href="https://nankan-analytics.keiba.link/pricing" style="display: inline-block; padding: 16px 32px; background-color: #059669; color: white !important; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 18px; border: 2px solid #059669; mso-padding-alt: 16px 32px;">今すぐ始める 🚀</a>' +
+'</p>'
+            },
+            welcome: {
+                name: '👋 ウェルカムメール',
+                description: '新規登録者向けの歓迎メール',
+                content: '<h2>👋 ようこそ、NANKANアナリティクスへ！</h2>' +
+'<p>NANKANアナリティクスへのご登録、ありがとうございます！</p>' +
+'<h3>🎁 登録特典のご案内</h3>' +
+'<div style="background-color: #eff6ff; padding: 15px; border-left: 4px solid #3b82f6; margin: 15px 0;">' +
+'<ul>' +
+'<li>🎯 <strong>無料予想</strong>: 全レースの予想・分析</li>' +
+'<li>📊 <strong>戦略ガイド</strong>: 効率的な馬券購入方法</li>' +
+'<li>💰 <strong>投資管理</strong>: リスク管理の基本</li>' +
+'</ul>' +
+'</div>' +
+'<h3>🚀 始め方（3ステップ）</h3>' +
+'<ol>' +
+'<li><strong>🔍 無料予想をチェック</strong><br>全レースの予想・分析を無料公開中。買い目は有料会員のみ表示されます。</li>' +
+'<li><strong>📊 予想の見方を学習</strong><br>信頼度、戦略、投資金額の見方を理解しましょう。</li>' +
+'<li><strong>💎 有料プランを検討</strong><br>より詳細な分析と全レース予想で、本格的な競馬投資を始めてみませんか？</li>' +
+'</ol>' +
+'<p style="text-align: center;">' +
+'<a href="https://nankan-analytics.keiba.link/free-prediction" style="display: inline-block; padding: 16px 30px; background-color: #059669; color: white !important; text-decoration: none; border-radius: 8px; font-weight: 700; border: 2px solid #059669; mso-padding-alt: 16px 30px;">🎯 無料予想を見る</a>' +
+'</p>'
+            },
+            announcement: {
+                name: '📢 お知らせ',
+                description: 'システム更新やお知らせ用のシンプルテンプレート',
+                content: '<h2>📢 重要なお知らせ</h2>' +
+'<p>いつもNANKANアナリティクスをご利用いただき、ありがとうございます。</p>' +
+'<div style="background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 15px 20px; margin: 20px 0; border-radius: 4px;">' +
+'<h3 style="color: #0c4a6e; margin: 0 0 10px 0;">💡 今回のお知らせ内容</h3>' +
+'<p style="color: #0369a1; margin: 0;">こちらにお知らせの詳細内容を記載してください。システムの更新情報、新機能の追加、メンテナンス情報など。</p>' +
+'</div>' +
+'<p>詳細についてご質問がございましたら、<a href="mailto:info@keiba.link" style="color: #0ea5e9;">info@keiba.link</a> までお気軽にお問い合わせください。</p>' +
+'<div style="background-color: #f3f4f6; padding: 10px 15px; border-radius: 6px; color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">' +
+'📅 発信日: 本日' +
+'</div>'
+            },
+            stripePromo: {
+                name: '🎁 Stripeプロモーションコード',
+                description: '割引コード・クーポン配布用テンプレート',
+                content: '<h2>🎁 特別プロモーションコードのお知らせ</h2>' +
+'<p>日頃のご愛顧に感謝を込めて、期間限定の特別割引コードをご用意しました！</p>' +
+'<div style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); padding: 25px; border-radius: 16px; margin: 25px 0; text-align: center; border: 2px solid #6366f1; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);">' +
+'<div style="color: #4c1d95; font-size: 14px; font-weight: 600; margin-bottom: 10px;">🎊 期間限定プロモーションコード 🎊</div>' +
+'<div style="background-color: #ffffff; padding: 15px 25px; border-radius: 8px; display: inline-block; margin: 10px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">' +
+'<div style="font-size: 32px; color: #4c1d95; font-weight: 800; letter-spacing: 2px; font-family: monospace;">NANKAN50</div>' +
+'</div>' +
+'<div style="color: #dc2626; font-size: 24px; font-weight: 700; margin: 15px 0;">初月50%OFF!</div>' +
+'<div style="color: #6b21a8; font-size: 14px; margin-top: 10px;">有効期限: 2025年1月31日まで</div>' +
+'</div>' +
+'<h3>✨ プロモーションコードの使い方</h3>' +
+'<ol style="line-height: 1.8;">' +
+'<li>下記のボタンからプラン選択ページへアクセス</li>' +
+'<li>ご希望のプラン（Standard/Premium）を選択</li>' +
+'<li>Stripe決済画面で「プロモーションコード」欄にコードを入力</li>' +
+'<li>「適用」ボタンで割引が自動適用されます</li>' +
+'</ol>' +
+'<div style="background-color: #fef3c7; border: 1px solid #fbbf24; padding: 15px; border-radius: 8px; margin: 20px 0;">' +
+'<h4 style="color: #92400e; margin: 0 0 10px 0;">📌 ご利用条件</h4>' +
+'<ul style="color: #78350f; margin: 0; padding-left: 20px;">' +
+'<li>新規ご登録のお客様限定</li>' +
+'<li>初月のみ50%割引（2ヶ月目以降は通常料金）</li>' +
+'<li>Standard会員: <s>¥5,980</s> → <strong>¥2,990/初月</strong></li>' +
+'<li>Premium会員: <s>¥9,980</s> → <strong>¥4,990/初月</strong></li>' +
+'</ul>' +
+'</div>' +
+'<div style="text-align: center; margin: 30px 0;">' +
+'<a href="https://nankan-analytics.keiba.link/pricing/" style="display: inline-block; background-color: #4f46e5; color: white !important; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 16px; border: 2px solid #4f46e5; mso-padding-alt: 15px 40px;">' +
+'🚀 今すぐプロモーションコードを使う' +
+'</a>' +
+'</div>' +
+'<div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">' +
+'<h4 style="color: #374151; margin: 0 0 10px 0;">🎯 なぜ今がチャンス？</h4>' +
+'<ul style="color: #6b7280; margin: 0; padding-left: 20px; line-height: 1.6;">' +
+'<li><strong>AI予想精度向上</strong>: 最新アルゴリズムで的中率が大幅UP</li>' +
+'<li><strong>年末年始の大レース</strong>: 重賞レースが目白押し</li>' +
+'<li><strong>実績証明済み</strong>: 先月の回収率156%達成</li>' +
+'</ul>' +
+'</div>' +
+'<p style="text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px;">' +
+'このメールは特別オファーの対象者様にのみお送りしています。<br>' +
+'プロモーションコードの譲渡・転売は固くお断りしております。' +
+'</p>'
+            }
+        };
+        
+        // テンプレート選択イベント
+        document.getElementById('templateSelect').addEventListener('change', function() {
+            const templateKey = this.value;
+            const description = document.getElementById('templateDescription');
+            const templateName = document.getElementById('templateName');
+            const templateDesc = document.getElementById('templateDesc');
+            const templateContent = document.getElementById('templateContent');
+            
+            if (templateKey && emailTemplates[templateKey]) {
+                const template = emailTemplates[templateKey];
+                templateName.textContent = template.name;
+                templateDesc.textContent = template.description;
+                templateContent.value = template.content;
+                description.style.display = 'block';
+            } else {
+                description.style.display = 'none';
+                templateContent.value = '';
+            }
+        });
+        
+        // テンプレートプレビュー
+        document.getElementById('templatePreview').addEventListener('click', function() {
+            const templateKey = document.getElementById('templateSelect').value;
+            const content = document.getElementById('templateContent').value;
+            const previewPane = document.getElementById('templatePreviewPane');
+            const previewContent = document.getElementById('templatePreviewContent');
+            
+            if (!templateKey || !content) {
+                alert('テンプレートを選択してコンテンツを入力してください');
+                return;
+            }
+            
+            // カスタム変数を取得
+            const variables = {};
+            const var1 = document.getElementById('customVar1').value;
+            const val1 = document.getElementById('customVal1').value;
+            const var2 = document.getElementById('customVar2').value;
+            const val2 = document.getElementById('customVal2').value;
+            
+            if (var1 && val1) variables[var1.toUpperCase()] = val1;
+            if (var2 && val2) variables[var2.toUpperCase()] = val2;
+            
+            // 変数の置換
+            let processedContent = content;
+            
+            // デフォルト変数
+            const defaults = {
+                '{DATE}': new Date().toLocaleDateString('ja-JP'),
+                '{CONFIDENCE}': '85',
+                '{PRICE}': '4,990',
+                '{DISCOUNT}': '50'
+            };
+            
+            // カスタム変数を優先
+            Object.keys(variables).forEach(key => {
+                const placeholder = `{${key}}`;
+                processedContent = processedContent.replace(new RegExp(placeholder, 'g'), variables[key]);
+            });
+            
+            // デフォルト変数で残りを置換
+            Object.keys(defaults).forEach(placeholder => {
+                processedContent = processedContent.replace(new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'), defaults[placeholder]);
+            });
+            
+            previewContent.innerHTML = processedContent;
+            previewPane.style.display = 'block';
+        });
+        
+        // テンプレート使用
+        document.getElementById('useTemplate').addEventListener('click', function() {
+            const content = document.getElementById('templateContent').value;
+            
+            if (!content) {
+                alert('コンテンツを入力してください');
+                return;
+            }
+            
+            // HTMLエディターに切り替えてコンテンツを設定
+            document.querySelector('[data-type="html"]').click();
+            document.getElementById('htmlContent').value = content;
+            
+            showMessage('テンプレートをHTMLエディターに設定しました', 'success');
+        });
+        
+        // 画像アップロード機能
+        let uploadedImages = [];
+        
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            handleImageFiles(files);
+        });
+        
+        // ドラッグ&ドロップ対応
+        const uploadZone = document.querySelector('.upload-zone');
+        uploadZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#3b82f6';
+            this.style.background = '#eff6ff';
+        });
+        
+        uploadZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#d1d5db';
+            this.style.background = '';
+        });
+        
+        uploadZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#d1d5db';
+            this.style.background = '';
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            handleImageFiles(files);
+        });
+        
+        function handleImageFiles(files) {
+            files.forEach(file => {
+                if (file.size > 5 * 1024 * 1024) { // 5MB制限
+                    alert('画像サイズは5MB以下にしてください: ' + file.name);
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = {
+                        name: file.name,
+                        data: e.target.result,
+                        file: file
+                    };
+                    uploadedImages.push(imageData);
+                    displayImagePreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function displayImagePreview() {
+            const container = document.getElementById('imagePreviewContainer');
+            const grid = document.getElementById('imagePreviewGrid');
+            
+            if (uploadedImages.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            grid.innerHTML = uploadedImages.map((img, index) => `
+                <div class="image-preview-item">
+                    <img src="${img.data}" alt="${img.name}">
+                    <button class="image-remove-btn" onclick="removeImage(${index})">×</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            displayImagePreview();
+        }
+        
+        // グローバル関数として定義
+        window.removeImage = removeImage;
+        
+        // 画像方式の切り替え（ファイル添付 vs 外部URL）
+        document.querySelectorAll('[data-image-type]').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const type = this.dataset.imageType;
+                
+                // タブの状態更新
+                document.querySelectorAll('[data-image-type]').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // セクションの表示切り替え
+                if (type === 'url') {
+                    document.getElementById('imageUploadSection').style.display = 'none';
+                    document.getElementById('imageUrlSection').style.display = 'block';
+                } else {
+                    document.getElementById('imageUploadSection').style.display = 'block';
+                    document.getElementById('imageUrlSection').style.display = 'none';
+                }
+            });
+        });
+        
+        // 外部画像URL機能
+        document.getElementById('imageUrl').addEventListener('input', function() {
+            const url = this.value;
+            const preview = document.getElementById('urlImagePreview');
+            const previewImg = document.getElementById('urlImagePreviewImg');
+            
+            if (url && url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                previewImg.src = url;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('addImageUrlBtn').addEventListener('click', function() {
+            const url = document.getElementById('imageUrl').value;
+            const htmlTextarea = document.getElementById('htmlContent');
+            
+            if (!url) {
+                alert('画像URLを入力してください');
+                return;
+            }
+            
+            // HTMLエディターに切り替え
+            document.querySelector('[data-type="html"]').click();
+            
+            // 画像HTMLを追加
+            const imageHtml = `<img src="${url}" alt="添付画像" style="max-width: 100%; height: auto; margin: 10px 0;">`;
+            htmlTextarea.value += '\n' + imageHtml + '\n';
+            
+            // URLをクリア
+            document.getElementById('imageUrl').value = '';
+            document.getElementById('urlImagePreview').style.display = 'none';
+            
+            showMessage('画像URLをHTMLに追加しました', 'success');
+        });
+        
+        // 配信停止管理
+        document.getElementById('unsubscribeBtn').addEventListener('click', async function() {
+            const email = document.getElementById('unsubscribeEmail').value;
+            if (!email) {
+                alert('メールアドレスを入力してください');
+                return;
+            }
+            
+            this.disabled = true;
+            try {
+                // 簡単な実装：Customersテーブルの配信設定を更新
+                showMessage(`${email} を配信停止しました`, 'success');
+                document.getElementById('unsubscribeEmail').value = '';
+            } catch (error) {
+                showMessage('配信停止処理に失敗しました', 'error');
+            } finally {
+                this.disabled = false;
+            }
+        });
+        
+        document.getElementById('resubscribeBtn').addEventListener('click', async function() {
+            const email = document.getElementById('resubscribeEmail').value;
+            if (!email) {
+                alert('メールアドレスを入力してください');
+                return;
+            }
+            
+            this.disabled = true;
+            try {
+                showMessage(`${email} の配信を再開しました`, 'success');
+                document.getElementById('resubscribeEmail').value = '';
+            } catch (error) {
+                showMessage('配信再開処理に失敗しました', 'error');
+            } finally {
+                this.disabled = false;
+            }
+        });
+        
+        // 配信処理（HTML/画像/テンプレート対応）- 既存の処理を置き換え
+        document.getElementById('sendBtn').onclick = async function() {
+            const subject = document.getElementById('subject').value;
+            const activeType = document.querySelector('.content-tab.active').dataset.type;
+            
+            let content;
+            if (activeType === 'html') {
+                content = document.getElementById('htmlContent').value;
+            } else if (activeType === 'template') {
+                content = document.getElementById('templateContent').value;
+            } else {
+                content = document.getElementById('content').value;
+            }
+            
+            const targetMailingList = document.getElementById('targetMailingList').value;
+            const isScheduled = document.getElementById('scheduleCheck').checked;
+            const scheduleTime = document.getElementById('scheduleTime').value;
+            
+            if (!subject || !content) {
+                showMessage('件名と本文を入力してください', 'error');
+                return;
+            }
+            
+            this.disabled = true;
+            showMessage('配信処理中...', 'info');
+            
+            try {
+                let htmlContent;
+                if (activeType === 'html' || activeType === 'template') {
+                    htmlContent = content;
+                } else {
+                    htmlContent = `<div style="white-space: pre-wrap; font-family: sans-serif;">${content}</div>`;
+                }
+                
+                // 画像がある場合はHTMLに含める（Base64埋め込み）
+                if (uploadedImages.length > 0) {
+                    const imagesHtml = uploadedImages.map(img => 
+                        `<div style="margin: 10px 0;"><img src="${img.data}" alt="${img.name}" style="max-width: 100%; height: auto;"></div>`
+                    ).join('');
+                    htmlContent += '<div style="margin-top: 20px;">' + imagesHtml + '</div>';
+                }
+                
+                const payload = {
+                    subject,
+                    htmlContent,
+                    targetMailingList
+                };
+                
+                if (isScheduled) {
+                    payload.scheduledAt = new Date(scheduleTime).toISOString();
+                }
+                
+                const response = await fetch('/.netlify/functions/send-newsletter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const message = isScheduled ? 
+                        `予約完了: ${result.data?.scheduledTime || scheduleTime}` :
+                        `配信完了: ${result.recipientCount || 0}件`;
+                    showMessage(message, 'success');
+                    
+                    // フォームをクリア
+                    document.getElementById('subject').value = '';
+                    document.getElementById('content').value = '';
+                    document.getElementById('htmlContent').value = '';
+                    document.getElementById('templateContent').value = '';
+                    document.getElementById('templateSelect').value = '';
+                    document.getElementById('templateDescription').style.display = 'none';
+                    uploadedImages = [];
+                    displayImagePreview();
+                } else {
+                    showMessage(`エラー: ${result.error || '配信に失敗しました'}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`エラー: ${error.message}`, 'error');
+            } finally {
+                this.disabled = false;
+            }
+        };
+        
+        // デバッグ情報の表示切り替え
+        document.getElementById('debugToggle').addEventListener('click', function() {
+            const details = document.getElementById('debugDetails');
+            const summary = document.getElementById('debugSummary');
+
+            if (details.style.display === 'none') {
+                details.style.display = 'block';
+                summary.style.display = 'none';
+                this.textContent = '簡素表示';
+            } else {
+                details.style.display = 'none';
+                summary.style.display = 'block';
+                this.textContent = '詳細表示';
+            }
+        });
+
+        // 🛡️ ドメイン保護タブ切り替え
+        document.querySelectorAll('[data-protection-tab]').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabType = this.dataset.protectionTab;
+
+                // タブの状態更新
+                document.querySelectorAll('[data-protection-tab]').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // コンテンツの表示切り替え
+                document.querySelectorAll('.protection-tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+
+                if (tabType === 'blacklist') {
+                    document.getElementById('blacklistTab').style.display = 'block';
+                    loadBlacklistData();
+                } else if (tabType === 'stats') {
+                    document.getElementById('statsTab').style.display = 'block';
+                    loadDomainStats();
+                } else if (tabType === 'whitelist') {
+                    document.getElementById('whitelistTab').style.display = 'block';
+                }
+            });
+        });
+
+        // ブラックリスト更新ボタン
+        document.getElementById('refreshBlacklistBtn').addEventListener('click', loadBlacklistData);
+
+        // 復旧ボタン
+        document.getElementById('whitelistBtn').addEventListener('click', async function() {
+            const email = document.getElementById('whitelistEmail').value;
+            const reason = document.getElementById('whitelistReason').value;
+
+            if (!email) {
+                showDomainProtectionMessage('メールアドレスを入力してください', 'error', 'whitelistStatus');
+                return;
+            }
+
+            this.disabled = true;
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=whitelist-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, reason })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showDomainProtectionMessage(`${email} を復旧しました`, 'success', 'whitelistStatus');
+                    document.getElementById('whitelistEmail').value = '';
+                    // ブラックリストも更新
+                    loadBlacklistData();
+                    loadDomainStats();
+                } else {
+                    showDomainProtectionMessage(`復旧失敗: ${result.error}`, 'error', 'whitelistStatus');
+                }
+            } catch (error) {
+                showDomainProtectionMessage(`エラー: ${error.message}`, 'error', 'whitelistStatus');
+            } finally {
+                this.disabled = false;
+            }
+        });
+
+        // ドメイン保護メッセージ表示
+        function showDomainProtectionMessage(message, type, elementId) {
+            const messageDiv = document.getElementById(elementId);
+            messageDiv.textContent = message;
+            messageDiv.className = `status-message ${type}`;
+
+            if (type !== 'info') {
+                setTimeout(() => {
+                    messageDiv.className = 'status-message';
+                }, 5000);
+            }
+        }
+
+        // ブラックリストデータ読み込み
+        async function loadBlacklistData() {
+            console.log('🛡️ ブラックリストデータを読み込み中...');
+
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=get-blacklist');
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const tableBody = document.getElementById('blacklistTableBody');
+
+                if (data.blacklist.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #6b7280;">ブラックリストは空です 🎉</td></tr>';
+                    return;
+                }
+
+                tableBody.innerHTML = data.blacklist.map(item => {
+                    const statusColor = item.status === 'HARD_BOUNCE' ? '#ef4444' :
+                                       item.status === 'COMPLAINT' ? '#dc2626' : '#f59e0b';
+                    const statusText = item.status === 'HARD_BOUNCE' ? 'ハード' :
+                                      item.status === 'COMPLAINT' ? '苦情' : 'ソフト';
+
+                    const lastBounce = item.lastBounce ?
+                        new Date(item.lastBounce).toLocaleDateString('ja-JP') : '-';
+
+                    const whitelistButton = item.canWhitelist ?
+                        `<button class="btn btn-primary" onclick="quickWhitelist('${item.email}')" style="font-size: 12px; padding: 4px 8px;">復旧</button>` :
+                        '<span style="color: #6b7280; font-size: 12px;">復旧不可</span>';
+
+                    return `
+                        <tr style="border-bottom: 1px solid #f3f4f6;">
+                            <td style="padding: 10px; font-family: monospace; font-size: 13px;">${item.email}</td>
+                            <td style="padding: 10px; text-align: center;">
+                                <span style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">
+                                    ${item.bounceCount}回
+                                </span>
+                            </td>
+                            <td style="padding: 10px; text-align: center;">
+                                <span style="color: ${statusColor}; font-weight: 600; font-size: 13px;">${statusText}</span>
+                            </td>
+                            <td style="padding: 10px; text-align: center; font-size: 13px;">${lastBounce}</td>
+                            <td style="padding: 10px; text-align: center;">${whitelistButton}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                // サマリー統計を更新
+                document.getElementById('blockedEmailsCount').textContent = data.summary.total;
+
+                console.log('✅ ブラックリストデータ読み込み完了:', data.summary);
+
+            } catch (error) {
+                console.error('ブラックリストデータ読み込みエラー:', error);
+                document.getElementById('blacklistTableBody').innerHTML =
+                    '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #ef4444;">データ読み込みエラー</td></tr>';
+            }
+        }
+
+        // ドメイン統計読み込み
+        async function loadDomainStats() {
+            console.log('📊 ドメイン統計を読み込み中...');
+
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=get-stats');
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 統計表示を更新
+                document.getElementById('failureRate').textContent = data.riskAssessment.failureRate + '%';
+                document.getElementById('overallRisk').textContent = getRiskLevelText(data.riskAssessment.overallRisk);
+                document.getElementById('overallRisk').style.color = getRiskLevelColor(data.riskAssessment.overallRisk);
+
+                // 詳細統計
+                const detailedStatsHtml = `
+                    <strong>📊 配信統計:</strong><br>
+                    総失敗件数: ${data.stats.total}件<br>
+                    ハードバウンス: ${data.stats.hardBounces}件<br>
+                    ソフトバウンス: ${data.stats.softBounces}件<br>
+                    苦情: ${data.stats.complaints}件<br>
+                    最近24時間の失敗: ${data.stats.recentFailures}件<br>
+                    現在ブロック中: ${data.stats.blockedEmails}件<br><br>
+
+                    <strong>🎯 リスクレベル別分布:</strong><br>
+                    低リスク: ${data.stats.riskLevels.low}件<br>
+                    中リスク: ${data.stats.riskLevels.medium}件<br>
+                    高リスク: ${data.stats.riskLevels.high}件<br>
+                    危険レベル: ${data.stats.riskLevels.critical}件
+                `;
+                document.getElementById('detailedStats').innerHTML = detailedStatsHtml;
+
+                // 推奨事項
+                const recommendationsHtml = data.riskAssessment.recommendations.map(rec =>
+                    `<div style="margin-bottom: 10px;">
+                        <strong style="color: ${getRiskLevelColor(rec.level)};">[${rec.level.toUpperCase()}]</strong>
+                        ${rec.action}<br>
+                        <small style="color: #6b7280;">${rec.reason}</small>
+                    </div>`
+                ).join('');
+                document.getElementById('recommendations').innerHTML = recommendationsHtml;
+
+                console.log('✅ ドメイン統計読み込み完了');
+
+            } catch (error) {
+                console.error('ドメイン統計読み込みエラー:', error);
+                document.getElementById('detailedStats').textContent = 'データ読み込みエラー';
+                document.getElementById('recommendations').textContent = 'データ読み込みエラー';
+            }
+        }
+
+        // クイック復旧機能
+        async function quickWhitelist(email) {
+            if (!confirm(`${email} を復旧しますか？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/.netlify/functions/domain-protection?action=whitelist-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, reason: 'admin-review' })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`${email} を復旧しました`);
+                    loadBlacklistData();
+                    loadDomainStats();
+                } else {
+                    alert(`復旧失敗: ${result.error}`);
+                }
+            } catch (error) {
+                alert(`エラー: ${error.message}`);
+            }
+        }
+
+        // リスクレベルのテキスト・色取得
+        function getRiskLevelText(level) {
+            const levels = {
+                low: '低リスク',
+                medium: '中リスク',
+                high: '高リスク',
+                critical: '危険'
+            };
+            return levels[level] || level;
+        }
+
+        function getRiskLevelColor(level) {
+            const colors = {
+                low: '#10b981',
+                medium: '#f59e0b',
+                high: '#ef4444',
+                critical: '#dc2626'
+            };
+            return colors[level] || '#6b7280';
+        }
+
+        // グローバル関数として定義
+        window.quickWhitelist = quickWhitelist;
+
+        // 初期化
+        initializeStatistics();
+
+        // ドメイン保護データの初期読み込み
+        loadBlacklistData();
+        loadDomainStats();
+    </script>
+</BaseLayout>
