@@ -176,7 +176,8 @@ exports.handler = async (event, context) => {
     const today = jstDate.toISOString().split('T')[0];
 
     // 🔍 退会申請チェック（2025-11-26追加）
-    const withdrawalRequested = user.get('WithdrawalRequested') === 1 || user.get('WithdrawalRequested') === true;
+    // 🔧 2025-11-27修正: let に変更（自動リセット時に再代入が必要）
+    let withdrawalRequested = user.get('WithdrawalRequested') === 1 || user.get('WithdrawalRequested') === true;
 
     // 🔍 有効期限チェック（PremiumまたはStandardで期限切れならFreeに自動降格）
     let isExpired = false;
@@ -198,13 +199,28 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // 🚨 2025-11-26追加: 退会申請済みの場合はログに記録
-    if (withdrawalRequested) {
-      console.log(`🚫 ユーザー ${email} は退会申請済みです`);
-    }
-
     // 🔧 プラン値正規化: 大文字小文字混在問題解決
     const normalizedPlan = normalizePlan(currentPlan);
+
+    // 🚨 2025-11-27修正: 有料プラン契約中なのに退会フラグが残っている場合は自動リセット
+    // 原因: Standard退会 → Premium Sanrenpuku購入時にフラグがリセットされないバグ
+    if (withdrawalRequested && !isExpired && (normalizedPlan !== 'Free' && normalizedPlan !== 'free')) {
+      console.log(`⚠️ ユーザー ${email} は有料プラン契約中なのに退会フラグが残っています - 自動リセットします`);
+      console.log(`   プラン: ${normalizedPlan}, 有効期限: ${validUntil}, 期限切れ: ${isExpired}`);
+
+      // 退会フラグを自動リセット
+      await base('Customers').update(user.id, {
+        'WithdrawalRequested': false,
+        'WithdrawalDate': null,
+        'WithdrawalReason': null
+      });
+
+      // ローカル変数も更新（後続処理で正しい値を使用）
+      withdrawalRequested = false;
+      console.log(`✅ 退会フラグリセット完了`);
+    } else if (withdrawalRequested) {
+      console.log(`🚫 ユーザー ${email} は退会申請済みです`);
+    }
 
     // ログインポイント付与チェック + プラン変更ボーナス（期限切れでない場合のみ）
     let pointsAdded = 0;
