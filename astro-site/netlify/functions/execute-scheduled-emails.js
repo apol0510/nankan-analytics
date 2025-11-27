@@ -287,6 +287,7 @@ export default async function handler(request, context) {
           console.log(`✅ 送信完了: ${Subject}`);
         } else {
           console.log(`🔄 送信継続中: ${Subject} - 次回実行を待機中`);
+        }
 
       } catch (sendError) {
         console.error(`❌ 送信失敗: ${Subject}`, sendError);
