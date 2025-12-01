@@ -13,6 +13,41 @@
 
 ---
 
+## 🚨 **絶対に忘れてはいけない最重要ルール** 🚨
+
+### 📊 **会員階層構造（段階的システム）**
+
+**会員は段階的にしか利用できない仕組み**
+
+```
+Free会員
+  ↓
+Premium会員（Standard会員含む）
+  ↓
+Premium Sanrenpuku会員
+  ↓
+Premium Plus（単品商品）
+```
+
+### ⚠️ **絶対に間違えてはいけないこと**
+
+1. **Premium Plusは単品商品である**
+   - ❌ Premium Plus会員は存在しない
+   - ✅ Premium Plusは最上位の単品商品
+   - ✅ Premium Sanrenpuku会員だけが次のステップとして購入できる
+
+2. **表示ルール**
+   - ❌ Premium会員ページにPremium Plusを表示してはいけない
+   - ✅ Premium Sanrenpuku会員ページにのみPremium Plusを表示する
+   - **理由**: 段階的にしか利用できないから
+
+3. **アップセル導線**
+   - Premium会員 → Premium Sanrenpukuへのアップセル
+   - Premium Sanrenpuku会員 → Premium Plus（単品商品）へのアップセル
+   - **絶対に飛び級させてはいけない**
+
+---
+
 ## 🔧 **定期メンテナンス記録** 🔧
 
 ### ✅ **2025-11-30 メンテナンス実施**
