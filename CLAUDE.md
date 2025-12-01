@@ -48,6 +48,61 @@ Premium Plus（単品商品）
 
 ---
 
+## 📸 **毎日の画像更新作業** 📸
+
+### 🎯 **「画像更新コミットプッシュ」指示で自動更新される3箇所**
+
+| ページ | 更新対象 | 表示枚数 | 更新方法 |
+|--------|----------|----------|----------|
+| **/premium-plus/** | Line 1367-1383 | 直近5戦 | 手動更新必須 |
+| **/premium-sanrenpuku/** | Line 401-413 | 直近3戦（CTA） | 手動更新必須 |
+| **/withdrawal-upsell/** | Line 534 | 最新1枚 | **自動読み込み** ✅ |
+
+### 📋 **更新手順（「画像更新コミットプッシュ」と指示）**
+
+#### **1. premium-plus.astro（5枚更新）**
+```astro
+<!-- Line 1367-1383 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 最新日 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 1日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 2日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 3日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 4日前 -->
+```
+
+#### **2. premium-sanrenpuku.astro（3枚更新）**
+```astro
+<!-- Line 401-413: Premium Plus CTAセクション -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 最新日 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 1日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 2日前 -->
+```
+
+#### **3. withdrawal-upsell.astro（自動）**
+- ✅ **自動で最新画像を読み込み**（Line 534）
+- ✅ 最大10日前まで遡って検索
+- ✅ 手動更新不要
+
+### 🚀 **コミットメッセージ例**
+```
+📸 Premium Plus実績画像更新・YYYY-MM-DD
+
+- premium-plus.astro: 直近5戦（MM/DD〜MM/DD）
+- premium-sanrenpuku.astro: 直近3戦（MM/DD〜MM/DD）
+- withdrawal-upsell.astro: 自動読み込み ✅
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+### ⚠️ **重要ポイント**
+- 📂 画像は `/public/upsell-images/upsell-YYYYMMDD.png` に配置
+- 📅 ファイル名形式: `upsell-20251128.png`（8桁日付）
+- 🔄 withdrawal-upsellは自動読み込みのため更新不要
+
+---
+
 ## 🔧 **定期メンテナンス記録** 🔧
 
 ### ✅ **2025-11-30 メンテナンス実施**
