@@ -397,6 +397,22 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
                         <p class="cta-subtitle">超高性能AIが導く"最高確率の1鞍"を、あなたに。</p>
                     </div>
 
+                    <!-- 最新の的中実績画像 -->
+                    <div class="cta-results-preview">
+                        <h3 class="preview-title">📊 直近3戦の実績</h3>
+                        <div class="preview-grid">
+                            <div class="preview-image-card">
+                                <img src="/upsell-images/upsell-20251128.png" alt="11/28的中実績" onerror="this.parentElement.style.display='none'" />
+                            </div>
+                            <div class="preview-image-card">
+                                <img src="/upsell-images/upsell-20251127.png" alt="11/27的中実績" onerror="this.parentElement.style.display='none'" />
+                            </div>
+                            <div class="preview-image-card">
+                                <img src="/upsell-images/upsell-20251126.png" alt="11/26的中実績" onerror="this.parentElement.style.display='none'" />
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="cta-features">
                         <div class="cta-feature">
                             <span class="feature-icon">🎯</span>
@@ -1360,6 +1376,48 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
         box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
     }
 
+    /* 的中実績プレビュー */
+    .cta-results-preview {
+        margin: 30px 0;
+    }
+
+    .preview-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #fbbf24;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .preview-image-card {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 12px;
+        padding: 10px;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .preview-image-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .preview-image-card img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        display: block;
+    }
+
     .cta-header {
         text-align: center;
         margin-bottom: 40px;
@@ -1501,6 +1559,15 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
 
         .cta-subtitle {
             font-size: 1rem;
+        }
+
+        .preview-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .preview-title {
+            font-size: 1.1rem;
         }
 
         .cta-features {

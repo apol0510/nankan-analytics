@@ -24,7 +24,7 @@ Free会員
   ↓
 Premium会員（Standard会員含む）
   ↓
-Premium Sanrenpuku会員
+Premium Sanrenpuku会員（Combo含む）
   ↓
 Premium Plus（単品商品）
 ```
@@ -34,16 +34,16 @@ Premium Plus（単品商品）
 1. **Premium Plusは単品商品である**
    - ❌ Premium Plus会員は存在しない
    - ✅ Premium Plusは最上位の単品商品
-   - ✅ Premium Sanrenpuku会員だけが次のステップとして購入できる
+   - ✅ **Premium Sanrenpuku会員とPremium Combo会員のみが購入できる**
 
 2. **表示ルール**
    - ❌ Premium会員ページにPremium Plusを表示してはいけない
-   - ✅ Premium Sanrenpuku会員ページにのみPremium Plusを表示する
+   - ✅ **Premium Sanrenpuku会員・Premium Combo会員ページにのみ表示**
    - **理由**: 段階的にしか利用できないから
 
 3. **アップセル導線**
    - Premium会員 → Premium Sanrenpukuへのアップセル
-   - Premium Sanrenpuku会員 → Premium Plus（単品商品）へのアップセル
+   - **Premium Sanrenpuku会員・Premium Combo会員 → Premium Plus（単品商品）へのアップセル**
    - **絶対に飛び級させてはいけない**
 
 ---
