@@ -160,10 +160,12 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
                 const sanrenpukuSection = document.getElementById('sanrenpuku-yesterday-results');
 
                 if (sanrenpukuSection) {
-                    // 🔧 2025-11-27修正: Premium Sanrenpuku・Premium Combo会員も三連複結果を表示
-                    if (userPlan === 'Premium' || userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Combo') {
+                    // 🔧 2025-12-01修正: Premium会員・Premium Sanrenpuku会員のみ三連複結果を表示（Comboは非表示）
+                    if (userPlan === 'Premium' || userPlan === 'Premium Sanrenpuku') {
                         sanrenpukuSection.style.display = 'block';
                         console.log('✅ 三連複昨日の結果表示: ' + userPlan + '会員');
+                    } else if (userPlan === 'Premium Combo') {
+                        console.log('🚫 三連複昨日の結果非表示: Premium Combo会員（/premium-sanrenpuku/で閲覧可能）');
                     }
                 }
             })();
@@ -997,7 +999,7 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         </div>
 
         <!-- 🏆 三連複 昨日の的中結果（最下部配置） -->
-        <!-- ⚠️ アクセス制御: Standard/Premium（アップセル用）・Premium Sanrenpuku・Premium Combo会員に表示 -->
+        <!-- ⚠️ アクセス制御: Standard/Premium（アップセル用）・Premium Sanrenpuku会員に表示（Comboは非表示） -->
         <div id="sanrenpuku-yesterday-results" style="display: none;">
             <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(234, 88, 12, 0.2)); padding: 2rem; border-radius: 16px; border: 1px solid rgba(245, 158, 11, 0.3);">
                 <h2 style="font-size: 1.8rem; font-weight: 700; color: rgb(245, 158, 11); margin-bottom: 1rem; text-align: center;">
@@ -1144,13 +1146,16 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
 
             console.log('🔍 最終プラン判定:', userPlan);
 
-            // 🔧 2025-11-27修正: Premium Sanrenpuku・Premium Combo会員も三連複結果を表示
+            // 🔧 2025-12-01修正: Premium会員・Premium Sanrenpuku会員のみ三連複結果を表示（Comboは非表示）
             // Standard/Premium（馬単プラン）は三連複アップセル用に表示
-            // Premium Sanrenpuku・Premium Comboは契約プランとして表示
+            // Premium Sanrenpukuは契約プランとして表示
+            // Premium Comboは/premium-sanrenpuku/で閲覧（/premium-predictions/では非表示）
             if (userPlan === 'Standard' || userPlan === 'Premium' || userPlan === 'premium' ||
-                userPlan === 'Premium Sanrenpuku' || userPlan === 'Premium Combo') {
+                userPlan === 'Premium Sanrenpuku') {
                 sanrenpukuResultsSection.style.display = 'block';
                 console.log('✅ 三連複昨日の結果表示: ' + userPlan + '会員');
+            } else if (userPlan === 'Premium Combo') {
+                console.log('🚫 三連複昨日の結果非表示: Premium Combo会員（/premium-sanrenpuku/で閲覧可能）');
             } else {
                 console.log('🚫 三連複昨日の結果非表示: ' + (userPlan || '不明') + '（アクセス権限なし）');
             }
