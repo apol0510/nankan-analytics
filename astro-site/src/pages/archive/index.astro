@@ -1,6 +1,17 @@
 ---
 export const prerender = true;
-import archiveData from '../../data/archiveResults.json';
+import archiveData10 from '../../data/archiveResults_2025-10.json';
+import archiveData11 from '../../data/archiveResults_2025-11.json';
+import archiveData12 from '../../data/archiveResults_2025-12.json';
+
+// 全月のデータを統合
+const archiveData = {
+  '2025': {
+    ...archiveData10['2025'],
+    ...archiveData11['2025'],
+    ...archiveData12['2025']
+  }
+};
 
 const years = Object.keys(archiveData).sort().reverse(); // 新しい順
 

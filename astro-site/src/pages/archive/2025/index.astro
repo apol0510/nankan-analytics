@@ -1,9 +1,16 @@
 ---
 export const prerender = true;
-import archiveData from '../../../data/archiveResults.json';
+import archiveData10 from '../../../data/archiveResults_2025-10.json';
+import archiveData11 from '../../../data/archiveResults_2025-11.json';
+import archiveData12 from '../../../data/archiveResults_2025-12.json';
 
 const year = '2025';
-const yearData = archiveData[year] || {};
+// 複数月のデータを統合
+const yearData = {
+  ...archiveData10[year],
+  ...archiveData11[year],
+  ...archiveData12[year]
+};
 const months = Object.keys(yearData).sort().reverse(); // 新しい順
 
 // 年間統計計算
