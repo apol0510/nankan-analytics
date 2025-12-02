@@ -13,6 +13,82 @@
 
 ---
 
+## 🚨 **最優先：プロジェクト識別ルール（複数ウィンドウ対応）** 🚨
+
+### **このプロジェクトの識別情報**
+
+```
+プロジェクト名: nankan-analytics
+作業ディレクトリ: /Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site
+Gitリポジトリ: https://github.com/apol0510/nankan-analytics.git
+親ディレクトリ: /WorkSpace/nankan-analytics/
+```
+
+### **セッション開始時の必須確認（毎回実行）**
+
+```bash
+# 1. 現在地確認
+pwd
+
+# 2. Gitリポジトリ確認
+git remote -v
+
+# 3. 期待値チェック
+# pwd: /Users/apolon/.../nankan-analytics/astro-site
+# git: apol0510/nankan-analytics.git
+
+# 4. 間違っている場合は即座に移動
+cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
+```
+
+### **厳格な制約事項**
+
+#### **✅ 許可される操作**
+- `/WorkSpace/nankan-analytics/` 配下のみ
+- `astro-site/` ディレクトリ内の全ファイル
+- `CLAUDE.md`, `README.md`（親ディレクトリ）
+
+#### **❌ 絶対禁止の操作**
+- `/WorkSpace/Keiba review platform/` への一切のアクセス ⚠️
+- `/WorkSpace/nankan-analytics-pro/` への一切のアクセス
+- `/WorkSpace/nankan-beginner/` への一切のアクセス
+- `/WorkSpace/nankan-course/` への一切のアクセス
+- `/WorkSpace/nankan-inteli/` への一切のアクセス
+- `/WorkSpace/nankan-keiba/` への一切のアクセス
+- 親ディレクトリ `/WorkSpace/` の直接走査・検索
+
+### **ファイル検索時の制約**
+
+```bash
+# ❌ 絶対禁止（親ディレクトリまで検索）
+grep -r "pattern" /Users/apolon/.../WorkSpace/
+
+# ❌ 絶対禁止（相対パスで親に遡る）
+cd ../
+grep -r "pattern" ../
+
+# ✅ 正しい方法（プロジェクト内のみ検索）
+grep -r "pattern" /Users/apolon/.../nankan-analytics/astro-site/
+grep -r "pattern" ./src/
+```
+
+### **間違ったプロジェクトを参照した場合**
+
+**即座に以下を実行：**
+
+1. **停止**: 現在の操作を中断
+2. **報告**: 「⚠️ 警告：間違ったプロジェクト（[プロジェクト名]）を参照しました」
+3. **修正**: 正しいディレクトリに移動
+4. **再確認**: `pwd` と `git remote -v` で検証
+
+### **マコさんが複数プロジェクトを並行作業する場合**
+
+- ✅ 各Claudeウィンドウは**独立した1つのプロジェクトのみ**を担当
+- ✅ ウィンドウAでnankan-analytics、ウィンドウBでKeiba review platform
+- ❌ 1つのウィンドウで複数プロジェクトを横断してはいけない
+
+---
+
 ## 🚨 **絶対に忘れてはいけない最重要ルール** 🚨
 
 ### 📊 **会員階層構造（段階的システム）**
