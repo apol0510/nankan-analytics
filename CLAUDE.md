@@ -260,6 +260,65 @@ src/data/
 
 ---
 
+### **🔹 予想更新の手順**
+
+**マコさんが「予想更新コミットプッシュ」と指示したら：**
+
+#### **Step 1: ファイル確認**
+```bash
+# allRacesPrediction.json の先頭部分を確認
+Read src/data/allRacesPrediction.json (limit: 50)
+```
+
+#### **Step 2: public/dataに同期（必須・スキップ禁止）**
+```bash
+cp src/data/allRacesPrediction.json public/data/
+```
+- ✅ **既存ファイルがあっても必ず実行**
+
+#### **Step 3: JSON検証**
+```bash
+python3 -c "
+import json
+with open('src/data/allRacesPrediction.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    main_race = next((r for r in data['races'] if r.get('isMainRace')), None)
+    print(f'✅ レース日: {data[\"raceDate\"]}')
+    print(f'✅ 会場: {data[\"track\"]}')
+    print(f'✅ レース数: {data[\"totalRaces\"]}')
+    if main_race:
+        print(f'✅ メインレース: {main_race[\"raceNumber\"]} {main_race[\"raceInfo\"][\"raceName\"]}')
+"
+```
+
+#### **Step 4: コミット・プッシュ（必須・スキップ禁止）**
+```bash
+git add src/data/allRacesPrediction.json public/data/allRacesPrediction.json
+
+git commit -m "$(cat <<'EOF'
+🔮 予想更新・YYYY-MM-DD
+
+- 会場: ○○競馬
+- レース数: ○R
+- メインレース: ○○賞
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+
+git push origin main
+```
+
+**用途：**
+- `/premium-predictions/`（全レース予想・馬単買い目）
+- `/standard-predictions/`（後半3レース・三連複買い目）
+- `/free-prediction/`（メインレースのみ・買い目なし）
+- トップページ（メインレースプレビュー）
+
+---
+
 ### **🔹 馬単結果更新の手順**
 
 **マコさんが「馬単結果更新コミットプッシュ」と指示したら：**
@@ -489,6 +548,13 @@ git push origin main
 ---
 
 ### **✅ チェックリスト（絶対に忘れない）**
+
+**予想更新時：**
+- [ ] マコさんが管理画面でallRacesPrediction.json生成・配置
+- [ ] クロちゃんが public/data/ に同期（**必須・スキップ禁止**）
+- [ ] クロちゃんが JSON検証
+- [ ] クロちゃんが コミット・プッシュ（**必須・スキップ禁止**）
+- [ ] **❌「更新不要」判定は絶対にしない**
 
 **馬単結果更新時：**
 - [ ] マコさんが archiveResults_2025-12.json に貼り付け
@@ -858,4 +924,4 @@ git push origin main
 **🏁 Project Phase**: システム安定稼働中・月別ファイル分割完了 ✨
 **🎯 Next Priority**: 毎日の結果更新作業の安定運用
 **📊 価格体系**: Premium ¥9,980 / Sanrenpuku ¥19,820 / Combo ¥24,800 / Plus ¥68,000
-**✨ 本日の成果**: 馬単結果更新フロー改訂・「更新不要」判定廃止・常時同期ルール確立・最新1日分のみ抽出システム実装（馬単）・三連複は複数月統合システム実装（馬単と三連複の違いを明確化）！
+**✨ 本日の成果**: 馬単結果更新フロー改訂・「更新不要」判定廃止・常時同期ルール確立・最新1日分のみ抽出システム実装（馬単）・三連複は複数月統合システム実装（馬単と三連複の違いを明確化）・予想更新手順追加！
