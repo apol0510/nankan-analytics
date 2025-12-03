@@ -350,8 +350,23 @@ with open('src/data/darkHorseData.json', 'r', encoding='utf-8') as f:
 "
 ```
 
-#### **Step 4: コミット・プッシュ（必須・スキップ禁止）**
+#### **Step 4: STORAGE_VERSION更新（必須・スキップ禁止）**
 ```bash
+# dark-horse-picks.astro のSTORAGE_VERSIONを更新日付に変更
+Edit src/pages/dark-horse-picks.astro
+
+# Line 396 と Line 435 の2箇所を更新
+# const STORAGE_VERSION = 'YYYY-MM-DD'; ← 更新日付に変更
+```
+
+**⚠️ 重要：**
+- darkHorseData.jsonの `"date": "2025-12-04"` と同じ日付に更新
+- **2箇所（Line 396, Line 435）両方とも更新すること**
+- この更新を忘れると「穴馬を見る」ボタンが「再確認する」のままになる
+
+#### **Step 5: コミット・プッシュ（必須・スキップ禁止）**
+```bash
+# データファイルのコミット
 git add src/data/darkHorseData.json public/data/darkHorseData.json
 
 git commit -m "$(cat <<'EOF'
@@ -368,16 +383,35 @@ EOF
 )"
 
 git push origin main
+
+# STORAGE_VERSIONのコミット（別コミット）
+git add src/pages/dark-horse-picks.astro
+
+git commit -m "$(cat <<'EOF'
+🔧 STORAGE_VERSION更新・YYYY-MM-DD
+
+- dark-horse-picks.astro: STORAGE_VERSION更新
+- キャッシュバスティング対応
+- 穴馬を見るボタン正常表示対応
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+
+git push origin main
 ```
 
 **用途：**
 - `/premium-predictions/`（穴馬情報表示）
 - `/standard-predictions/`（穴馬情報表示）
+- `/dark-horse-picks/`（穴馬ピック専用ページ）
 - 管理画面（/admin/dark-horse-finder/）
 
 **注意：**
-- storage_versionは自動管理（data-version-manager.js）
-- ブラウザキャッシュクリア不要（バージョン管理システムが自動処理）
+- STORAGE_VERSIONは**手動更新必須**（自動管理ではない）
+- 更新を忘れるとブラウザキャッシュが残り、ボタン表示が正常にならない
 
 ---
 
