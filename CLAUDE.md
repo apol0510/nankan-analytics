@@ -136,7 +136,20 @@ Premium Plus（単品商品）
 
 ### 📋 **更新手順（「画像更新コミットプッシュ」と指示）**
 
-#### **1. premium-plus.astro（5枚更新）**
+#### **Step 0: 画像ファイルのGit状態確認（必須・最優先）**
+```bash
+# 新しい画像ファイルがGitに追加されているか確認
+git status
+
+# Untracked filesに upsell-YYYYMMDD.png がある場合は追加
+git add public/upsell-images/upsell-YYYYMMDD.png
+```
+
+**⚠️ 重要：**
+- 画像ファイルがGitにコミットされていないと、Netlifyにデプロイされない
+- **必ずgit statusで確認してから次のステップへ進む**
+
+#### **Step 1: premium-plus.astro（5枚更新）**
 ```astro
 <!-- Line 1367-1383 -->
 <img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 最新日 -->
@@ -146,7 +159,7 @@ Premium Plus（単品商品）
 <img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 4日前 -->
 ```
 
-#### **2. premium-sanrenpuku.astro（3枚更新）**
+#### **Step 2: premium-sanrenpuku.astro（3枚更新）**
 ```astro
 <!-- Line 401-413: Premium Plus CTAセクション -->
 <img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 最新日 -->
@@ -154,10 +167,25 @@ Premium Plus（単品商品）
 <img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 2日前 -->
 ```
 
-#### **3. withdrawal-upsell.astro（自動）**
+#### **Step 3: withdrawal-upsell.astro（自動）**
 - ✅ **自動で最新画像を読み込み**（Line 534）
 - ✅ 最大10日前まで遡って検索
 - ✅ 手動更新不要
+
+### 🚀 **Step 4: コミット・プッシュ（画像ファイル + Astroファイル）**
+```bash
+# 画像ファイルがUntracked filesの場合は追加（再確認）
+git add public/upsell-images/upsell-YYYYMMDD.png
+
+# Astroファイルも追加
+git add src/pages/premium-plus.astro src/pages/premium-sanrenpuku.astro
+
+# コミット
+git commit -m "📸 Premium Plus実績画像更新・YYYY-MM-DD"
+
+# プッシュ
+git push origin main
+```
 
 ### 🚀 **コミットメッセージ例**
 ```
