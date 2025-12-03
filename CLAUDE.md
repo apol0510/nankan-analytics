@@ -271,11 +271,43 @@ Read src/data/archiveResults_2025-12.json
 
 #### **Step 2: トップページ用ファイル更新（必須・スキップ禁止）**
 ```bash
-# 月別ファイルからトップページ用ファイルにコピー（上書き）
-cp src/data/archiveResults_2025-12.json src/data/archiveResults.json
+# 月別ファイルから最新1日分のみ抽出してarchiveResults.jsonに保存
+python3 -c "
+import json
+
+# 月別ファイル読み込み
+with open('src/data/archiveResults_2025-12.json', 'r', encoding='utf-8') as f:
+    monthly_data = json.load(f)
+
+# 最新1日分のみ抽出
+year = '2025'
+month = '12'
+days = sorted(monthly_data[year][month].keys(), reverse=True)
+latest_day = days[0]
+latest_day_data = monthly_data[year][month][latest_day]
+
+# トップページ用ファイル作成（最新1日分のみ）
+top_page_data = {
+    year: {
+        month: {
+            latest_day: latest_day_data
+        }
+    }
+}
+
+# 保存
+with open('src/data/archiveResults.json', 'w', encoding='utf-8') as f:
+    json.dump(top_page_data, f, ensure_ascii=False, indent=2)
+
+print(f'✅ 最新日: {latest_day}')
+print(f'✅ 会場: {latest_day_data[\"venue\"]}')
+print(f'✅ 的中: {latest_day_data[\"hitRaces\"]}/{latest_day_data[\"totalRaces\"]}')
+print(f'✅ 回収率: {latest_day_data[\"recoveryRate\"]}%')
+"
 ```
 - ✅ **既存データがあっても必ず実行**
-- ✅ 編集ミス防止のため直接編集せずコピー
+- ✅ **最新1日分のみ抽出**（1年後もファイルサイズ1.8KB維持）
+- ✅ 編集ミス防止のため手動編集なし
 
 #### **Step 3: JSON検証**
 ```bash
@@ -334,25 +366,99 @@ git push origin main
 
 **マコさんが「三連複結果更新コミットプッシュ」と指示したら：**
 
-#### **Step 1: 月別ファイル更新（archiveSanrenpukuResults_2025-12.json）**
-- 最新日のデータを**先頭に追加**（降順維持）
+#### **Step 1: 月別ファイル確認**
+```bash
+# archiveSanrenpukuResults_2025-12.json を確認
+Read src/data/archiveSanrenpukuResults_2025-12.json
+```
 
-#### **Step 2: トップページ用ファイル更新（archiveSanrenpukuResults.json）← 絶対忘れない**
-- **archiveSanrenpukuResults.json**も同じ内容で更新
-- standard-predictions.astroは**archiveSanrenpukuResults.json**を読み込む
+#### **Step 2: トップページ用ファイル更新（必須・スキップ禁止）**
+```bash
+# 月別ファイルから最新1日分のみ抽出してarchiveSanrenpukuResults.jsonに保存
+python3 -c "
+import json
 
-#### **Step 3: public/dataに同期**
+# 月別ファイル読み込み
+with open('src/data/archiveSanrenpukuResults_2025-12.json', 'r', encoding='utf-8') as f:
+    monthly_data = json.load(f)
+
+# 最新1日分のみ抽出
+year = '2025'
+month = '12'
+days = sorted(monthly_data[year][month].keys(), reverse=True)
+latest_day = days[0]
+latest_day_data = monthly_data[year][month][latest_day]
+
+# トップページ用ファイル作成（最新1日分のみ）
+top_page_data = {
+    year: {
+        month: {
+            latest_day: latest_day_data
+        }
+    }
+}
+
+# 保存
+with open('src/data/archiveSanrenpukuResults.json', 'w', encoding='utf-8') as f:
+    json.dump(top_page_data, f, ensure_ascii=False, indent=2)
+
+print(f'✅ 最新日: {latest_day}')
+print(f'✅ 会場: {latest_day_data[\"venue\"]}')
+print(f'✅ 的中: {latest_day_data[\"hitRaces\"]}/{latest_day_data[\"totalRaces\"]}')
+"
+```
+- ✅ **既存データがあっても必ず実行**
+- ✅ **最新1日分のみ抽出**（1年後もファイルサイズ1.8KB維持）
+- ✅ standard-predictions.astroは**archiveSanrenpukuResults.json**を読み込む
+
+#### **Step 3: JSON検証**
+```bash
+# データ構造が正しいか確認
+python3 -c "
+import json
+with open('src/data/archiveSanrenpukuResults.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    days = list(data['2025']['12'].keys())
+    latest_day = days[0]
+    latest_data = data['2025']['12'][latest_day]
+    print(f'Days: {days}')
+    print(f'Latest Day: {latest_day}')
+    print(f'Venue: {latest_data[\"venue\"]}')
+    print(f'HitRaces: {latest_data[\"hitRaces\"]} / {latest_data[\"totalRaces\"]}')
+"
+```
+
+#### **Step 4: public/dataに同期（必須・スキップ禁止）**
 ```bash
 cp src/data/archiveSanrenpukuResults_2025-12.json public/data/
 cp src/data/archiveSanrenpukuResults.json public/data/
 ```
+- ✅ **既存ファイルがあっても必ず実行**
 
-#### **Step 4: コミット・プッシュ**
+#### **Step 5: コミット・プッシュ（必須・スキップ禁止）**
 ```bash
-git add src/data/archiveSanrenpukuResults_2025-12.json src/data/archiveSanrenpukuResults.json public/data/
-git commit -m "📊 三連複結果更新・YYYY-MM-DD"
+# 月別ファイル + トップページ用ファイルを同時にコミット
+git add src/data/archiveSanrenpukuResults_2025-12.json src/data/archiveSanrenpukuResults.json public/data/archiveSanrenpukuResults_2025-12.json public/data/archiveSanrenpukuResults.json
+
+git commit -m "$(cat <<'EOF'
+📊 三連複結果更新・YYYY-MM-DD
+
+- MM/DD（会場）: 的中○/12レース
+- 的中率: ○○%
+- 月別ファイル + トップページ用ファイル同時更新
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+
 git push origin main
 ```
+
+- ✅ **月別ファイルとトップページ用ファイルを1回のコミットで同時更新**
+- ✅ データの整合性を保証
+- ✅ コミット漏れを防止
 
 ---
 
@@ -725,4 +831,4 @@ git push origin main
 **🏁 Project Phase**: システム安定稼働中・月別ファイル分割完了 ✨
 **🎯 Next Priority**: 毎日の結果更新作業の安定運用
 **📊 価格体系**: Premium ¥9,980 / Sanrenpuku ¥19,820 / Combo ¥24,800 / Plus ¥68,000
-**✨ 本日の成果**: 馬単結果更新フロー改訂・「更新不要」判定廃止・常時同期ルール確立！
+**✨ 本日の成果**: 馬単結果更新フロー改訂・「更新不要」判定廃止・常時同期ルール確立・最新1日分のみ抽出システム実装（1年後もファイルサイズ1.8KB維持）！
