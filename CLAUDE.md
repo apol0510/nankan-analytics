@@ -235,45 +235,111 @@ src/data/
 - ✅ **スケーラビリティ**: 10年後（2035年）も問題なし
 - ✅ **メンテナンス**: 今月分のみ編集（他月は不変）
 
-#### **毎日の結果更新手順（変更後）**
+#### **毎日の結果更新手順（2025-12-03改訂版）**
 
-**マコさんが「結果更新」と指示したら：**
+**⚠️ 重要：2つのファイルを更新する必要があります**
+1. **archiveResults_2025-12.json**（月別アーカイブ用）
+2. **archiveResults.json**（トップページ「昨日の結果」表示用）← **必須！**
 
-1. **現在のデータ確認**
-```python
-# archiveResults_2025-12.json を確認（5.5KB・軽量）
-import json
-with open('src/data/archiveResults_2025-12.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
-    dates = sorted(data['2025']['12'].keys())
-    print(f"12月のデータ: {dates}")
+---
+
+### **🔹 馬単結果更新の手順**
+
+**マコさんが「馬単結果更新コミットプッシュ」と指示したら：**
+
+#### **Step 1: 月別ファイル確認**
+```bash
+# archiveResults_2025-12.json を確認
+Read src/data/archiveResults_2025-12.json
 ```
 
-2. **マコさんからデータ受け取り**
-   - 12/○の馬単結果（"02": { ... }形式）
-   - 12/○の三連複結果（"02": { ... }形式）
+#### **Step 2: 月別ファイル更新（archiveResults_2025-12.json）**
+- 最新日のデータを**先頭に追加**（降順維持）
+- 例: "03"を"02"の前に追加
 
-3. **月別ファイルに追加**
-   - `src/data/archiveResults_2025-12.json` に追加
-   - `src/data/archiveSanrenpukuResults_2025-12.json` に追加
+#### **Step 3: トップページ用ファイル更新（archiveResults.json）← 絶対忘れない**
+- **archiveResults.json**も同じ内容で更新
+- トップページ（index.astro）は**archiveResults.json**を読み込む
+- **このファイルを更新しないとトップページに反映されない**
 
-4. **追加後の確認**
-```python
-# 追加したデータが正しく反映されたか確認
-```
-
-5. **public/dataに同期**
+#### **Step 4: public/dataに同期**
 ```bash
 cp src/data/archiveResults_2025-12.json public/data/
-cp src/data/archiveSanrenpukuResults_2025-12.json public/data/
+cp src/data/archiveResults.json public/data/
 ```
 
-6. **コミット・プッシュ**
+#### **Step 5: コミット（月別ファイル）**
 ```bash
-git add src/data/archiveResults_2025-12.json src/data/archiveSanrenpukuResults_2025-12.json public/data/
-git commit -m "📊 馬単・三連複結果更新・YYYY-MM-DD"
+git add src/data/archiveResults_2025-12.json public/data/archiveResults_2025-12.json
+git commit -m "📊 馬単結果更新・YYYY-MM-DD
+
+- MM/DD（会場）: 的中○/12レース
+- 回収率: ○○%
+- 総払戻: ○○,○○○円
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
 git push origin main
 ```
+
+#### **Step 6: コミット（トップページ用ファイル）**
+```bash
+git add src/data/archiveResults.json public/data/archiveResults.json
+git commit -m "📊 トップページ用archiveResults.json更新・YYYY-MM-DD
+
+- MM/DD（会場）: 的中○/12レース
+- 回収率: ○○%
+- 総払戻: ○○,○○○円
+- トップページ「昨日の結果」表示用
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### **🔹 三連複結果更新の手順**
+
+**マコさんが「三連複結果更新コミットプッシュ」と指示したら：**
+
+#### **Step 1: 月別ファイル更新（archiveSanrenpukuResults_2025-12.json）**
+- 最新日のデータを**先頭に追加**（降順維持）
+
+#### **Step 2: トップページ用ファイル更新（archiveSanrenpukuResults.json）← 絶対忘れない**
+- **archiveSanrenpukuResults.json**も同じ内容で更新
+- standard-predictions.astroは**archiveSanrenpukuResults.json**を読み込む
+
+#### **Step 3: public/dataに同期**
+```bash
+cp src/data/archiveSanrenpukuResults_2025-12.json public/data/
+cp src/data/archiveSanrenpukuResults.json public/data/
+```
+
+#### **Step 4: コミット・プッシュ**
+```bash
+git add src/data/archiveSanrenpukuResults_2025-12.json src/data/archiveSanrenpukuResults.json public/data/
+git commit -m "📊 三連複結果更新・YYYY-MM-DD"
+git push origin main
+```
+
+---
+
+### **✅ チェックリスト（絶対に忘れない）**
+
+**馬単結果更新時：**
+- [ ] archiveResults_2025-12.json 更新
+- [ ] **archiveResults.json 更新**← トップページ用（必須）
+- [ ] public/data/ に両方同期
+- [ ] 2回コミット・プッシュ
+
+**三連複結果更新時：**
+- [ ] archiveSanrenpukuResults_2025-12.json 更新
+- [ ] **archiveSanrenpukuResults.json 更新**← standard-predictions用（必須）
+- [ ] public/data/ に両方同期
+- [ ] コミット・プッシュ
 
 #### **月末処理（1月1日など）**
 新月開始時に新しい月別ファイルを作成：
