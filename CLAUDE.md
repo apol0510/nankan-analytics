@@ -342,7 +342,7 @@ git push origin main
 **用途：**
 - `/premium-predictions/`（全レース予想・馬単買い目）
 - `/standard-predictions/`（後半3レース・三連複買い目）
-- `/free-prediction/`（メインレースのみ・買い目なし）
+- `/free-prediction/`（全レース予想・買い目なし）
 - トップページ（メインレースプレビュー）
 
 ---
