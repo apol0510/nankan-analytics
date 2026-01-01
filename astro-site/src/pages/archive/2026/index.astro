@@ -1,0 +1,331 @@
+---
+export const prerender = true;
+import archiveData01 from '../../../data/archiveResults_2026-01.json';
+
+const year = '2026';
+// 複数月のデータを統合（現在は1月のみ、将来的に追加予定）
+const yearData = {
+  ...archiveData01[year]
+};
+const months = Object.keys(yearData).sort().reverse(); // 新しい順
+
+// 年間統計計算
+let totalDays = 0;
+let totalPayoutYear = 0;
+let totalHitRaces = 0;
+let totalRaces = 0;
+
+const monthSummaries = months.map(month => {
+  const monthData = yearData[month];
+  const days = Object.keys(monthData);
+
+  let perfectDays = 0;
+  let monthPayout = 0;
+  let monthHitRaces = 0;
+  let monthTotalRaces = 0;
+
+  days.forEach(day => {
+    const dayData = monthData[day];
+    if (dayData.perfectHit) perfectDays++;
+    monthPayout += dayData.totalPayout || 0;
+    monthHitRaces += dayData.hitRaces || 0;
+    monthTotalRaces += dayData.totalRaces || 0;
+  });
+
+  totalDays += days.length;
+  totalPayoutYear += monthPayout;
+  totalHitRaces += monthHitRaces;
+  totalRaces += monthTotalRaces;
+
+  const hitRate = monthTotalRaces > 0 ? Math.round((monthHitRaces / monthTotalRaces) * 100) : 0;
+
+  return {
+    month,
+    perfectDays,
+    payout: monthPayout,
+    hitRaces: monthHitRaces,
+    totalRaces: monthTotalRaces,
+    hitRate,
+    daysCount: days.length
+  };
+});
+
+const yearHitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) : 0;
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026年 的中実績アーカイブ | NANKANアナリティクス</title>
+  <meta name="description" content="2026年の全月別的中実績。パーフェクト的中の記録と月間統計を確認できます。">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 16px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #f59e0b;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+    }
+
+    /* 年間統計 */
+    .year-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+
+    /* 月別一覧 */
+    .months-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .month-card {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(100, 116, 139, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .month-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(245, 158, 11, 0.5);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .month-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(100, 116, 139, 0.3);
+    }
+
+    .month-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fbbf24;
+    }
+
+    .perfect-count {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .month-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .month-stat {
+      text-align: center;
+    }
+
+    .month-stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #60a5fa;
+      margin-bottom: 0.3rem;
+    }
+
+    .month-stat-label {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(100, 116, 139, 0.3);
+    }
+
+    .back-link a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s;
+      margin: 0 0.5rem;
+    }
+
+    .back-link a:hover {
+      color: #3b82f6;
+    }
+
+    .view-details-button {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 1.5rem;
+      transition: all 0.3s;
+      display: inline-block;
+      width: 100%;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    .view-details-button:hover {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: rgba(245, 158, 11, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .title {
+        font-size: 1.8rem;
+      }
+
+      .month-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .month-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">🏆 2026年 的中実績アーカイブ</h1>
+      <p class="subtitle">月別の的中記録と統計</p>
+    </div>
+
+    <!-- 年間統計 -->
+    <div class="year-stats">
+      <div class="stat-card">
+        <div class="stat-value">{totalDays}日</div>
+        <div class="stat-label">年間開催日数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{yearHitRate}%</div>
+        <div class="stat-label">年間的中率</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">¥{totalPayoutYear.toLocaleString()}</div>
+        <div class="stat-label">年間合計配当</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{totalHitRaces}/{totalRaces}</div>
+        <div class="stat-label">年間的中レース数</div>
+      </div>
+    </div>
+
+    <!-- 月別一覧 -->
+    <div class="months-grid">
+      {monthSummaries.map(summary => (
+        <a href={`/archive/2026/${summary.month}/`} class="month-card">
+          <div class="month-header">
+            <h2 class="month-title">{summary.month}月</h2>
+            {summary.hitRate === 100 && (
+              <div class="perfect-count">🏆 {summary.hitRaces}/{summary.totalRaces}的中</div>
+            )}
+          </div>
+
+          <div class="month-stats-grid">
+            <div class="month-stat">
+              <div class="month-stat-value">{summary.hitRate}%</div>
+              <div class="month-stat-label">的中率</div>
+            </div>
+            <div class="month-stat">
+              <div class="month-stat-value">{summary.daysCount}日</div>
+              <div class="month-stat-label">開催日数</div>
+            </div>
+            <div class="month-stat">
+              <div class="month-stat-value">{summary.hitRaces}/{summary.totalRaces}</div>
+              <div class="month-stat-label">的中数</div>
+            </div>
+            <div class="month-stat">
+              <div class="month-stat-value">¥{(summary.payout / 1000).toFixed(0)}K</div>
+              <div class="month-stat-label">合計配当</div>
+            </div>
+          </div>
+
+          <div class="view-details-button">
+            📊 詳細を見る →
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="back-link">
+      <a href="/archive/">← アーカイブトップ</a>
+      <a href="/pricing/">プレミアム予想</a>
+    </div>
+  </div>
+</body>
+</html>
