@@ -33,7 +33,7 @@ const latestResult = getLatestDayData();
 
 // 昨日の結果データを作成
 const yesterdayResults = latestResult ? {
-    date: `${latestResult.month}月${latestResult.day}日`,
+    date: `${parseInt(latestResult.month)}月${parseInt(latestResult.day)}日`,
     track: latestResult.venue,
     hitCount: latestResult.hitRaces,
     totalCount: latestResult.totalRaces,
