@@ -19,5 +19,5 @@ export default defineConfig({
   },
 
   // SEO設定
-  trailingSlash: 'ignore'
+  trailingSlash: 'never'
 });
