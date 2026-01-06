@@ -250,6 +250,39 @@ const description = "南関競馬の馬券種類と特徴、オッズの見方�
                         <li><strong>初心者こそデータ分析を使うべき</strong> - 経験がなくても、データに基づいた予想なら上級者以上の成績を出せる。NANKANアナリティクスがその証明。</li>
                     </ul>
                 </div>
+
+                <h3>📊 配当分布の視覚化（馬単）</h3>
+                <p class="chart-intro">NANKANアナリティクスの2025年10月〜12月の馬単配当分布を視覚化しました。どの配当帯が最も多く的中しているかが一目で分かります。</p>
+
+                <div class="chart-container">
+                    <canvas id="payoutDistributionChart"></canvas>
+                </div>
+
+                <div class="chart-explanation">
+                    <h4>📈 配当分布から読み取れる重要ポイント</h4>
+                    <div class="explanation-grid">
+                        <div class="explanation-card">
+                            <div class="explanation-icon">💰</div>
+                            <h5>安定配当（500円〜2,000円）が過半数</h5>
+                            <p>52.4%が安定配当帯。この配当帯を高確率で的中させることが、安定的な資金増加につながる。</p>
+                        </div>
+                        <div class="explanation-card">
+                            <div class="explanation-icon">🎯</div>
+                            <h5>中配当（2,000円〜10,000円）が23.7%</h5>
+                            <p>月に数回の中配当が回収率を押し上げる。この配当帯を狙うことで、月間利益が大幅に増加。</p>
+                        </div>
+                        <div class="explanation-card">
+                            <div class="explanation-icon">🚀</div>
+                            <h5>高配当（10,000円以上）が5.4%</h5>
+                            <p>月に1〜2回の高配当が全体の回収率を劇的に向上させる。30,240円や17,890円などの大的中がここに含まれる。</p>
+                        </div>
+                        <div class="explanation-card">
+                            <div class="explanation-icon">📊</div>
+                            <h5>低配当（500円未満）は18.5%のみ</h5>
+                            <p>NANKANアナリティクスは低配当馬券を避ける戦略。人気薄でも期待値が高い馬を選ぶため、配当が低すぎる馬券は買わない。</p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <section class="odds-calculation">
@@ -400,6 +433,264 @@ const description = "南関競馬の馬券種類と特徴、オッズの見方�
                         <li>必要資金：600円（100円×6）</li>
                         <li>的中確率：約2%</li>
                         <li>理由：的中率が低すぎて継続困難</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 💰 高配当成功事例セクション -->
+            <section class="success-cases-section">
+                <h3>💰 実戦事例：馬単で高配当的中（2025年10月〜12月）</h3>
+                <p class="success-intro">「馬単は難しい」と言われますが、データ分析を使えば高配当も的中できます。実際の的中レースを紹介します。</p>
+
+                <div class="success-cases-grid">
+                    <div class="success-case-card">
+                        <div class="success-case-header">
+                            <h4>🏇 浦和11R</h4>
+                            <p class="success-payout">30,240円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年10月18日</p>
+                        </div>
+                        <div class="success-case-body">
+                            <div class="success-detail">
+                                <span class="success-detail-label">券種</span>
+                                <span class="success-detail-value">馬単</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">買い目</span>
+                                <span class="success-detail-value">4 → 1</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">投資額</span>
+                                <span class="success-detail-value">300円</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">回収率</span>
+                                <span class="success-detail-value">10,080%</span>
+                            </div>
+                        </div>
+                        <div class="success-lesson">
+                            <p><strong>💡 学べること:</strong> 馬単でも10,000%超の回収率は可能。データに基づいた予想なら、初心者でも高配当を的中できる。</p>
+                        </div>
+                    </div>
+
+                    <div class="success-case-card">
+                        <div class="success-case-header">
+                            <h4>🏇 大井12R（GI レディスプレリュード）</h4>
+                            <p class="success-payout">17,890円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年11月20日</p>
+                        </div>
+                        <div class="success-case-body">
+                            <div class="success-detail">
+                                <span class="success-detail-label">券種</span>
+                                <span class="success-detail-value">馬単</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">買い目</span>
+                                <span class="success-detail-value">9 → 2</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">投資額</span>
+                                <span class="success-detail-value">300円</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">回収率</span>
+                                <span class="success-detail-value">5,963%</span>
+                            </div>
+                        </div>
+                        <div class="success-lesson">
+                            <p><strong>💡 学べること:</strong> GIレースでも馬単で高配当が狙える。券種選択が重要で、馬単は中〜高配当を狙うのに最適。</p>
+                        </div>
+                    </div>
+
+                    <div class="success-case-card">
+                        <div class="success-case-header">
+                            <h4>🏇 大井7R</h4>
+                            <p class="success-payout">6,490円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年12月2日</p>
+                        </div>
+                        <div class="success-case-body">
+                            <div class="success-detail">
+                                <span class="success-detail-label">券種</span>
+                                <span class="success-detail-value">馬単</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">買い目</span>
+                                <span class="success-detail-value">9 → 2</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">投資額</span>
+                                <span class="success-detail-value">300円</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">回収率</span>
+                                <span class="success-detail-value">2,163%</span>
+                            </div>
+                        </div>
+                        <div class="success-lesson">
+                            <p><strong>💡 学べること:</strong> 普通のレースでも2,000%超。経験ではなくデータで馬を選ぶことが、高配当的中の鍵。</p>
+                        </div>
+                    </div>
+
+                    <div class="success-case-card">
+                        <div class="success-case-header">
+                            <h4>🏇 船橋8R</h4>
+                            <p class="success-payout">5,730円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年11月12日</p>
+                        </div>
+                        <div class="success-case-body">
+                            <div class="success-detail">
+                                <span class="success-detail-label">券種</span>
+                                <span class="success-detail-value">馬単</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">買い目</span>
+                                <span class="success-detail-value">11 → 9</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">投資額</span>
+                                <span class="success-detail-value">300円</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="success-detail-label">回収率</span>
+                                <span class="success-detail-value">1,910%</span>
+                            </div>
+                        </div>
+                        <div class="success-lesson">
+                            <p><strong>💡 学べること:</strong> 馬単の配当は単勝や複勝の数倍。初心者が避けるべきではなく、データ分析で攻略すべき券種。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 📊 安定的中セクション -->
+            <section class="stable-cases-section">
+                <h3>📊 実戦事例：馬単で安定的中（500円〜2,000円）</h3>
+                <p class="stable-intro">高配当だけでなく、安定配当も重要。馬単でも500円〜2,000円の的中を高確率で狙えます。</p>
+
+                <div class="stable-cases-grid">
+                    <div class="stable-case-card">
+                        <div class="stable-case-header">
+                            <h4>🏇 船橋11R</h4>
+                            <p class="stable-payout">1,990円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年10月8日</p>
+                        </div>
+                        <div class="stable-case-body">
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">券種</span>
+                                <span class="stable-detail-value">馬単</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">買い目</span>
+                                <span class="stable-detail-value">1 → 5</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">投資額</span>
+                                <span class="stable-detail-value">300円</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">回収率</span>
+                                <span class="stable-detail-value">663%</span>
+                            </div>
+                        </div>
+                        <div class="stable-lesson">
+                            <p><strong>💡 学べること:</strong> 1,990円でも回収率663%。馬単は複勝やワイドより配当が高く、初心者にも実は向いている。</p>
+                        </div>
+                    </div>
+
+                    <div class="stable-case-card">
+                        <div class="stable-case-header">
+                            <h4>🏇 大井12R</h4>
+                            <p class="stable-payout">1,350円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年10月10日</p>
+                        </div>
+                        <div class="stable-case-body">
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">券種</span>
+                                <span class="stable-detail-value">馬単</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">買い目</span>
+                                <span class="stable-detail-value">1 → 5</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">投資額</span>
+                                <span class="stable-detail-value">300円</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">回収率</span>
+                                <span class="stable-detail-value">450%</span>
+                            </div>
+                        </div>
+                        <div class="stable-lesson">
+                            <p><strong>💡 学べること:</strong> 1,350円でも回収率450%。この程度の配当を月10回的中させれば、安定的に資金が増える。</p>
+                        </div>
+                    </div>
+
+                    <div class="stable-case-card">
+                        <div class="stable-case-header">
+                            <h4>🏇 浦和10R</h4>
+                            <p class="stable-payout">920円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年11月13日</p>
+                        </div>
+                        <div class="stable-case-body">
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">券種</span>
+                                <span class="stable-detail-value">馬単</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">買い目</span>
+                                <span class="stable-detail-value">1 → 4</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">投資額</span>
+                                <span class="stable-detail-value">300円</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">回収率</span>
+                                <span class="stable-detail-value">307%</span>
+                            </div>
+                        </div>
+                        <div class="stable-lesson">
+                            <p><strong>💡 学べること:</strong> 920円でも回収率307%。控除率25%を大幅に超えており、これが期待値プラスの馬券。</p>
+                        </div>
+                    </div>
+
+                    <div class="stable-case-card">
+                        <div class="stable-case-header">
+                            <h4>🏇 川崎9R</h4>
+                            <p class="stable-payout">590円</p>
+                            <p style="margin: 0; opacity: 0.9;">2025年12月1日</p>
+                        </div>
+                        <div class="stable-case-body">
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">券種</span>
+                                <span class="stable-detail-value">馬単</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">買い目</span>
+                                <span class="stable-detail-value">2 → 3</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">投資額</span>
+                                <span class="stable-detail-value">300円</span>
+                            </div>
+                            <div class="stable-detail">
+                                <span class="stable-detail-label">回収率</span>
+                                <span class="stable-detail-value">197%</span>
+                            </div>
+                        </div>
+                        <div class="stable-lesson">
+                            <p><strong>💡 学べること:</strong> 590円でも回収率197%。初心者が複勝で100円〜200円を的中させるより、馬単で590円を的中させる方が稼げる。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-insight">
+                    <h4>🎯 馬単で学ぶべき重要ポイント</h4>
+                    <ul>
+                        <li><strong>「複勝やワイドから始めるべき」は誤解</strong> - データ分析を使えば、初心者でも馬単で76.2%の的中率を実現できる。</li>
+                        <li><strong>配当のバランスが重要</strong> - 高配当（10,000円以上）月1〜2回 + 安定配当（500円〜2,000円）月10回以上 = 回収率193.9%。</li>
+                        <li><strong>馬単は初心者こそ選ぶべき券種</strong> - 複勝やワイドは的中率が高くても配当が低すぎて稼げない。馬単は配当と的中率のバランスが最適。</li>
+                        <li><strong>経験ではなくデータが重要</strong> - NANKANアナリティクスの実績が証明。初心者でもデータに基づいた予想なら上級者以上の成績を出せる。</li>
                     </ul>
                 </div>
             </section>
@@ -1032,6 +1323,342 @@ const description = "南関競馬の馬券種類と特徴、オッズの見方�
             margin-bottom: 0.75rem;
             line-height: 1.6;
         }
+
+        /* Chart.js グラフ用スタイル */
+        .chart-intro {
+            font-size: 1.05rem;
+            color: #666;
+            margin: 1rem 0 2rem 0;
+            text-align: center;
+        }
+
+        .chart-container {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container canvas {
+            max-height: 400px;
+        }
+
+        .chart-explanation {
+            background: #f8fafc;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .chart-explanation h4 {
+            color: #3b82f6;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .explanation-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .explanation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .explanation-icon {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .explanation-card h5 {
+            color: #1a1a1a;
+            margin: 0.5rem 0 1rem 0;
+            font-size: 1.05rem;
+            text-align: center;
+        }
+
+        .explanation-card p {
+            color: #666;
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* 成功事例セクション */
+        .success-cases-section {
+            margin: 3rem 0;
+        }
+
+        .success-cases-section h3 {
+            color: #10b981;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .success-intro {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .success-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .success-case-card {
+            background: white;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .success-case-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .success-case-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .success-case-header h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .success-payout {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .success-case-body {
+            padding: 1.5rem;
+        }
+
+        .success-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .success-detail-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .success-detail-value {
+            color: #1a1a1a;
+            font-weight: bold;
+        }
+
+        .success-lesson {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .success-lesson p {
+            margin: 0;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* 安定的中セクション */
+        .stable-cases-section {
+            margin: 3rem 0;
+        }
+
+        .stable-cases-section h3 {
+            color: #3b82f6;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .stable-intro {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .stable-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stable-case-card {
+            background: white;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stable-case-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .stable-case-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stable-case-header h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .stable-payout {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .stable-case-body {
+            padding: 1.5rem;
+        }
+
+        .stable-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .stable-detail-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stable-detail-value {
+            color: #1a1a1a;
+            font-weight: bold;
+        }
+
+        .stable-lesson {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stable-lesson p {
+            margin: 0;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
     </style>
+
+    <!-- Chart.js ライブラリ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- 配当分布グラフ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('payoutDistributionChart');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['500円未満', '500円〜2,000円', '2,000円〜10,000円', '10,000円以上'],
+                    datasets: [{
+                        label: '配当分布',
+                        data: [18.5, 52.4, 23.7, 5.4],
+                        backgroundColor: [
+                            'rgba(156, 163, 175, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(156, 163, 175, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: 20
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '馬単配当分布（2025年10月〜12月）',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.toFixed(1) + '%';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
