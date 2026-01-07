@@ -452,6 +452,20 @@ cp src/data/allRacesPrediction.json public/data/
 ```
 - ✅ **既存ファイルがあっても必ず実行**
 
+#### **Step 2.5: 無料予想アーカイブ自動保存（必須・スキップ禁止）** 🆕
+```bash
+python3 scripts/archive-free-prediction.py
+```
+- ✅ **allRacesPrediction.jsonを日別ファイルとして自動保存**
+- ✅ **src/data/free-predictions/YYYY-MM-DD.json に保存**
+- ✅ **public/data/free-predictions/YYYY-MM-DD.json に同期**
+- ✅ **SEO効果：日別アーカイブページ自動生成（/free-prediction/YYYY/MM/DD/）**
+
+**⚠️ 重要：**
+- 毎日の予想更新時に必ず実行
+- スキップすると、過去の予想が消える
+- アーカイブファイルも自動的にGitに追加される
+
 #### **Step 3: JSON検証**
 ```bash
 python3 -c "
@@ -469,7 +483,8 @@ with open('src/data/allRacesPrediction.json', 'r', encoding='utf-8') as f:
 
 #### **Step 4: コミット・プッシュ（必須・スキップ禁止）**
 ```bash
-git add src/data/allRacesPrediction.json public/data/allRacesPrediction.json
+# 予想データ + 無料予想アーカイブを同時にコミット
+git add src/data/allRacesPrediction.json public/data/allRacesPrediction.json src/data/free-predictions/ public/data/free-predictions/
 
 git commit -m "$(cat <<'EOF'
 🔮 予想更新・YYYY-MM-DD
@@ -477,6 +492,7 @@ git commit -m "$(cat <<'EOF'
 - 会場: ○○競馬
 - レース数: ○R
 - メインレース: ○○賞
+- 無料予想アーカイブ保存 ✅
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
