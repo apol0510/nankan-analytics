@@ -87,9 +87,13 @@ exports.handler = async (event, context) => {
     }]);
 
     // 処理対象のイベントのみ処理
+    // ⚠️ 重要（専門家推奨）: 本番では PAYMENT系 イベントで権限付与を確定すべき
+    // - ACTIVATED: 購読有効化（決済完了とは限らない）→ 仮登録・subscription_id保存
+    // - PAYMENT.SALE.COMPLETED: 単品決済完了 → 本登録
+    // - BILLING.SUBSCRIPTION.PAYMENT.COMPLETED: サブスク決済完了 → 本登録（将来実装予定）
     const validEventTypes = [
       'BILLING.SUBSCRIPTION.CREATED',   // サブスク登録
-      'BILLING.SUBSCRIPTION.ACTIVATED', // サブスク有効化
+      'BILLING.SUBSCRIPTION.ACTIVATED', // サブスク有効化（テスト用・仮登録）
       'PAYMENT.SALE.COMPLETED'          // 単品決済完了
     ];
 
@@ -117,6 +121,11 @@ exports.handler = async (event, context) => {
       customerName = `${resource.subscriber?.name?.given_name || ''} ${resource.subscriber?.name?.surname || ''}`.trim();
       planId = resource.plan_id;
 
+      // 🔍 デバッグログ追加
+      console.log('🔍 DEBUG - email:', email);
+      console.log('🔍 DEBUG - planId:', planId);
+      console.log('🔍 DEBUG - customerName:', customerName);
+
       // プラン名マッピング（PayPal Plan ID → システム内部プラン名）
       const planMapping = {
         'P-68H748483T318591TNFRBYMQ': 'Standard',
@@ -125,7 +134,9 @@ exports.handler = async (event, context) => {
         'P-8KU85292CD447891XNFRB4GI': 'Premium Combo'
       };
 
-      userPlan = planMapping[planId];
+      // 🔧 2026-01-10修正: Webhook Simulatorのダミーplan_idに対応（デフォルトStandard）
+      userPlan = planMapping[planId] || 'Standard';
+      console.log('🔍 DEBUG - userPlan:', userPlan, `(mapped from ${planId})`);
     } else if (eventType === 'PAYMENT.SALE.COMPLETED') {
       // 単品決済イベント（Premium Plus）
       email = resource.payer?.payer_info?.email;
