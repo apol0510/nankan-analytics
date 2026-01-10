@@ -239,7 +239,7 @@ exports.handler = async (event, context) => {
             subject: `【NANKANアナリティクス】${userPlan}プラン ご登録ありがとうございます`
           }],
           from: {
-            email: 'nankan.analytics@gmail.com',
+            email: 'support@keiba.link',
             name: 'NANKANアナリティクス'
           },
           content: [{
