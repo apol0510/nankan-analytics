@@ -1,8 +1,7 @@
-// PayPal IPN Webhook受信Function
+// PayPal Webhook受信Function（REST API Webhook形式）
 // 決済完了時にAirtable登録 + SendGridウェルカムメール送信
 
 const Airtable = require('airtable');
-const querystring = require('querystring');
 
 exports.handler = async (event, context) => {
   const headers = {
@@ -30,83 +29,116 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    console.log('🎯 PayPal IPN受信:', new Date().toISOString());
+    console.log('🎯 PayPal Webhook受信:', new Date().toISOString());
     console.log('📦 Event body:', event.body);
+    console.log('📋 Headers:', JSON.stringify(event.headers, null, 2));
 
-    // PayPal IPNペイロード解析（form-urlencoded形式）
-    const ipnData = querystring.parse(event.body);
+    // PayPal Webhookペイロード解析（JSON形式）
+    const webhookData = JSON.parse(event.body || '{}');
 
-    console.log('🔍 IPN Data:', JSON.stringify(ipnData, null, 2));
+    console.log('🔍 Webhook Data:', JSON.stringify(webhookData, null, 2));
 
-    // PayPal IPN検証（必須）
-    const isValid = await verifyIPN(event.body);
-    if (!isValid) {
-      console.error('❌ IPN検証失敗');
+    // 必須フィールド確認
+    const {
+      id: eventId,
+      event_type: eventType,
+      resource
+    } = webhookData;
+
+    if (!eventId || !eventType || !resource) {
+      throw new Error('Missing required webhook fields');
+    }
+
+    console.log('🔍 Event ID:', eventId);
+    console.log('🔍 Event Type:', eventType);
+
+    // Airtable接続
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
+      .base(process.env.AIRTABLE_BASE_ID);
+
+    // 🔒 重複排除チェック（event_idベース・冪等性保証）
+    const processedEvents = await base('ProcessedWebhookEvents')
+      .select({
+        filterByFormula: `{EventId} = "${eventId}"`
+      })
+      .firstPage()
+      .catch(() => []);
+
+    if (processedEvents.length > 0) {
+      console.log('⚠️ 重複イベント検出・スキップ:', eventId);
       return {
-        statusCode: 400,
+        statusCode: 200,
         headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'IPN verification failed' })
+        body: JSON.stringify({
+          message: 'Duplicate event ignored',
+          eventId
+        })
       };
     }
 
-    console.log('✅ IPN検証成功');
-
-    // トランザクションタイプ確認
-    const txnType = ipnData.txn_type;
-    const paymentStatus = ipnData.payment_status;
-
-    console.log('🔍 Transaction Type:', txnType);
-    console.log('🔍 Payment Status:', paymentStatus);
+    // イベント記録（重複排除用・処理開始時に即座記録）
+    await base('ProcessedWebhookEvents').create([{
+      fields: {
+        'EventId': eventId,
+        'EventType': eventType,
+        'ProcessedAt': new Date().toISOString(),
+        'Status': 'processing'
+      }
+    }]);
 
     // 処理対象のイベントのみ処理
-    const validTxnTypes = [
-      'subscr_signup',      // サブスク登録
-      'subscr_payment',     // サブスク決済
-      'web_accept',         // 単品決済
-      'express_checkout'    // Express Checkout
+    const validEventTypes = [
+      'BILLING.SUBSCRIPTION.CREATED',   // サブスク登録
+      'BILLING.SUBSCRIPTION.ACTIVATED', // サブスク有効化
+      'PAYMENT.SALE.COMPLETED'          // 単品決済完了
     ];
 
-    if (!validTxnTypes.includes(txnType)) {
-      console.log('⚠️ 処理対象外のイベント:', txnType);
+    if (!validEventTypes.includes(eventType)) {
+      console.log('⚠️ 処理対象外のイベント:', eventType);
+
+      // イベント記録を更新
+      await base('ProcessedWebhookEvents').update(processedEvents[0]?.id || eventId, {
+        'Status': 'ignored'
+      });
+
       return {
         statusCode: 200,
         headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Event ignored', txnType })
+        body: JSON.stringify({ message: 'Event ignored', eventType })
       };
     }
 
-    // Completedステータスのみ処理
-    if (paymentStatus !== 'Completed' && txnType !== 'subscr_signup') {
-      console.log('⚠️ 未完了の決済をスキップ:', paymentStatus);
-      return {
-        statusCode: 200,
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Payment not completed', paymentStatus })
+    // サブスクリプション情報抽出
+    let email, customerName, planId, userPlan;
+
+    if (eventType === 'BILLING.SUBSCRIPTION.CREATED' || eventType === 'BILLING.SUBSCRIPTION.ACTIVATED') {
+      // サブスクリプションイベント
+      email = resource.subscriber?.email_address;
+      customerName = `${resource.subscriber?.name?.given_name || ''} ${resource.subscriber?.name?.surname || ''}`.trim();
+      planId = resource.plan_id;
+
+      // プラン名マッピング（PayPal Plan ID → システム内部プラン名）
+      const planMapping = {
+        'P-68H748483T318591TNFRBYMQ': 'Standard',
+        'P-6US56295GW7958014NFRB2BQ': 'Premium',
+        'P-17K19274A7982913DNFRB3KA': 'Premium Sanrenpuku',
+        'P-8KU85292CD447891XNFRB4GI': 'Premium Combo'
       };
+
+      userPlan = planMapping[planId];
+    } else if (eventType === 'PAYMENT.SALE.COMPLETED') {
+      // 単品決済イベント（Premium Plus）
+      email = resource.payer?.payer_info?.email;
+      customerName = `${resource.payer?.payer_info?.first_name || ''} ${resource.payer?.payer_info?.last_name || ''}`.trim();
+      userPlan = 'Premium Plus';
     }
 
-    // 必須データ確認
-    const email = ipnData.payer_email;
-    const itemName = ipnData.item_name || ipnData.item_name1;
-    const customerName = `${ipnData.first_name || ''} ${ipnData.last_name || ''}`.trim();
-
-    if (!email || !itemName) {
-      throw new Error('Missing required fields: payer_email or item_name');
+    if (!email || !userPlan) {
+      throw new Error('Missing required fields: email or userPlan');
     }
 
-    // プラン名マッピング（PayPal商品名 → システム内部プラン名）
-    const planMapping = {
-      'Standard': 'Standard',
-      'Premium': 'Premium',
-      'Premium Sanrenpuku': 'Premium Sanrenpuku',
-      'Premium Combo': 'Premium Combo',
-      'Premium Plus': 'Premium Plus'
-    };
-
-    const userPlan = planMapping[itemName];
-    if (!userPlan) {
-      throw new Error(`Unknown product: ${itemName}`);
-    }
+    console.log('📧 Email:', email);
+    console.log('📦 User Plan:', userPlan);
 
     // 有効期限計算（Premium Plus以外は1ヶ月後）
     const now = new Date();
@@ -121,10 +153,6 @@ exports.handler = async (event, context) => {
     }
 
     const expiryDateStr = expiryDate ? expiryDate.toISOString().split('T')[0] : '';
-
-    // Airtable接続
-    const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
-      .base(process.env.AIRTABLE_BASE_ID);
 
     // 既存顧客チェック
     const existingRecords = await base('Customers')
@@ -147,7 +175,7 @@ exports.handler = async (event, context) => {
         'WithdrawalRequested': false, // 退会フラグリセット
         'WithdrawalDate': null,
         'WithdrawalReason': null,
-        'StripeCustomerId': ipnData.txn_id || '', // PayPalトランザクションID
+        'StripeCustomerId': resource.id || eventId, // PayPal Subscription ID
         'LastUpdated': now.toISOString()
       });
 
@@ -164,7 +192,7 @@ exports.handler = async (event, context) => {
           'プラン': userPlan,
           '有効期限': expiryDateStr,
           'RegistrationDate': now.toISOString().split('T')[0],
-          'StripeCustomerId': ipnData.txn_id || '',
+          'StripeCustomerId': resource.id || eventId,
           'WithdrawalRequested': false,
           'LastUpdated': now.toISOString()
         }
@@ -207,13 +235,30 @@ exports.handler = async (event, context) => {
       }
     }
 
+    // イベント記録を更新（処理完了）
+    const processedEventRecords = await base('ProcessedWebhookEvents')
+      .select({
+        filterByFormula: `{EventId} = "${eventId}"`
+      })
+      .firstPage();
+
+    if (processedEventRecords.length > 0) {
+      await base('ProcessedWebhookEvents').update(processedEventRecords[0].id, {
+        'Status': 'completed',
+        'CustomerEmail': email,
+        'UserPlan': userPlan
+      });
+    }
+
     // 成功レスポンス
     return {
       statusCode: 200,
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: true,
-        message: 'IPN processed successfully',
+        message: 'Webhook processed successfully',
+        eventId,
+        eventType,
         customerEmail: email,
         plan: userPlan,
         expiryDate: expiryDateStr,
@@ -223,7 +268,7 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('❌ IPN処理エラー:', error);
+    console.error('❌ Webhook処理エラー:', error);
 
     return {
       statusCode: 500,
@@ -236,38 +281,6 @@ exports.handler = async (event, context) => {
     };
   }
 };
-
-// PayPal IPN検証（必須セキュリティ対策）
-async function verifyIPN(ipnBody) {
-  try {
-    // PayPal Sandboxか本番環境か判定
-    const verifyUrl = process.env.PAYPAL_MODE === 'live'
-      ? 'https://ipnpb.paypal.com/cgi-bin/webscr'
-      : 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
-
-    // IPNデータに cmd=_notify-validate を追加
-    const verifyBody = `cmd=_notify-validate&${ipnBody}`;
-
-    console.log('🔍 IPN検証URL:', verifyUrl);
-
-    const response = await fetch(verifyUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': verifyBody.length.toString()
-      },
-      body: verifyBody
-    });
-
-    const verifyResult = await response.text();
-    console.log('🔍 IPN検証結果:', verifyResult);
-
-    return verifyResult === 'VERIFIED';
-  } catch (error) {
-    console.error('❌ IPN検証エラー:', error);
-    return false;
-  }
-}
 
 // ウェルカムメールHTML生成（マジックリンク付き）
 function generateWelcomeEmail(customerName, plan, expiryDate, email) {

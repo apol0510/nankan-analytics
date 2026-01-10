@@ -209,6 +209,216 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## 🔧 **定期メンテナンス記録** 🔧
 
+### 🔄 **2026-01-10 PayPal決済統合実装（Stripe代替）**
+
+#### **背景・緊急対応**
+- **日時**: 2026年1月10日
+- **問題**: Stripe入金停止（¥211,244が引き出せない・2026年1月8日期限）
+- **対応**: PayPal Payment Links + Webhook統合の緊急実装
+- **方針**: 柔軟性重視（PayPal即時導入、Stripe復旧待ち 1/13まで）
+
+---
+
+#### **Phase 1: PayPal Payment Links作成（5プラン対応）**
+
+##### **作成したPayment Links**
+| プラン名 | 価格 | タイプ | Plan ID |
+|---------|------|--------|---------|
+| Standard | ¥5,980/月 | サブスク | P-68H748483T318591TNFRBYMQ |
+| Premium | ¥9,980/月 | サブスク | P-6US56295GW7958014NFRB2BQ |
+| Premium Sanrenpuku | ¥19,820/月 | サブスク | P-17K19274A7982913DNFRB3KA |
+| Premium Combo | ¥24,800/月 | サブスク | P-8KU85292CD447891XNFRB4GI |
+| Premium Plus | ¥68,000 | 単品決済 | - |
+
+##### **Webhook URL設定**
+- **IPN URL**: `https://nankan-analytics.netlify.app/.netlify/functions/paypal-webhook`
+- **設定場所**: PayPal Account Settings → Notifications → Instant Payment Notifications
+
+---
+
+#### **Phase 2: サイト全体のリンク更新（9ファイル・18リンク置換）**
+
+##### **更新ファイル一覧**
+1. `src/pages/pricing.astro` - 2リンク（Premium, Sanrenpuku）
+2. `src/pages/dashboard.astro` - 6リンク（全プラン）
+3. `src/pages/premium-predictions.astro` - 2リンク
+4. `src/pages/standard-predictions.astro` - 2リンク
+5. `src/pages/premium-plus.astro` - 2リンク
+6. `src/pages/premium-sanrenpuku.astro` - 1リンク
+7. `src/pages/archive-sanrenpuku/index.astro` - 1リンク
+8. `src/pages/sanrenpuku-demo.astro` - 1リンク
+9. `src/pages/withdrawal-upsell.astro` - 1リンク
+
+##### **置換内容**
+```javascript
+// Before: Stripe Payment Links
+https://buy.stripe.com/5kQ8wP0ulcAMggzgVldby0M
+
+// After: PayPal Payment Links
+https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-6US56295GW7958014NFRB2BQ
+```
+
+---
+
+#### **Phase 3: paypal-webhook.js実装**
+
+##### **🚨 重要：IPN vs Webhook（専門家指摘による修正）**
+
+**初期実装ミス:**
+- ❌ IPN（古いシステム・form-urlencoded形式）で実装
+- ❌ querystring.parse()でペイロード解析
+- ❌ IPN検証を実装
+
+**修正後（Webhook形式）:**
+- ✅ REST API Webhook（JSON形式）
+- ✅ JSON.parse()でペイロード解析
+- ✅ event_id重複排除（冪等性保証）
+- ✅ ProcessedWebhookEventsテーブルで処理履歴管理
+
+##### **実装内容（netlify/functions/paypal-webhook.js）**
+
+**1. Webhookペイロード解析（JSON形式）**
+```javascript
+const webhookData = JSON.parse(event.body || '{}');
+const { id: eventId, event_type: eventType, resource } = webhookData;
+```
+
+**2. event_id重複排除（冪等性保証）**
+```javascript
+const processedEvents = await base('ProcessedWebhookEvents')
+  .select({
+    filterByFormula: `{EventId} = "${eventId}"`
+  })
+  .firstPage()
+  .catch(() => []);
+
+if (processedEvents.length > 0) {
+  console.log('⚠️ 重複イベント検出・スキップ:', eventId);
+  return { statusCode: 200, ... };
+}
+```
+
+**3. 処理対象イベント**
+```javascript
+const validEventTypes = [
+  'BILLING.SUBSCRIPTION.CREATED',   // サブスク登録
+  'BILLING.SUBSCRIPTION.ACTIVATED', // サブスク有効化
+  'PAYMENT.SALE.COMPLETED'          // 単品決済完了
+];
+```
+
+**4. PayPal Plan ID → システムプラン名マッピング**
+```javascript
+const planMapping = {
+  'P-68H748483T318591TNFRBYMQ': 'Standard',
+  'P-6US56295GW7958014NFRB2BQ': 'Premium',
+  'P-17K19274A7982913DNFRB3KA': 'Premium Sanrenpuku',
+  'P-8KU85292CD447891XNFRB4GI': 'Premium Combo'
+};
+```
+
+**5. 既存システムとの統合**
+- Airtable Customersテーブル登録/更新
+- SendGridウェルカムメール送信（新規顧客のみ）
+- マジックリンク付きメール（既存のauth-user.js連携）
+- 有効期限自動計算（サブスク: 1ヶ月後、Premium Plus: 無期限）
+
+---
+
+#### **Phase 4: Airtableテーブル追加**
+
+##### **新規テーブル: ProcessedWebhookEvents**
+
+**役割:** Webhook重複処理防止（冪等性保証）
+
+| フィールド名 | 型 | 必須 | 説明 |
+|------------|-----|------|------|
+| EventId | Single line text | ✅ | PayPal Event ID（重複排除キー） |
+| EventType | Single line text | ✅ | イベントタイプ |
+| ProcessedAt | Date | ✅ | 処理開始日時（ISO 8601） |
+| Status | Single select | ✅ | processing / completed / ignored |
+| CustomerEmail | Email | ❌ | 顧客メールアドレス |
+| UserPlan | Single line text | ❌ | プラン名 |
+
+**重要性:**
+- PayPalは同じWebhookイベントを複数回送信することがある
+- EventIdで重複チェックし、既に処理済みの場合はスキップ
+- 同じ決済で複数回顧客登録されることを防ぐ
+
+---
+
+#### **Phase 5: テスト戦略（ハイブリッドアプローチ）**
+
+##### **専門家の推奨戦略**
+
+**Phase 1: Webhook Simulator（即時実施）** ✅ 採用
+- PayPal Developer Portalの「Webhook Simulator」使用
+- 疎通確認のみ（偽のIDでも問題なし）
+- paypal-webhook.js → Airtable → SendGrid の連携確認
+- **メリット**: ゼロリスク・即時テスト可能
+
+**Phase 2: 本番リリース（1人目の顧客決済）**
+- Payment Linksを公開
+- PayPal管理画面とAirtableをスマホで監視
+- **Resend機能**: 失敗時はPayPal側で「Webhook Events」から再送可能
+
+**Phase 3: 将来対応（決済失敗時の自動停止）**
+- 「不履行サイクル」による自動停止システム
+- Sandboxで「決済失敗イベント」の検証
+- **現時点では不要**（Phase 2で十分）
+
+##### **Sandboxテストを避ける理由**
+- ❌ テスト顧客の自動作成機能不安定
+- ❌ 実際の決済フローと乖離がある
+- ✅ Webhook Simulatorで十分な疎通確認が可能
+- ✅ 本番1人目の決済で「Resend機能」によるリカバリー可能
+
+##### **自己決済テストを避ける理由**
+- ⚠️ アカウント制限リスク（PayPalが自己決済を検知する可能性）
+- ⚠️ 既存Stripe顧客と混在するリスク
+- ✅ Webhook Simulatorで代替可能
+
+---
+
+#### **技術的成果**
+
+**実装完了:**
+- ✅ PayPal Payment Links 5プラン作成
+- ✅ サイト全体のリンク更新（9ファイル・18リンク）
+- ✅ paypal-webhook.js Webhook形式実装
+- ✅ event_id重複排除システム実装
+- ✅ 既存システム（Airtable, SendGrid, Magic Link）との完全統合
+
+**実装待ち:**
+- ⏳ ProcessedWebhookEventsテーブル作成（マコさん作業）
+- ⏳ Webhook Simulatorテスト
+- ⏳ 本番デプロイ
+
+---
+
+#### **ビジネス価値**
+
+**即時効果:**
+- ✅ **Stripe入金停止問題の解決**: PayPalで即座決済再開可能
+- ✅ **顧客体験維持**: 既存のマジックリンク認証・メール送信システムそのまま
+- ✅ **柔軟性確保**: Stripe復旧後も併用可能
+
+**長期運用メリット:**
+- ✅ **決済手段の多様化**: Stripe + PayPal 2チャネル運用
+- ✅ **リスク分散**: 1つの決済業者に依存しない
+- ✅ **顧客選択肢増加**: 決済方法を選べる
+
+---
+
+#### **次のステップ**
+1. マコさん: Airtable ProcessedWebhookEventsテーブル作成
+2. クロちゃん: Webhook Simulatorテスト実施
+3. 疎通確認完了後: 本番デプロイ
+4. 1人目の顧客決済: PayPal管理画面監視
+5. Stripe復旧（1/13）: 状況に応じてStripe/PayPal併用継続
+
+---
+
 ### ✅ **2026-01-06 コース解説29ページ強化 + 初心者講座との相互リンク実装**
 
 #### **背景・目的**
@@ -1609,8 +1819,8 @@ git push origin main
 
 ---
 
-**📅 最終更新日**: 2026-01-02
-**🏁 Project Phase**: データファイル管理ルール追加・システム安定化 ✨
-**🎯 Next Priority**: データ整合性保証・運用の安定化
-**📊 価格体系**: Premium ¥9,980 / Sanrenpuku ¥19,820 / Combo ¥24,800 / Plus ¥68,000
-**✨ 本日の成果**: データファイル役割定義追加・更新手順チェックリスト追加・インシデント対策完了
+**📅 最終更新日**: 2026-01-10
+**🏁 Project Phase**: PayPal決済統合実装・Stripe代替システム構築 ✨
+**🎯 Next Priority**: ProcessedWebhookEventsテーブル作成 → Webhook Simulatorテスト → 本番デプロイ
+**📊 価格体系**: Standard ¥5,980 / Premium ¥9,980 / Sanrenpuku ¥19,820 / Combo ¥24,800 / Plus ¥68,000
+**✨ 本日の成果**: PayPal Payment Links 5プラン作成・サイト全体18リンク更新・paypal-webhook.js Webhook形式実装・event_id重複排除実装完了
