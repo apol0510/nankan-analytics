@@ -215,7 +215,7 @@ exports.handler = async (event, context) => {
       customerRecord = await base('Customers').create([{
         fields: {
           'Email': email,
-          'Name': customerName,
+          '氏名': customerName,
           'プラン': userPlan,
           '有効期限': expiryDateStr,
           'RegistrationDate': now.toISOString().split('T')[0],
