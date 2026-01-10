@@ -121,7 +121,7 @@ exports.handler = async (event, context) => {
       customerName = `${resource.subscriber?.name?.given_name || ''} ${resource.subscriber?.name?.surname || ''}`.trim();
       planId = resource.plan_id;
 
-      // 🔍 デバッグログ追加
+      // 🔍 デバッグログ追加（代入後にログ出力）
       console.log('🔍 DEBUG - email:', email);
       console.log('🔍 DEBUG - planId:', planId);
       console.log('🔍 DEBUG - customerName:', customerName);
@@ -134,8 +134,24 @@ exports.handler = async (event, context) => {
         'P-8KU85292CD447891XNFRB4GI': 'Premium Combo'
       };
 
-      // 🔧 2026-01-10修正: Webhook Simulatorのダミーplan_idに対応（デフォルトStandard）
-      userPlan = planMapping[planId] || 'Standard';
+      // 🔧 2026-01-10修正（専門家推奨）: Webhook Simulator専用フォールバック
+      // ⚠️ 本番で未知のplan_idが来た場合はエラー（自動でStandard付与は危険）
+      const WEBHOOK_SIMULATOR_PLAN_ID = 'P-5ML4271244454362WXNWU5NQ'; // PayPal Simulatorのダミーplan_id
+
+      userPlan = planMapping[planId];
+
+      if (!userPlan) {
+        // マッピングに無い場合
+        if (planId === WEBHOOK_SIMULATOR_PLAN_ID) {
+          // Webhook Simulatorの場合のみ Standard でテスト許可
+          userPlan = 'Standard';
+          console.log('⚠️ Webhook Simulator検出: Standardでテスト実行');
+        } else {
+          // 本番で未知のplan_idが来た場合はエラー
+          throw new Error(`Unknown plan_id: ${planId}. Please add to planMapping.`);
+        }
+      }
+
       console.log('🔍 DEBUG - userPlan:', userPlan, `(mapped from ${planId})`);
     } else if (eventType === 'PAYMENT.SALE.COMPLETED') {
       // 単品決済イベント（Premium Plus）
