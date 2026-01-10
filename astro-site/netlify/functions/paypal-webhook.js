@@ -216,7 +216,6 @@ exports.handler = async (event, context) => {
           '氏名': customerName,
           'プラン': userPlan,
           '有効期限': expiryDateStr,
-          '登録日': now.toISOString().split('T')[0],
           'WithdrawalRequested': false
         }
       }]);
