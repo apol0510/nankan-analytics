@@ -87,14 +87,18 @@ exports.handler = async (event, context) => {
     }]);
 
     // 処理対象のイベントのみ処理
-    // ⚠️ 重要（専門家推奨）: 本番では PAYMENT系 イベントで権限付与を確定すべき
-    // - ACTIVATED: 購読有効化（決済完了とは限らない）→ 仮登録・subscription_id保存
-    // - PAYMENT.SALE.COMPLETED: 単品決済完了 → 本登録
-    // - BILLING.SUBSCRIPTION.PAYMENT.COMPLETED: サブスク決済完了 → 本登録（将来実装予定）
+    // 🔧 2026-01-11 本番仕様実装（専門家推奨）:
+    // - CREATED/ACTIVATED: 仮登録のみ（Status: pending、メール送らない）
+    // - PAYMENT.COMPLETED: 本登録（Status: active、ウェルカムメール送信）
+    // - CANCELLED/SUSPENDED/EXPIRED: 権限剥奪（Status: cancelled/suspended）
     const validEventTypes = [
-      'BILLING.SUBSCRIPTION.CREATED',   // サブスク登録
-      'BILLING.SUBSCRIPTION.ACTIVATED', // サブスク有効化（テスト用・仮登録）
-      'PAYMENT.SALE.COMPLETED'          // 単品決済完了
+      'BILLING.SUBSCRIPTION.CREATED',             // サブスク登録（仮登録）
+      'BILLING.SUBSCRIPTION.ACTIVATED',           // サブスク有効化（テスト用・仮登録）
+      'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED',   // サブスク決済完了（本登録） ✨
+      'PAYMENT.SALE.COMPLETED',                   // 単品決済完了（本登録）
+      'BILLING.SUBSCRIPTION.CANCELLED',           // サブスクキャンセル（権限剥奪）
+      'BILLING.SUBSCRIPTION.SUSPENDED',           // サブスク停止（権限剥奪）
+      'BILLING.SUBSCRIPTION.EXPIRED'              // サブスク期限切れ（権限剥奪）
     ];
 
     if (!validEventTypes.includes(eventType)) {
@@ -112,73 +116,111 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // サブスクリプション情報抽出
-    let email, customerName, planId, userPlan;
+    // 🔧 2026-01-11 イベントタイプ別処理分岐
+    let email, customerName, planId, userPlan, subscriptionId;
+    let eventCategory; // 'pending', 'payment', 'cancellation'
 
-    if (eventType === 'BILLING.SUBSCRIPTION.CREATED' || eventType === 'BILLING.SUBSCRIPTION.ACTIVATED') {
-      // サブスクリプションイベント
+    // プラン名マッピング（共通）
+    const planMapping = {
+      'P-68H748483T318591TNFRBYMQ': 'Standard',
+      'P-6US56295GW7958014NFRB2BQ': 'Premium',
+      'P-17K19274A7982913DNFRB3KA': 'Premium Sanrenpuku',
+      'P-8KU85292CD447891XNFRB4GI': 'Premium Combo'
+    };
+    const WEBHOOK_SIMULATOR_PLAN_ID = 'P-5ML4271244454362WXNWU5NQ';
+
+    // サブスク系イベント（CREATED/ACTIVATED/PAYMENT.COMPLETED）
+    const isSubscriptionEvent = [
+      'BILLING.SUBSCRIPTION.CREATED',
+      'BILLING.SUBSCRIPTION.ACTIVATED',
+      'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED'
+    ].includes(eventType);
+
+    // キャンセル系イベント
+    const isCancellationEvent = [
+      'BILLING.SUBSCRIPTION.CANCELLED',
+      'BILLING.SUBSCRIPTION.SUSPENDED',
+      'BILLING.SUBSCRIPTION.EXPIRED'
+    ].includes(eventType);
+
+    if (isSubscriptionEvent) {
+      // サブスクリプションイベント（仮登録 or 本登録）
       email = resource.subscriber?.email_address;
       customerName = `${resource.subscriber?.name?.given_name || ''} ${resource.subscriber?.name?.surname || ''}`.trim();
       planId = resource.plan_id;
+      subscriptionId = resource.id;
 
-      // 🔍 デバッグログ追加（代入後にログ出力）
       console.log('🔍 DEBUG - email:', email);
       console.log('🔍 DEBUG - planId:', planId);
-      console.log('🔍 DEBUG - customerName:', customerName);
-
-      // プラン名マッピング（PayPal Plan ID → システム内部プラン名）
-      const planMapping = {
-        'P-68H748483T318591TNFRBYMQ': 'Standard',
-        'P-6US56295GW7958014NFRB2BQ': 'Premium',
-        'P-17K19274A7982913DNFRB3KA': 'Premium Sanrenpuku',
-        'P-8KU85292CD447891XNFRB4GI': 'Premium Combo'
-      };
-
-      // 🔧 2026-01-10修正（専門家推奨）: Webhook Simulator専用フォールバック
-      // ⚠️ 本番で未知のplan_idが来た場合はエラー（自動でStandard付与は危険）
-      const WEBHOOK_SIMULATOR_PLAN_ID = 'P-5ML4271244454362WXNWU5NQ'; // PayPal Simulatorのダミーplan_id
+      console.log('🔍 DEBUG - subscriptionId:', subscriptionId);
 
       userPlan = planMapping[planId];
-
       if (!userPlan) {
-        // マッピングに無い場合
         if (planId === WEBHOOK_SIMULATOR_PLAN_ID) {
-          // Webhook Simulatorの場合のみ Standard でテスト許可
           userPlan = 'Standard';
           console.log('⚠️ Webhook Simulator検出: Standardでテスト実行');
         } else {
-          // 本番で未知のplan_idが来た場合はエラー
           throw new Error(`Unknown plan_id: ${planId}. Please add to planMapping.`);
         }
       }
 
-      console.log('🔍 DEBUG - userPlan:', userPlan, `(mapped from ${planId})`);
+      // イベントカテゴリ判定
+      if (eventType === 'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED') {
+        eventCategory = 'payment'; // 本登録
+      } else {
+        eventCategory = 'pending'; // 仮登録
+      }
+
     } else if (eventType === 'PAYMENT.SALE.COMPLETED') {
       // 単品決済イベント（Premium Plus）
       email = resource.payer?.payer_info?.email;
       customerName = `${resource.payer?.payer_info?.first_name || ''} ${resource.payer?.payer_info?.last_name || ''}`.trim();
       userPlan = 'Premium Plus';
+      eventCategory = 'payment'; // 本登録
+
+    } else if (isCancellationEvent) {
+      // キャンセル系イベント（権限剥奪）
+      subscriptionId = resource.id;
+      eventCategory = 'cancellation';
+
+      // 🔧 メール抽出フォールバック（専門家推奨）
+      email = resource.subscriber?.email_address;
+      if (!email) {
+        // subscription_id で Customers を検索
+        console.log('⚠️ メール取得失敗・subscription_idで検索:', subscriptionId);
+        const existingRecords = await base('Customers')
+          .select({
+            filterByFormula: `{PayPalSubscriptionID} = "${subscriptionId}"`
+          })
+          .firstPage();
+
+        if (existingRecords.length > 0) {
+          email = existingRecords[0].fields.Email;
+          userPlan = existingRecords[0].fields['プラン'];
+          console.log('✅ メール復元成功:', email);
+        } else {
+          throw new Error(`Email not found for subscription_id: ${subscriptionId}`);
+        }
+      }
     }
 
-    if (!email || !userPlan) {
-      throw new Error('Missing required fields: email or userPlan');
+    if (!email) {
+      throw new Error('Missing required field: email');
     }
 
     console.log('📧 Email:', email);
     console.log('📦 User Plan:', userPlan);
+    console.log('🏷️ Event Category:', eventCategory);
 
     // 有効期限計算（Premium Plus以外は1ヶ月後）
     const now = new Date();
     let expiryDate;
 
     if (userPlan === 'Premium Plus') {
-      // Premium Plusは単品商品なので有効期限なし
-      expiryDate = null;
+      expiryDate = null; // Premium Plusは無期限
     } else {
-      // サブスクは1ヶ月後
       expiryDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
     }
-
     const expiryDateStr = expiryDate ? expiryDate.toISOString().split('T')[0] : '';
 
     // 既存顧客チェック
@@ -190,41 +232,109 @@ exports.handler = async (event, context) => {
 
     let customerRecord;
     let isNewCustomer = false;
+    let shouldSendWelcomeEmail = false;
 
-    if (existingRecords.length > 0) {
-      // 既存顧客の更新
-      console.log('🔄 既存顧客を更新:', email);
+    // 🔧 2026-01-11 イベントカテゴリ別処理
+    if (eventCategory === 'pending') {
+      // ========================================
+      // A. 仮登録（CREATED/ACTIVATED）
+      // ========================================
+      console.log('📝 仮登録処理:', email);
 
-      const recordId = existingRecords[0].id;
-      customerRecord = await base('Customers').update(recordId, {
-        'プラン': userPlan,
-        '有効期限': expiryDateStr,
-        'WithdrawalRequested': false, // 退会フラグリセット
-        'WithdrawalDate': null,
-        'WithdrawalReason': null
-      });
+      if (existingRecords.length > 0) {
+        const recordId = existingRecords[0].id;
+        customerRecord = await base('Customers').update(recordId, {
+          'Status': 'pending',
+          'PayPalSubscriptionID': subscriptionId || '',
+          'プラン': userPlan
+        });
+        console.log('✅ 既存顧客を仮登録に更新:', recordId);
+      } else {
+        customerRecord = await base('Customers').create([{
+          fields: {
+            'Email': email,
+            '氏名': customerName || '',
+            'プラン': userPlan,
+            'Status': 'pending',
+            'PayPalSubscriptionID': subscriptionId || '',
+            'WithdrawalRequested': false
+          }
+        }]);
+        console.log('✅ 新規顧客を仮登録:', customerRecord[0].id);
+      }
 
-      console.log('✅ 既存顧客更新完了:', recordId);
-    } else {
-      // 新規顧客登録
-      console.log('➕ 新規顧客を登録:', email);
-      isNewCustomer = true;
+    } else if (eventCategory === 'payment') {
+      // ========================================
+      // B. 本登録（PAYMENT.COMPLETED）
+      // ========================================
+      console.log('💰 本登録処理（決済完了）:', email);
 
-      customerRecord = await base('Customers').create([{
-        fields: {
-          'Email': email,
-          '氏名': customerName,
+      if (existingRecords.length > 0) {
+        const recordId = existingRecords[0].id;
+        const welcomeSentAt = existingRecords[0].fields.WelcomeSentAt;
+
+        // ✅ WelcomeSentAt が無い場合のみメール送信
+        shouldSendWelcomeEmail = !welcomeSentAt;
+
+        customerRecord = await base('Customers').update(recordId, {
+          'Status': 'active',
           'プラン': userPlan,
           '有効期限': expiryDateStr,
-          'WithdrawalRequested': false
-        }
-      }]);
+          'PayPalSubscriptionID': subscriptionId || '',
+          'PaidAt': now.toISOString(),
+          'WithdrawalRequested': false,
+          'WithdrawalDate': null,
+          'WithdrawalReason': null,
+          'AccessEnabled': true
+        });
+        console.log('✅ 既存顧客を本登録に更新:', recordId);
+      } else {
+        isNewCustomer = true;
+        shouldSendWelcomeEmail = true;
 
-      console.log('✅ 新規顧客登録完了:', customerRecord[0].id);
+        customerRecord = await base('Customers').create([{
+          fields: {
+            'Email': email,
+            '氏名': customerName || '',
+            'プラン': userPlan,
+            '有効期限': expiryDateStr,
+            'Status': 'active',
+            'PayPalSubscriptionID': subscriptionId || '',
+            'PaidAt': now.toISOString(),
+            'WithdrawalRequested': false,
+            'AccessEnabled': true
+          }
+        }]);
+        console.log('✅ 新規顧客を本登録:', customerRecord[0].id);
+      }
+
+    } else if (eventCategory === 'cancellation') {
+      // ========================================
+      // C. 権限剥奪（CANCELLED/SUSPENDED/EXPIRED）
+      // ========================================
+      console.log('⛔ 権限剥奪処理:', email);
+
+      if (existingRecords.length > 0) {
+        const recordId = existingRecords[0].id;
+        const statusMap = {
+          'BILLING.SUBSCRIPTION.CANCELLED': 'cancelled',
+          'BILLING.SUBSCRIPTION.SUSPENDED': 'suspended',
+          'BILLING.SUBSCRIPTION.EXPIRED': 'cancelled'
+        };
+
+        customerRecord = await base('Customers').update(recordId, {
+          'Status': statusMap[eventType] || 'cancelled',
+          'AccessEnabled': false,
+          'CancelledAt': now.toISOString()
+        });
+        console.log('✅ 顧客権限を剥奪:', recordId);
+      } else {
+        console.log('⚠️ 顧客が見つからない（既に削除済み？）');
+      }
     }
 
-    // SendGridでウェルカムメール送信（新規顧客のみ）
-    if (isNewCustomer) {
+    // 📧 ウェルカムメール送信（本登録かつ未送信の場合のみ）
+    if (shouldSendWelcomeEmail) {
       console.log('📧 ウェルカムメール送信開始...');
 
       const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
@@ -251,6 +361,13 @@ exports.handler = async (event, context) => {
 
       if (sendGridResponse.ok) {
         console.log('✅ ウェルカムメール送信完了');
+
+        // WelcomeSentAt を記録（重複送信防止）
+        const recordId = isNewCustomer ? customerRecord[0].id : existingRecords[0].id;
+        await base('Customers').update(recordId, {
+          'WelcomeSentAt': now.toISOString()
+        });
+        console.log('✅ WelcomeSentAt記録完了');
       } else {
         const errorText = await sendGridResponse.text();
         console.error('❌ SendGrid送信失敗:', errorText);
