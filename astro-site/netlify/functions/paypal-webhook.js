@@ -201,9 +201,7 @@ exports.handler = async (event, context) => {
         '有効期限': expiryDateStr,
         'WithdrawalRequested': false, // 退会フラグリセット
         'WithdrawalDate': null,
-        'WithdrawalReason': null,
-        'StripeCustomerId': resource.id || eventId, // PayPal Subscription ID
-        'LastUpdated': now.toISOString()
+        'WithdrawalReason': null
       });
 
       console.log('✅ 既存顧客更新完了:', recordId);
@@ -219,9 +217,7 @@ exports.handler = async (event, context) => {
           'プラン': userPlan,
           '有効期限': expiryDateStr,
           '登録日': now.toISOString().split('T')[0],
-          'StripeCustomerId': resource.id || eventId,
-          'WithdrawalRequested': false,
-          'LastUpdated': now.toISOString()
+          'WithdrawalRequested': false
         }
       }]);
 
