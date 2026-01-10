@@ -218,7 +218,7 @@ exports.handler = async (event, context) => {
           '氏名': customerName,
           'プラン': userPlan,
           '有効期限': expiryDateStr,
-          'RegistrationDate': now.toISOString().split('T')[0],
+          '登録日': now.toISOString().split('T')[0],
           'StripeCustomerId': resource.id || eventId,
           'WithdrawalRequested': false,
           'LastUpdated': now.toISOString()
