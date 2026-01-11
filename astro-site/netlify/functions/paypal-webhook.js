@@ -87,15 +87,15 @@ exports.handler = async (event, context) => {
     }]);
 
     // 処理対象のイベントのみ処理
-    // 🔧 2026-01-11 本番仕様実装（専門家推奨）:
-    // - CREATED/ACTIVATED: 仮登録のみ（Status: pending、メール送らない）
-    // - PAYMENT.COMPLETED: 本登録（Status: active、ウェルカムメール送信）
+    // 🔧 2026-01-11 本番仕様実装（専門家推奨・ハイブリッドアプローチ）:
+    // - CREATED: 仮登録のみ（Status: pending、メール送らない）
+    // - ACTIVATED: 本登録（Status: active、AccessEnabled: true、ウェルカムメール送信）
+    // - PAYMENT.SALE.COMPLETED: サブスクならPaidAt更新のみ、Premium Plusなら本登録
     // - CANCELLED/SUSPENDED/EXPIRED: 権限剥奪（Status: cancelled/suspended）
     const validEventTypes = [
       'BILLING.SUBSCRIPTION.CREATED',             // サブスク登録（仮登録）
-      'BILLING.SUBSCRIPTION.ACTIVATED',           // サブスク有効化（テスト用・仮登録）
-      'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED',   // サブスク決済完了（本登録） ✨
-      'PAYMENT.SALE.COMPLETED',                   // 単品決済完了（本登録）
+      'BILLING.SUBSCRIPTION.ACTIVATED',           // サブスク有効化（本登録） ✨
+      'PAYMENT.SALE.COMPLETED',                   // 単品決済完了 or サブスク入金確認
       'BILLING.SUBSCRIPTION.CANCELLED',           // サブスクキャンセル（権限剥奪）
       'BILLING.SUBSCRIPTION.SUSPENDED',           // サブスク停止（権限剥奪）
       'BILLING.SUBSCRIPTION.EXPIRED'              // サブスク期限切れ（権限剥奪）
@@ -129,11 +129,10 @@ exports.handler = async (event, context) => {
     };
     const WEBHOOK_SIMULATOR_PLAN_ID = 'P-5ML4271244454362WXNWU5NQ';
 
-    // サブスク系イベント（CREATED/ACTIVATED/PAYMENT.COMPLETED）
+    // サブスク系イベント（CREATED/ACTIVATED）
     const isSubscriptionEvent = [
       'BILLING.SUBSCRIPTION.CREATED',
-      'BILLING.SUBSCRIPTION.ACTIVATED',
-      'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED'
+      'BILLING.SUBSCRIPTION.ACTIVATED'
     ].includes(eventType);
 
     // キャンセル系イベント
@@ -164,19 +163,45 @@ exports.handler = async (event, context) => {
         }
       }
 
-      // イベントカテゴリ判定
-      if (eventType === 'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED') {
-        eventCategory = 'payment'; // 本登録
-      } else {
+      // イベントカテゴリ判定（ハイブリッドアプローチ）
+      if (eventType === 'BILLING.SUBSCRIPTION.ACTIVATED') {
+        eventCategory = 'payment'; // 本登録（専門家推奨）
+      } else if (eventType === 'BILLING.SUBSCRIPTION.CREATED') {
         eventCategory = 'pending'; // 仮登録
       }
 
     } else if (eventType === 'PAYMENT.SALE.COMPLETED') {
-      // 単品決済イベント（Premium Plus）
-      email = resource.payer?.payer_info?.email;
-      customerName = `${resource.payer?.payer_info?.first_name || ''} ${resource.payer?.payer_info?.last_name || ''}`.trim();
-      userPlan = 'Premium Plus';
-      eventCategory = 'payment'; // 本登録
+      // PAYMENT.SALE.COMPLETED: サブスク入金確認 or Premium Plus単品決済
+
+      // billing_agreement_id があればサブスク決済、なければ単品決済
+      const billingAgreementId = resource.billing_agreement_id;
+
+      if (billingAgreementId) {
+        // サブスクリプション決済の場合：PaidAt更新のみ
+        subscriptionId = billingAgreementId;
+        eventCategory = 'payment_confirmation'; // 入金確認のみ
+
+        // メール取得（subscription_idで検索）
+        const existingRecords = await base('Customers')
+          .select({
+            filterByFormula: `{PayPalSubscriptionID} = "${subscriptionId}"`
+          })
+          .firstPage();
+
+        if (existingRecords.length > 0) {
+          email = existingRecords[0].fields.Email;
+          userPlan = existingRecords[0].fields['プラン'];
+          console.log('✅ サブスク入金確認:', email);
+        } else {
+          throw new Error(`Subscription not found: ${subscriptionId}`);
+        }
+      } else {
+        // Premium Plus単品決済の場合：本登録処理
+        email = resource.payer?.payer_info?.email;
+        customerName = `${resource.payer?.payer_info?.first_name || ''} ${resource.payer?.payer_info?.last_name || ''}`.trim();
+        userPlan = 'Premium Plus';
+        eventCategory = 'payment'; // 本登録
+      }
 
     } else if (isCancellationEvent) {
       // キャンセル系イベント（権限剥奪）
@@ -308,9 +333,25 @@ exports.handler = async (event, context) => {
         console.log('✅ 新規顧客を本登録:', customerRecord[0].id);
       }
 
+    } else if (eventCategory === 'payment_confirmation') {
+      // ========================================
+      // C. 入金確認（PAYMENT.SALE.COMPLETED for subscriptions）
+      // ========================================
+      console.log('💰 入金確認処理（PaidAt更新のみ）:', email);
+
+      if (existingRecords.length > 0) {
+        const recordId = existingRecords[0].id;
+        customerRecord = await base('Customers').update(recordId, {
+          'PaidAt': now.toISOString()
+        });
+        console.log('✅ PaidAt更新完了:', recordId);
+      } else {
+        console.log('⚠️ 顧客が見つからない（未登録？）');
+      }
+
     } else if (eventCategory === 'cancellation') {
       // ========================================
-      // C. 権限剥奪（CANCELLED/SUSPENDED/EXPIRED）
+      // D. 権限剥奪（CANCELLED/SUSPENDED/EXPIRED）
       // ========================================
       console.log('⛔ 権限剥奪処理:', email);
 
