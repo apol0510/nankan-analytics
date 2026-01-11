@@ -181,7 +181,7 @@ exports.handler = async (event, context) => {
         subscriptionId = billingAgreementId;
         eventCategory = 'payment_confirmation'; // 入金確認のみ
 
-        // メール取得（subscription_idで検索）
+        // 🔧 2026-01-11専門家推奨: PayPalSubscriptionIDで顧客を引く
         const existingRecords = await base('Customers')
           .select({
             filterByFormula: `{PayPalSubscriptionID} = "${subscriptionId}"`
@@ -191,9 +191,11 @@ exports.handler = async (event, context) => {
         if (existingRecords.length > 0) {
           email = existingRecords[0].fields.Email;
           userPlan = existingRecords[0].fields['プラン'];
-          console.log('✅ サブスク入金確認:', email);
+          console.log('✅ サブスク入金確認:', email, '(SubscriptionID:', subscriptionId, ')');
         } else {
-          throw new Error(`Subscription not found: ${subscriptionId}`);
+          // 🔧 2026-01-11修正: throwせず、ログだけ残して200返す（未知のsale）
+          console.log('⚠️ 未知のサブスク入金・顧客特定不可（SubscriptionID:', subscriptionId, '）→ スキップ');
+          // emailが無いまま続行 → Line 232のチェックで安全にスキップ
         }
       } else {
         // Premium Plus単品決済の場合：本登録処理
@@ -229,8 +231,23 @@ exports.handler = async (event, context) => {
       }
     }
 
+    // 🔧 2026-01-11専門家推奨: payment_confirmationはemail不要（SubscriptionIDで顧客特定）
     if (!email) {
-      throw new Error('Missing required field: email');
+      if (eventCategory === 'payment_confirmation') {
+        // 入金確認はemail無しでもOK（SubscriptionIDで特定できなかった場合）
+        console.log('⚠️ Email特定不可・入金確認スキップ（SubscriptionID:', subscriptionId, ')');
+        // 重複排除記録は残す（再処理防止）
+        await base('ProcessedWebhookEvents').update(processedRecord.id, {
+          'Status': 'completed'
+        });
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Unknown subscription sale skipped', eventId })
+        };
+      } else {
+        // その他のイベントはemail必須
+        throw new Error('Missing required field: email');
+      }
     }
 
     console.log('📧 Email:', email);
@@ -338,16 +355,17 @@ exports.handler = async (event, context) => {
       // ========================================
       // C. 入金確認（PAYMENT.SALE.COMPLETED for subscriptions）
       // ========================================
-      console.log('💰 入金確認処理（PaidAt更新のみ）:', email);
+      // 🔧 2026-01-11修正: subscriptionIDも併記（顧客特定の透明性向上）
+      console.log('💰 入金確認処理（PaidAt更新のみ）:', email, '(SubscriptionID:', subscriptionId, ')');
 
       if (existingRecords.length > 0) {
         const recordId = existingRecords[0].id;
         customerRecord = await base('Customers').update(recordId, {
           'PaidAt': now.toISOString()
         });
-        console.log('✅ PaidAt更新完了:', recordId);
+        console.log('✅ PaidAt更新完了:', recordId, '(SubscriptionID:', subscriptionId, ')');
       } else {
-        console.log('⚠️ 顧客が見つからない（未登録？）');
+        console.log('⚠️ 顧客が見つからない（未登録？）・SubscriptionID:', subscriptionId);
       }
 
     } else if (eventCategory === 'cancellation') {
