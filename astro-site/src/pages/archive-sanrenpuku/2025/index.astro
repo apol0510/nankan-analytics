@@ -1,15 +1,6 @@
 ---
 export const prerender = true;
-import archiveData2025_11 from '../../../data/archiveSanrenpukuResults_2025-11.json';
-import archiveData2025_12 from '../../../data/archiveSanrenpukuResults_2025-12.json';
-
-// 2025年全データ統合
-const archiveSanrenpukuResults = {
-  '2025': {
-    ...archiveData2025_11['2025'],
-    ...archiveData2025_12['2025']
-  }
-};
+import archiveSanrenpukuResults from '../../../data/archiveSanrenpukuResults.json';
 
 const year = '2025';
 const yearData = archiveSanrenpukuResults[year] || {};

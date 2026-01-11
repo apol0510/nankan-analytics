@@ -1,22 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import archiveData2025_11 from '../../data/archiveSanrenpukuResults_2025-11.json';
-import archiveData2025_12 from '../../data/archiveSanrenpukuResults_2025-12.json';
-import archiveData2026_01 from '../../data/archiveSanrenpukuResults_2026-01.json';
+import archiveSanrenpukuResults from '../../data/archiveSanrenpukuResults.json';
 
 // 🔒 Premium会員認証チェック（無料会員はアクセス不可）
 // クライアントサイドでプラン判定を行う想定
-
-// 全月のデータを統合
-const archiveSanrenpukuResults = {
-  '2025': {
-    ...archiveData2025_11['2025'],
-    ...archiveData2025_12['2025']
-  },
-  '2026': {
-    ...archiveData2026_01['2026']
-  }
-};
 
 // 年別集計データを生成
 const years = Object.keys(archiveSanrenpukuResults).sort((a, b) => parseInt(b) - parseInt(a));
@@ -208,7 +195,7 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
       </div>
       <!-- プラン選択ボタン -->
       <div class="cta-plans">
-        <a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-17K19274A7982913DNFRB3KA" class="cta-plan-card" target="_blank" rel="noopener">
+        <a href="https://buy.stripe.com/28EcN5fpf58k8O734vdby0P" class="cta-plan-card" target="_blank" rel="noopener">
           <div class="plan-header">
             <span class="plan-name">三連複のみ</span>
           </div>
@@ -216,7 +203,7 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
           <div class="plan-description">高性能AI三連複絞り込み買い目</div>
         </a>
 
-        <a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-8KU85292CD447891XNFRB4GI" class="cta-plan-card cta-plan-recommended" target="_blank" rel="noopener">
+        <a href="https://buy.stripe.com/6oU28r90R1W8c0jbB1dby0Q" class="cta-plan-card cta-plan-recommended" target="_blank" rel="noopener">
           <div class="recommended-badge">おすすめ</div>
           <div class="plan-header">
             <span class="plan-name">馬単+三連複セット</span>

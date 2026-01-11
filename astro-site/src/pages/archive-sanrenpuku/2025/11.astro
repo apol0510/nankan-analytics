@@ -1,10 +1,10 @@
 ---
 export const prerender = true;
-import archiveData2025_11 from '../../../data/archiveSanrenpukuResults_2025-11.json';
+import archiveSanrenpukuData from '../../../data/archiveSanrenpukuResults.json';
 
 const year = '2025';
 const month = '11';
-const monthData = archiveData2025_11[year]?.[month] || {};
+const monthData = archiveSanrenpukuData[year]?.[month] || {};
 const days = Object.keys(monthData).sort().reverse(); // 新しい順
 
 // 月間統計計算
@@ -562,7 +562,7 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       return (
         <div class="day-section">
           <div class="day-header">
-            <h2 class="day-title">11月{parseInt(day)}日 {dayData.venue}競馬</h2>
+            <h2 class="day-title">11月{day}日 {dayData.venue}競馬</h2>
             <div class="perfect-badge">🏆 {dayData.hitRaces}/{dayData.totalRaces}的中</div>
           </div>
 
