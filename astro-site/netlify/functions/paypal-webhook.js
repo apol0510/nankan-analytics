@@ -165,7 +165,7 @@ exports.handler = async (event, context) => {
 
       // イベントカテゴリ判定（ハイブリッドアプローチ）
       if (eventType === 'BILLING.SUBSCRIPTION.ACTIVATED') {
-        eventCategory = 'payment'; // 本登録（専門家推奨）
+        eventCategory = 'activation'; // サブスク契約開始（アクセス権付与）
       } else if (eventType === 'BILLING.SUBSCRIPTION.CREATED') {
         eventCategory = 'pending'; // 仮登録
       }
@@ -200,7 +200,7 @@ exports.handler = async (event, context) => {
         email = resource.payer?.payer_info?.email;
         customerName = `${resource.payer?.payer_info?.first_name || ''} ${resource.payer?.payer_info?.last_name || ''}`.trim();
         userPlan = 'Premium Plus';
-        eventCategory = 'payment'; // 本登録
+        eventCategory = 'one_time_payment'; // 単品決済（Premium Plus）
       }
 
     } else if (isCancellationEvent) {
@@ -288,11 +288,12 @@ exports.handler = async (event, context) => {
         console.log('✅ 新規顧客を仮登録:', customerRecord[0].id);
       }
 
-    } else if (eventCategory === 'payment') {
+    } else if (eventCategory === 'activation' || eventCategory === 'one_time_payment') {
       // ========================================
-      // B. 本登録（ACTIVATED - 契約開始）
+      // B. 本登録（activation: サブスク契約開始, one_time_payment: 単品決済）
       // ========================================
-      console.log('✅ 本登録処理（契約開始・アクセス権付与）:', email);
+      const categoryLabel = eventCategory === 'activation' ? 'サブスク契約開始' : '単品決済（Premium Plus）';
+      console.log(`✅ 本登録処理（${categoryLabel}・アクセス権付与）:`, email);
 
       if (existingRecords.length > 0) {
         const recordId = existingRecords[0].id;
@@ -312,7 +313,7 @@ exports.handler = async (event, context) => {
           'WithdrawalReason': null,
           'AccessEnabled': true
         });
-        console.log('✅ 既存顧客を本登録に更新（アクセス権付与）:', recordId);
+        console.log(`✅ 既存顧客を本登録に更新（${categoryLabel}）:`, recordId);
       } else {
         isNewCustomer = true;
         shouldSendWelcomeEmail = true;
@@ -330,7 +331,7 @@ exports.handler = async (event, context) => {
             'AccessEnabled': true
           }
         }]);
-        console.log('✅ 新規顧客を本登録（アクセス権付与）:', customerRecord[0].id);
+        console.log(`✅ 新規顧客を本登録（${categoryLabel}）:`, customerRecord[0].id);
       }
 
     } else if (eventCategory === 'payment_confirmation') {
