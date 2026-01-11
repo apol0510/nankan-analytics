@@ -290,9 +290,9 @@ exports.handler = async (event, context) => {
 
     } else if (eventCategory === 'payment') {
       // ========================================
-      // B. 本登録（PAYMENT.COMPLETED）
+      // B. 本登録（ACTIVATED - 契約開始）
       // ========================================
-      console.log('💰 本登録処理（決済完了）:', email);
+      console.log('✅ 本登録処理（契約開始・アクセス権付与）:', email);
 
       if (existingRecords.length > 0) {
         const recordId = existingRecords[0].id;
@@ -306,13 +306,13 @@ exports.handler = async (event, context) => {
           'プラン': userPlan,
           '有効期限': expiryDateStr,
           'PayPalSubscriptionID': subscriptionId || '',
-          'PaidAt': now.toISOString(),
+          // PaidAt は PAYMENT.SALE.COMPLETED で更新（入金確認時）
           'WithdrawalRequested': false,
           'WithdrawalDate': null,
           'WithdrawalReason': null,
           'AccessEnabled': true
         });
-        console.log('✅ 既存顧客を本登録に更新:', recordId);
+        console.log('✅ 既存顧客を本登録に更新（アクセス権付与）:', recordId);
       } else {
         isNewCustomer = true;
         shouldSendWelcomeEmail = true;
@@ -325,12 +325,12 @@ exports.handler = async (event, context) => {
             '有効期限': expiryDateStr,
             'Status': 'active',
             'PayPalSubscriptionID': subscriptionId || '',
-            'PaidAt': now.toISOString(),
+            // PaidAt は PAYMENT.SALE.COMPLETED で更新（入金確認時）
             'WithdrawalRequested': false,
             'AccessEnabled': true
           }
         }]);
-        console.log('✅ 新規顧客を本登録:', customerRecord[0].id);
+        console.log('✅ 新規顧客を本登録（アクセス権付与）:', customerRecord[0].id);
       }
 
     } else if (eventCategory === 'payment_confirmation') {
