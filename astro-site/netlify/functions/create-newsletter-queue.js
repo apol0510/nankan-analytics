@@ -153,13 +153,19 @@ export default async function handler(request, context) {
     let queueCreatedCount = 0;
     let queueFailedCount = 0;
 
+    // 🔧 専門家推奨: performUpsert使用（重複防止）
     for (let i = 0; i < batches.length; i++) {
       const batch = batches[i];
 
       try {
+        // performUpsert用のペイロード（Key手動設定）
         const queueData = {
+          performUpsert: {
+            fieldsToMergeOn: ['Key'] // Keyフィールドで重複判定
+          },
           records: batch.map(customer => ({
             fields: {
+              'Key': `${jobId}:${customer.email.toLowerCase()}`, // 🔧 手動Key生成
               'JobId': [job.id], // Link to another record形式
               'Email': customer.email,
               'Status': 'pending',
@@ -169,7 +175,7 @@ export default async function handler(request, context) {
         };
 
         const queueResponse = await fetch(queueUrl, {
-          method: 'POST',
+          method: 'PATCH', // 🔧 performUpsertはPATCH
           headers: {
             'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
             'Content-Type': 'application/json'
@@ -178,8 +184,11 @@ export default async function handler(request, context) {
         });
 
         if (queueResponse.ok) {
-          queueCreatedCount += batch.length;
-          console.log(`✅ バッチ ${i + 1}/${batches.length}: ${batch.length}件投入完了`);
+          const result = await queueResponse.json();
+          const created = result.records.filter(r => r.createdTime).length;
+          const updated = result.records.length - created;
+          queueCreatedCount += created;
+          console.log(`✅ バッチ ${i + 1}/${batches.length}: 新規${created}件、既存${updated}件（重複スキップ）`);
         } else {
           const errorData = await queueResponse.text();
           console.error(`❌ バッチ ${i + 1}/${batches.length} 失敗:`, errorData);

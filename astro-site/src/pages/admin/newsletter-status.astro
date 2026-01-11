@@ -1,71 +1,9 @@
 ---
 // Queue方式メルマガ配信システム - 進捗ダッシュボード
-// リアルタイム進捗確認・手動操作UI
+// 🔧 専門家推奨: API Key露出対策（Functions経由）
 
-const AIRTABLE_API_KEY = import.meta.env.AIRTABLE_API_KEY;
-const AIRTABLE_BASE_ID = import.meta.env.AIRTABLE_BASE_ID;
-
-// URLパラメータからJobId取得
+// URLパラメータからJobId取得（サーバーサイド）
 const jobId = Astro.url.searchParams.get('jobId') || '';
-
-let job = null;
-let queueStats = null;
-let error = null;
-
-if (jobId && AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
-  try {
-    // ジョブ情報取得
-    const jobsUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/NewsletterJobs`;
-    const jobFilterFormula = `{JobId} = "${jobId}"`;
-    const jobUrl = `${jobsUrl}?filterByFormula=${encodeURIComponent(jobFilterFormula)}`;
-
-    const jobResponse = await fetch(jobUrl, {
-      headers: {
-        'Authorization': `Bearer ${AIRTABLE_API_KEY}`
-      }
-    });
-
-    if (jobResponse.ok) {
-      const jobData = await jobResponse.json();
-      if (jobData.records.length > 0) {
-        job = jobData.records[0].fields;
-        job.id = jobData.records[0].id;
-      } else {
-        error = `ジョブが見つかりません: ${jobId}`;
-      }
-    }
-
-    // Queue統計取得
-    if (job) {
-      const queueUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/NewsletterQueue`;
-      const queueFilterFormula = `{JobId} = "${jobId}"`;
-      const queueFetchUrl = `${queueUrl}?filterByFormula=${encodeURIComponent(queueFilterFormula)}`;
-
-      const queueResponse = await fetch(queueFetchUrl, {
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_API_KEY}`
-        }
-      });
-
-      if (queueResponse.ok) {
-        const queueData = await queueResponse.json();
-        const records = queueData.records || [];
-
-        queueStats = {
-          pending: records.filter(r => r.fields.Status === 'pending').length,
-          sending: records.filter(r => r.fields.Status === 'sending').length,
-          success: records.filter(r => r.fields.Status === 'success').length,
-          failed: records.filter(r => r.fields.Status === 'failed').length,
-          total: records.length
-        };
-      }
-    }
-  } catch (err) {
-    error = err.message;
-  }
-}
-
-const progress = job && queueStats ? Math.round((queueStats.success / job.TotalRecipients) * 100) : 0;
 ---
 
 <!DOCTYPE html>
@@ -252,6 +190,13 @@ const progress = job && queueStats ? Math.round((queueStats.success / job.TotalR
       border-left: 4px solid #e53e3e;
     }
 
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: #4a5568;
+    }
+
     .input-group {
       margin: 20px 0;
     }
@@ -280,6 +225,14 @@ const progress = job && queueStats ? Math.round((queueStats.success / job.TotalR
       color: #2c5282;
       text-align: center;
     }
+
+    #dashboard-content {
+      display: none;
+    }
+
+    #dashboard-content.show {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -293,99 +246,68 @@ const progress = job && queueStats ? Math.round((queueStats.success / job.TotalR
           <input type="text" id="jobIdInput" placeholder="JOB-2026-01-11-001" />
           <button class="btn btn-primary" onclick="loadJob()">読み込み</button>
         </div>
-      ) : error ? (
-        <div class="error">
-          <strong>エラー:</strong> {error}
-        </div>
-      ) : job ? (
+      ) : (
         <>
-          <div class="job-info">
-            <h2>{job.Subject}</h2>
-            <div class="status-badge {job.Status}">{job.Status}</div>
-            <p style="margin-top: 10px; color: #718096;">
-              作成日時: {new Date(job.CreatedAt).toLocaleString('ja-JP')}
-            </p>
-            {job.QueuedAt && (
-              <p style="color: #718096;">
-                Queue生成完了: {new Date(job.QueuedAt).toLocaleString('ja-JP')}
-              </p>
-            )}
-            {job.CompletedAt && (
-              <p style="color: #718096;">
-                配信完了: {new Date(job.CompletedAt).toLocaleString('ja-JP')}
-              </p>
-            )}
+          <div id="loading" class="loading">
+            🔄 データ読み込み中...
           </div>
 
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-label">総配信数</div>
-              <div class="stat-value">{job.TotalRecipients.toLocaleString()}件</div>
+          <div id="error-message" class="error" style="display: none;"></div>
+
+          <div id="dashboard-content">
+            <div class="job-info">
+              <h2 id="job-subject"></h2>
+              <div id="job-status-badge" class="status-badge"></div>
+              <p id="job-created" style="margin-top: 10px; color: #718096;"></p>
+              <p id="job-queued" style="color: #718096;"></p>
+              <p id="job-completed" style="color: #718096;"></p>
             </div>
-            <div class="stat-card success">
-              <div class="stat-label">送信成功</div>
-              <div class="stat-value">{queueStats.success.toLocaleString()}件</div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">総配信数</div>
+                <div class="stat-value" id="stat-total">0件</div>
+              </div>
+              <div class="stat-card success">
+                <div class="stat-label">送信成功</div>
+                <div class="stat-value" id="stat-success">0件</div>
+              </div>
+              <div class="stat-card failed">
+                <div class="stat-label">送信失敗</div>
+                <div class="stat-value" id="stat-failed">0件</div>
+              </div>
+              <div class="stat-card pending">
+                <div class="stat-label">送信待ち</div>
+                <div class="stat-value" id="stat-pending">0件</div>
+              </div>
             </div>
-            <div class="stat-card failed">
-              <div class="stat-label">送信失敗</div>
-              <div class="stat-value">{queueStats.failed.toLocaleString()}件</div>
+
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
             </div>
-            <div class="stat-card pending">
-              <div class="stat-label">送信待ち</div>
-              <div class="stat-value">{queueStats.pending.toLocaleString()}件</div>
+
+            <div style="margin-top: 30px;" id="action-buttons">
+              <!-- ボタンは動的に生成 -->
             </div>
-          </div>
 
-          <div class="progress-bar">
-            <div class="progress-fill" style={`width: ${progress}%`}>
-              {progress}%
+            <div class="reload-notice">
+              💡 進捗は自動更新されません。「更新」ボタンで最新状態を確認してください。
             </div>
-          </div>
-
-          <div style="margin-top: 30px;">
-            {job.Status === 'queued' && (
-              <button class="btn btn-success" onclick="startSending()">
-                🚀 送信開始
-              </button>
-            )}
-
-            {job.Status === 'sending' && (
-              <>
-                <button class="btn btn-warning" onclick="continueSending()">
-                  ▶️ 送信続行
-                </button>
-                <button class="btn btn-danger" onclick="pauseSending()">
-                  ⏸️ 一時停止
-                </button>
-              </>
-            )}
-
-            {job.Status === 'paused' && (
-              <button class="btn btn-success" onclick="resumeSending()">
-                ▶️ 再開
-              </button>
-            )}
-
-            {queueStats.failed > 0 && (
-              <button class="btn btn-primary" onclick="retryFailed()">
-                🔄 失敗分を再送（{queueStats.failed}件）
-              </button>
-            )}
-
-            <button class="btn btn-primary" onclick="location.reload()">
-              🔄 更新
-            </button>
-          </div>
-
-          <div class="reload-notice">
-            💡 進捗は自動更新されません。「更新」ボタンで最新状態を確認してください。
           </div>
         </>
-      ) : null}
+      )}
     </div>
   </div>
 
   <script define:vars={{ jobId }}>
+    let currentJobData = null;
+    let currentQueueStats = null;
+
+    // ページ読み込み時にデータ取得
+    if (jobId) {
+      fetchStatus();
+    }
+
     function loadJob() {
       const inputJobId = document.getElementById('jobIdInput').value.trim();
       if (inputJobId) {
@@ -395,11 +317,111 @@ const progress = job && queueStats ? Math.round((queueStats.success / job.TotalR
       }
     }
 
+    async function fetchStatus() {
+      try {
+        // 🔧 専門家推奨: Functions経由でデータ取得（API Key露出なし）
+        const response = await fetch(`/.netlify/functions/get-newsletter-status?jobId=${encodeURIComponent(jobId)}`);
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'データ取得に失敗しました');
+        }
+
+        const data = await response.json();
+        currentJobData = data.job;
+        currentQueueStats = data.queueStats;
+
+        // UI更新
+        updateUI();
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('dashboard-content').classList.add('show');
+      } catch (err) {
+        console.error('データ取得エラー:', err);
+        document.getElementById('loading').style.display = 'none';
+        const errorEl = document.getElementById('error-message');
+        errorEl.textContent = `エラー: ${err.message}`;
+        errorEl.style.display = 'block';
+      }
+    }
+
+    function updateUI() {
+      const job = currentJobData;
+      const stats = currentQueueStats;
+
+      // ジョブ情報
+      document.getElementById('job-subject').textContent = job.Subject;
+
+      const statusBadge = document.getElementById('job-status-badge');
+      statusBadge.textContent = job.Status;
+      statusBadge.className = `status-badge ${job.Status}`;
+
+      document.getElementById('job-created').textContent =
+        `作成日時: ${new Date(job.CreatedAt).toLocaleString('ja-JP')}`;
+
+      if (job.QueuedAt) {
+        document.getElementById('job-queued').textContent =
+          `Queue生成完了: ${new Date(job.QueuedAt).toLocaleString('ja-JP')}`;
+        document.getElementById('job-queued').style.display = 'block';
+      } else {
+        document.getElementById('job-queued').style.display = 'none';
+      }
+
+      if (job.CompletedAt) {
+        document.getElementById('job-completed').textContent =
+          `配信完了: ${new Date(job.CompletedAt).toLocaleString('ja-JP')}`;
+        document.getElementById('job-completed').style.display = 'block';
+      } else {
+        document.getElementById('job-completed').style.display = 'none';
+      }
+
+      // 統計
+      document.getElementById('stat-total').textContent = `${job.TotalRecipients.toLocaleString()}件`;
+      document.getElementById('stat-success').textContent = `${stats.success.toLocaleString()}件`;
+      document.getElementById('stat-failed').textContent = `${stats.failed.toLocaleString()}件`;
+      document.getElementById('stat-pending').textContent = `${stats.pending.toLocaleString()}件`;
+
+      // 進捗バー
+      const progress = job.TotalRecipients > 0 ? Math.round((stats.success / job.TotalRecipients) * 100) : 0;
+      const progressFill = document.getElementById('progress-fill');
+      progressFill.style.width = `${progress}%`;
+      progressFill.textContent = `${progress}%`;
+
+      // ボタン
+      updateButtons(job.Status, stats.failed);
+    }
+
+    function updateButtons(status, failedCount) {
+      const buttonsContainer = document.getElementById('action-buttons');
+      let buttonsHTML = '';
+
+      if (status === 'queued') {
+        buttonsHTML += '<button class="btn btn-success" onclick="startSending()">🚀 送信開始</button>';
+      }
+
+      if (status === 'sending') {
+        buttonsHTML += '<button class="btn btn-warning" onclick="continueSending()">▶️ 送信続行</button>';
+        buttonsHTML += '<button class="btn btn-danger" onclick="pauseSending()">⏸️ 一時停止</button>';
+      }
+
+      if (status === 'paused') {
+        buttonsHTML += '<button class="btn btn-success" onclick="resumeSending()">▶️ 再開</button>';
+      }
+
+      if (failedCount > 0) {
+        buttonsHTML += `<button class="btn btn-primary" onclick="retryFailed()">🔄 失敗分を再送（${failedCount}件）</button>`;
+      }
+
+      buttonsHTML += '<button class="btn btn-primary" onclick="location.reload()">🔄 更新</button>';
+
+      buttonsContainer.innerHTML = buttonsHTML;
+    }
+
     async function startSending() {
       if (!confirm('送信を開始しますか？')) return;
 
       try {
-        const response = await fetch('/.netlify/functions/send-newsletter-worker', {
+        const response = await fetch('/.netlify/functions/send-newsletter-worker-background', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ jobId })
@@ -428,7 +450,7 @@ const progress = job && queueStats ? Math.round((queueStats.success / job.TotalR
     }
 
     async function pauseSending() {
-      if (!confirm('送信を一時停止しますか？\n（現在のバッチ処理が完了するまで待ちます）')) return;
+      if (!confirm('送信を一時停止しますか？\\n（現在のバッチ処理が完了するまで待ちます）')) return;
       // 実装予定: ジョブのStatusを'paused'に更新
       alert('一時停止機能は開発中です');
     }

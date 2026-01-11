@@ -1,6 +1,6 @@
 // Queue方式メルマガ配信システム - 送信ワーカー（Background Functions）
+// 専門家推奨修正版：10件バッチ更新 + LeaseId二重起動ガード
 // PayPal Webhook Phase 7の冪等性設計応用
-// pending → sending → success/failed の状態遷移で重複配信を構造的に防止
 
 export default async function handler(request, context) {
   const headers = {
@@ -31,6 +31,10 @@ export default async function handler(request, context) {
     const SEND_RATE_MS = 125; // 8通/秒（125ms/通）
     const MAX_EXECUTION_TIME = 13 * 60 * 1000; // 13分（余裕持たせる）
     const AIRTABLE_RATE_DELAY = 200; // Airtableレート制限対策（5rps）
+
+    // 🔧 専門家推奨: LeaseId（二重起動ガード）
+    const LEASE_ID = `worker-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const LEASE_DURATION = 15 * 60 * 1000; // 15分（Background Functions最大実行時間）
 
     const startTime = Date.now();
     let totalProcessed = 0;
@@ -70,9 +74,19 @@ export default async function handler(request, context) {
     while (Date.now() - startTime < MAX_EXECUTION_TIME) {
       console.log('🔄 バッチ処理開始...');
 
-      // 1. pending のみ取得（BATCH_SIZE件）
       const queueUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/NewsletterQueue`;
-      const filterFormula = `AND({JobId} = "${jobId}", {Status} = "pending")`;
+
+      // 1. pending AND (ClaimedAt is blank OR ClaimedAt < 15分前) のみ取得
+      //    🔧 専門家推奨: 二重起動ガード（見かけ上のロック）
+      const leaseExpireTime = new Date(Date.now() - LEASE_DURATION);
+      const filterFormula = `AND(
+        {JobId} = "${jobId}",
+        {Status} = "pending",
+        OR(
+          {ClaimedAt} = BLANK(),
+          IS_BEFORE({ClaimedAt}, '${leaseExpireTime.toISOString()}')
+        )
+      )`;
       const queueFetchUrl = `${queueUrl}?filterByFormula=${encodeURIComponent(filterFormula)}&maxRecords=${BATCH_SIZE}`;
 
       const queueResponse = await fetch(queueFetchUrl, {
@@ -95,35 +109,37 @@ export default async function handler(request, context) {
 
       console.log(`📊 取得: ${queueRecords.length}件（pending）`);
 
-      // 2. 即座に sending に更新（バッチ操作・冪等性保証）
-      const updatePayload = {
+      // 2. 即座に ClaimedAt + LeaseId 更新（取り込みの印・バッチ操作）
+      //    🔧 専門家推奨: 「見かけ上のロック」で二重起動ガード
+      const claimPayload = {
         records: queueRecords.map(record => ({
           id: record.id,
-          fields: { 'Status': 'sending' }
+          fields: {
+            'ClaimedAt': new Date().toISOString(),
+            'ClaimedBy': LEASE_ID
+          }
         }))
       };
 
-      const updateResponse = await fetch(queueUrl, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatePayload)
-      });
-
-      if (!updateResponse.ok) {
-        console.error('❌ Status更新失敗:', updateResponse.status);
-        // 失敗しても続行（次回実行でpendingが残っている可能性）
-      } else {
-        console.log('✅ Status更新完了: pending → sending');
+      // ClaimedAtを10件ずつバッチ更新
+      const claimBatches = chunkArray(claimPayload.records, 10);
+      for (const claimBatch of claimBatches) {
+        await fetch(queueUrl, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ records: claimBatch })
+        });
+        await sleep(AIRTABLE_RATE_DELAY);
       }
 
-      await sleep(AIRTABLE_RATE_DELAY);
+      console.log(`✅ Claim完了: LeaseId=${LEASE_ID}`);
 
-      // 3. SendGrid送信（スロットリング付き）
-      let batchSuccess = 0;
-      let batchFailed = 0;
+      // 3. SendGrid送信（スロットリング付き）+ 結果溜め込み
+      //    🔧 専門家推奨: 1件ずつupdateせず、配列に溜めてから10件バッチ更新
+      const sendResults = [];
 
       for (const record of queueRecords) {
         const email = record.fields.Email;
@@ -181,70 +197,96 @@ export default async function handler(request, context) {
           });
 
           if (sendGridResponse.ok) {
-            // 成功 → success
-            await fetch(`${queueUrl}/${recordId}`, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                fields: {
-                  'Status': 'success',
-                  'SentAt': new Date().toISOString()
-                }
-              })
+            // 成功 → 結果溜め込み
+            sendResults.push({
+              id: recordId,
+              fields: {
+                'Status': 'success',
+                'SentAt': new Date().toISOString(),
+                'ClaimedAt': null, // Claim解除
+                'ClaimedBy': null
+              }
             });
-
-            batchSuccess++;
             console.log(`✅ 送信成功: ${email}`);
 
           } else {
-            // 失敗 → failed
+            // 失敗 → 結果溜め込み
             const errorData = await sendGridResponse.text();
-
-            await fetch(`${queueUrl}/${recordId}`, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                fields: {
-                  'Status': 'failed',
-                  'LastError': errorData.substring(0, 500), // 最大500文字
-                  'RetryCount': (record.fields.RetryCount || 0) + 1
-                }
-              })
+            sendResults.push({
+              id: recordId,
+              fields: {
+                'Status': 'failed',
+                'LastError': errorData.substring(0, 500),
+                'RetryCount': (record.fields.RetryCount || 0) + 1,
+                'ClaimedAt': null, // Claim解除
+                'ClaimedBy': null
+              }
             });
-
-            batchFailed++;
             console.error(`❌ 送信失敗: ${email} - ${errorData.substring(0, 100)}`);
           }
 
         } catch (individualError) {
-          // 例外 → failed
-          await fetch(`${queueUrl}/${recordId}`, {
-            method: 'PATCH',
-            headers: {
-              'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              fields: {
-                'Status': 'failed',
-                'LastError': individualError.message.substring(0, 500),
-                'RetryCount': (record.fields.RetryCount || 0) + 1
-              }
-            })
-          }).catch(err => console.error('❌ Status更新失敗:', err));
-
-          batchFailed++;
+          // 例外 → 結果溜め込み
+          sendResults.push({
+            id: recordId,
+            fields: {
+              'Status': 'failed',
+              'LastError': individualError.message.substring(0, 500),
+              'RetryCount': (record.fields.RetryCount || 0) + 1,
+              'ClaimedAt': null, // Claim解除
+              'ClaimedBy': null
+            }
+          });
           console.error(`❌ 例外発生: ${email} - ${individualError.message}`);
         }
 
         // スロットリング（8通/秒 = 125ms/通）
         await sleep(SEND_RATE_MS);
+      }
+
+      // 4. 🔧 専門家推奨: 10件バッチ更新（Airtable 5rps対策）
+      console.log(`📊 Airtableバッチ更新開始: ${sendResults.length}件`);
+      const updateBatches = chunkArray(sendResults, 10);
+
+      let batchSuccess = 0;
+      let batchFailed = 0;
+
+      for (const updateBatch of updateBatches) {
+        const updatePayload = {
+          records: updateBatch
+        };
+
+        try {
+          const updateResponse = await fetch(queueUrl, {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatePayload)
+          });
+
+          if (updateResponse.ok) {
+            // バッチ更新成功 → 成功/失敗カウント
+            updateBatch.forEach(record => {
+              if (record.fields.Status === 'success') {
+                batchSuccess++;
+              } else {
+                batchFailed++;
+              }
+            });
+            console.log(`✅ バッチ更新成功: ${updateBatch.length}件`);
+          } else {
+            console.error('❌ バッチ更新失敗:', updateResponse.status);
+            batchFailed += updateBatch.length;
+          }
+        } catch (updateError) {
+          console.error('❌ バッチ更新エラー:', updateError);
+          batchFailed += updateBatch.length;
+        }
+
+        // Airtableレート制限対策（5rps）
+        await sleep(AIRTABLE_RATE_DELAY);
       }
 
       totalProcessed += queueRecords.length;
@@ -253,7 +295,7 @@ export default async function handler(request, context) {
 
       console.log(`📊 バッチ結果: 成功${batchSuccess}件、失敗${batchFailed}件`);
 
-      // 4. Job集計更新
+      // 5. Job集計更新
       await fetch(`${jobsUrl}/${job.id}`, {
         method: 'PATCH',
         headers: {
@@ -331,6 +373,7 @@ export default async function handler(request, context) {
     const result = {
       success: true,
       jobId,
+      leaseId: LEASE_ID,
       totalProcessed,
       totalSuccess,
       totalFailed,
@@ -359,6 +402,15 @@ export default async function handler(request, context) {
       { status: 500, headers }
     );
   }
+}
+
+// ヘルパー関数: 配列を指定サイズのチャンクに分割
+function chunkArray(array, size) {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
 }
 
 // ヘルパー関数: Sleep
