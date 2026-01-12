@@ -94,4 +94,9 @@ backups/
 # Prototype files
 public/bet-layering-prototype*.html
 src/pages/premium-predictions-prototype.astro
-src/pages/premium-select 2.astro
+
+# Duplicate files with " 2", " 3" etc suffixes (復活防止)
+**/* 2.*
+**/* 3.*
+**/* 2
+**/* 3
