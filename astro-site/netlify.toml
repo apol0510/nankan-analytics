@@ -81,11 +81,6 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Background Functions設定（Queue方式メルマガ配信システム）
-[[functions]]
-  name = "send-newsletter-worker-background"
-  type = "background"
-
 [dev]
   command = "npm run dev"
   port = 4321
