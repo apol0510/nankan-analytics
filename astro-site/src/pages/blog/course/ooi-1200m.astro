@@ -570,6 +570,338 @@ const ogImage = "https://nankan-analytics.keiba.link/course_data/ooi_1200m.png";
                 font-size: 16px;
             }
         }
+
+        /* コース基本情報セクション（新設） */
+        .course-info-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-info-section h2 {
+            color: #0c4a6e;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .course-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .highlight-value {
+            color: #dc2626;
+            font-size: 1.5rem;
+        }
+
+        .course-characteristics {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .course-characteristics h3 {
+            color: #0c4a6e;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .characteristics-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .char-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1rem;
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+        }
+
+        .char-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .char-content strong {
+            color: #1e293b;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .char-content p {
+            color: #475569;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .comparison-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-box h3 {
+            color: #0c4a6e;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .comparison-item {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .comparison-label {
+            color: #1e293b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .comparison-detail p {
+            color: #475569;
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+
+        .comparison-arrow {
+            color: #3b82f6;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .course-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-arrow {
+                text-align: center;
+                transform: rotate(90deg);
+            }
+        }
+
+        /* 3段階戦略セクション（新設） */
+        .strategy-levels {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2.5rem 0;
+        }
+
+        .strategy-levels h3 {
+            color: #78350f;
+            font-size: 1.6rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .strategy-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .strategy-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .strategy-card.beginner .strategy-header {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+
+        .strategy-card.intermediate .strategy-header {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+
+        .strategy-card.advanced .strategy-header {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        }
+
+        .level-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .beginner-badge {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .intermediate-badge {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .advanced-badge {
+            background: #ec4899;
+            color: white;
+        }
+
+        .strategy-header h4 {
+            color: #1e293b;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .strategy-content {
+            padding: 1.5rem;
+        }
+
+        .strategy-point {
+            margin-bottom: 1.5rem;
+        }
+
+        .strategy-point:last-child {
+            margin-bottom: 0;
+        }
+
+        .strategy-point strong {
+            color: #0c4a6e;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .strategy-point p {
+            color: #475569;
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        /* よくある失敗パターン（新設） */
+        .failure-patterns {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2.5rem 0;
+        }
+
+        .failure-patterns h3 {
+            color: #7f1d1d;
+            font-size: 1.6rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .failure-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .failure-item {
+            background: white;
+            border-left: 4px solid #dc2626;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .failure-title {
+            color: #991b1b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .failure-reason,
+        .failure-solution {
+            margin: 0.75rem 0;
+        }
+
+        .failure-reason strong,
+        .failure-solution strong {
+            color: #0c4a6e;
+        }
+
+        .failure-reason {
+            color: #64748b;
+        }
+
+        .failure-solution {
+            color: #059669;
+            background: #f0fdf4;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border-left: 3px solid #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .strategy-levels, .failure-patterns {
+                padding: 1.5rem;
+            }
+
+            .strategy-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .level-badge {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -597,6 +929,7 @@ const ogImage = "https://nankan-analytics.keiba.link/course_data/ooi_1200m.png";
         <div class="table-of-contents">
             <h2 class="toc-title">目次</h2>
             <ul class="toc-list">
+                <li class="toc-item"><a href="#course-info" class="toc-link">🏟️ コース基本情報（1周1600m・直線386m）</a></li>
                 <li class="toc-item"><a href="#horse-number-analysis" class="toc-link">馬番別成績から見る有利な枠順</a></li>
                 <li class="toc-item"><a href="#popularity-analysis" class="toc-link">人気別成績が示す鉄板の法則</a></li>
                 <li class="toc-item"><a href="#optimal-strategy" class="toc-link">データから導き出される最適戦略</a></li>
@@ -619,9 +952,98 @@ const ogImage = "https://nankan-analytics.keiba.link/course_data/ooi_1200m.png";
             >
         </div>
 
+        <!-- コース基本情報セクション（新設） -->
+        <section class="course-info-section" id="course-info">
+            <h2>🏟️ 大井競馬場1200mコース基本情報</h2>
+
+            <div class="course-info-grid">
+                <div class="info-card">
+                    <div class="info-label">競馬場</div>
+                    <div class="info-value">大井競馬場</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">周回方向</div>
+                    <div class="info-value">右回り（外回り）</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">1周距離</div>
+                    <div class="info-value">1,600m</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">直線距離</div>
+                    <div class="info-value highlight-value">386m</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">レース距離</div>
+                    <div class="info-value">1,200m</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">スタート位置</div>
+                    <div class="info-value">バックストレッチ</div>
+                </div>
+            </div>
+
+            <div class="course-characteristics">
+                <h3>📌 コース特性</h3>
+                <div class="characteristics-list">
+                    <div class="char-item">
+                        <span class="char-icon">✅</span>
+                        <div class="char-content">
+                            <strong>南関東最長の直線386m</strong>
+                            <p>4コーナーからゴールまで386mの直線は南関東4場で最も長く、差し馬・追込馬にもチャンスがある。</p>
+                        </div>
+                    </div>
+                    <div class="char-item">
+                        <span class="char-icon">✅</span>
+                        <div class="char-content">
+                            <strong>バックストレッチスタート</strong>
+                            <p>1200mはバックストレッチからスタートし、3コーナーから4コーナーを経てゴール。コーナー2つを回る。</p>
+                        </div>
+                    </div>
+                    <div class="char-item">
+                        <span class="char-icon">✅</span>
+                        <div class="char-content">
+                            <strong>外回りコースの特性</strong>
+                            <p>1周1600mの外回りコースを使用。内回り（1400m・直線286m）よりもゆとりがあり、展開の幅が広い。</p>
+                        </div>
+                    </div>
+                    <div class="char-item">
+                        <span class="char-icon">⚠️</span>
+                        <div class="char-content">
+                            <strong>枠順の影響</strong>
+                            <p>直線が長いため、外枠でも十分に差せる。ただし、スタート直後の内枠有利な側面もあり、枠順の影響は複雑。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-box">
+                <h3>🔄 大井1000mとの違い</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="comparison-label">1000m</div>
+                        <div class="comparison-detail">
+                            <p>• スタート: ホームストレッチ</p>
+                            <p>• コーナー: 1つのみ</p>
+                            <p>• 特性: スピード特化、内枠絶対有利</p>
+                        </div>
+                    </div>
+                    <div class="comparison-arrow">→</div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">1200m</div>
+                        <div class="comparison-detail">
+                            <p>• スタート: バックストレッチ</p>
+                            <p>• コーナー: 2つ</p>
+                            <p>• 特性: スピード+持久力、外枠も有利</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <h2 id="horse-number-analysis">馬番別成績から見る有利な枠順</h2>
 
-        <p>大井競馬場の1200mレースは、南関東地方競馬の中でも最も施行回数が多い主要距離です。1000mよりもやや余裕があるものの、依然としてスピード勝負の側面が強く、枠順の影響は無視できません。今回の大規模データ分析から、意外な傾向が明らかになりました。</p>
+        <p>大井競馬場の1200mレースは、<strong>南関東最長の直線386m</strong>を活かせる距離です。バックストレッチからスタートし、3コーナー・4コーナーの2つを回ってゴール。1000mと異なり、外枠でも直線で十分に差せるのが特徴です。今回の大規模データ分析から、コース特性を反映した興味深い傾向が明らかになりました。</p>
 
         <div class="stats-grid">
             <div class="stat-card">
@@ -714,7 +1136,12 @@ const ogImage = "https://nankan-analytics.keiba.link/course_data/ooi_1200m.png";
 
         <div class="important">
             <strong>⚠️ 注目ポイント</strong><br>
-            大井1200mでは、大外枠の16番が13.6%という最高勝率を記録。また、12番枠も11.3%と高い数値を示しています。一方で、内枠では3番枠が10.7%と健闘しており、1000mとは異なる傾向が見られます。フルゲートでの大外枠は頭数が少ないため、出走時は要注目です。
+            大井1200mでは、<strong>直線386mの長さ</strong>が枠順の有利不利に大きく影響。大外枠の16番が13.6%という最高勝率を記録しているのは、長い直線で外枠の不利を挽回できるため。また、12番枠も11.3%と高い数値を示しています。一方で、内枠では3番枠が10.7%と健闘しており、スタート直後のポジション取りで有利な側面もあります。
+        </div>
+
+        <div class="recommendation">
+            <strong>📊 データ出典</strong><br>
+            本ページのデータは、<strong>公式地方競馬情報サイト（KEIBA.GO.JP）</strong>の統計情報に基づいています。コース情報（1周距離・直線距離）は南関東公式サイトの公開データを使用し、馬番別・人気別成績は過去の実績データから算出しています。
         </div>
 
         <h2 id="popularity-analysis">人気別成績が示す鉄板の法則</h2>
@@ -791,13 +1218,130 @@ const ogImage = "https://nankan-analytics.keiba.link/course_data/ooi_1200m.png";
 
         <h2 id="optimal-strategy">データから導き出される最適戦略</h2>
 
-        <p>大井1200mは、1000mと比較してやや波乱含みの展開が増える傾向にあります。1番人気の勝率が40.9%と、1000mの71.4%から大きく低下することからも、より慎重な馬券構成が求められます。</p>
+        <p>大井1200mは、<strong>直線386mの長さ</strong>と<strong>2つのコーナー</strong>が生み出す、1000mとは異なる展開が特徴です。1番人気の勝率が40.9%と、1000mの71.4%から大きく低下することからも、より慎重な馬券構成が求められます。</p>
 
-        <p>特筆すべきは、大外枠の好成績と3番枠の健闘です。16番枠の13.6%という勝率は、少頭数での出走が多いことを考慮しても注目に値します。また、3番枠の複勝率27.4%は全馬番中トップであり、馬券の軸として検討する価値があります。</p>
+        <!-- 3段階戦略セクション（新設） -->
+        <section class="strategy-levels">
+            <h3>🎯 レベル別攻略法</h3>
+
+            <!-- 初心者向け -->
+            <div class="strategy-card beginner">
+                <div class="strategy-header">
+                    <span class="level-badge beginner-badge">初心者向け</span>
+                    <h4>堅実的中を目指す戦略</h4>
+                </div>
+                <div class="strategy-content">
+                    <div class="strategy-point">
+                        <strong>✅ 基本方針</strong>
+                        <p>1番人気を軸に、2-3番人気を相手にした馬単・ワイドで堅実に的中を狙う</p>
+                    </div>
+                    <div class="strategy-point">
+                        <strong>📊 買い目例</strong>
+                        <p>馬単：1番人気 → 2,3番人気（2点）<br>
+                           ワイド：1-2, 1-3, 2-3（3点）</p>
+                    </div>
+                    <div class="strategy-point">
+                        <strong>⚠️ 注意点</strong>
+                        <p>• 1番人気の勝率は40.9%なので、単勝は避ける<br>
+                           • 3番枠の馬が1-3番人気なら積極的に狙う<br>
+                           • 16番枠がいる場合は要チェック</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 中級者向け -->
+            <div class="strategy-card intermediate">
+                <div class="strategy-header">
+                    <span class="level-badge intermediate-badge">中級者向け</span>
+                    <h4>枠順を活かした攻略法</h4>
+                </div>
+                <div class="strategy-content">
+                    <div class="strategy-point">
+                        <strong>✅ 基本方針</strong>
+                        <p>人気と枠順を組み合わせ、コース特性（直線386m）を最大限に活かす</p>
+                    </div>
+                    <div class="strategy-point">
+                        <strong>📊 狙い目パターン</strong>
+                        <p>① 3番枠の2-4番人気馬（複勝率27.4%・全馬番トップ）<br>
+                           ② 12番・16番枠の1-3番人気馬（外枠有利）<br>
+                           ③ 4番人気までの差し・追込馬（直線長い）</p>
+                    </div>
+                    <div class="strategy-point">
+                        <strong>💡 買い目例</strong>
+                        <p>馬単：3番枠の人気馬 → 12,16番枠（2-4点）<br>
+                           三連複：1,2番人気 + 3番枠 + 12,16番枠（BOX）</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上級者向け -->
+            <div class="strategy-card advanced">
+                <div class="strategy-header">
+                    <span class="level-badge advanced-badge">上級者向け</span>
+                    <h4>高配当を狙う穴戦略</h4>
+                </div>
+                <div class="strategy-content">
+                    <div class="strategy-point">
+                        <strong>✅ 基本方針</strong>
+                        <p>コース特性と脚質・展開を読み、波乱を的中させる</p>
+                    </div>
+                    <div class="strategy-point">
+                        <strong>🎯 穴狙いのポイント</strong>
+                        <p>① 16番枠の4-6番人気馬（直線で伸びる差し馬）<br>
+                           ② 3番枠の5-8番人気馬（内枠で好位取れる先行馬）<br>
+                           ③ 逃げ馬不在レース（ペースが落ち着き差し有利）<br>
+                           ④ 4番人気以下の複数が好枠（波乱の兆候）</p>
+                    </div>
+                    <div class="strategy-point">
+                        <strong>💡 買い目例</strong>
+                        <p>馬単：3番枠穴馬 → 16番枠穴馬<br>
+                           三連単：1,2番人気 - 3,4番人気 - 5-8番人気（流し）</p>
+                    </div>
+                    <div class="strategy-point">
+                        <strong>⚠️ リスク管理</strong>
+                        <p>波乱狙いは10レース中2-3レース程度に留め、的中率とのバランスを取る</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- よくある失敗パターン（新設） -->
+        <section class="failure-patterns">
+            <h3>❌ よくある失敗パターン</h3>
+            <div class="failure-list">
+                <div class="failure-item">
+                    <div class="failure-title">🚫 失敗1: 1番人気の単勝・複勝買い</div>
+                    <div class="failure-reason">
+                        <strong>理由:</strong> 1番人気の勝率は40.9%で1000m（71.4%）より大幅に低い。単勝では回収率が見込めない。
+                    </div>
+                    <div class="failure-solution">
+                        <strong>対策:</strong> 馬単・ワイドで2-4番人気と組み合わせる
+                    </div>
+                </div>
+                <div class="failure-item">
+                    <div class="failure-title">🚫 失敗2: 内枠一辺倒の予想</div>
+                    <div class="failure-reason">
+                        <strong>理由:</strong> 1000mと異なり、直線386mで外枠の不利を挽回できる。16番・12番枠の勝率が高い。
+                    </div>
+                    <div class="failure-solution">
+                        <strong>対策:</strong> 外枠の好走馬を積極的に評価する
+                    </div>
+                </div>
+                <div class="failure-item">
+                    <div class="failure-title">🚫 失敗3: 追込馬の完全消し</div>
+                    <div class="failure-reason">
+                        <strong>理由:</strong> 直線386mは南関東最長。差し・追込馬でも十分に届く距離。
+                    </div>
+                    <div class="failure-solution">
+                        <strong>対策:</strong> 4番人気以内の差し・追込馬は検討する
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <div class="important">
             <strong>💡 最終結論</strong><br>
-            大井1200mは「堅さと波乱のバランス型レース」です。1番人気を軸としながらも、2-4番人気への流しを厚くし、大外枠（16番・12番）と3番枠の好走馬を組み合わせる戦略が効果的です。1000mほどの鉄板度はないため、点数を絞りすぎないことが的中への近道となります。
+            大井1200mは<strong>「直線386mを制する者が勝つ」</strong>コースです。1番人気を軸としながらも、3番枠・12番枠・16番枠の好走馬を組み合わせ、直線で伸びる差し馬を軽視しない戦略が効果的です。1000mほどの鉄板度はないため、点数を絞りすぎず、コース特性を理解した馬券構成が的中への近道となります。
         </div>
 
         <h2 id="comparison-analysis">1000mとの比較から見える攻略法</h2>
@@ -817,6 +1361,39 @@ const ogImage = "https://nankan-analytics.keiba.link/course_data/ooi_1200m.png";
         <p>大井競馬場1200mレースは、南関東競馬の主戦場とも言える重要な距離です。今回の5,000レース以上に及ぶビッグデータ分析により、大外枠の優位性と3番枠の安定感、そして人気馬の信頼度の変化が明確になりました。</p>
 
         <p>1000mほどの極端な傾向はないものの、それだけに綿密なデータ分析が威力を発揮します。枠順と人気の組み合わせ、展開予想を総合的に判断することで、回収率の向上が期待できるでしょう。継続的にデータを蓄積し、さらなる精度向上を目指してまいります。</p>
+
+        <!-- 初心者講座へのリンク（内部リンク強化） -->
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; padding: 30px 20px; margin: 30px 0;">
+            <h2 style="color: #0c4a6e; font-size: 22px; margin-top: 0; text-align: center; border: none;">📚 初心者講座で基礎から学ぶ</h2>
+            <p style="text-align: center; color: #475569; font-size: 16px; margin: 15px 0;">
+                コース特性を理解した上で、南関競馬の基礎から実戦まで体系的に学びませんか？
+            </p>
+
+            <div class="stats-grid" style="margin: 25px 0;">
+                <a href="/beginner/lesson-02/" style="background: white; border: 2px solid #e5e7eb; color: #1e293b; padding: 20px; border-radius: 10px; text-decoration: none; display: block; transition: all 0.3s ease;">
+                    <div style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 14px; margin-bottom: 10px; display: inline-block;">Step 2</div>
+                    <div style="font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 8px;">南関の特徴</div>
+                    <div style="color: #64748b; font-size: 14px;">4場それぞれの特性と、なぜデータ分析が重要かを学ぶ</div>
+                </a>
+                <a href="/beginner/lesson-06/" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 2px solid #f59e0b; color: #1e293b; padding: 20px; border-radius: 10px; text-decoration: none; display: block; position: relative; transition: all 0.3s ease;">
+                    <div style="background: #f59e0b; color: white; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 14px; margin-bottom: 10px; display: inline-block;">Step 6</div>
+                    <div style="position: absolute; top: 10px; right: 10px; background: #dc2626; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">おすすめ</div>
+                    <div style="font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 8px;">コース別の最初の一手</div>
+                    <div style="color: #64748b; font-size: 14px;">場と距離で変わる鉄板戦略を、実データで完全マスター</div>
+                </a>
+                <a href="/beginner/lesson-07/" style="background: white; border: 2px solid #e5e7eb; color: #1e293b; padding: 20px; border-radius: 10px; text-decoration: none; display: block; transition: all 0.3s ease;">
+                    <div style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 14px; margin-bottom: 10px; display: inline-block;">Step 7</div>
+                    <div style="font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 8px;">実戦チェックリスト</div>
+                    <div style="color: #64748b; font-size: 14px;">購入前・レース中・結果分析の3段階で継続的に勝つ</div>
+                </a>
+            </div>
+
+            <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 2px solid #bae6fd;">
+                <a href="/beginner/" class="cta-button cta-button-primary" style="background: #3b82f6; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: all 0.3s ease;">
+                    全7ステップの初心者講座を見る →
+                </a>
+            </div>
+        </div>
     </article>
 
     <!-- 追加セクション -->
