@@ -91,9 +91,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </li>
                 </ul>
 
-                <a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-6US56295GW7958014NFRB2BQ" class="plan-button plan-button-premium">
-                    プレミアムプランを始める
-                </a>
+                <button class="plan-button plan-button-premium" onclick="openBankModal('Premium', 9980)">
+                    🏦 銀行振込で申し込む
+                </button>
             </div>
 
             <!-- スタンダードプラン -->
@@ -130,9 +130,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </li>
                 </ul>
 
-                <a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-68H748483T318591TNFRBYMQ" class="plan-button plan-button-standard">
-                    スタンダードプランを始める
-                </a>
+                <button class="plan-button plan-button-standard" onclick="openBankModal('Standard', 5980)">
+                    🏦 銀行振込で申し込む
+                </button>
             </div>
         </div>
 
@@ -195,9 +195,252 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
         </div>
     </div>
+
+    <!-- 銀行振込モーダル -->
+    <div class="bank-modal" id="bankModal">
+      <div class="bank-modal-content">
+        <button class="bank-modal-close" onclick="closeBankModal()">×</button>
+
+        <h2 class="bank-modal-title">🏦 銀行振込でのお申し込み</h2>
+        <p class="modal-plan-info" id="modalPlanInfo"></p>
+
+        <div class="bank-info-box">
+          <div class="bank-info-item">
+            <span class="bank-info-label">振込先銀行</span>
+            <span class="bank-info-value">三井住友銀行
+              <button class="copy-button" onclick="copyToClipboard('三井住友銀行')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">支店名</span>
+            <span class="bank-info-value">洲本支店
+              <button class="copy-button" onclick="copyToClipboard('洲本支店')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座種別</span>
+            <span class="bank-info-value">普通</span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座番号</span>
+            <span class="bank-info-value">5338892
+              <button class="copy-button" onclick="copyToClipboard('5338892')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座名義</span>
+            <span class="bank-info-value" style="font-size: 0.95rem;">ﾏ-ｸｱﾂﾌﾟｴ-ｱｲｻ-ﾋﾞｽ ｱｻｲ ﾄｼﾋﾛ
+              <button class="copy-button" onclick="copyToClipboard('ﾏ-ｸｱﾂﾌﾟｴ-ｱｲｻ-ﾋﾞｽ ｱｻｲ ﾄｼﾋﾛ')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
+            <span class="bank-info-label">振込金額</span>
+            <span class="bank-info-value" style="color: #10b981; font-size: 1.3rem;" id="modalAmount">¥5,980</span>
+          </div>
+        </div>
+
+        <div class="bank-steps">
+          <div class="bank-steps-title">📝 お申し込み手順</div>
+          <div class="bank-step">
+            <span class="bank-step-number">1</span>
+            <span>上記の口座情報に振込金額をお振込みください</span>
+          </div>
+          <div class="bank-step">
+            <span class="bank-step-number">2</span>
+            <span>振込完了後、下記のフォームから必要情報をご送信ください</span>
+          </div>
+          <div class="bank-step">
+            <span class="bank-step-number">3</span>
+            <span>入金確認取れ次第、ログイン情報をメールでお送りします（1〜2営業日）</span>
+          </div>
+        </div>
+
+        <!-- 銀行振込申し込みフォーム -->
+        <div class="bank-form-section">
+          <div class="bank-form-title">💳 銀行振込お申し込みフォーム</div>
+
+          <form id="bankTransferForm" class="bank-form">
+            <div class="form-group">
+              <label for="fullName" class="form-label">お名前 <span class="required">*</span></label>
+              <input type="text" id="fullName" name="fullName" class="form-input" required placeholder="山田 太郎">
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">メールアドレス <span class="required">*</span></label>
+              <input type="email" id="email" name="email" class="form-input" required placeholder="example@email.com">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="transferDate" class="form-label">振込日 <span class="required">*</span></label>
+                <input type="date" id="transferDate" name="transferDate" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label for="transferTime" class="form-label">振込時刻 <span class="required">*</span></label>
+                <input type="time" id="transferTime" name="transferTime" class="form-input" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="transferAmount" class="form-label">振込金額 <span class="required">*</span></label>
+              <input type="number" id="transferAmount" name="transferAmount" class="form-input" required readonly>
+            </div>
+
+            <div class="form-group">
+              <label for="transferName" class="form-label">振込名義人 <span class="required">*</span></label>
+              <input type="text" id="transferName" name="transferName" class="form-input" required placeholder="ヤマダ タロウ">
+              <small class="form-hint">※振込時に使用した名義人を入力してください</small>
+            </div>
+
+            <div class="form-group">
+              <label for="remarks" class="form-label">備考・ご要望</label>
+              <textarea id="remarks" name="remarks" class="form-input" rows="3" placeholder="何かご要望がありましたらご記入ください（任意）"></textarea>
+            </div>
+
+            <button type="submit" class="form-submit-button" id="submitButton">
+              <span class="submit-text">📨 申し込みを送信</span>
+              <span class="submit-loading" style="display: none;">送信中...</span>
+            </button>
+
+            <div class="form-message" id="formMessage" style="display: none;"></div>
+          </form>
+        </div>
+
+        <div class="bank-warning">
+          <div class="bank-warning-title">⚠️ ご注意事項</div>
+          <div class="bank-warning-text">
+            ・振込手数料はお客様負担となります<br>
+            ・土日祝日の場合、確認が翌営業日となる場合がございます<br>
+            ・振込名義人とお申し込み者が異なる場合は、必ずメールにてお知らせください<br>
+            ・ご入金後のキャンセル・返金は承っておりません
+          </div>
+        </div>
+      </div>
+    </div>
 </BaseLayout>
 
-<!-- Payment LinksはStripeが全て処理するため、JavaScriptは不要 -->
+<script is:inline>
+  let currentPlan = '';
+  let currentAmount = 0;
+
+  function openBankModal(planName, amount) {
+    currentPlan = planName;
+    currentAmount = amount;
+
+    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
+    document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
+    document.getElementById('transferAmount').value = amount;
+    document.getElementById('bankModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeBankModal() {
+    document.getElementById('bankModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function copyToClipboard(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      document.execCommand('copy');
+      alert('コピーしました: ' + text);
+    } catch (err) {
+      console.error('コピーに失敗しました:', err);
+    }
+
+    document.body.removeChild(textarea);
+  }
+
+  // DOMContentLoaded後にフォーム処理を登録
+  document.addEventListener('DOMContentLoaded', () => {
+    // モーダル外クリックで閉じる
+    document.addEventListener('click', (e) => {
+      const bankModal = document.getElementById('bankModal');
+      if (e.target === bankModal) {
+        closeBankModal();
+      }
+    });
+
+    // Escapeキーで閉じる
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeBankModal();
+      }
+    });
+
+    // 銀行振込フォーム送信処理
+    const bankTransferForm = document.getElementById('bankTransferForm');
+    if (bankTransferForm) {
+      bankTransferForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitButton = document.getElementById('submitButton');
+        const submitText = submitButton.querySelector('.submit-text');
+        const submitLoading = submitButton.querySelector('.submit-loading');
+        const formMessage = document.getElementById('formMessage');
+
+        submitButton.disabled = true;
+        submitText.style.display = 'none';
+        submitLoading.style.display = 'inline';
+        formMessage.style.display = 'none';
+
+        const formData = {
+          fullName: document.getElementById('fullName').value,
+          email: document.getElementById('email').value,
+          transferDate: document.getElementById('transferDate').value,
+          transferTime: document.getElementById('transferTime').value,
+          transferAmount: document.getElementById('transferAmount').value,
+          transferName: document.getElementById('transferName').value,
+          remarks: document.getElementById('remarks').value,
+          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
+          timestamp: new Date().toISOString()
+        };
+
+        try {
+          const response = await fetch('/.netlify/functions/bank-transfer-application', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            formMessage.textContent = '✅ お申し込みを受け付けました。確認メールをお送りしましたのでご確認ください。';
+            formMessage.className = 'form-message success';
+            formMessage.style.display = 'block';
+
+            document.getElementById('bankTransferForm').reset();
+
+            setTimeout(() => {
+              closeBankModal();
+              formMessage.style.display = 'none';
+            }, 3000);
+          } else {
+            throw new Error(result.error || '送信に失敗しました');
+          }
+        } catch (error) {
+          formMessage.textContent = '❌ エラーが発生しました: ' + error.message;
+          formMessage.className = 'form-message error';
+          formMessage.style.display = 'block';
+        } finally {
+          submitButton.disabled = false;
+          submitText.style.display = 'inline';
+          submitLoading.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
 
 <style>
     .pricing-page {
@@ -493,5 +736,350 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .plan-button-premium {
             border-width: 3px;
         }
+    }
+
+    /* 銀行振込モーダル */
+    .bank-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .bank-modal.active {
+      display: flex;
+    }
+
+    .bank-modal-content {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 2px solid rgba(59, 130, 246, 0.5);
+      border-radius: 16px;
+      padding: 2.5rem;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .bank-modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #ef4444;
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .bank-modal-close:hover {
+      background: rgba(239, 68, 68, 0.3);
+      transform: rotate(90deg);
+    }
+
+    .bank-modal-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #60a5fa;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .modal-plan-info {
+      text-align: center;
+      color: #10b981;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .bank-info-box {
+      background: rgba(59, 130, 246, 0.1);
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .bank-info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .bank-info-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .bank-info-label {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .bank-info-value {
+      color: #e2e8f0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: right;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .copy-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .copy-button:hover {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      transform: translateY(-2px);
+    }
+
+    .bank-steps {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .bank-steps-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #10b981;
+      margin-bottom: 1rem;
+    }
+
+    .bank-step {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .bank-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .bank-step-number {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .bank-form-section {
+      background: rgba(16, 185, 129, 0.05);
+      border: 2px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .bank-form-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #10b981;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .bank-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .required {
+      color: #ef4444;
+      margin-left: 4px;
+    }
+
+    .form-input {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(51, 65, 85, 0.5);
+      color: #e2e8f0;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-hint {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-submit-button {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 1rem;
+    }
+
+    .form-submit-button:hover:not(:disabled) {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .form-submit-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .form-message {
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .form-message.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+
+    .form-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .bank-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .bank-warning-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fbbf24;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bank-warning-text {
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .bank-modal-content {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+      }
+
+      .bank-modal-title {
+        font-size: 1.5rem;
+      }
+
+      .bank-info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .bank-info-value {
+        text-align: left;
+        font-size: 1rem;
+      }
+
+      .copy-button {
+        margin-left: 0;
+        margin-top: 8px;
+      }
+
+      .bank-step {
+        font-size: 0.9rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .bank-form-section {
+        padding: 1.5rem;
+      }
+
+      .form-submit-button {
+        font-size: 1rem;
+        padding: 0.875rem 1.5rem;
+      }
     }
 </style>
