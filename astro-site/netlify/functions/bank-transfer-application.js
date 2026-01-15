@@ -100,7 +100,7 @@ exports.handler = async (event, context) => {
   <div class="container">
     <div class="header">
       <h2 style="margin: 0;">🏦 銀行振込申請通知</h2>
-      <p style="margin: 10px 0 0 0; font-size: 0.95rem;">Premium Plus購入申請が届きました</p>
+      <p style="margin: 10px 0 0 0; font-size: 0.95rem;">${productName} 購入申請が届きました</p>
     </div>
 
     <div class="section">
@@ -154,7 +154,7 @@ exports.handler = async (event, context) => {
       <ol style="margin: 0; padding-left: 20px; color: #78350f;">
         <li>振込確認（三井住友銀行 洲本支店 普通 5338892）</li>
         <li>入金確認後、${email} へアクセス情報を送信</li>
-        <li>Airtableに顧客情報を登録（Plan: Premium Sanrenpuku）</li>
+        <li>Airtableに顧客情報を登録（${productName}）</li>
       </ol>
     </div>
 
@@ -176,7 +176,7 @@ exports.handler = async (event, context) => {
     const userEmailData = {
       personalizations: [{
         to: [{ email: email }],
-        subject: '【銀行振込申請受付】NANKANアナリティクス Premium Plus'
+        subject: `【銀行振込申請受付】NANKANアナリティクス ${productName}`
       }],
       from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
       content: [{
@@ -252,7 +252,7 @@ exports.handler = async (event, context) => {
         </li>
         <li style="margin-bottom: 10px;">
           <strong>アクセス情報送付</strong><br>
-          Premium Plus（三連単予想）のアクセス方法をメールでお送りいたします
+          ${productName} のアクセス方法をメールでお送りいたします
         </li>
       </ol>
     </div>
