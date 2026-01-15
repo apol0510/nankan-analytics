@@ -4068,9 +4068,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <li>✅ 的中率72% 回収率156%</li>
                         <li>✅ 買い目点数7-9点の少点数</li>
                     </ul>
-                    <a href="mailto:nankan.analytics@keiba.link?subject=プラン変更希望（Premium Combo ¥24,800）&body=お名前：%0D%0A現在のプラン：Premium%0D%0A変更希望プラン：Premium Combo%0D%0A%0D%0A※折り返しご連絡いたします。" class="btn-plan combo">
+                    <button class="btn-plan combo" onclick="openBankModal('Premium Combo', 24800)">
                         🏦 銀行振込でプラン変更
-                    </a>
+                    </button>
                     <p class="plan-note">変更前: Premium ¥9,980 → 変更後: Combo ¥24,800</p>
                 </div>
 
@@ -4086,9 +4086,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <li>✅ 買い目点数7-9点の少点数</li>
                         <li class="warning-feature">❌ 馬単3戦略は閲覧できません</li>
                     </ul>
-                    <a href="mailto:nankan.analytics@keiba.link?subject=プラン変更希望（Premium Sanrenpuku ¥19,820）&body=お名前：%0D%0A現在のプラン：Premium%0D%0A変更希望プラン：Premium Sanrenpuku%0D%0A%0D%0A※折り返しご連絡いたします。" class="btn-plan sanrenpuku">
+                    <button class="btn-plan sanrenpuku" onclick="openBankModal('Premium Sanrenpuku', 19820)">
                         🏦 銀行振込でプラン変更
-                    </a>
+                    </button>
                     <p class="plan-note">変更前: Premium ¥9,980 → 変更後: Sanrenpuku ¥19,820</p>
                 </div>
             </div>
@@ -4153,9 +4153,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <li>✅ 的中率72% 回収率156%</li>
                         <li>✅ 買い目点数7-9点の少点数</li>
                     </ul>
-                    <a href="mailto:nankan.analytics@keiba.link?subject=プラン変更希望（Premium Sanrenpuku ¥19,820）&body=お名前：%0D%0A現在のプラン：Standard%0D%0A変更希望プラン：Premium Sanrenpuku%0D%0A%0D%0A※折り返しご連絡いたします。" class="btn-plan sanrenpuku">
+                    <button class="btn-plan sanrenpuku" onclick="openBankModal('Premium Sanrenpuku', 19820)">
                         🏦 銀行振込でプラン変更
-                    </a>
+                    </button>
                     <p class="plan-note">変更前: Standard ¥5,980 → 変更後: Sanrenpuku ¥19,820</p>
                 </div>
 
@@ -4172,9 +4172,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <li>✅ 的中率72% 回収率156%</li>
                         <li>✅ 買い目点数7-9点の少点数</li>
                     </ul>
-                    <a href="mailto:nankan.analytics@keiba.link?subject=プラン変更希望（Premium Combo ¥24,800）&body=お名前：%0D%0A現在のプラン：Standard%0D%0A変更希望プラン：Premium Combo%0D%0A%0D%0A※折り返しご連絡いたします。" class="btn-plan combo">
+                    <button class="btn-plan combo" onclick="openBankModal('Premium Combo', 24800)">
                         🏦 銀行振込でプラン変更
-                    </a>
+                    </button>
                     <p class="plan-note">変更前: Standard ¥5,980 → 変更後: Combo ¥24,800</p>
                 </div>
             </div>
@@ -4501,5 +4501,251 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 }
             });
         });
+    </script>
+
+    <!-- 銀行振込モーダル -->
+    <div class="bank-modal" id="bankModal">
+      <div class="bank-modal-content">
+        <button class="bank-modal-close" onclick="closeBankModal()">×</button>
+
+        <h2 class="bank-modal-title">🏦 銀行振込でのお申し込み</h2>
+        <p class="modal-plan-info" id="modalPlanInfo"></p>
+
+        <div class="bank-info-box">
+          <div class="bank-info-item">
+            <span class="bank-info-label">振込先銀行</span>
+            <span class="bank-info-value">三井住友銀行
+              <button class="copy-button" onclick="copyToClipboard('三井住友銀行')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">支店名</span>
+            <span class="bank-info-value">洲本支店
+              <button class="copy-button" onclick="copyToClipboard('洲本支店')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座種別</span>
+            <span class="bank-info-value">普通</span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座番号</span>
+            <span class="bank-info-value">5338892
+              <button class="copy-button" onclick="copyToClipboard('5338892')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item">
+            <span class="bank-info-label">口座名義</span>
+            <span class="bank-info-value" style="font-size: 0.95rem;">ﾏ-ｸｱﾂﾌﾟｴ-ｱｲｻ-ﾋﾞｽ ｱｻｲ ﾄｼﾋﾛ
+              <button class="copy-button" onclick="copyToClipboard('ﾏ-ｸｱﾂﾌﾟｴ-ｱｲｻ-ﾋﾞｽ ｱｻｲ ﾄｼﾋﾛ')">コピー</button>
+            </span>
+          </div>
+          <div class="bank-info-item" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
+            <span class="bank-info-label">振込金額</span>
+            <span class="bank-info-value" style="color: #10b981; font-size: 1.3rem;" id="modalAmount">¥5,980</span>
+          </div>
+        </div>
+
+        <div class="bank-steps">
+          <div class="bank-steps-title">📝 お申し込み手順</div>
+          <div class="bank-step">
+            <span class="bank-step-number">1</span>
+            <span>上記の口座情報に振込金額をお振込みください</span>
+          </div>
+          <div class="bank-step">
+            <span class="bank-step-number">2</span>
+            <span>振込完了後、下記のフォームから必要情報をご送信ください</span>
+          </div>
+          <div class="bank-step">
+            <span class="bank-step-number">3</span>
+            <span>入金確認取れ次第、プラン変更処理を実施します（1〜2営業日）</span>
+          </div>
+        </div>
+
+        <!-- 銀行振込申し込みフォーム -->
+        <div class="bank-form-section">
+          <div class="bank-form-title">💳 銀行振込お申し込みフォーム</div>
+
+          <form id="bankTransferForm" class="bank-form">
+            <div class="form-group">
+              <label for="fullName" class="form-label">お名前 <span class="required">*</span></label>
+              <input type="text" id="fullName" name="fullName" class="form-input" required placeholder="山田 太郎">
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">メールアドレス <span class="required">*</span></label>
+              <input type="email" id="email" name="email" class="form-input" required placeholder="example@email.com">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="transferDate" class="form-label">振込日 <span class="required">*</span></label>
+                <input type="date" id="transferDate" name="transferDate" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label for="transferTime" class="form-label">振込時刻 <span class="required">*</span></label>
+                <input type="time" id="transferTime" name="transferTime" class="form-input" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="transferAmount" class="form-label">振込金額 <span class="required">*</span></label>
+              <input type="number" id="transferAmount" name="transferAmount" class="form-input" required readonly>
+            </div>
+
+            <div class="form-group">
+              <label for="transferName" class="form-label">振込名義人 <span class="required">*</span></label>
+              <input type="text" id="transferName" name="transferName" class="form-input" required placeholder="ヤマダ タロウ">
+              <small class="form-hint">※振込時に使用した名義人を入力してください</small>
+            </div>
+
+            <div class="form-group">
+              <label for="remarks" class="form-label">備考・ご要望</label>
+              <textarea id="remarks" name="remarks" class="form-input" rows="3" placeholder="何かご要望がありましたらご記入ください（任意）"></textarea>
+            </div>
+
+            <button type="submit" class="form-submit-button" id="submitButton">
+              <span class="submit-text">📨 申し込みを送信</span>
+              <span class="submit-loading" style="display: none;">送信中...</span>
+            </button>
+
+            <div class="form-message" id="formMessage" style="display: none;"></div>
+          </form>
+        </div>
+
+        <div class="bank-warning">
+          <div class="bank-warning-title">⚠️ ご注意事項</div>
+          <div class="bank-warning-text">
+            ・振込手数料はお客様負担となります<br>
+            ・土日祝日の場合、確認が翌営業日となる場合がございます<br>
+            ・振込名義人とお申し込み者が異なる場合は、必ずメールにてお知らせください<br>
+            ・プラン変更後のキャンセル・返金は承っておりません
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      let currentPlan = '';
+      let currentAmount = 0;
+
+      function openBankModal(planName, amount) {
+        currentPlan = planName;
+        currentAmount = amount;
+
+        document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
+        document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
+        document.getElementById('transferAmount').value = amount;
+        document.getElementById('bankModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeBankModal() {
+        document.getElementById('bankModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+
+      function copyToClipboard(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        try {
+          document.execCommand('copy');
+          alert('コピーしました: ' + text);
+        } catch (err) {
+          console.error('コピーに失敗しました:', err);
+        }
+
+        document.body.removeChild(textarea);
+      }
+
+      // DOMContentLoaded後にフォーム処理を登録
+      document.addEventListener('DOMContentLoaded', () => {
+        // モーダル外クリックで閉じる
+        document.addEventListener('click', (e) => {
+          const bankModal = document.getElementById('bankModal');
+          if (e.target === bankModal) {
+            closeBankModal();
+          }
+        });
+
+        // Escapeキーで閉じる
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            closeBankModal();
+          }
+        });
+
+        // 銀行振込フォーム送信処理
+        const bankTransferForm = document.getElementById('bankTransferForm');
+        if (bankTransferForm) {
+          bankTransferForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitButton = document.getElementById('submitButton');
+            const submitText = submitButton.querySelector('.submit-text');
+            const submitLoading = submitButton.querySelector('.submit-loading');
+            const formMessage = document.getElementById('formMessage');
+
+            submitButton.disabled = true;
+            submitText.style.display = 'none';
+            submitLoading.style.display = 'inline';
+            formMessage.style.display = 'none';
+
+            const formData = {
+              fullName: document.getElementById('fullName').value,
+              email: document.getElementById('email').value,
+              transferDate: document.getElementById('transferDate').value,
+              transferTime: document.getElementById('transferTime').value,
+              transferAmount: document.getElementById('transferAmount').value,
+              transferName: document.getElementById('transferName').value,
+              remarks: document.getElementById('remarks').value,
+              productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
+              timestamp: new Date().toISOString()
+            };
+
+            try {
+              const response = await fetch('/.netlify/functions/bank-transfer-application', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+              });
+
+              const result = await response.json();
+
+              if (result.success) {
+                formMessage.textContent = '✅ お申し込みを受け付けました。確認メールをお送りしましたのでご確認ください。';
+                formMessage.className = 'form-message success';
+                formMessage.style.display = 'block';
+
+                document.getElementById('bankTransferForm').reset();
+
+                setTimeout(() => {
+                  closeBankModal();
+                  formMessage.style.display = 'none';
+                }, 3000);
+              } else {
+                throw new Error(result.error || '送信に失敗しました');
+              }
+            } catch (error) {
+              console.error('送信エラー:', error);
+              formMessage.textContent = '❌ 送信に失敗しました。時間をおいて再度お試しください。';
+              formMessage.className = 'form-message error';
+              formMessage.style.display = 'block';
+            } finally {
+              submitButton.disabled = false;
+              submitText.style.display = 'inline';
+              submitLoading.style.display = 'none';
+            }
+          });
+        }
+      });
     </script>
 </BaseLayout>
