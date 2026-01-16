@@ -210,22 +210,22 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
       </div>
       <!-- プラン選択ボタン -->
       <div class="cta-plans">
-        <a href="mailto:nankan.analytics@keiba.link?subject=プラン申込希望（Premium Sanrenpuku ¥19,820）&body=お名前：%0D%0Aメールアドレス：%0D%0A希望プラン：Premium Sanrenpuku%0D%0A%0D%0A※折り返しご連絡いたします。" class="cta-plan-card">
+        <button onclick="openBankModal('Premium Sanrenpuku', 19820)" class="cta-plan-card">
           <div class="plan-header">
             <span class="plan-name">🏦 三連複のみ</span>
           </div>
           <div class="plan-price">¥19,820<span class="plan-period">/月</span></div>
           <div class="plan-description">高性能AI三連複絞り込み買い目</div>
-        </a>
+        </button>
 
-        <a href="mailto:nankan.analytics@keiba.link?subject=プラン申込希望（Premium Combo ¥24,800）&body=お名前：%0D%0Aメールアドレス：%0D%0A希望プラン：Premium Combo%0D%0A%0D%0A※折り返しご連絡いたします。" class="cta-plan-card cta-plan-recommended">
+        <button onclick="openBankModal('Premium Combo', 24800)" class="cta-plan-card cta-plan-recommended">
           <div class="recommended-badge">おすすめ</div>
           <div class="plan-header">
             <span class="plan-name">🏦 馬単+三連複セット</span>
           </div>
           <div class="plan-price">¥24,800<span class="plan-period">/月</span></div>
           <div class="plan-description">通常¥29,800 → ¥5,000お得！</div>
-        </a>
+        </button>
       </div>
     </div>
   </div>
@@ -783,6 +783,11 @@ const description = 'NANKANアナリティクスの三連複買い目的中実�
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
   }
 
   .cta-plan-card:hover {

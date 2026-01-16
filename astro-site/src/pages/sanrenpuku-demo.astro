@@ -538,7 +538,7 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
                     ※ 高性能AI三連複の自動絞り込み機能は「三連複」のみです。馬単は従来通り3戦略の買い目提供となります。
                 </p>
                 <div class="plan-buttons">
-                    <a href="mailto:nankan.analytics@keiba.link?subject=プラン申込希望（Premium Combo ¥24,800）&body=お名前：%0D%0Aメールアドレス：%0D%0A希望プラン：Premium Combo%0D%0A%0D%0A※折り返しご連絡いたします。" class="plan-btn combo-plan">
+                    <button onclick="openBankModal('Premium Combo', 24800)" class="plan-btn combo-plan">
                         <div class="plan-badge">お得</div>
                         <div class="plan-name">🏦 馬単+三連複 併用プランに変更</div>
                         <div class="plan-subtitle">Premium Combo</div>
@@ -555,8 +555,8 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
                                 <span class="feature-detail">新たに追加されます</span>
                             </div>
                         </div>
-                    </a>
-                    <a href="mailto:nankan.analytics@keiba.link?subject=プラン申込希望（Premium Sanrenpuku ¥19,820）&body=お名前：%0D%0Aメールアドレス：%0D%0A希望プラン：Premium Sanrenpuku%0D%0A%0D%0A※折り返しご連絡いたします。" class="plan-btn single-plan">
+                    </button>
+                    <button onclick="openBankModal('Premium Sanrenpuku', 19820)" class="plan-btn single-plan">
                         <div class="plan-name">🏦 三連複プランに変更</div>
                         <div class="plan-subtitle">Premium Sanrenpuku</div>
                         <div class="plan-price">¥19,820<span class="plan-period">/月</span></div>
@@ -570,7 +570,7 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
                                 ※ 馬単の3戦略買い目は含まれません
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1765,6 +1765,11 @@ const actualDescription = '本命ファーンヒル（88pt）の信頼度が高�
         transition: all 0.3s ease;
         display: block;
         text-align: center;
+        width: 100%;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
     }
 
     .plan-btn:hover {
