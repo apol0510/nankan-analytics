@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import archiveData2025_10 from '../../data/archiveSanrenpukuResults_2025-10.json';
 import archiveData2025_11 from '../../data/archiveSanrenpukuResults_2025-11.json';
 import archiveData2025_12 from '../../data/archiveSanrenpukuResults_2025-12.json';
 import archiveData2026_01 from '../../data/archiveSanrenpukuResults_2026-01.json';
@@ -10,6 +11,7 @@ import archiveData2026_01 from '../../data/archiveSanrenpukuResults_2026-01.json
 // 全月のデータを統合
 const archiveSanrenpukuResults = {
   '2025': {
+    ...archiveData2025_10['2025'],
     ...archiveData2025_11['2025'],
     ...archiveData2025_12['2025']
   },
