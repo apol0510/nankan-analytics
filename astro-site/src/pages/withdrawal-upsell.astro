@@ -755,21 +755,6 @@
         ※次の超勝負レース1鞍のAI超精密買い目提供<br>
         ※人間では実現不可能なレベルの的中精度
       </p>
-
-      <!-- 割引コード表示 -->
-      <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 12px;">
-        <p style="font-size: 1rem; color: #10b981; font-weight: 600; margin-bottom: 0.5rem;">
-          💰 特別割引コード
-        </p>
-        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1rem 0;">
-          <code id="promoCode" style="font-size: 1.8rem; font-weight: bold; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 0.5rem 1.5rem; border-radius: 8px; letter-spacing: 2px;">off30000</code>
-          <button onclick="copyPromoCode()" style="padding: 0.5rem 1rem; background: #10b981; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">📋 コピー</button>
-        </div>
-        <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
-          👉 お申し込みボタンをクリック後、Stripe決済ページで<br>
-          上記の割引コードを入力してください
-        </p>
-      </div>
     </div>
 
     <!-- ラストチャンス強調 -->
@@ -921,46 +906,6 @@
           }
         });
       }); // DOMContentLoaded の閉じカッコ
-
-      // 割引コードコピー機能（より確実な実装）
-      function copyPromoCode() {
-        const code = 'off30000';
-
-        // テキストエリアを使った従来の方法（より確実）
-        const textarea = document.createElement('textarea');
-        textarea.value = code;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-
-        try {
-          const successful = document.execCommand('copy');
-          document.body.removeChild(textarea);
-
-          if (successful) {
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.textContent = '✅ コピー完了！';
-            btn.style.background = '#059669';
-            setTimeout(() => {
-              btn.textContent = originalText;
-              btn.style.background = '#10b981';
-            }, 2000);
-          } else {
-            throw new Error('Copy failed');
-          }
-        } catch (err) {
-          document.body.removeChild(textarea);
-          // フォールバック：コードを選択状態にする
-          const codeElement = document.getElementById('promoCode');
-          const range = document.createRange();
-          range.selectNode(codeElement);
-          window.getSelection().removeAllRanges();
-          window.getSelection().addRange(range);
-          alert('コードを選択しました。Ctrl+C（Mac: Cmd+C）でコピーしてください');
-        }
-      }
     </script>
 
   </div>
