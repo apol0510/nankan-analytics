@@ -1,3 +1,51 @@
 {
-    "git.ignoreLimitWarning": true
+    // Git設定
+    "git.ignoreLimitWarning": true,
+
+    // 🔧 VSCodeクラッシュ防止設定（2026-01-13追加）
+
+    // TypeScriptサーバーのメモリ制限（デフォルト3GB → 2GBに削減）
+    "typescript.tsserver.maxTsServerMemory": 2048,
+
+    // ファイル監視を無効化（大量ファイルによるメモリ圧迫を防止）
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/.git/**": true,
+        "**/dist/**": true,
+        "**/.astro/**": true,
+        "**/public/**": true
+    },
+
+    // 検索から除外（検索時のメモリ使用量削減）
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/.astro": true,
+        "**/public/data": true
+    },
+
+    // ファイル数制限（大量ファイルの同時処理を防止）
+    "files.maxMemoryForLargeFilesMB": 2048,
+
+    // 自動保存を無効化（頻繁な書き込みによるメモリ圧迫を防止）
+    "files.autoSave": "off",
+
+    // Git自動フェッチを無効化（バックグラウンド処理を削減）
+    "git.autorefresh": false,
+    "git.autofetch": false,
+
+    // Markdown プレビューを無効化（メモリ節約）
+    "markdown.preview.breaks": false,
+
+    // Breadcrumbs を簡略化（UI処理を削減）
+    "breadcrumbs.symbolPath": "off",
+
+    // Editor の軽量化
+    "editor.minimap.enabled": false,
+    "editor.suggest.shareSuggestSelections": false,
+    "editor.quickSuggestions": {
+        "other": false,
+        "comments": false,
+        "strings": false
+    }
 }
