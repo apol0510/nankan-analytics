@@ -1428,6 +1428,12 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         currentPlan = planName;
         currentAmount = amount;
 
+        // プラン選択モーダルを閉じる
+        const planSelectionModal = document.getElementById('planSelectionModal');
+        if (planSelectionModal) {
+          planSelectionModal.style.display = 'none';
+        }
+
         document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
         document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
         document.getElementById('transferAmount').value = amount;
