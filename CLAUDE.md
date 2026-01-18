@@ -15,6 +15,16 @@
 
 ## 📅 **日常更新作業マニュアル** 📅
 
+### ⚠️ **🚨 DAILY_UPDATE_PROCEDURES.md は削除厳禁 🚨**
+
+**重要：** `DAILY_UPDATE_PROCEDURES.md` は日常業務の根幹ファイルです。
+- ❌ **絶対に削除・移動してはいけません**
+- ✅ バックアップ: `DAILY_UPDATE_PROCEDURES.BACKUP.md`
+- ✅ 2026-01-18に復元・作成された重要資産
+- ✅ CLAUDE.md軽量化のためにアーカイブ分割したもの
+
+---
+
 **マコさんが以下の指示をしたら、すぐに該当手順を実行：**
 
 - 🔮 **「予想更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-予想更新の手順)
