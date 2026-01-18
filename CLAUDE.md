@@ -13,6 +13,23 @@
 
 ---
 
+## 📅 **日常更新作業マニュアル** 📅
+
+**マコさんが以下の指示をしたら、すぐに該当手順を実行：**
+
+- 🔮 **「予想更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-予想更新の手順)
+- 🐴 **「穴馬更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-穴馬更新の手順)
+- 📊 **「馬単結果更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-馬単結果更新の手順)
+- 📊 **「三連複結果更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-三連複結果更新の手順)
+- 📸 **「画像更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-画像更新の手順)
+
+**🚨 絶対に守ること：**
+- ❌ 「更新不要」判定は絶対にしない
+- ✅ 既存データがあっても必ず全手順を実行する
+- ✅ マコさんが貼り付けたデータを信頼し、必ず同期・コミット・プッシュする
+
+---
+
 ## 🚨 **最優先：プロジェクト識別ルール（複数ウィンドウ対応）** 🚨
 
 ### **このプロジェクトの識別情報**
