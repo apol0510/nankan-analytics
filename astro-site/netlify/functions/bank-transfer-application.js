@@ -74,6 +74,7 @@ exports.handler = async (event, context) => {
     const adminEmailData = {
       personalizations: [{
         to: [{ email: ADMIN_EMAIL }],
+        bcc: [{ email: process.env.MAKE_MAILHOOK_EMAIL || '' }].filter(item => item.email), // Make Mailhook転送
         subject: `【銀行振込申請】${email} - ${productName}`
       }],
       from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
