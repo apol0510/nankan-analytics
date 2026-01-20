@@ -4595,10 +4595,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
 
             <div class="form-group">
-              <label for="transferName" class="form-label">振込名義人 <span class="required">*</span></label>
-              <input type="text" id="transferName" name="transferName" class="form-input" required placeholder="ヤマダ タロウ">
-              <small class="form-hint">※振込時に使用した名義人を入力してください</small>
-            </div>
 
             <div class="form-group">
               <label for="remarks" class="form-label">備考・ご要望</label>
@@ -4619,7 +4615,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="bank-warning-text">
             ・振込手数料はお客様負担となります<br>
             ・土日祝日の場合、確認が翌営業日となる場合がございます<br>
-            ・振込名義人とお申し込み者が異なる場合は、必ずメールにてお知らせください<br>
+            ・<strong>お名前と同じ名義で振込をお願いします</strong><br>
+            ・名義が異なる場合は、備考欄にその旨をご記入ください<br>
             ・プラン変更後のキャンセル・返金は承っておりません
           </div>
         </div>
@@ -4703,7 +4700,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               transferDate: document.getElementById('transferDate').value,
               transferTime: document.getElementById('transferTime').value,
               transferAmount: document.getElementById('transferAmount').value,
-              transferName: document.getElementById('transferName').value,
+              transferName: document.getElementById('fullName').value,  // お名前と同じ
               remarks: document.getElementById('remarks').value,
               productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
               timestamp: new Date().toISOString()
