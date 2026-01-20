@@ -143,21 +143,43 @@ export function getRiskLevelText(riskPercentage) {
     return "標準";
 }
 
-// 推奨度計算（リスクの逆数ベース）
+// 推奨度計算（リスクの逆数ベース + 文字列グレード対応）
 export function getRecommendationStars(riskPercentage) {
+    // 文字列グレード（"A+", "B+"など）の場合
+    if (typeof riskPercentage === 'string') {
+        const grade = riskPercentage.toUpperCase();
+        if (grade === 'A+' || grade === 'A') return "★★★★★";
+        if (grade === 'B+' || grade === 'B') return "★★★★☆";
+        if (grade === 'C+' || grade === 'C') return "★★★☆☆";
+        if (grade === 'D+' || grade === 'D') return "★★☆☆☆";
+        return "★☆☆☆☆";
+    }
+
+    // 数値の場合（従来の処理）
     if (riskPercentage <= 25) return "★★★★★";
     if (riskPercentage <= 35) return "★★★★☆";
     if (riskPercentage <= 50) return "★★★☆☆";
-    if (riskPercentage <= 70) return "★★☆☆☆";  // 高配当追求型を★★にするため閾値を70%に拡張
+    if (riskPercentage <= 70) return "★★☆☆☆";
     return "★☆☆☆☆";
 }
 
 // 推奨度の数値計算（★の個数を返す）
 export function getRecommendationCount(riskPercentage) {
+    // 文字列グレード（"A+", "B+"など）の場合
+    if (typeof riskPercentage === 'string') {
+        const grade = riskPercentage.toUpperCase();
+        if (grade === 'A+' || grade === 'A') return 5;
+        if (grade === 'B+' || grade === 'B') return 4;
+        if (grade === 'C+' || grade === 'C') return 3;
+        if (grade === 'D+' || grade === 'D') return 2;
+        return 1;
+    }
+
+    // 数値の場合（従来の処理）
     if (riskPercentage <= 25) return 5;
     if (riskPercentage <= 35) return 4;
     if (riskPercentage <= 50) return 3;
-    if (riskPercentage <= 70) return 2;  // 高配当追求型を★★にするため閾値を70%に拡張
+    if (riskPercentage <= 70) return 2;
     return 1;
 }
 

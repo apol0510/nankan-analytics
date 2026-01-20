@@ -43,13 +43,34 @@ const { raceInfo, horses, analysis, preview = '', allHorses, totalHorses } = mai
 // 正規化されたホースデータ（メインレース用）
 const normalizedHorses = normalizeHorseData(mainRace);
 
-// 統一システムで戦略データを生成（動的買い目対応）
+// 統一システムで戦略データを生成（JSONデータ優先、動的買い目対応）
 const raceData = processUnifiedRaceData(mainRace);
-const strategies = {
-    safe: raceData.strategies.safe,
-    balance: raceData.strategies.balance,
-    aggressive: raceData.strategies.aggressive
-};
+
+// JSONデータにstrategiesが存在する場合は優先使用
+let strategies;
+if (mainRace.strategies && mainRace.strategies.safe && mainRace.strategies.balance && mainRace.strategies.aggressive) {
+    console.log(`✅ Archive ${allRacesData.raceDate}: Using JSON strategies data`);
+
+    // JSONデータのフィールド名をマッピング（title→name, risk→description）
+    const mapStrategy = (s) => ({
+        ...s,
+        name: s.title || s.name,
+        description: s.risk || s.description
+    });
+
+    strategies = {
+        safe: mapStrategy(mainRace.strategies.safe),
+        balance: mapStrategy(mainRace.strategies.balance),
+        aggressive: mapStrategy(mainRace.strategies.aggressive)
+    };
+} else {
+    console.log(`⚠️ Archive ${allRacesData.raceDate}: Using dynamic strategies`);
+    strategies = {
+        safe: raceData.strategies.safe,
+        balance: raceData.strategies.balance,
+        aggressive: raceData.strategies.aggressive
+    };
+}
 
 // スコア表示用のスコア変数を定義
 const mainHorseScore = getHorseConfidenceFromMark(mainRace.horses.main);
