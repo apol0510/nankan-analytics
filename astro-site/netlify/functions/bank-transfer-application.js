@@ -415,6 +415,79 @@ exports.handler = async (event, context) => {
       console.log('ℹ️ Premium Plus - Airtable registration skipped');
     }
 
+    // ========================================
+    // BlastMail読者登録（Premium Plus以外の月額プラン）
+    // ========================================
+    if (!productName.includes('Premium Plus')) {
+      try {
+        const BLASTMAIL_USERNAME = process.env.BLASTMAIL_USERNAME;
+        const BLASTMAIL_PASSWORD = process.env.BLASTMAIL_PASSWORD;
+        const BLASTMAIL_API_KEY = process.env.BLASTMAIL_API_KEY;
+
+        if (!BLASTMAIL_USERNAME || !BLASTMAIL_PASSWORD || !BLASTMAIL_API_KEY) {
+          console.warn('⚠️ BlastMail credentials not configured, skipping reader registration');
+        } else {
+          // Step 1: ログイン（access_token取得）
+          const loginUrl = 'https://api.bme.jp/rest/1.0/authenticate/login';
+          const loginParams = new URLSearchParams({
+            username: BLASTMAIL_USERNAME,
+            password: BLASTMAIL_PASSWORD,
+            api_key: BLASTMAIL_API_KEY,
+            format: 'json'
+          });
+
+          const loginResponse = await fetch(loginUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: loginParams.toString()
+          });
+
+          if (!loginResponse.ok) {
+            throw new Error(`BlastMail login failed: ${loginResponse.status}`);
+          }
+
+          const loginData = await loginResponse.json();
+          const accessToken = loginData.accessToken;
+
+          if (!accessToken) {
+            throw new Error('BlastMail access token not returned');
+          }
+
+          // Step 2: 読者登録
+          const registerUrl = 'https://api.bme.jp/rest/1.0/contact/detail/create';
+          const registerParams = new URLSearchParams({
+            access_token: accessToken,
+            format: 'json',
+            email: email,
+            name: fullName
+          });
+
+          const registerResponse = await fetch(registerUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: registerParams.toString()
+          });
+
+          if (!registerResponse.ok) {
+            const errorText = await registerResponse.text();
+            throw new Error(`BlastMail reader registration failed: ${registerResponse.status} - ${errorText}`);
+          }
+
+          const registerData = await registerResponse.json();
+          console.log('✅ BlastMail reader registered:', email, 'ContactID:', registerData.contactID);
+        }
+      } catch (blastMailError) {
+        console.error('❌ BlastMail registration error:', blastMailError);
+        // BlastMailエラーでも処理は続行（メール送信・Airtable登録は成功しているため）
+      }
+    } else {
+      console.log('ℹ️ Premium Plus - BlastMail registration skipped');
+    }
+
     console.log('✅ Bank transfer application submitted:', {
       email,
       fullName,
