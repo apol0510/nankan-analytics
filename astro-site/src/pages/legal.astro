@@ -33,8 +33,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       width: 100%;
       border-collapse: collapse;
       margin: 2rem 0;
-      background: white;
+      background: white !important;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 1;
     }
 
     .info-table th,
@@ -42,17 +44,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid #e5e7eb;
+      position: relative;
+      z-index: 2;
     }
 
     .info-table th {
-      background: #2563eb;
+      background: #2563eb !important;
       color: white;
       font-weight: 600;
       width: 35%;
     }
 
     .info-table td {
-      background: #f9fafb;
+      background: white !important;
+      opacity: 1 !important;
     }
 
     .info-table tr:last-child th,
