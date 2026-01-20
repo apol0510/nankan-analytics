@@ -245,7 +245,7 @@ exports.handler = async (event, context) => {
         </li>
         <li style="margin-bottom: 10px;">
           <strong>入金確認</strong><br>
-          入金確認取れ次第、ご連絡させていただきます
+          入金確認取れ次第、即時にログイン情報をメールでお送りいたします
         </li>
         <li style="margin-bottom: 10px;">
           <strong>アクセス情報送付</strong><br>
