@@ -313,6 +313,158 @@ exports.handler = async (event, context) => {
       throw new Error(`Failed to send user email: ${userResponse.status}`);
     }
 
+    // ========================================
+    // Airtable登録（Premium Plus以外の月額プラン）
+    // ========================================
+    if (!productName.includes('Premium Plus')) {
+      try {
+        const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+        const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+
+        if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+          console.warn('⚠️ Airtable credentials not configured, skipping registration');
+        } else {
+          // 既存顧客チェック
+          const searchFormula = `{Email} = "${email}"`;
+          const searchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?filterByFormula=${encodeURIComponent(searchFormula)}`;
+
+          const searchResponse = await fetch(searchUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!searchResponse.ok) {
+            throw new Error(`Airtable search failed: ${searchResponse.status}`);
+          }
+
+          const searchData = await searchResponse.json();
+          const existingRecords = searchData.records || [];
+
+          if (existingRecords.length > 0) {
+            // 既存顧客 - Update
+            const recordId = existingRecords[0].id;
+            const updateUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers/${recordId}`;
+
+            const updatePayload = {
+              fields: {
+                'Name': fullName,
+                'Plan': productName,
+                'Status': 'pending_payment',
+                'TransferDate': transferDate,
+                'TransferAmount': transferAmount,
+                'TransferName': transferName,
+                'Remarks': remarks || ''
+              }
+            };
+
+            const updateResponse = await fetch(updateUrl, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(updatePayload)
+            });
+
+            if (!updateResponse.ok) {
+              throw new Error(`Airtable update failed: ${updateResponse.status}`);
+            }
+
+            console.log('✅ Airtable updated (existing customer):', email);
+          } else {
+            // 新規顧客 - Create
+            const createUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers`;
+
+            const createPayload = {
+              fields: {
+                'Email': email,
+                'Name': fullName,
+                'Plan': productName,
+                'Status': 'pending_payment',
+                'TransferDate': transferDate,
+                'TransferAmount': transferAmount,
+                'TransferName': transferName,
+                'Remarks': remarks || ''
+              }
+            };
+
+            const createResponse = await fetch(createUrl, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(createPayload)
+            });
+
+            if (!createResponse.ok) {
+              throw new Error(`Airtable create failed: ${createResponse.status}`);
+            }
+
+            console.log('✅ Airtable created (new customer):', email);
+          }
+        }
+      } catch (airtableError) {
+        console.error('❌ Airtable registration error:', airtableError);
+        // Airtableエラーでも処理は続行（メール送信は成功しているため）
+      }
+    } else {
+      console.log('ℹ️ Premium Plus - Airtable registration skipped');
+    }
+
+    // ========================================
+    // BlastMail API通知（全商品共通）
+    // ========================================
+    try {
+      const BLASTMAIL_API_KEY = process.env.BLASTMAIL_API_KEY;
+
+      if (!BLASTMAIL_API_KEY) {
+        console.warn('⚠️ BlastMail API key not configured, skipping notification');
+      } else {
+        const blastMailUrl = 'https://api.blastmail.jp/v1/emails/send'; // 仮のエンドポイント
+
+        const blastMailPayload = {
+          to: email,
+          from: 'noreply@keiba.link',
+          subject: `【銀行振込申請受付】NANKANアナリティクス ${productName}`,
+          body: `${fullName} 様
+
+銀行振込申請を受け付けました。
+
+【申請内容】
+- 商品: ${productName}
+- 振込予定日: ${transferDate} ${transferTime}
+- 振込金額: ¥${Number(transferAmount).toLocaleString()}
+
+入金確認後、アクセス情報をお送りいたします。
+
+NANKANアナリティクス
+https://nankan-analytics.keiba.link`
+        };
+
+        const blastMailResponse = await fetch(blastMailUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${BLASTMAIL_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(blastMailPayload)
+        });
+
+        if (!blastMailResponse.ok) {
+          throw new Error(`BlastMail API failed: ${blastMailResponse.status}`);
+        }
+
+        console.log('✅ BlastMail notification sent:', email);
+      }
+    } catch (blastMailError) {
+      console.error('❌ BlastMail notification error:', blastMailError);
+      // BlastMailエラーでも処理は続行
+    }
+
     console.log('✅ Bank transfer application submitted:', {
       email,
       fullName,
