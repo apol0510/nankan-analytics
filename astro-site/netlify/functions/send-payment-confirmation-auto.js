@@ -147,7 +147,7 @@ exports.handler = async (event, context) => {
       from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
       content: [{
         type: 'text/html',
-        value: generateEmailHTML(fullName, productName, planInfo, japanTime)
+        value: generateEmailHTML(fullName, email, productName, planInfo, japanTime)
       }],
       tracking_settings: {
         click_tracking: { enable: false },
@@ -227,7 +227,7 @@ exports.handler = async (event, context) => {
 /**
  * メールHTML生成
  */
-function generateEmailHTML(fullName, productName, planInfo, japanTime) {
+function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
   return `
 <!DOCTYPE html>
 <html>
