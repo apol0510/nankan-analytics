@@ -45,12 +45,22 @@
     Cache-Control = "public, max-age=31536000"
 
 [[redirects]]
+  from = "/tokutei"
+  to = "/legal"
+  status = 301
+
+[[redirects]]
+  from = "/tokutei/"
+  to = "/legal/"
+  status = 301
+
+[[redirects]]
   from = "/old-premium"
   to = "/premium-predictions"
   status = 301
 
 [[redirects]]
-  from = "/old-standard"  
+  from = "/old-standard"
   to = "/standard-predictions"
   status = 301
 
