@@ -4,15 +4,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Legal Information" description="Legal information and business details for NANKAN Analytics">
   <style>
+    /* 暗い背景を完全に覆う */
+    :global(.main-content) {
+      background: white !important;
+      margin-top: 0 !important;
+      padding-top: 80px !important;
+    }
+
     .legal-page {
       padding: 4rem 0;
       background: white;
-      min-height: 100vh;
+      min-height: calc(100vh - 80px);
     }
 
     .legal-content {
       max-width: 900px;
       margin: 0 auto;
+      padding: 0 20px;
     }
 
     .legal-content h1 {
