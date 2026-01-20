@@ -458,8 +458,8 @@ exports.handler = async (event, context) => {
           const registerParams = new URLSearchParams({
             access_token: accessToken,
             format: 'json',
-            email: email,
-            name: fullName
+            c15: email,      // E-Mail（必須）
+            c0: fullName     // 氏名
           });
 
           const registerResponse = await fetch(registerUrl, {
