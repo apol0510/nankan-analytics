@@ -415,56 +415,6 @@ exports.handler = async (event, context) => {
       console.log('ℹ️ Premium Plus - Airtable registration skipped');
     }
 
-    // ========================================
-    // BlastMail API通知（全商品共通）
-    // ========================================
-    try {
-      const BLASTMAIL_API_KEY = process.env.BLASTMAIL_API_KEY;
-
-      if (!BLASTMAIL_API_KEY) {
-        console.warn('⚠️ BlastMail API key not configured, skipping notification');
-      } else {
-        const blastMailUrl = 'https://api.blastmail.jp/v1/emails/send'; // 仮のエンドポイント
-
-        const blastMailPayload = {
-          to: email,
-          from: 'noreply@keiba.link',
-          subject: `【銀行振込申請受付】NANKANアナリティクス ${productName}`,
-          body: `${fullName} 様
-
-銀行振込申請を受け付けました。
-
-【申請内容】
-- 商品: ${productName}
-- 振込予定日: ${transferDate} ${transferTime}
-- 振込金額: ¥${Number(transferAmount).toLocaleString()}
-
-入金確認後、アクセス情報をお送りいたします。
-
-NANKANアナリティクス
-https://nankan-analytics.keiba.link`
-        };
-
-        const blastMailResponse = await fetch(blastMailUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${BLASTMAIL_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(blastMailPayload)
-        });
-
-        if (!blastMailResponse.ok) {
-          throw new Error(`BlastMail API failed: ${blastMailResponse.status}`);
-        }
-
-        console.log('✅ BlastMail notification sent:', email);
-      }
-    } catch (blastMailError) {
-      console.error('❌ BlastMail notification error:', blastMailError);
-      // BlastMailエラーでも処理は続行
-    }
-
     console.log('✅ Bank transfer application submitted:', {
       email,
       fullName,
