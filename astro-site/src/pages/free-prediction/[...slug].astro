@@ -108,10 +108,6 @@ const archiveDate = formattedDate;
                     <div class="stat-value highlight-value">{raceInfo.abilityIndex}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">推奨度</div>
-                    <div class="stat-value stars-value">{getRecommendationStars(raceInfo.recommendation)}</div>
-                </div>
-                <div class="stat-card">
                     <div class="stat-label">期待回収率</div>
                     <div class="stat-value">{raceInfo.expectedReturn}%</div>
                 </div>
@@ -157,13 +153,6 @@ const archiveDate = formattedDate;
                     </div>
                 </div>
 
-                <ProgressBarConfidence
-                    confidence={mainHorseScore}
-                    label="AI信頼度"
-                    showPercentage={true}
-                    barColor="primary"
-                />
-
                 <div class="analysis-text">
                     {horses.main.reason && horses.main.reason.split('\n').map(paragraph => paragraph.trim() && <p>{paragraph.trim()}</p>)}
                 </div>
@@ -183,13 +172,6 @@ const archiveDate = formattedDate;
                         </div>
                     </div>
                 </div>
-
-                <ProgressBarConfidence
-                    confidence={subHorseScore}
-                    label="AI信頼度"
-                    showPercentage={true}
-                    barColor="secondary"
-                />
 
                 <div class="analysis-text">
                     {horses.sub.reason && horses.sub.reason.split('\n').map(paragraph => paragraph.trim() && <p>{paragraph.trim()}</p>)}
