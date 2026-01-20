@@ -127,12 +127,8 @@ exports.handler = async (event, context) => {
     <div class="section">
       <h3 style="margin-top: 0; color: #1e293b;">💰 振込情報</h3>
       <div class="info-row">
-        <span class="label">振込日:</span>
+        <span class="label">振込完了日:</span>
         <span class="value">${transferDate}</span>
-      </div>
-      <div class="info-row">
-        <span class="label">振込時刻:</span>
-        <span class="value">${transferTime}</span>
       </div>
       <div class="info-row">
         <span class="label">振込金額:</span>
@@ -225,8 +221,8 @@ exports.handler = async (event, context) => {
         <span class="value">${productName}</span>
       </div>
       <div class="info-row">
-        <span class="label">振込予定日:</span>
-        <span class="value">${transferDate} ${transferTime}</span>
+        <span class="label">振込完了日:</span>
+        <span class="value">${transferDate}</span>
       </div>
       <div class="info-row">
         <span class="label">振込金額:</span>
