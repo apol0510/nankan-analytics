@@ -324,6 +324,10 @@ exports.handler = async (event, context) => {
         if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
           console.warn('⚠️ Airtable credentials not configured, skipping registration');
         } else {
+          // プラン名から料金部分を削除（Airtable Single select用）
+          // 例: "Premium (¥9,980/月)" → "Premium"
+          const planName = productName.replace(/\s*\(¥[\d,]+\/[^)]+\)/, '').replace(/\s*\(¥[\d,]+\/[^)]+\)/, '');
+
           // 既存顧客チェック
           const searchFormula = `{Email} = "${email}"`;
           const searchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?filterByFormula=${encodeURIComponent(searchFormula)}`;
@@ -351,7 +355,7 @@ exports.handler = async (event, context) => {
             const updatePayload = {
               fields: {
                 '氏名': fullName,
-                'プラン': productName,
+                'プラン': planName,
                 'Status': 'pending_payment'
               }
             };
@@ -380,7 +384,7 @@ exports.handler = async (event, context) => {
               fields: {
                 'Email': email,
                 '氏名': fullName,
-                'プラン': productName,
+                'プラン': planName,
                 'Status': 'pending_payment'
               }
             };
