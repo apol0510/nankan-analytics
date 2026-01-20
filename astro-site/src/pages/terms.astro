@@ -1,343 +1,212 @@
 ---
-export const prerender = true;const pageTitle = "利用規約 | NANKANアナリティクス";
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>利用規約 | NANKANアナリティクス</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<BaseLayout title="Terms of Service" description="Terms of Service for NANKAN Analytics sports data analytics platform">
+  <style>
+    .legal-page {
+      padding: 4rem 0;
+      background: white;
+      min-height: 100vh;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.7;
-        }
+    .legal-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+    .legal-content h1 {
+      font-size: 2.5rem;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
 
-        h1 {
-            color: #3b82f6;
-            font-size: 32px;
-            margin-bottom: 20px;
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
-        }
+    .last-updated {
+      color: #6b7280;
+      margin-bottom: 3rem;
+      font-style: italic;
+    }
 
-        h2 {
-            color: #60a5fa;
-            font-size: 24px;
-            margin: 40px 0 20px;
-            padding-left: 10px;
-            border-left: 3px solid #3b82f6;
-        }
+    .legal-content h2 {
+      font-size: 1.75rem;
+      color: #2563eb;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
 
-        h3 {
-            color: #93c5fd;
-            font-size: 18px;
-            margin: 25px 0 15px;
-        }
+    .legal-content p {
+      line-height: 1.8;
+      color: #374151;
+      margin-bottom: 1.5rem;
+    }
 
-        p {
-            margin-bottom: 15px;
-            color: #cbd5e1;
-        }
+    .legal-content ul {
+      list-style: disc;
+      margin-left: 2rem;
+      margin-bottom: 1.5rem;
+    }
 
-        ul, ol {
-            margin: 15px 0;
-            padding-left: 30px;
-        }
+    .legal-content li {
+      line-height: 1.8;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
 
-        li {
-            margin-bottom: 8px;
-            color: #cbd5e1;
-        }
+    .language-notice {
+      background: #fef3c7;
+      padding: 1.5rem;
+      border-left: 4px solid #f59e0b;
+      margin-bottom: 2rem;
+      border-radius: 4px;
+    }
 
-        .highlight-box {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
+    .language-notice p {
+      font-size: 1rem;
+      color: #92400e;
+      margin: 0;
+      line-height: 1.8;
+      font-weight: 500;
+    }
 
-        .warning-box {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 25px 0;
-        }
+    @media (max-width: 768px) {
+      .legal-content h1 {
+        font-size: 2rem;
+      }
 
-        .important-note {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 25px 0;
-        }
+      .legal-content h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 
-        .contact-section {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 8px;
-            padding: 25px;
-            margin: 30px 0;
-        }
+  <section class="legal-page">
+    <div class="container legal-content">
+      <h1>Terms of Service</h1>
+      <p class="last-updated">Last Updated: January 21, 2026</p>
 
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            color: #3b82f6;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
+      <!-- Language Notice -->
+      <div class="language-notice">
+        <p>
+          <strong>⚠️ Important Notice:</strong><br>
+          This service and all contractual terms are provided in English only.<br>
+          By using this service, you confirm that you understand and agree to these terms.
+        </p>
+      </div>
 
-        .back-link:hover {
-            background: rgba(59, 130, 246, 0.1);
-            transform: translateY(-2px);
-        }
+      <p>
+        Welcome to Tirol Analytics ("we," "our," or "us"). These Terms of Service ("Terms") govern your access to and use of our sports data analytics platform and services (collectively, the "Service").
+      </p>
 
-        .update-date {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 14px;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(59, 130, 246, 0.2);
-        }
+      <p>
+        By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of these Terms, you may not access the Service.
+      </p>
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: rgba(30, 41, 59, 0.5);
-        }
+      <h2>1. Service Description</h2>
+      <p>
+        Tirol Analytics provides AI-powered sports data analytics services. Our platform analyzes historical performance data and provides statistical insights and analysis results for various sports competitions.
+      </p>
 
-        th, td {
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 12px;
-            text-align: left;
-        }
+      <h2>2. User Accounts</h2>
+      <p>
+        To access certain features of the Service, you may be required to create an account. You agree to:
+      </p>
+      <ul>
+        <li>Provide accurate, current, and complete information during registration</li>
+        <li>Maintain and promptly update your account information</li>
+        <li>Maintain the security of your password and account</li>
+        <li>Accept responsibility for all activities that occur under your account</li>
+        <li>Notify us immediately of any unauthorized use of your account</li>
+      </ul>
 
-        th {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>利用規約</h1>
+      <h2>3. Subscription and Payment</h2>
+      <p>
+        Our Service is offered through various subscription plans. By subscribing, you agree to:
+      </p>
+      <ul>
+        <li>Pay all fees associated with your chosen subscription plan</li>
+        <li>Provide current, complete, and accurate payment information</li>
+        <li>Allow us to charge your payment method for recurring subscription fees</li>
+        <li>Accept that subscription fees are non-refundable except as required by law</li>
+      </ul>
 
-        <div class="important-note">
-            <strong>重要</strong><br>
-            本利用規約は、株式会社リリーフが提供するNANKANアナリティクス（以下「本サービス」）をご利用いただくお客様（以下「ユーザー」）との間の契約条件を定めたものです。本サービスをご利用になる前に、必ず本利用規約をお読みください。
-        </div>
+      <h2>4. Cancellation and Refunds</h2>
+      <p>
+        You may cancel your subscription at any time. Upon cancellation:
+      </p>
+      <ul>
+        <li>Your access to premium features will continue until the end of your current billing period</li>
+        <li>No refunds will be provided for partial subscription periods</li>
+        <li>You will not be charged for subsequent billing periods</li>
+      </ul>
 
-        <h2>第1条　規約の適用</h2>
-        <p>本利用規約は、ユーザーと株式会社リリーフ（以下「当社」）との間の本サービスの利用に関わる一切の関係に適用されるものとします。当社が本サービス上で掲載する個別規定やルールも本利用規約の一部を構成します。</p>
+      <h2>5. Use of Service</h2>
+      <p>
+        You agree to use the Service only for lawful purposes and in accordance with these Terms. You agree NOT to:
+      </p>
+      <ul>
+        <li>Use the Service in any way that violates any applicable national or international law</li>
+        <li>Share your account credentials with others</li>
+        <li>Attempt to reverse engineer, decompile, or otherwise extract the source code of the Service</li>
+        <li>Use any automated system to access the Service without our express written permission</li>
+        <li>Interfere with or disrupt the Service or servers connected to the Service</li>
+      </ul>
 
-        <h2>第2条　サービス内容</h2>
-        <p>本サービスは、AI技術を活用した南関東競馬の予想情報提供サービスです。</p>
-        <h3>2.1 提供サービス</h3>
-        <ul>
-            <li><strong>競馬予想情報</strong>：AI分析による競馬予想の配信</li>
-            <li><strong>データ分析</strong>：過去のレース結果や統計情報の提供</li>
-            <li><strong>投資戦略</strong>：馬券購入に関する戦略提案</li>
-            <li><strong>実績管理</strong>：的中率や収支の記録・分析</li>
-        </ul>
+      <h2>6. Intellectual Property</h2>
+      <p>
+        The Service and its original content, features, and functionality are owned by Tirol Analytics and are protected by international copyright, trademark, and other intellectual property laws.
+      </p>
 
-        <h3>2.2 料金プラン</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>プラン名</th>
-                    <th>月額料金（税込）</th>
-                    <th>提供内容</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>無料会員</td>
-                    <td>0円</td>
-                    <td>メインレース予想のみ</td>
-                </tr>
-                <tr>
-                    <td>Standard会員</td>
-                    <td>5,980円</td>
-                    <td>後半3レース予想</td>
-                </tr>
-                <tr>
-                    <td>Premium会員</td>
-                    <td>9,980円</td>
-                    <td>全レース予想</td>
-                </tr>
-            </tbody>
-        </table>
+      <h2>7. Data Accuracy and Analysis Disclaimer</h2>
+      <p>
+        The data and statistical analysis provided by this Service are based on historical information and mathematical models. While we strive for accuracy, we cannot guarantee the completeness, timeliness, or accuracy of the data or analysis results. The analysis results are provided for reference purposes only and do not guarantee specific outcomes or results in any sports competitions or events.
+      </p>
 
-        <h2>第3条　利用登録</h2>
-        <h3>3.1 登録要件</h3>
-        <p>本サービスの利用を希望する方は、以下の要件を満たしている必要があります：</p>
-        <ul>
-            <li>満20歳以上であること</li>
-            <li>日本国内に在住していること</li>
-            <li>本利用規約に同意すること</li>
-            <li>反社会的勢力でないこと</li>
-        </ul>
+      <h2>8. No Investment or Decision-Making Advice</h2>
+      <p>
+        This Service provides statistical analysis and data insights as a software tool. It does NOT provide investment advice, financial advice, or decision-making recommendations. Any decisions you make based on the data or analysis provided by this Service are entirely your own responsibility. You should not rely solely on the information provided by this Service for any financial or decision-making purposes.
+      </p>
 
-        <h3>3.2 登録情報</h3>
-        <p>利用登録の際は、以下の情報を正確に入力してください：</p>
-        <ul>
-            <li>氏名</li>
-            <li>メールアドレス</li>
-            <li>電話番号</li>
-            <li>住所</li>
-            <li>パスワード</li>
-        </ul>
+      <h2>9. Service Type: SaaS Platform</h2>
+      <p>
+        Tirol Analytics is a Software-as-a-Service (SaaS) platform that provides automated data analysis through AI and machine learning algorithms. Users access the platform via their personal dashboard to view real-time analytical results and statistical insights. The Service operates entirely through automated software systems without manual intervention or personalized consultation.
+      </p>
 
-        <h2>第4条　禁止事項</h2>
-        <p>ユーザーは、本サービスの利用にあたり、以下の行為をしてはなりません：</p>
-        <ol>
-            <li><strong>法令違反</strong>：法令または公序良俗に違反する行為</li>
-            <li><strong>犯罪行為</strong>：犯罪行為に関連する行為</li>
-            <li><strong>サーバー妨害</strong>：本サービスのサーバーやネットワークの正常な動作を妨害する行為</li>
-            <li><strong>不正アクセス</strong>：本サービスのシステムに不正にアクセスする行為</li>
-            <li><strong>逆解析等</strong>：本サービスのプログラムを逆解析する行為</li>
-            <li><strong>情報の無断複製</strong>：本サービスの情報を無断で複製・転載・配布する行為</li>
-            <li><strong>営利目的利用</strong>：本サービスを営利目的で利用する行為（個人利用は除く）</li>
-            <li><strong>第三者へのなりすまし</strong>：他のユーザーに関する個人情報を詐称する行為</li>
-            <li><strong>迷惑行為</strong>：他のユーザーや第三者に迷惑をかける行為</li>
-            <li><strong>その他不適切な行為</strong>：その他、当社が不適切と判断する行為</li>
-        </ol>
+      <h2>10. General Disclaimer of Warranties</h2>
+      <p>
+        The Service is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied. We do not warrant that:
+      </p>
+      <ul>
+        <li>The Service will be uninterrupted, secure, or error-free</li>
+        <li>The results obtained from the use of the Service will be accurate or reliable</li>
+        <li>Analysis or statistical results provided will guarantee specific outcomes</li>
+      </ul>
 
-        <h2>第5条　料金および支払い</h2>
-        <h3>5.1 料金</h3>
-        <p>有料プランの料金は、各プランページに記載された金額とします。料金には消費税が含まれています。</p>
+      <h2>11. Limitation of Liability</h2>
+      <p>
+        In no event shall Tirol Analytics be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, or other intangible losses, resulting from:
+      </p>
+      <ul>
+        <li>Your access to or use of or inability to access or use the Service</li>
+        <li>Any conduct or content of any third party on the Service</li>
+        <li>Unauthorized access, use, or alteration of your transmissions or content</li>
+      </ul>
 
-        <h3>5.2 支払い方法</h3>
-        <p>料金の支払いは、クレジットカード決済のみとします。決済処理はPAY.JPを通じて安全に行われます。</p>
+      <h2>12. Changes to Terms</h2>
+      <p>
+        We reserve the right to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days' notice prior to any new terms taking effect. Your continued use of the Service after such changes constitutes acceptance of the new Terms.
+      </p>
 
-        <h3>5.3 課金タイミング</h3>
-        <ul>
-            <li>初回課金：プラン申込時</li>
-            <li>継続課金：毎月同日（月額プラン）</li>
-            <li>解約：解約手続き完了後、次回更新日から停止</li>
-        </ul>
+      <h2>13. Governing Law</h2>
+      <p>
+        These Terms shall be governed by and construed in accordance with the laws of Japan, without regard to its conflict of law provisions.
+      </p>
 
-        <h2>第6条　解約・退会</h2>
-        <h3>6.1 ユーザーからの解約</h3>
-        <p>ユーザーは、いつでもマイページから解約手続きを行うことができます。解約手続き完了後、次回更新日以降の課金は停止されますが、既にお支払いいただいた料金の返金は行いません。</p>
-
-        <h3>6.2 当社からの利用停止・強制退会</h3>
-        <p>当社は、ユーザーが以下に該当する場合、事前の通知なくサービスの利用を停止または強制退会させることができます：</p>
-        <ul>
-            <li>本利用規約に違反した場合</li>
-            <li>料金の支払いを怠った場合</li>
-            <li>長期間サービスの利用がない場合</li>
-            <li>その他、当社が不適切と判断した場合</li>
-        </ul>
-
-        <h2>第7条　免責事項</h2>
-        <div class="warning-box">
-            <h3>7.1 予想の的中について</h3>
-            <p><strong>重要：</strong>本サービスで提供する競馬予想は、あくまで情報提供を目的としており、的中を保証するものではありません。馬券の購入および損益は、すべてユーザーの自己責任となります。</p>
-        </div>
-
-        <h3>7.2 免責範囲</h3>
-        <p>当社は、以下について一切の責任を負いません：</p>
-        <ul>
-            <li>本サービスの予想情報に基づく馬券購入による損失</li>
-            <li>競馬に関する損失や債務</li>
-            <li>本サービスの一時的な利用不能</li>
-            <li>システムメンテナンスによるサービス停止</li>
-            <li>第三者によるシステムへの不正アクセス</li>
-            <li>天災地変等の不可抗力による損害</li>
-        </ul>
-
-        <h2>第8条　知的財産権</h2>
-        <p>本サービスに含まれるコンテンツ（予想情報、分析データ、テキスト、画像、ロゴ等）の著作権その他の知的財産権は、当社または正当な権利者に帰属します。ユーザーは、これらを無断で複製、転載、配布することはできません。</p>
-
-        <h2>第9条　個人情報の保護</h2>
-        <p>当社は、ユーザーの個人情報について、当社の「プライバシーポリシー」に従って適切に管理します。</p>
-
-        <h2>第10条　サービスの変更・終了</h2>
-        <h3>10.1 サービス内容の変更</h3>
-        <p>当社は、ユーザーへの事前の通知をもって、本サービスの内容を変更することができます。</p>
-
-        <h3>10.2 サービスの終了</h3>
-        <p>当社は、以下の場合にサービスを終了することができます：</p>
-        <ul>
-            <li>事業戦略上の理由</li>
-            <li>法的規制の変更</li>
-            <li>その他やむを得ない事由</li>
-        </ul>
-        <p>サービス終了の場合は、3ヶ月前までにユーザーに通知します。</p>
-
-        <h2>第11条　損害賠償の制限</h2>
-        <p>当社がユーザーに対して負う損害賠償責任は、直接かつ通常の損害に限定され、その額は当該ユーザーが当社に支払った直近12ヶ月の利用料金を上限とします。</p>
-
-        <h2>第12条　分離可能性</h2>
-        <p>本利用規約のいずれかの条項が無効と判断された場合でも、残りの条項は引き続き有効とします。</p>
-
-        <h2>第13条　規約の変更</h2>
-        <p>当社は、法令の改正や事業内容の変更等により、本利用規約を変更する場合があります。重要な変更については、本サイト上で30日前までに通知いたします。</p>
-
-        <h2>第14条　準拠法・管轄裁判所</h2>
-        <p>本利用規約の解釈にあたっては、日本法を準拠法とします。本サービスに関して紛争が生じた場合には、徳島地方裁判所を第一審の専属的合意管轄とします。</p>
-
-        <div class="warning-box">
-            <h2>ギャンブル依存症について</h2>
-            <p><strong>競馬は適度に楽しみましょう</strong></p>
-            <p>競馬等の公営競技は適度に楽しむ娯楽です。のめり込みすぎにご注意ください。ギャンブル依存症でお困りの方は、以下の相談窓口にご相談ください：</p>
-            <ul>
-                <li><strong>ギャンブル等依存症でお困りの皆様へ</strong><br>
-                <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000070789.html" style="color: #60a5fa;">厚生労働省 依存症対策</a></li>
-                <li><strong>公営競技ギャンブル依存症カウンセリングセンター</strong><br>
-                電話：0120-683-705（無料）</li>
-            </ul>
-        </div>
-
-        <div class="contact-section">
-            <h2>第15条　お問い合わせ</h2>
-            <p>本利用規約に関するお問い合わせは、以下までご連絡ください：</p>
-            <p><strong>株式会社リリーフ NANKANアナリティクス運営事務局</strong><br>
-            メールアドレス: support@keiba.link<br>
-            受付時間: 平日 10:00-18:00（土日祝日を除く）</p>
-        </div>
-
-        <div class="update-date">
-            制定日：2025年8月29日<br>
-            最終更新日：2025年8月29日
-        </div>
-
-        <a href="/" class="back-link">← トップページに戻る</a>
+      <h2>14. Contact Information</h2>
+      <p>
+        If you have any questions about these Terms, please contact us at:
+        <br><br>
+        Email: <a href="mailto:support@tirol.link" style="color: #2563eb;">support@tirol.link</a>
+      </p>
     </div>
-</body>
-</html>
+  </section>
+</BaseLayout>
