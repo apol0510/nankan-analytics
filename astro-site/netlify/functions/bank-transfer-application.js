@@ -350,13 +350,9 @@ exports.handler = async (event, context) => {
 
             const updatePayload = {
               fields: {
-                'Name': fullName,
-                'Plan': productName,
-                'Status': 'pending_payment',
-                'TransferDate': transferDate,
-                'TransferAmount': transferAmount,
-                'TransferName': transferName,
-                'Remarks': remarks || ''
+                '氏名': fullName,
+                'プラン': productName,
+                'Status': 'pending_payment'
               }
             };
 
@@ -383,13 +379,9 @@ exports.handler = async (event, context) => {
             const createPayload = {
               fields: {
                 'Email': email,
-                'Name': fullName,
-                'Plan': productName,
-                'Status': 'pending_payment',
-                'TransferDate': transferDate,
-                'TransferAmount': transferAmount,
-                'TransferName': transferName,
-                'Remarks': remarks || ''
+                '氏名': fullName,
+                'プラン': productName,
+                'Status': 'pending_payment'
               }
             };
 
