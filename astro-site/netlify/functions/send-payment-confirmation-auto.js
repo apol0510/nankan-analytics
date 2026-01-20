@@ -350,7 +350,6 @@ function getPlanInfo(productName) {
         <ul style="margin: 0; padding-left: 20px; color: #065f46;">
           <li>後半3レース（10R、11R、12R）の予想データ</li>
           <li>Standard Predictions ページ</li>
-          <li>過去の実績アーカイブ</li>
         </ul>
       `,
       additionalNotes: `
@@ -373,7 +372,6 @@ function getPlanInfo(productName) {
         <ul style="margin: 0; padding-left: 20px; color: #065f46;">
           <li>全レース（1R〜12R）の予想データ</li>
           <li>Premium Predictions ページ</li>
-          <li>過去の実績アーカイブ</li>
           <li>穴馬データ</li>
         </ul>
       `,
@@ -397,7 +395,6 @@ function getPlanInfo(productName) {
         <ul style="margin: 0; padding-left: 20px; color: #065f46;">
           <li>全レース（1R〜12R）の予想データ</li>
           <li>三連複予想データ（高精度買い目）</li>
-          <li>Archive Sanrenpuku ページ（過去の三連複実績）</li>
           <li>穴馬データ</li>
         </ul>
       `,
@@ -421,7 +418,6 @@ function getPlanInfo(productName) {
         <ul style="margin: 0; padding-left: 20px; color: #065f46;">
           <li>全レース（1R〜12R）の予想データ</li>
           <li>三連複予想データ（高精度買い目）</li>
-          <li>Archive Sanrenpuku ページ（過去の三連複実績）</li>
           <li>穴馬データ</li>
           <li>Combo会員限定コンテンツ</li>
         </ul>
