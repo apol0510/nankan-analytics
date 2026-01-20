@@ -356,7 +356,7 @@ exports.handler = async (event, context) => {
               fields: {
                 '氏名': fullName,
                 'プラン': planName,
-                'Status': 'pending_payment'
+                'Status': 'pending'
               }
             };
 
@@ -385,7 +385,7 @@ exports.handler = async (event, context) => {
                 'Email': email,
                 '氏名': fullName,
                 'プラン': planName,
-                'Status': 'pending_payment'
+                'Status': 'pending'
               }
             };
 
@@ -476,11 +476,17 @@ exports.handler = async (event, context) => {
 
           if (!registerResponse.ok) {
             const errorText = await registerResponse.text();
-            throw new Error(`BlastMail reader registration failed: ${registerResponse.status} - ${errorText}`);
-          }
 
-          const registerData = await registerResponse.json();
-          console.log('✅ BlastMail reader registered:', email, 'ContactID:', registerData.contactID);
+            // 重複登録エラーは成功として扱う
+            if (errorText.includes('Has already been registered')) {
+              console.log('ℹ️ BlastMail reader already registered:', email);
+            } else {
+              throw new Error(`BlastMail reader registration failed: ${registerResponse.status} - ${errorText}`);
+            }
+          } else {
+            const registerData = await registerResponse.json();
+            console.log('✅ BlastMail reader registered:', email, 'ContactID:', registerData.contactID);
+          }
         }
       } catch (blastMailError) {
         console.error('❌ BlastMail registration error:', blastMailError);
