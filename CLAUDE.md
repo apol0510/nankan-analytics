@@ -151,6 +151,66 @@ Premium Plus（単品商品）
 
 ---
 
+## 🚨 **ページとproductNameの完全対応表** 🚨
+
+**⚠️ 重要：このページで何が購入できるかを絶対に間違えないこと**
+
+### **各ページで購入できる商品**
+
+| ページURL | 対象ユーザー | 購入できる商品 | productName | Airtable登録 | BlastMail登録 |
+|-----------|-------------|----------------|-------------|-------------|--------------|
+| `/pricing/` | 新規ユーザー | **Standard, Premium のみ** | `Standard`, `Premium` | ✅ | ✅ |
+| `/dashboard/` | 既存Premium会員 | **Sanrenpuku/Combo（アップグレード）** | `Premium Sanrenpuku`, `Premium Combo` | ✅ | ✅ |
+| `/premium-predictions/` | Premium会員 | **Sanrenpuku/Combo（アップセル）** | `Premium Sanrenpuku`, `Premium Combo` | ✅ | ✅ |
+| `/standard-predictions/` | 一般ユーザー | **Sanrenpuku/Combo** | `Premium Sanrenpuku`, `Premium Combo` | ✅ | ✅ |
+| `/sanrenpuku-demo/` | デモページ | **Sanrenpuku/Combo** | `Premium Sanrenpuku`, `Premium Combo` | ✅ | ✅ |
+| `/archive-sanrenpuku/` | アーカイブ | **Sanrenpuku/Combo** | `Premium Sanrenpuku`, `Premium Combo` | ✅ | ✅ |
+| **⚠️ `/premium-sanrenpuku/`** | **Sanrenpuku/Combo会員** | **🚨 Premium Plus（単品商品）のみ** | `Premium Plus` | **❌ スキップ** | **❌ スキップ** |
+| **⚠️ `/withdrawal-upsell/`** | **退会時** | **🚨 Premium Plus（単品商品）のみ** | `Premium Plus` | **❌ スキップ** | **❌ スキップ** |
+| `/premium-plus/` | - | **Premium Plus（単品商品）** | `Premium Plus` | ❌ | ❌ |
+
+### **絶対に間違えないこと**
+
+#### **❌ よくある間違い（絶対にしないこと）**
+
+1. **`/pricing/` でPremium Sanrenpukuが買えると思う**
+   - ❌ 間違い！`/pricing/`はStandard/Premiumのみ
+   - ✅ 正しい：新規ユーザーは最初にStandard/Premiumから始める
+
+2. **`/premium-sanrenpuku/` でPremium Sanrenpuku会員プランが買えると思う**
+   - ❌ 間違い！このページで買えるのは**Premium Plus（単品商品）のみ**
+   - ✅ 正しい：このページはSanrenpuku/Combo会員向けで、Premium Plusのみ販売
+
+3. **Premium Plusに対してAirtable/BlastMail登録する**
+   - ❌ 間違い！Premium Plusは単品商品なのでスキップ
+   - ✅ 正しい：月額プラン（Standard/Premium/Sanrenpuku/Combo）のみ登録
+
+#### **✅ 正しい理解**
+
+**購入フロー（段階的）:**
+```
+新規ユーザー
+  ↓
+/pricing/ → Standard または Premium 購入（Airtable/BlastMail登録 ✅）
+  ↓
+/dashboard/ → Premium Sanrenpuku または Premium Combo にアップグレード（Airtable/BlastMail登録 ✅）
+  ↓
+/premium-sanrenpuku/ → Premium Plus（単品商品）購入（Airtable/BlastMail登録 ❌）
+```
+
+**テスト時の正しいページ選択:**
+- **月額プランテスト（Airtable/BlastMail登録あり）**:
+  - `/pricing/` → Standard/Premium
+  - `/dashboard/` → Premium Sanrenpuku/Combo
+  - `/premium-predictions/` → Premium Sanrenpuku/Combo
+  - `/standard-predictions/` → Premium Sanrenpuku/Combo
+
+- **単品商品テスト（Airtable/BlastMail登録なし）**:
+  - `/premium-sanrenpuku/` → Premium Plus
+  - `/withdrawal-upsell/` → Premium Plus
+
+---
+
 ## 📸 **毎日の画像更新作業** 📸
 
 ### 🎯 **「画像更新コミットプッシュ」指示で自動更新される3箇所**
