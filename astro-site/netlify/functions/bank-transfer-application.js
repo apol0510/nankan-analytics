@@ -370,7 +370,9 @@ exports.handler = async (event, context) => {
             });
 
             if (!updateResponse.ok) {
-              throw new Error(`Airtable update failed: ${updateResponse.status}`);
+              const errorText = await updateResponse.text();
+              console.error('❌ Airtable update error details:', errorText);
+              throw new Error(`Airtable update failed: ${updateResponse.status} - ${errorText}`);
             }
 
             console.log('✅ Airtable updated (existing customer):', email);
@@ -391,6 +393,8 @@ exports.handler = async (event, context) => {
               }
             };
 
+            console.log('📤 Airtable create payload:', JSON.stringify(createPayload, null, 2));
+
             const createResponse = await fetch(createUrl, {
               method: 'POST',
               headers: {
@@ -401,7 +405,9 @@ exports.handler = async (event, context) => {
             });
 
             if (!createResponse.ok) {
-              throw new Error(`Airtable create failed: ${createResponse.status}`);
+              const errorText = await createResponse.text();
+              console.error('❌ Airtable create error details:', errorText);
+              throw new Error(`Airtable create failed: ${createResponse.status} - ${errorText}`);
             }
 
             console.log('✅ Airtable created (new customer):', email);
