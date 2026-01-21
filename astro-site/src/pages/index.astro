@@ -369,80 +369,24 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                 </div>
             </section>
 
-            <!-- Content Grid -->
-            <div class="content-grid">
-                <!-- Main Articles -->
-                <section class="main-articles">
-                    <article class="article-card">
-                        <div class="article-content">
-                            <span class="article-category">機械学習</span>
-                            <h2 class="article-title">
-                                <a href="/machine-learning/python-horse-racing-data-analysis/">Pythonで始める競馬データ分析 - pandas基礎からXGBoostまで</a>
-                            </h2>
-                            <p class="article-excerpt">
-                                pandasとscikit-learnを使った競馬データ分析の基礎を解説。実際のコード例付きで初心者でも理解できます。
-                            </p>
-                            <div class="article-meta">
-                                <span>📅 2025年1月15日</span>
-                                <span>⏱️ 8分で読める</span>
-                                <a href="/machine-learning/python-horse-racing-data-analysis/" class="read-more">続きを読む →</a>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="article-card">
-                        <div class="article-content">
-                            <span class="article-category">深層学習</span>
-                            <h2 class="article-title">
-                                <a href="/deep-learning/lstm-time-series-tensorflow/">LSTMを使った時系列予想モデル - TensorFlow実装例</a>
-                            </h2>
-                            <p class="article-excerpt">
-                                TensorFlowでLSTMネットワークを構築し、競馬の時系列データから予想モデルを作成する方法を詳解。
-                            </p>
-                            <div class="article-meta">
-                                <span>📅 2025年1月10日</span>
-                                <span>⏱️ 12分で読める</span>
-                                <a href="/deep-learning/lstm-time-series-tensorflow/" class="read-more">続きを読む →</a>
-                            </div>
-                        </div>
-                    </article>
-                </section>
-
-                <!-- Sidebar -->
-                <aside class="sidebar">
-
-                    <!-- Categories -->
-                    <div class="sidebar-card">
-                        <h3 class="sidebar-title">📚 コンテンツ</h3>
-                        <div class="sidebar-item">
-                            <a href="/machine-learning/" class="sidebar-link">機械学習</a>
-                        </div>
-                        <div class="sidebar-item">
-                            <a href="/deep-learning/" class="sidebar-link">深層学習</a>
-                        </div>
-                        <div class="sidebar-item">
-                            <a href="/data-science/" class="sidebar-link">データサイエンス</a>
-                        </div>
-                        <div class="sidebar-item">
-                            <a href="/ai-predictions/" class="sidebar-link">AI予想</a>
-                        </div>
+            <!-- 無料予想CTAセクション -->
+            <section class="free-cta-section">
+                <div class="container">
+                    <h2 class="section-title" style="color: var(--success-color);">まずは無料予想を体験</h2>
+                    <p class="section-subtitle">
+                        毎日更新される無料予想で、AIの実力を体験してください。<br>
+                        本命・対抗・穴馬の3つの戦略で、的中と配当のバランスを最適化。
+                    </p>
+                    <div class="cta-features">
+                        ✓ 毎日無料で更新<br>
+                        ✓ 会員登録不要<br>
+                        ✓ 3つの戦略で最適化
                     </div>
-
-                    <!-- Premium CTA -->
-                    <div class="sidebar-card premium-cta">
-                        <h3 class="sidebar-title">⭐ 有料AI予想サービス</h3>
-                        <p style="color: var(--body-text-color); font-size: 0.95rem; margin-bottom: 15px; line-height: 1.5;">
-                            <strong>詳細な買い目・投資金額・リスク分析</strong>を毎日配信。<br>
-                            月間回収率150%超えの実績。
-                        </p>
-                        <div style="margin-bottom: 15px; font-size: 0.9rem; color: var(--accent-text-color);">
-                            ✓ 毎日の詳細買い目配信<br>
-                            ✓ リアルタイム相場分析<br>
-                            ✓ 個別投資相談サポート
-                        </div>
-                    </div>
-                </aside>
-            </div>
+                    <a href="/free-prediction/" class="free-cta-button">
+                        無料予想を見る →
+                    </a>
+                </div>
+            </section>
 </BaseLayout>
 
 <style>
@@ -648,152 +592,39 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
             line-height: 1.5;
         }
 
-        /* Content Grid */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 40px;
-            margin-top: 40px;
+        /* 無料予想CTAセクション */
+        .free-cta-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            padding: 60px 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 40px 0;
+            border: 2px solid rgba(16, 185, 129, 0.3);
         }
 
-        .main-articles {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .article-card {
-            background: var(--card-background);
-            border-radius: var(--card-border-radius);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
-        }
-
-        .article-content {
-            padding: var(--card-padding);
-        }
-
-        .article-category {
-            display: inline-block;
-            background: var(--accent-color);
-            color: white;
-            padding: 4px 12px;
-            border-radius: var(--tag-border-radius);
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .article-category.prediction {
-            background: var(--success-color);
-        }
-
-        .article-category.tech {
-            background: #8b5cf6;
-        }
-
-        .article-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 12px;
+        .cta-features {
             color: var(--body-text-color);
+            font-size: 1rem;
+            margin: 20px 0 30px;
+            line-height: 1.8;
         }
 
-        .article-title a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .article-title a:hover {
-            color: var(--accent-color);
-        }
-
-        .article-excerpt {
-            color: var(--accent-text-color);
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-
-        .article-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 0.9rem;
-            color: var(--accent-text-color);
-        }
-
-        .read-more {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .sidebar-card {
-            background: var(--card-background);
-            padding: var(--card-padding);
-            border-radius: var(--card-border-radius);
-            border: 1px solid var(--border-color);
-        }
-
-        .sidebar-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--accent-color);
-        }
-
-        .sidebar-item {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar-item:last-child {
-            border-bottom: none;
-        }
-
-        .sidebar-link {
-            color: var(--body-text-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .sidebar-link:hover {
-            color: var(--accent-color);
-        }
-
-        /* Premium CTA */
-        .premium-cta {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-        }
-
-        .cta-button {
+        .free-cta-button {
             display: inline-block;
-            background: var(--accent-color);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
+            padding: 15px 40px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: transform 0.3s;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
-        .cta-button:hover {
-            transform: translateY(-2px);
+        .free-cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
 
         /* Tech Detail Button */
@@ -808,13 +639,17 @@ const raceTitle = `${formattedDate} ${track} ${enhancedRaceInfo?.raceNumber || '
                 font-size: 2.2rem;
             }
 
-            .content-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
             .prediction-cards, .tech-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .free-cta-section {
+                padding: 40px 20px;
+            }
+
+            .free-cta-button {
+                padding: 12px 30px;
+                font-size: 1rem;
             }
             
             .stats-grid {
