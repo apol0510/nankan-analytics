@@ -45,24 +45,57 @@ exports.handler = async (event, context) => {
 
     console.log('📅 7日後の日付:', sevenDaysLaterStr);
 
-    // レコード検索
-    const filterFormula = `AND(
+    // レコード検索（3パターン試行）
+    const filterFormula1 = `AND(
       {有効期限} = '${sevenDaysLaterStr}',
       {プラン} != 'Free',
       {PaymentMethod} = 'Bank Transfer',
       NOT({ExpiryWarningNotificationSent})
     )`;
 
-    console.log('🔍 フィルタ条件:', filterFormula);
+    const filterFormula2 = `AND(
+      DATESTR({有効期限}) = '${sevenDaysLaterStr}',
+      {プラン} != 'Free',
+      {PaymentMethod} = 'Bank Transfer',
+      NOT({ExpiryWarningNotificationSent})
+    )`;
 
-    const records = await base('Customers')
+    const filterFormula3 = `AND(
+      IS_SAME({有効期限}, '${sevenDaysLaterStr}', 'day'),
+      {プラン} != 'Free',
+      {PaymentMethod} = 'Bank Transfer',
+      NOT({ExpiryWarningNotificationSent})
+    )`;
+
+    console.log('🔍 テスト1（直接比較）:', filterFormula1);
+    const records1 = await base('Customers')
       .select({
-        filterByFormula: filterFormula,
+        filterByFormula: filterFormula1,
         maxRecords: 100
       })
       .firstPage();
+    console.log(`📊 テスト1 結果: ${records1.length}件`);
 
-    console.log(`📊 検索結果: ${records.length}件`);
+    console.log('🔍 テスト2（DATESTR）:', filterFormula2);
+    const records2 = await base('Customers')
+      .select({
+        filterByFormula: filterFormula2,
+        maxRecords: 100
+      })
+      .firstPage();
+    console.log(`📊 テスト2 結果: ${records2.length}件`);
+
+    console.log('🔍 テスト3（IS_SAME）:', filterFormula3);
+    const records3 = await base('Customers')
+      .select({
+        filterByFormula: filterFormula3,
+        maxRecords: 100
+      })
+      .firstPage();
+    console.log(`📊 テスト3 結果: ${records3.length}件`);
+
+    // 最も多く見つかった結果を使用
+    const records = records1.length > 0 ? records1 : (records2.length > 0 ? records2 : records3);
 
     // 詳細情報を取得
     const recordDetails = records.map(record => ({
@@ -84,7 +117,18 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         success: true,
         sevenDaysLaterDate: sevenDaysLaterStr,
-        filterFormula: filterFormula,
+        test1: {
+          formula: '直接比較 {有効期限} = date',
+          count: records1.length
+        },
+        test2: {
+          formula: 'DATESTR({有効期限}) = date',
+          count: records2.length
+        },
+        test3: {
+          formula: 'IS_SAME({有効期限}, date, day)',
+          count: records3.length
+        },
         recordCount: records.length,
         records: recordDetails
       }, null, 2)
