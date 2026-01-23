@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
     const records = await base('Customers')
       .select({
         filterByFormula: `AND(
-          {有効期限} = '${sevenDaysLaterStr}',
+          DATESTR({有効期限}) = '${sevenDaysLaterStr}',
           {プラン} != 'Free',
           {PaymentMethod} = 'Bank Transfer',
           NOT({ExpiryWarningNotificationSent})
