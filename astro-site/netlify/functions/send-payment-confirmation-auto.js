@@ -296,7 +296,7 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
       <div class="info-row" style="border-bottom: none;">
         <span class="label">ログインURL:</span>
         <div class="value" style="margin-top: 10px;">
-          <a href="${planInfo.loginUrl}" class="login-button" target="_blank">
+          <a href="${planInfo.loginUrl}" class="login-button" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 15px 0;">
             ${planInfo.buttonText}
           </a>
         </div>
