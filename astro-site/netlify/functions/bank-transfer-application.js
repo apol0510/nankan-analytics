@@ -352,7 +352,8 @@ exports.handler = async (event, context) => {
               fields: {
                 '氏名': fullName,
                 'プラン': planName,
-                'Status': 'pending'
+                'Status': 'pending',
+                'PaymentMethod': 'Bank Transfer'
               }
             };
 
@@ -381,7 +382,8 @@ exports.handler = async (event, context) => {
                 'Email': email,
                 '氏名': fullName,
                 'プラン': planName,
-                'Status': 'pending'
+                'Status': 'pending',
+                'PaymentMethod': 'Bank Transfer'
               }
             };
 

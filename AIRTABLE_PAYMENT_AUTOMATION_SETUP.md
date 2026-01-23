@@ -13,13 +13,46 @@ Airtableで顧客のStatusを "pending" → "active" に変更すると、自動
 | フィールド名 | 型 | 説明 |
 |--------------|-----|------|
 | **PaymentEmailSent** | Checkbox | 入金確認メール送信済みフラグ（二重送信防止） |
+| **PaymentMethod** | Single line text | 支払い方法（例: "Bank Transfer", "Credit Card"） |
+| **ExpiryDate** | Date | 有効期限（YYYY-MM-DD）|
+| **ExpiryWarningNotificationSent** | Checkbox | 1週間前通知送信済みフラグ |
+| **ExpiryWarningNotificationDate** | Date | 1週間前通知送信日 |
+| **ExpiryNotificationSent** | Checkbox | 期限切れ通知送信済みフラグ |
+| **ExpiryNotificationDate** | Date | 期限切れ通知送信日 |
 
 **追加手順:**
 1. Customersテーブルを開く
 2. 右上の「+」ボタンをクリック
-3. フィールドタイプ: **Checkbox**
-4. フィールド名: **PaymentEmailSent**
-5. 「Create field」をクリック
+3. 以下のフィールドを1つずつ追加:
+
+**PaymentEmailSent:**
+- フィールドタイプ: **Checkbox**
+- フィールド名: **PaymentEmailSent**
+
+**PaymentMethod:**
+- フィールドタイプ: **Single line text**
+- フィールド名: **PaymentMethod**
+
+**ExpiryDate:**
+- フィールドタイプ: **Date**
+- フィールド名: **ExpiryDate**
+- 日付フォーマット: **ISO（YYYY-MM-DD）**
+
+**ExpiryWarningNotificationSent:**
+- フィールドタイプ: **Checkbox**
+- フィールド名: **ExpiryWarningNotificationSent**
+
+**ExpiryWarningNotificationDate:**
+- フィールドタイプ: **Date**
+- フィールド名: **ExpiryWarningNotificationDate**
+
+**ExpiryNotificationSent:**
+- フィールドタイプ: **Checkbox**
+- フィールド名: **ExpiryNotificationSent**
+
+**ExpiryNotificationDate:**
+- フィールドタイプ: **Date**
+- フィールド名: **ExpiryNotificationDate**
 
 ---
 
@@ -267,17 +300,34 @@ curl -X POST https://nankan-analytics.keiba.link/.netlify/functions/send-payment
 | プラン | Single select | Standard/Premium/Premium Sanrenpuku/Premium Combo/Test |
 | Status | Single select | pending/active/cancelled/suspended |
 | **PaymentEmailSent** | **Checkbox** | **入金確認メール送信済みフラグ** |
+| **PaymentMethod** | **Single line text** | **支払い方法（Bank Transfer/Credit Card）** |
+| **ExpiryDate** | **Date** | **有効期限（YYYY-MM-DD）** |
+| **ExpiryWarningNotificationSent** | **Checkbox** | **1週間前通知送信済みフラグ** |
+| **ExpiryWarningNotificationDate** | **Date** | **1週間前通知送信日** |
+| **ExpiryNotificationSent** | **Checkbox** | **期限切れ通知送信済みフラグ** |
+| **ExpiryNotificationDate** | **Date** | **期限切れ通知送信日** |
 
 ---
 
 ## ✅ 完了チェックリスト
 
+### **入金確認メール自動送信:**
 - [ ] Customersテーブルに `PaymentEmailSent` フィールド追加
+- [ ] Customersテーブルに `PaymentMethod` フィールド追加
+- [ ] Customersテーブルに `ExpiryDate` フィールド追加
 - [ ] Airtable Automation作成（入金確認メール自動送信）
 - [ ] Trigger設定: Status = "active" AND PaymentEmailSent ≠ true
 - [ ] Action設定: Webhook → Netlify Function
 - [ ] テスト実行: メール送信 ✅、PaymentEmailSent更新 ✅
 - [ ] Automation有効化（Turn on）
+
+### **有効期限管理システム:**
+- [ ] Customersテーブルに `ExpiryWarningNotificationSent` フィールド追加
+- [ ] Customersテーブルに `ExpiryWarningNotificationDate` フィールド追加
+- [ ] Customersテーブルに `ExpiryNotificationSent` フィールド追加
+- [ ] Customersテーブルに `ExpiryNotificationDate` フィールド追加
+- [ ] Netlify Scheduled Functions が毎日午前9時（UTC）に実行されることを確認
+- [ ] テスト実行: 1週間前通知 ✅、期限切れ通知 ✅
 
 ---
 
@@ -291,5 +341,47 @@ curl -X POST https://nankan-analytics.keiba.link/.netlify/functions/send-payment
 
 ---
 
-**最終更新**: 2026-01-20
-**バージョン**: 1.0.0 - 完全自動化対応版
+---
+
+## 🔔 有効期限管理システム（2026-01-23追加）
+
+### **概要**
+
+銀行振込ユーザー限定で、以下の2つの通知が自動送信されます：
+
+1. **1週間前通知**（ExpiryDate - 7日）
+   - 30% OFF 割引案内（同プラン継続）
+   - 上位プラン30% OFF アップセル案内
+   - 管理者にも通知
+
+2. **期限切れ通知**（ExpiryDate当日）
+   - 3ヶ月40% OFF、6ヶ月50% OFF 割引案内
+   - 上位プラン30% OFF アップセル案内
+   - 管理者にも詳細サマリー通知
+
+### **動作フロー**
+
+1. **入金確認時（Status変更時）**
+   - ExpiryDate を自動設定（入金確認日から1ヶ月後）
+   - PaymentMethod を "Bank Transfer" と設定
+
+2. **毎日午前9時（UTC）**
+   - cron-expiry-check.js が自動実行
+   - 1週間前通知チェック → 該当者にメール送信
+   - 期限切れ通知チェック → 該当者にメール送信
+
+3. **通知対象**
+   - PaymentMethod = "Bank Transfer" のユーザーのみ
+   - 通知済みフラグで二重送信防止
+
+### **割引内容**
+
+| 通知タイプ | 同プラン継続 | 上位プランアップセル |
+|-----------|-------------|-------------------|
+| **1週間前** | 30% OFF | 30% OFF |
+| **期限切れ** | 3ヶ月40% OFF<br>6ヶ月50% OFF | 30% OFF |
+
+---
+
+**最終更新**: 2026-01-23
+**バージョン**: 2.0.0 - 有効期限管理システム追加

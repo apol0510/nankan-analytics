@@ -9,32 +9,68 @@ export default async function handler(request, context) {
   console.log('⏰ 期限切れチェックcron開始:', new Date().toISOString());
 
   try {
-    // 期限切れ通知Functionを呼び出し
     const baseUrl = process.env.URL || 'https://nankan-analytics.netlify.app';
-    const notificationUrl = `${baseUrl}/.netlify/functions/expiry-notification`;
+    const results = {};
 
-    console.log('📧 期限切れ通知URL:', notificationUrl);
+    // ========================================
+    // 1. 1週間前通知を実行
+    // ========================================
+    const warningUrl = `${baseUrl}/.netlify/functions/expiry-warning-notification`;
+    console.log('⚠️ 1週間前通知URL:', warningUrl);
 
-    const response = await fetch(notificationUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+    try {
+      const warningResponse = await fetch(warningUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (warningResponse.ok) {
+        results.warningNotification = await warningResponse.json();
+        console.log('✅ 1週間前通知完了:', results.warningNotification);
+      } else {
+        console.error('❌ 1週間前通知失敗:', warningResponse.status);
+        results.warningNotification = { error: `Failed: ${warningResponse.status}` };
       }
-    });
-
-    if (!response.ok) {
-      throw new Error(`期限切れ通知失敗: ${response.status}`);
+    } catch (warningError) {
+      console.error('❌ 1週間前通知エラー:', warningError);
+      results.warningNotification = { error: warningError.message };
     }
 
-    const result = await response.json();
+    // ========================================
+    // 2. 期限切れ通知を実行
+    // ========================================
+    const expiryUrl = `${baseUrl}/.netlify/functions/expiry-notification`;
+    console.log('📧 期限切れ通知URL:', expiryUrl);
 
-    console.log('✅ 期限切れチェック完了:', result);
+    try {
+      const expiryResponse = await fetch(expiryUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (expiryResponse.ok) {
+        results.expiryNotification = await expiryResponse.json();
+        console.log('✅ 期限切れ通知完了:', results.expiryNotification);
+      } else {
+        console.error('❌ 期限切れ通知失敗:', expiryResponse.status);
+        results.expiryNotification = { error: `Failed: ${expiryResponse.status}` };
+      }
+    } catch (expiryError) {
+      console.error('❌ 期限切れ通知エラー:', expiryError);
+      results.expiryNotification = { error: expiryError.message };
+    }
+
+    console.log('✅ 期限チェック完了:', results);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: '期限切れチェック完了',
-        notificationResult: result,
+        message: '期限チェック完了（1週間前 + 期限切れ）',
+        results: results,
         timestamp: new Date().toISOString()
       }),
       { status: 200, headers }

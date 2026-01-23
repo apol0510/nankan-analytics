@@ -195,6 +195,13 @@ exports.handler = async (event, context) => {
       console.log('💎 Premium Plus: ExpiryDate設定スキップ');
     }
 
+    // PaymentMethod を "Bank Transfer" と設定（未設定の場合のみ）
+    const currentPaymentMethod = fields.PaymentMethod;
+    if (!currentPaymentMethod) {
+      updatePayload.fields['PaymentMethod'] = 'Bank Transfer';
+      console.log('💳 PaymentMethod設定: Bank Transfer');
+    }
+
     const updateResponse = await fetch(recordUrl, {
       method: 'PATCH',
       headers: {

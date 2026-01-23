@@ -1,4 +1,4 @@
-// 期限切れ通知システム（お客様＋マコさんへの自動通知）
+// 有効期限1週間前通知システム（銀行振込ユーザー限定）
 // 実行タイミング: 毎日午前9時（cron-expiry-check.jsから呼び出し）
 
 const Airtable = require('airtable');
@@ -7,32 +7,39 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.handler = async (event, context) => {
-  console.log('🔔 期限切れ通知システム開始');
+  console.log('⚠️ 有効期限1週間前通知システム開始');
 
   try {
     // Airtable設定
     const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
       .base(process.env.AIRTABLE_BASE_ID);
 
-    // 今日の日付取得
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // 7日後の日付取得（YYYY-MM-DD）
+    const sevenDaysLater = new Date();
+    sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
+    const sevenDaysLaterStr = sevenDaysLater.toISOString().split('T')[0];
 
-    // 期限切れユーザー検索（ExpiryDateが今日以前・銀行振込ユーザーのみ）
+    // 8日後の日付取得（範囲指定用）
+    const eightDaysLater = new Date(sevenDaysLater);
+    eightDaysLater.setDate(eightDaysLater.getDate() + 1);
+    const eightDaysLaterStr = eightDaysLater.toISOString().split('T')[0];
+
+    // 7日後に期限切れユーザー検索（銀行振込ユーザーのみ）
     const records = await base('Customers')
       .select({
         filterByFormula: `AND(
           {ExpiryDate},
-          IS_BEFORE({ExpiryDate}, TODAY()),
+          IS_AFTER({ExpiryDate}, '${sevenDaysLaterStr}'),
+          IS_BEFORE({ExpiryDate}, '${eightDaysLaterStr}'),
           {プラン} != 'Free',
           {PaymentMethod} = 'Bank Transfer',
-          NOT({ExpiryNotificationSent})
+          NOT({ExpiryWarningNotificationSent})
         )`,
         maxRecords: 100
       })
       .firstPage();
 
-    console.log(`📊 期限切れユーザー（銀行振込）: ${records.length}件`);
+    console.log(`📊 7日後期限切れユーザー（銀行振込）: ${records.length}件`);
 
     let notifications = [];
 
@@ -42,13 +49,13 @@ exports.handler = async (event, context) => {
       const plan = record.get('プラン');
       const expiryDate = record.get('ExpiryDate');
 
-      console.log(`📧 期限切れ通知送信: ${email} (${plan}, 期限: ${expiryDate})`);
+      console.log(`📧 1週間前通知送信: ${email} (${plan}, 期限: ${expiryDate})`);
 
       // お客様への通知メール
       const customerEmail = {
         to: email,
         from: 'nankan-analytics@keiba.link',
-        subject: '【期間限定】特別割引で復帰しませんか？ - NANKANアナリティクス',
+        subject: '【重要】プランの有効期限まで残り7日 - 特別割引のご案内',
         html: generateCustomerEmail(fullName, email, plan, expiryDate),
         tracking_settings: {
           click_tracking: { enable: false, enable_text: false },
@@ -62,7 +69,7 @@ exports.handler = async (event, context) => {
       const adminEmail = {
         to: 'nankan-analytics@keiba.link',
         from: 'nankan-analytics@keiba.link',
-        subject: `[管理者通知] ${email} 様に期限切れ通知+割引案内を送信しました`,
+        subject: `[管理者通知] ${email} 様に1週間前通知を送信しました`,
         html: generateAdminEmail(email, fullName, plan, expiryDate),
         tracking_settings: {
           click_tracking: { enable: false, enable_text: false },
@@ -83,8 +90,8 @@ exports.handler = async (event, context) => {
 
         // Airtableに通知済みフラグを設定
         await base('Customers').update(record.id, {
-          'ExpiryNotificationSent': true,
-          'ExpiryNotificationDate': new Date().toISOString().split('T')[0]
+          'ExpiryWarningNotificationSent': true,
+          'ExpiryWarningNotificationDate': new Date().toISOString().split('T')[0]
         });
 
         notifications.push({
@@ -112,13 +119,13 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify({
         success: true,
-        message: `期限切れ通知処理完了: ${notifications.length}件`,
+        message: `1週間前通知処理完了: ${notifications.length}件`,
         notifications
       }, null, 2)
     };
 
   } catch (error) {
-    console.error('🚨 期限切れ通知システムエラー:', error);
+    console.error('🚨 1週間前通知システムエラー:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -129,7 +136,7 @@ exports.handler = async (event, context) => {
   }
 };
 
-// お客様向けメール本文生成（3ヶ月40%OFF、6ヶ月50%OFF + アップセル案内）
+// お客様向けメール本文生成（30%OFF + アップセル案内）
 function generateCustomerEmail(fullName, email, plan, expiryDate) {
   const planInfo = getPlanDiscountInfo(plan);
 
@@ -141,13 +148,12 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
   <style>
     body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; line-height: 1.8; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .header { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
     .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-    .expiry-box { background: white; border: 2px solid #ef4444; border-radius: 8px; padding: 20px; margin: 20px 0; }
-    .discount-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 8px; padding: 25px; margin: 20px 0; }
-    .discount-option { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; margin: 15px 0; border: 2px solid rgba(255,255,255,0.3); }
-    .discount-price { font-size: 2rem; font-weight: bold; margin: 10px 0; }
-    .original-price { text-decoration: line-through; opacity: 0.7; font-size: 1rem; }
+    .expiry-box { background: white; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .discount-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 8px; padding: 25px; margin: 20px 0; text-align: center; }
+    .discount-price { font-size: 2rem; font-weight: bold; margin: 15px 0; }
+    .original-price { text-decoration: line-through; opacity: 0.7; font-size: 1.2rem; }
     .upsell-card { background: white; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 15px 0; }
     .btn { display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 10px 0; font-weight: bold; }
     .footer { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; }
@@ -156,42 +162,31 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
 <body>
   <div class="container">
     <div class="header">
-      <h1>💔 有効期限が切れました</h1>
-      <p style="font-size: 1.1rem; margin: 10px 0;">でも、まだ間に合います！</p>
+      <h1>⏰ 有効期限まで残り7日です</h1>
+      <p style="font-size: 1.2rem; margin: 10px 0;">特別割引でプランを継続しませんか？</p>
     </div>
     <div class="content">
       <p>いつもNANKANアナリティクスをご利用いただきありがとうございます。</p>
-      <p><strong>${fullName} 様</strong>のプランが有効期限を迎えました。</p>
+      <p><strong>${fullName} 様</strong>のプランが間もなく有効期限を迎えます。</p>
 
       <div class="expiry-box">
-        <h3>📌 有効期限情報</h3>
-        <p><strong>プラン:</strong> ${plan}会員</p>
+        <h3>🔔 有効期限情報</h3>
+        <p><strong>現在のプラン:</strong> ${plan}会員</p>
         <p><strong>有効期限:</strong> ${expiryDate}</p>
-        <p style="color: #ef4444; font-weight: bold;">現在は無料会員に戻っています</p>
+        <p style="color: #f59e0b; font-weight: bold;">残り7日で無料会員に戻ります</p>
       </div>
 
       <div class="discount-card">
-        <h2 style="margin: 0 0 15px 0;">🎉 復帰限定！ 特別割引</h2>
-        <p style="margin: 0 0 20px 0; font-size: 1.05rem;">この機会にぜひ復帰してください</p>
-
-        <div class="discount-option">
-          <h3 style="margin: 0 0 10px 0;">💰 3ヶ月プラン</h3>
-          <div class="original-price">通常: ${planInfo.threeMonthOriginal}</div>
-          <div class="discount-price">${planInfo.threeMonthDiscount} <span style="font-size: 1rem;">(40% OFF)</span></div>
-          <p style="margin: 10px 0 0 0; font-size: 0.9rem;">1ヶ月あたり ${planInfo.threeMonthPerMonth}</p>
-        </div>
-
-        <div class="discount-option">
-          <h3 style="margin: 0 0 10px 0;">🌟 6ヶ月プラン（お得！）</h3>
-          <div class="original-price">通常: ${planInfo.sixMonthOriginal}</div>
-          <div class="discount-price">${planInfo.sixMonthDiscount} <span style="font-size: 1rem;">(50% OFF)</span></div>
-          <p style="margin: 10px 0 0 0; font-size: 0.9rem;">1ヶ月あたり ${planInfo.sixMonthPerMonth}</p>
-        </div>
+        <h2 style="margin: 0 0 15px 0;">🎉 期間限定！ 特別割引</h2>
+        <p style="margin: 0 0 10px 0;">同じプランを継続する場合</p>
+        <div class="original-price">通常価格: ${planInfo.currentPrice}</div>
+        <div class="discount-price">${planInfo.discountPrice} <span style="font-size: 1rem;">(30% OFF)</span></div>
+        <p style="margin: 15px 0 0 0; font-size: 0.95rem;">この割引は期限切れまでの7日間限定です</p>
       </div>
 
       ${planInfo.upsellHtml}
 
-      <h3 style="margin-top: 30px;">📞 復帰をご希望の場合</h3>
+      <h3 style="margin-top: 30px;">📞 継続をご希望の場合</h3>
       <p>下記の口座に振り込み後、<strong>${email}</strong> 宛にメールでお知らせください。</p>
 
       <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -202,8 +197,8 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
       </div>
 
       <div style="text-align: center; margin: 30px 0;">
-        <a href="mailto:nankan.analytics@keiba.link?subject=【プラン復帰】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A希望期間: （3ヶ月 or 6ヶ月）%0A振込金額: （上記の割引価格）%0A振込完了日: （ご記入ください）" class="btn">
-          復帰を申し込む（メールで連絡）
+        <a href="mailto:nankan.analytics@keiba.link?subject=【プラン継続】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A振込金額: ${planInfo.discountPrice}%0A振込完了日: （ご記入ください）" class="btn">
+          継続を申し込む（メールで連絡）
         </a>
       </div>
 
@@ -211,7 +206,7 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
         <p>NANKANアナリティクス<br>
         Email: nankan-analytics@keiba.link</p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 15px;">
-          ※このメールは有効期限切れ時に自動送信されています
+          ※このメールは有効期限7日前に自動送信されています
         </p>
       </div>
     </div>
@@ -223,8 +218,6 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
 
 // 管理者向けメール本文生成
 function generateAdminEmail(email, fullName, plan, expiryDate) {
-  const planInfo = getPlanDiscountInfo(plan);
-
   return `
 <!DOCTYPE html>
 <html>
@@ -233,35 +226,36 @@ function generateAdminEmail(email, fullName, plan, expiryDate) {
   <style>
     body { font-family: monospace; line-height: 1.6; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f3f4f6; }
-    .info-box { background: white; border-left: 4px solid #ef4444; padding: 15px; margin: 10px 0; }
+    .info-box { background: white; border-left: 4px solid #f59e0b; padding: 15px; margin: 10px 0; }
     h2 { color: #1f2937; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🚨 期限切れ通知送信（管理者用）</h2>
+    <h2>⏰ 1週間前通知送信（管理者用）</h2>
 
     <div class="info-box">
       <p><strong>お名前:</strong> ${fullName}</p>
       <p><strong>メールアドレス:</strong> ${email}</p>
       <p><strong>プラン:</strong> ${plan}</p>
-      <p><strong>期限切れ日:</strong> ${expiryDate}</p>
+      <p><strong>有効期限:</strong> ${expiryDate}</p>
       <p><strong>通知日時:</strong> ${new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</p>
+      <p><strong>割引内容:</strong> 30% OFF（7日間限定）</p>
     </div>
 
-    <h3>送信した割引内容</h3>
+    <h3>送信内容</h3>
     <ul>
-      <li>✅ <strong>3ヶ月プラン:</strong> ${planInfo.threeMonthDiscount} (40% OFF) - 1ヶ月あたり ${planInfo.threeMonthPerMonth}</li>
-      <li>✅ <strong>6ヶ月プラン:</strong> ${planInfo.sixMonthDiscount} (50% OFF) - 1ヶ月あたり ${planInfo.sixMonthPerMonth}</li>
-      <li>✅ <strong>上位プランアップセル:</strong> ${planInfo.upsellPlan || 'なし'} (30% OFF)</li>
+      <li>✅ 有効期限7日前の警告通知</li>
+      <li>✅ 30%OFF 特別割引案内（同プラン継続）</li>
+      <li>✅ 上位プラン30%OFF アップセル案内</li>
+      <li>✅ 銀行振込口座情報</li>
     </ul>
 
     <h3>対応事項</h3>
     <ul>
-      <li>✅ お客様に期限切れ通知メール（割引案内付き）を自動送信しました</li>
-      <li>✅ Airtableの ExpiryNotificationSent フィールドをTRUEに更新しました</li>
-      <li>⚠️ 振込連絡があった場合は、入金確認後 Status を "active" に変更してください</li>
-      <li>💡 復帰率を高めるため、数日後にフォローアップをご検討ください</li>
+      <li>お客様に1週間前通知メールを自動送信しました</li>
+      <li>Airtableの ExpiryWarningNotificationSent フィールドをTRUEに更新しました</li>
+      <li>振込連絡があった場合は入金確認後、Status を "active" に変更してください</li>
     </ul>
 
     <p>---<br>
@@ -272,7 +266,7 @@ function generateAdminEmail(email, fullName, plan, expiryDate) {
   `;
 }
 
-// プラン別の割引情報を取得（3ヶ月40%OFF、6ヶ月50%OFF）
+// プラン別の割引情報を取得
 function getPlanDiscountInfo(plan) {
   const planPrices = {
     'Standard': { current: 5980, name: 'Standard', upsell: 'Premium' },
@@ -284,59 +278,36 @@ function getPlanDiscountInfo(plan) {
   const planKey = Object.keys(planPrices).find(key => plan.includes(key)) || 'Premium';
   const info = planPrices[planKey];
 
-  // 3ヶ月プラン（40% OFF）
-  const threeMonthOriginal = info.current * 3;
-  const threeMonthDiscount = Math.round(threeMonthOriginal * 0.6);
-  const threeMonthPerMonth = Math.round(threeMonthDiscount / 3);
-
-  // 6ヶ月プラン（50% OFF）
-  const sixMonthOriginal = info.current * 6;
-  const sixMonthDiscount = Math.round(sixMonthOriginal * 0.5);
-  const sixMonthPerMonth = Math.round(sixMonthDiscount / 6);
+  const discountPrice = Math.round(info.current * 0.7);
+  const currentPrice = `¥${info.current.toLocaleString()}/月`;
+  const discountPriceStr = `¥${discountPrice.toLocaleString()}/月`;
 
   // アップセル案内HTML生成
   let upsellHtml = '';
-  let upsellPlan = null;
   if (info.upsell) {
-    upsellPlan = info.upsell;
     const upsellInfo = planPrices[info.upsell];
-    const upsellThreeMonthOriginal = upsellInfo.current * 3;
-    const upsellThreeMonthDiscount = Math.round(upsellThreeMonthOriginal * 0.7);
-    const upsellSixMonthOriginal = upsellInfo.current * 6;
-    const upsellSixMonthDiscount = Math.round(upsellSixMonthOriginal * 0.7);
+    const upsellDiscountPrice = Math.round(upsellInfo.current * 0.7);
 
     upsellHtml = `
       <div class="upsell-card">
         <h3 style="margin: 0 0 15px 0; color: #1e293b;">✨ さらに上のプランはいかがですか？</h3>
-        <p style="margin: 0 0 10px 0;"><strong>${info.upsell}会員</strong> にアップグレード（30% OFF）</p>
+        <p style="margin: 0 0 10px 0;"><strong>${info.upsell}会員</strong> にアップグレード</p>
         <p style="color: #64748b; margin: 0 0 15px 0; font-size: 0.95rem;">
           ${getUpsellDescription(info.upsell)}
         </p>
-        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-          <div style="text-align: center;">
-            <p style="margin: 0; font-weight: bold; color: #1e293b;">3ヶ月</p>
-            <p style="margin: 5px 0; font-size: 1.3rem; font-weight: bold; color: #10b981;">¥${upsellThreeMonthDiscount.toLocaleString()}</p>
-            <p style="margin: 0; font-size: 0.85rem; color: #6b7280;">(通常 ¥${upsellThreeMonthOriginal.toLocaleString()})</p>
-          </div>
-          <div style="text-align: center;">
-            <p style="margin: 0; font-weight: bold; color: #1e293b;">6ヶ月</p>
-            <p style="margin: 5px 0; font-size: 1.3rem; font-weight: bold; color: #10b981;">¥${upsellSixMonthDiscount.toLocaleString()}</p>
-            <p style="margin: 0; font-size: 0.85rem; color: #6b7280;">(通常 ¥${upsellSixMonthOriginal.toLocaleString()})</p>
-          </div>
+        <div style="text-align: center;">
+          <span style="text-decoration: line-through; color: #6b7280;">¥${upsellInfo.current.toLocaleString()}/月</span>
+          <span style="font-size: 1.5rem; font-weight: bold; color: #10b981; margin-left: 10px;">¥${upsellDiscountPrice.toLocaleString()}/月</span>
+          <span style="color: #10b981; font-weight: bold; margin-left: 5px;">(30% OFF)</span>
         </div>
       </div>
     `;
   }
 
   return {
-    threeMonthOriginal: `¥${threeMonthOriginal.toLocaleString()}`,
-    threeMonthDiscount: `¥${threeMonthDiscount.toLocaleString()}`,
-    threeMonthPerMonth: `¥${threeMonthPerMonth.toLocaleString()}`,
-    sixMonthOriginal: `¥${sixMonthOriginal.toLocaleString()}`,
-    sixMonthDiscount: `¥${sixMonthDiscount.toLocaleString()}`,
-    sixMonthPerMonth: `¥${sixMonthPerMonth.toLocaleString()}`,
-    upsellHtml: upsellHtml,
-    upsellPlan: upsellPlan
+    currentPrice: currentPrice,
+    discountPrice: discountPriceStr,
+    upsellHtml: upsellHtml
   };
 }
 
