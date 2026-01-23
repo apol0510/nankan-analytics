@@ -182,17 +182,17 @@ exports.handler = async (event, context) => {
       }
     };
 
-    // 月額プランの場合のみ ExpiryDate を設定（Premium Plus はスキップ）
+    // 月額プランの場合のみ 有効期限 を設定（Premium Plus はスキップ）
     if (!productName.includes('Premium Plus') && !productName.includes('Plus')) {
       const today = new Date();
       const expiryDate = new Date(today);
       expiryDate.setMonth(expiryDate.getMonth() + 1);
       const expiryDateString = expiryDate.toISOString().split('T')[0];
 
-      updatePayload.fields['ExpiryDate'] = expiryDateString;
-      console.log('📅 ExpiryDate設定:', expiryDateString, 'for', productName);
+      updatePayload.fields['有効期限'] = expiryDateString;
+      console.log('📅 有効期限設定:', expiryDateString, 'for', productName);
     } else {
-      console.log('💎 Premium Plus: ExpiryDate設定スキップ');
+      console.log('💎 Premium Plus: 有効期限設定スキップ');
     }
 
     // PaymentMethod を "Bank Transfer" と設定（未設定の場合のみ）

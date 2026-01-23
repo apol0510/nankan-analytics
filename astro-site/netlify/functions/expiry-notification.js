@@ -18,12 +18,12 @@ exports.handler = async (event, context) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 期限切れユーザー検索（ExpiryDateが今日以前・銀行振込ユーザーのみ）
+    // 期限切れユーザー検索（有効期限が今日以前・銀行振込ユーザーのみ）
     const records = await base('Customers')
       .select({
         filterByFormula: `AND(
-          {ExpiryDate},
-          IS_BEFORE({ExpiryDate}, TODAY()),
+          {有効期限},
+          IS_BEFORE({有効期限}, TODAY()),
           {プラン} != 'Free',
           {PaymentMethod} = 'Bank Transfer',
           NOT({ExpiryNotificationSent})
@@ -40,7 +40,7 @@ exports.handler = async (event, context) => {
       const email = record.get('Email');
       const fullName = record.get('氏名') || 'お客様';
       const plan = record.get('プラン');
-      const expiryDate = record.get('ExpiryDate');
+      const expiryDate = record.get('有効期限') || record.get('ExpiryDate');
 
       console.log(`📧 期限切れ通知送信: ${email} (${plan}, 期限: ${expiryDate})`);
 

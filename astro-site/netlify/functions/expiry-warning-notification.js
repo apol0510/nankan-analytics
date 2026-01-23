@@ -28,9 +28,9 @@ exports.handler = async (event, context) => {
     const records = await base('Customers')
       .select({
         filterByFormula: `AND(
-          {ExpiryDate},
-          IS_AFTER({ExpiryDate}, '${sevenDaysLaterStr}'),
-          IS_BEFORE({ExpiryDate}, '${eightDaysLaterStr}'),
+          {有効期限},
+          IS_AFTER({有効期限}, '${sevenDaysLaterStr}'),
+          IS_BEFORE({有効期限}, '${eightDaysLaterStr}'),
           {プラン} != 'Free',
           {PaymentMethod} = 'Bank Transfer',
           NOT({ExpiryWarningNotificationSent})
@@ -47,7 +47,7 @@ exports.handler = async (event, context) => {
       const email = record.get('Email');
       const fullName = record.get('氏名') || 'お客様';
       const plan = record.get('プラン');
-      const expiryDate = record.get('ExpiryDate');
+      const expiryDate = record.get('有効期限') || record.get('ExpiryDate');
 
       console.log(`📧 1週間前通知送信: ${email} (${plan}, 期限: ${expiryDate})`);
 
