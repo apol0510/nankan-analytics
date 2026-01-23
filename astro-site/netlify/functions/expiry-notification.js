@@ -17,13 +17,16 @@ exports.handler = async (event, context) => {
     // 今日の日付取得
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+
+    console.log(`📅 今日の日付: ${todayStr}`);
 
     // 期限切れユーザー検索（有効期限が今日以前・銀行振込ユーザーのみ）
     const records = await base('Customers')
       .select({
         filterByFormula: `AND(
           {有効期限},
-          IS_BEFORE({有効期限}, TODAY()),
+          NOT(IS_AFTER({有効期限}, TODAY())),
           {プラン} != 'Free',
           {PaymentMethod} = 'Bank Transfer',
           NOT({ExpiryNotificationSent})

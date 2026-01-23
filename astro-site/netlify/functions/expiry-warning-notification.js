@@ -19,18 +19,13 @@ exports.handler = async (event, context) => {
     sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
     const sevenDaysLaterStr = sevenDaysLater.toISOString().split('T')[0];
 
-    // 8日後の日付取得（範囲指定用）
-    const eightDaysLater = new Date(sevenDaysLater);
-    eightDaysLater.setDate(eightDaysLater.getDate() + 1);
-    const eightDaysLaterStr = eightDaysLater.toISOString().split('T')[0];
+    console.log(`📅 7日後の日付: ${sevenDaysLaterStr}`);
 
     // 7日後に期限切れユーザー検索（銀行振込ユーザーのみ）
     const records = await base('Customers')
       .select({
         filterByFormula: `AND(
-          {有効期限},
-          IS_AFTER({有効期限}, '${sevenDaysLaterStr}'),
-          IS_BEFORE({有効期限}, '${eightDaysLaterStr}'),
+          {有効期限} = '${sevenDaysLaterStr}',
           {プラン} != 'Free',
           {PaymentMethod} = 'Bank Transfer',
           NOT({ExpiryWarningNotificationSent})
