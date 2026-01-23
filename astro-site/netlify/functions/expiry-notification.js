@@ -205,7 +205,7 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
       </div>
 
       <div style="text-align: center; margin: 30px 0;">
-        <a href="mailto:nankan.analytics@keiba.link?subject=【プラン復帰】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A希望期間: （3ヶ月 or 6ヶ月）%0A振込金額: （上記の割引価格）%0A振込完了日: （ご記入ください）" class="btn">
+        <a href="mailto:nankan.analytics@keiba.link?subject=【プラン復帰】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A希望期間: （3ヶ月 or 6ヶ月）%0A振込金額: （上記の割引価格）%0A振込完了日: （ご記入ください）" class="btn" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold;">
           復帰を申し込む（メールで連絡）
         </a>
       </div>
