@@ -195,7 +195,7 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
       ${planInfo.upsellHtml}
 
       <h3 style="margin-top: 30px;">📞 復帰をご希望の場合</h3>
-      <p>下記の口座に振り込み後、<strong>${email}</strong> 宛にメールでお知らせください。</p>
+      <p>下記の口座に振り込み後、お知らせください。</p>
 
       <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h4 style="margin: 0 0 15px 0;">🏦 振込先口座</h4>
