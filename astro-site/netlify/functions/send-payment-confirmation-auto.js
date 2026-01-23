@@ -174,13 +174,26 @@ exports.handler = async (event, context) => {
     console.log('✅ Payment confirmation email sent:', email);
 
     // ========================================
-    // Step 4: PaymentEmailSent を true に更新
+    // Step 4: PaymentEmailSent を true に更新 + ExpiryDate 設定
     // ========================================
     const updatePayload = {
       fields: {
         'PaymentEmailSent': true
       }
     };
+
+    // 月額プランの場合のみ ExpiryDate を設定（Premium Plus はスキップ）
+    if (!productName.includes('Premium Plus') && !productName.includes('Plus')) {
+      const today = new Date();
+      const expiryDate = new Date(today);
+      expiryDate.setMonth(expiryDate.getMonth() + 1);
+      const expiryDateString = expiryDate.toISOString().split('T')[0];
+
+      updatePayload.fields['ExpiryDate'] = expiryDateString;
+      console.log('📅 ExpiryDate設定:', expiryDateString, 'for', productName);
+    } else {
+      console.log('💎 Premium Plus: ExpiryDate設定スキップ');
+    }
 
     const updateResponse = await fetch(recordUrl, {
       method: 'PATCH',
@@ -193,9 +206,12 @@ exports.handler = async (event, context) => {
 
     if (updateResponse.ok) {
       console.log('✅ PaymentEmailSent updated to true:', airtableRecordId);
+      if (updatePayload.fields['ExpiryDate']) {
+        console.log('✅ ExpiryDate updated:', updatePayload.fields['ExpiryDate']);
+      }
     } else {
       const errorText = await updateResponse.text();
-      console.error('⚠️ PaymentEmailSent update failed:', errorText);
+      console.error('⚠️ Airtable update failed:', errorText);
     }
 
     // 成功レスポンス
