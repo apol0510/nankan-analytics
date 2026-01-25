@@ -46,9 +46,9 @@
 
 ```
 プロジェクト名: nankan-analytics
-作業ディレクトリ: /Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site
+作業ディレクトリ: /Users/apolon/Projects/nankan-analytics/astro-site
 Gitリポジトリ: https://github.com/apol0510/nankan-analytics.git
-親ディレクトリ: /WorkSpace/nankan-analytics/
+親ディレクトリ: /Users/apolon/Projects/nankan-analytics/
 ```
 
 ### **セッション開始時の必須確認（毎回実行）**
@@ -65,37 +65,37 @@ git remote -v
 # git: apol0510/nankan-analytics.git
 
 # 4. 間違っている場合は即座に移動
-cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site"
+cd "/Users/apolon/Projects/nankan-analytics/astro-site"
 ```
 
 ### **厳格な制約事項**
 
 #### **✅ 許可される操作**
-- `/WorkSpace/nankan-analytics/` 配下のみ
+- `/Users/apolon/Projects/nankan-analytics/` 配下のみ
 - `astro-site/` ディレクトリ内の全ファイル
 - `CLAUDE.md`, `README.md`（親ディレクトリ）
 
 #### **❌ 絶対禁止の操作**
-- `/WorkSpace/Keiba review platform/` への一切のアクセス ⚠️
-- `/WorkSpace/nankan-analytics-pro/` への一切のアクセス
-- `/WorkSpace/nankan-beginner/` への一切のアクセス
-- `/WorkSpace/nankan-course/` への一切のアクセス
-- `/WorkSpace/nankan-inteli/` への一切のアクセス
-- `/WorkSpace/nankan-keiba/` への一切のアクセス
-- 親ディレクトリ `/WorkSpace/` の直接走査・検索
+- `/Users/apolon/Projects/Keiba review platform/` への一切のアクセス ⚠️
+- `/Users/apolon/Projects/nankan-analytics-pro/` への一切のアクセス
+- `/Users/apolon/Projects/nankan-beginner/` への一切のアクセス
+- `/Users/apolon/Projects/nankan-course/` への一切のアクセス
+- `/Users/apolon/Projects/nankan-inteli/` への一切のアクセス
+- `/Users/apolon/Projects/nankan-keiba/` への一切のアクセス
+- 親ディレクトリ `/Users/apolon/Projects/` の直接走査・検索
 
 ### **ファイル検索時の制約**
 
 ```bash
 # ❌ 絶対禁止（親ディレクトリまで検索）
-grep -r "pattern" /Users/apolon/.../WorkSpace/
+grep -r "pattern" /Users/apolon/Projects/
 
 # ❌ 絶対禁止（相対パスで親に遡る）
 cd ../
 grep -r "pattern" ../
 
 # ✅ 正しい方法（プロジェクト内のみ検索）
-grep -r "pattern" /Users/apolon/.../nankan-analytics/astro-site/
+grep -r "pattern" /Users/apolon/Projects/nankan-analytics/astro-site/
 grep -r "pattern" ./src/
 ```
 
@@ -368,7 +368,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 **方法1: プロジェクトを1つずつ開く（最も安定）** ⭐推奨
 ```bash
-cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics"
+cd "/Users/apolon/Projects/nankan-analytics"
 code .
 ```
 - メモリ使用量: 500MB〜800MB
@@ -400,7 +400,7 @@ rm -rf ~/Library/Application\ Support/Code/CachedData
 rm -rf ~/Library/Application\ Support/Code/Code\ Cache
 
 # 再起動（1プロジェクトのみ）
-cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics"
+cd "/Users/apolon/Projects/nankan-analytics"
 code .
 ```
 
