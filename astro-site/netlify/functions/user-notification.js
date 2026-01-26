@@ -84,7 +84,7 @@ export default async function handler(request, context) {
       personalizations: [
         {
           to: [{ email: email }],
-          subject: '🎉 NANKANアナリティクス登録完了！（独立システム配信）'
+          subject: '🎉 NANKANアナリティクス登録完了！'
         }
       ],
       from: {
@@ -109,8 +109,8 @@ export default async function handler(request, context) {
 
                 <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
                   <h3 style="color: #1e293b; margin-top: 0;">🎁 無料会員特典</h3>
-                  <ul style="color: #475569; padding-left: 20px;">
-                    <li>メインレース（11R）詳細予想</li>
+                  <ul style="color: #475569; padding-left: 20px; line-height: 1.8;">
+                    <li><strong>全レース（1R〜12R）詳細予想</strong></li>
                     <li>AI分析による予想データ</li>
                     <li>毎日ログインで1ポイント獲得</li>
                   </ul>
@@ -123,15 +123,15 @@ export default async function handler(request, context) {
                   </a>
                 </div>
 
-                <div style="background: #ecfdf5; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
-                  <p style="color: #065f46; margin: 0; font-size: 14px;">
-                    <strong>ログイン方法：</strong> メールアドレス「${email}」でログイン
+                <div style="background-color: #d1fae5; padding: 18px; border-radius: 8px; border-left: 4px solid #059669; margin-bottom: 15px;">
+                  <p style="color: #047857; margin: 0; font-size: 14px; line-height: 1.6;">
+                    <strong style="color: #065f46;">📧 ログイン方法：</strong> メールアドレス「<strong>${email}</strong>」でログイン
                   </p>
                 </div>
 
-                <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 15px;">
-                  <p style="color: #92400e; margin: 0; font-size: 14px;">
-                    <strong>⚠️ 重要：有料プラン会員の方へ</strong><br>
+                <div style="background-color: #fef08a; padding: 18px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                  <p style="color: #854d0e; margin: 0; font-size: 14px; line-height: 1.6;">
+                    <strong style="color: #78350f;">⚠️ 重要：有料プラン会員の方へ</strong><br>
                     予想データが正しく表示されない場合は、<strong>一度ログアウトしていただき、再度ログインしてください</strong>。これにより最新のプラン情報が反映されます。
                   </p>
                 </div>
@@ -144,9 +144,9 @@ export default async function handler(request, context) {
                   📧 support@nankan-analytics.keiba.link
                 </p>
                 <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
-                <p style="font-size: 12px; color: #94a3b8;">
-                  このメールは独立システム（user-notification.js）から配信されています<br>
-                  安全ドメイン: ${SAFE_DOMAIN} | 配信時刻: ${new Date().toISOString()}
+                <p style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
+                  このメールは自動配信されています<br>
+                  配信時刻: ${new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}
                 </p>
               </div>
             </div>
