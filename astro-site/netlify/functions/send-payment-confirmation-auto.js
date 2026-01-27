@@ -259,13 +259,13 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
   <style>
     body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; line-height: 1.8; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+    .header { background-color: #10b981; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
     .section { background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #10b981; }
     .info-row { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
     .label { font-weight: bold; color: #475569; display: inline-block; width: 120px; }
     .value { color: #1e293b; }
     .highlight { background: #dbeafe; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; margin: 20px 0; }
-    .login-button { display: inline-block; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 15px 0; }
+    .login-button { display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 15px 0; }
     .access-list { background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981; margin: 15px 0; }
     .footer { text-align: center; color: #64748b; font-size: 0.9rem; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
   </style>
@@ -296,7 +296,7 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
       <div class="info-row" style="border-bottom: none;">
         <span class="label">ログインURL:</span>
         <div class="value" style="margin-top: 10px;">
-          <a href="${planInfo.loginUrl}" class="login-button" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 15px 0;">
+          <a href="${planInfo.loginUrl}" class="login-button" target="_blank" style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 15px 0;">
             ${planInfo.buttonText}
           </a>
         </div>

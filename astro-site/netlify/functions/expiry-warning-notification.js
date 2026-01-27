@@ -143,14 +143,14 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
   <style>
     body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; line-height: 1.8; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .header { background-color: #f59e0b; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
     .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
     .expiry-box { background: white; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0; }
-    .discount-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 8px; padding: 25px; margin: 20px 0; text-align: center; }
+    .discount-card { background-color: #10b981; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 8px; padding: 25px; margin: 20px 0; text-align: center; }
     .discount-price { font-size: 2rem; font-weight: bold; margin: 15px 0; }
-    .original-price { text-decoration: line-through; opacity: 0.7; font-size: 1.2rem; }
+    .original-price { text-decoration: line-through; color: #d1d5db; font-size: 1.2rem; }
     .upsell-card { background: white; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 15px 0; }
-    .btn { display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 10px 0; font-weight: bold; }
+    .btn { display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 10px 0; font-weight: bold; }
     .footer { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; }
   </style>
 </head>
@@ -192,7 +192,7 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
       </div>
 
       <div style="text-align: center; margin: 30px 0;">
-        <a href="mailto:nankan.analytics@keiba.link?subject=【プラン継続】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A振込金額: ${planInfo.discountPrice}%0A振込完了日: （ご記入ください）" class="btn" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+        <a href="mailto:nankan.analytics@keiba.link?subject=【プラン継続】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A振込金額: ${planInfo.discountPrice}%0A振込完了日: （ご記入ください）" class="btn" style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold;">
           継続を申し込む（メールで連絡）
         </a>
       </div>

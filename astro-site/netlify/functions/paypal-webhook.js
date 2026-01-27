@@ -506,7 +506,7 @@ function generateWelcomeEmail(customerName, plan, expiryDate, email) {
   <title>ご登録ありがとうございます</title>
 </head>
 <body style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+  <div style="background-color: #667eea; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
     <h1 style="margin: 0; font-size: 24px;">🎉 ご登録ありがとうございます</h1>
   </div>
 
@@ -530,7 +530,7 @@ function generateWelcomeEmail(customerName, plan, expiryDate, email) {
 
       <div style="text-align: center;">
         <a href="${magicLink}"
-           style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 25px; font-weight: bold;">
+           style="display: inline-block; background-color: #667eea; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 15px 40px; border-radius: 25px; font-weight: bold;">
           マジックリンクでログイン
         </a>
       </div>

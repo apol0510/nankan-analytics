@@ -54,6 +54,7 @@ export default async function handler(request, context) {
               box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }
             .header {
+              background-color: #1e293b;
               background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
               color: white;
               padding: 20px;
@@ -62,6 +63,7 @@ export default async function handler(request, context) {
               margin-bottom: 20px;
             }
             button {
+              background-color: #dc2626;
               background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
               color: white;
               border: none;
@@ -72,6 +74,7 @@ export default async function handler(request, context) {
               margin: 10px;
             }
             .cancel-btn {
+              background-color: #6b7280;
               background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
             }
           </style>

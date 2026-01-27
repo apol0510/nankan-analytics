@@ -179,6 +179,7 @@ async function sendMagicLinkEmail(email, magicLink) {
                 padding: 20px;
               }
               .header {
+                background-color: #3b82f6;
                 background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
                 color: white;
                 padding: 30px;
@@ -192,8 +193,9 @@ async function sendMagicLinkEmail(email, magicLink) {
               }
               .button {
                 display: inline-block;
+                background-color: #3b82f6;
                 background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-                color: white !important;
+                color: #ffffff !important;
                 padding: 15px 40px;
                 text-decoration: none;
                 border-radius: 8px;
