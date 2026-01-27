@@ -96,9 +96,9 @@ export default async function handler(request, context) {
           type: 'text/html',
           value: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 30px; text-align: center; border-radius: 12px; margin-bottom: 20px;">
+              <div style="background-color: #1e293b; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 30px; text-align: center; border-radius: 12px; margin-bottom: 20px;">
                 <h1 style="color: #ffffff; margin: 0; font-size: 28px;">🏇 NANKANアナリティクス</h1>
-                <p style="color: #cbd5e1; margin: 10px 0 0 0; font-size: 16px;">南関競馬AI予想プラットフォーム</p>
+                <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px;">南関競馬AI予想プラットフォーム</p>
               </div>
 
               <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -118,7 +118,7 @@ export default async function handler(request, context) {
 
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${SAFE_DOMAIN}/dashboard"
-                     style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                     style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                     📊 マイページにログイン
                   </a>
                 </div>
