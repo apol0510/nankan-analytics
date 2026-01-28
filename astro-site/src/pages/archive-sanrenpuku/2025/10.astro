@@ -1,10 +1,10 @@
 ---
 export const prerender = true;
-import archiveData2026_01 from '../../../data/archiveSanrenpukuResults_2026-01.json';
+import archiveData2025_10 from '../../../data/archiveSanrenpukuResults_2025-10.json';
 
-const year = '2026';
-const month = '01';
-const monthData = archiveData2026_01[year]?.[month] || {};
+const year = '2025';
+const month = '10';
+const monthData = archiveData2025_10[year]?.[month] || {};
 const days = Object.keys(monthData).sort().reverse(); // 新しい順
 
 // 月間統計計算
@@ -32,22 +32,22 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO最適化メタタグ -->
-  <title>2026年1月 三連複的中実績｜Premium専用｜NANKANアナリティクス</title>
-  <meta name="description" content="2026年1月の三連複全的中実績を公開（Premium会員専用）。的中率{hitRate}%・総配当¥{totalPayoutMonth.toLocaleString()}の実績データ。AI厳選買い目による高精度三連複予想。" />
-  <meta name="keywords" content="三連複,的中実績,2026年1月,南関競馬,Premium会員,的中率,配当,競馬予想,AI予想" />
-  <link rel="canonical" href="https://nankan-analytics.keiba.link/archive-sanrenpuku/2026/01" />
+  <title>2025年10月 三連複的中実績｜Premium専用｜NANKANアナリティクス</title>
+  <meta name="description" content="2025年10月の三連複全的中実績を公開（Premium会員専用）。的中率{hitRate}%・総配当¥{totalPayoutMonth.toLocaleString()}の実績データ。AI厳選買い目による高精度三連複予想。" />
+  <meta name="keywords" content="三連複,的中実績,2025年10月,南関競馬,Premium会員,的中率,配当,競馬予想,AI予想" />
+  <link rel="canonical" href="https://nankan-analytics.keiba.link/archive-sanrenpuku/2025/10" />
 
   <!-- OGPタグ -->
-  <meta property="og:title" content="2026年1月 三連複的中実績｜Premium専用" />
+  <meta property="og:title" content="2025年10月 三連複的中実績｜Premium専用" />
   <meta property="og:description" content="的中率{hitRate}%・総配当¥{totalPayoutMonth.toLocaleString()}の三連複実績データ公開（Premium会員限定）。" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://nankan-analytics.keiba.link/archive-sanrenpuku/2026/01" />
+  <meta property="og:url" content="https://nankan-analytics.keiba.link/archive-sanrenpuku/2025/10" />
   <meta property="og:site_name" content="NANKANアナリティクス" />
   <meta property="og:locale" content="ja_JP" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="2026年1月 三連複的中実績｜Premium専用" />
+  <meta name="twitter:title" content="2025年10月 三連複的中実績｜Premium専用" />
   <meta name="twitter:description" content="的中率{hitRate}%・総配当¥{totalPayoutMonth.toLocaleString()}の三連複実績データ。" />
 
   <!-- 構造化データ（JSON-LD） -->
@@ -55,14 +55,14 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
   {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "2026年1月 三連複的中実績",
+    "name": "2025年10月 三連複的中実績",
     "description": "Premium会員専用の三連複的中実績アーカイブ。AI厳選買い目による全レースの的中記録と配当金額。",
     "numberOfItems": {totalHitRaces},
     "itemListElement": [
       {
         "@type": "SportsEvent",
         "name": "三連複的中実績",
-        "startDate": "2026-01",
+        "startDate": "2025-10",
         "location": {
           "@type": "Place",
           "name": "南関競馬（大井・川崎・船橋・浦和）"
@@ -86,69 +86,70 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
 
   <!-- 🔒 Standard/Premium会員専用認証チェック（クライアントサイドJavaScript） -->
   <script is:inline>
-    // LocalStorageからプラン情報取得
-    // 🔴 重要: user-planオブジェクトから取得（premium-predictions.astroと同じロジック）
+    // LocalStorageから正確にプラン情報を取得（user-planオブジェクト対応）
     let userPlan = null;
     let userEmail = null;
 
-    // user-planオブジェクトから取得（メインの認証方法）
+    // user-plan JSON objectから取得（dashboard.astroで保存される形式）
     const userPlanData = localStorage.getItem('user-plan');
     if (userPlanData) {
       try {
         const parsed = JSON.parse(userPlanData);
         userPlan = parsed.plan;
         userEmail = parsed.email;
+        console.log('🔍 Archive Sanrenpuku 10月 アクセスチェック');
+        console.log('user-plan object parsed successfully');
+        console.log('Email:', userEmail);
+        console.log('Plan:', userPlan);
       } catch (e) {
-        console.error('user-plan parse error:', e);
+        console.error('🚨 user-plan JSON parse error:', e);
       }
     }
 
-    // フォールバック：userPlan（キャメルケース）も確認
+    // フォールバック: 古いキー形式もチェック
     if (!userPlan) {
       userPlan = localStorage.getItem('userPlan');
+      userEmail = localStorage.getItem('userEmail');
+      console.log('🔍 Fallback to legacy keys');
+      console.log('Email:', userEmail);
+      console.log('Plan:', userPlan);
     }
 
-    // 🔴 LocalStorageキャッシュ問題対策（2025-11-05）
-    // 問題: 古い'Premium Predictions'がLocalStorageに残り続ける
-    // 解決: クライアントサイドで自動正規化してLocalStorageを更新
-    if (userPlan) {
-      const planLowerOriginal = userPlan.toLowerCase();
-      let normalizedPlan = userPlan;
+    // LocalStorage自動正規化（'premium predictions' → 'Premium'）
+    if (userPlan && userPlan.toLowerCase() === 'premium predictions') {
+      console.log('🔄 Normalizing plan: "premium predictions" → "Premium"');
+      userPlan = 'Premium';
 
-      // Premium Predictionsを自動的にPremiumに正規化
-      if (planLowerOriginal === 'premium predictions') {
-        normalizedPlan = 'Premium';
-        localStorage.setItem('userPlan', normalizedPlan);
-        console.log('🔄 プラン正規化: "Premium Predictions" → "Premium"');
-        userPlan = normalizedPlan;
+      // user-plan object形式で保存
+      if (userEmail) {
+        const normalizedData = {
+          plan: 'Premium',
+          email: userEmail,
+          normalizedAt: new Date().toISOString()
+        };
+        localStorage.setItem('user-plan', JSON.stringify(normalizedData));
+        console.log('✅ LocalStorage normalized to user-plan object format');
       }
     }
-
-    // デバッグログ
-    console.log('🔍 Archive Sanrenpuku 2026年1月 アクセスチェック');
-    console.log('Email:', userEmail);
-    console.log('Plan:', userPlan);
 
     // Standard・Premium会員のみアクセス可能（大文字小文字区別なし）
     // Premium Combo・Premium Sanrenpukuはアクセス不可
     // ※Premium Plusは単発商品（会員プランではない）のため判定不要
     const planLower = userPlan ? userPlan.toLowerCase() : '';
-
-    // 🔴 復活防止対策: Premiumのバリエーション完全対応（2025-11-05）
-    // 問題: 'Premium Predictions'でログインした会員がアクセス拒否される
-    // 原因: planLower === 'premium' のみチェック → 'premium predictions'は弾かれる
-    // 解決: 'Premium' と 'Premium Predictions' の両方に明示的に対応
     const isPremium = planLower === 'premium' || planLower === 'premium predictions';
     const isStandard = planLower === 'standard';
 
-    // 🔴 emailチェック削除（2025-11-05）: プラン判定のみで十分
-    // 理由: user-planオブジェクトが存在しない環境でもuserPlanは取得できるため
+    console.log('planLower:', planLower);
+    console.log('isPremium:', isPremium);
+    console.log('isStandard:', isStandard);
+
+    // emailチェックを削除（user-plan objectでemailがnullの場合があるため）
     if (!userPlan || (!isStandard && !isPremium)) {
       console.log('❌ アクセス拒否 - planLower:', planLower);
       alert('この機能はStandard/Premium会員専用です。\n\nStandard会員以上にアップグレードすると、三連複的中実績をご覧いただけます。');
       window.location.href = '/premium-predictions';
     } else {
-      console.log('✅ アクセス許可 - isPremium:', isPremium, 'isStandard:', isStandard);
+      console.log('✅ アクセス許可');
     }
   </script>
 
@@ -527,7 +528,7 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
         <span>👑</span>
         <span>Premium専用</span>
       </div>
-      <h1 class="title">🏆 2026年1月 三連複的中実績アーカイブ</h1>
+      <h1 class="title">🏆 2025年10月 三連複的中実績アーカイブ</h1>
       <p class="subtitle">AI厳選買い目による全レースの的中記録</p>
     </div>
 
@@ -562,7 +563,7 @@ const hitRate = totalRaces > 0 ? Math.round((totalHitRaces / totalRaces) * 100) 
       return (
         <div class="day-section">
           <div class="day-header">
-            <h2 class="day-title">1月{parseInt(day)}日 {dayData.venue}競馬</h2>
+            <h2 class="day-title">10月{parseInt(day)}日 {dayData.venue}競馬</h2>
             <div class="perfect-badge">🏆 {dayData.hitRaces}/{dayData.totalRaces}的中</div>
           </div>
 
