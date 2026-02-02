@@ -1,9 +1,13 @@
 ---
 export const prerender = true;
 import archiveData2026_01 from '../../../data/archiveSanrenpukuResults_2026-01.json';
+import archiveData2026_02 from '../../../data/archiveSanrenpukuResults_2026-02.json';
 
 const year = '2026';
-const yearData = archiveData2026_01[year] || {};
+const yearData = {
+  ...archiveData2026_01[year],
+  ...archiveData2026_02[year]
+};
 const months = Object.keys(yearData).sort().reverse(); // 新しい順
 
 // 年間統計計算

@@ -622,14 +622,70 @@ const archiveSanrenpukuResults = {
 };
 ```
 
-#### **Step 3: コミット・プッシュ**
+#### **Step 3: 月別アーカイブページ作成（必須・忘れるとリンク切れ）**
+
+**⚠️ 重要：新月開始時は必ず月別アーカイブページも作成してください！**
+
+**馬単アーカイブページ（/archive/2026/02.astro）:**
+```bash
+# 前月をコピーして作成
+cp src/pages/archive/2026/01.astro src/pages/archive/2026/02.astro
+
+# 以下の箇所を手動で編集（1月→2月に変更）
+# - Line 3: import archiveData from '../../../data/archiveResults_2026-02.json';
+# - Line 6: const month = '02';
+# - Line 35: <title>2026年2月 南関競馬的中実績｜...
+# - その他のメタタグ・本文中の「1月」→「2月」
+```
+
+**三連複アーカイブページ（/archive-sanrenpuku/2026/02.astro）:**
+```bash
+# 前月をコピーして作成
+cp src/pages/archive-sanrenpuku/2026/01.astro src/pages/archive-sanrenpuku/2026/02.astro
+
+# 以下の箇所を手動で編集（1月→2月に変更）
+# - Line 3: import archiveData2026_02 from '../../../data/archiveSanrenpukuResults_2026-02.json';
+# - Line 6: const month = '02';
+# - Line 35: <title>2026年2月 三連複的中実績｜...
+# - その他のメタタグ・本文中の「1月」→「2月」
+```
+
+**年間indexページに2月リンク追加（/archive/2026/index.astro）:**
+```astro
+// インポート追加
+import archiveData02 from '../../../data/archiveResults_2026-02.json';
+
+// データ統合に追加
+const yearData = {
+  ...archiveData01[year],
+  ...archiveData02[year]  // ← 新月分を追加
+};
+```
+
+**年間indexページに2月リンク追加（/archive-sanrenpuku/2026/index.astro）:**
+```astro
+// インポート追加
+import archiveData2026_02 from '../../../data/archiveSanrenpukuResults_2026-02.json';
+
+// データ統合に追加
+const yearData = {
+  ...archiveData2026_01[year],
+  ...archiveData2026_02[year]  // ← 新月分を追加
+};
+```
+
+#### **Step 4: コミット・プッシュ**
 ```bash
 git add src/data/archiveResults_2026-02.json \
         src/data/archiveSanrenpukuResults_2026-02.json \
         src/pages/archive/index.astro \
-        src/pages/archive-sanrenpuku/index.astro
+        src/pages/archive-sanrenpuku/index.astro \
+        src/pages/archive/2026/02.astro \
+        src/pages/archive-sanrenpuku/2026/02.astro \
+        src/pages/archive/2026/index.astro \
+        src/pages/archive-sanrenpuku/2026/index.astro
 
-git commit -m "🗓️ 2026年2月ファイル作成 + アーカイブインポート追加"
+git commit -m "🗓️ 2026年2月ファイル作成 + アーカイブページ追加 + インポート追加"
 git push origin main
 ```
 
@@ -639,15 +695,25 @@ git push origin main
 - 結果: ビルドエラー（validate-archive-data.jsが検出）
 - 修正: archive/index.astro と archive-sanrenpuku/index.astro にインポート追加
 
+❌ **月別アーカイブページ（02.astro）を作成し忘れる**
+- 結果: /archive/2026/ のリンクが404エラー
+- 修正: archive/2026/02.astro と archive-sanrenpuku/2026/02.astro を作成
+
+❌ **年間indexページ（/archive/2026/index.astro）に2月リンクを追加し忘れる**
+- 結果: /archive/2026/ に2月が表示されない
+- 修正: archive/2026/index.astro と archive-sanrenpuku/2026/index.astro にインポート追加
+
 ❌ **インポートだけ追加してデータ統合を忘れる**
 - 結果: アーカイブページに新月データが表示されない
 - 修正: `...archiveData2026_02['2026']` を統合オブジェクトに追加
 
 ✅ **正しい手順:**
-1. 月別ファイル作成
-2. アーカイブページにインポート追加
-3. データ統合に追加
-4. コミット・プッシュ
+1. 月別データファイル作成（archiveResults_2026-02.json, archiveSanrenpukuResults_2026-02.json）
+2. アーカイブトップページにインポート追加（archive/index.astro, archive-sanrenpuku/index.astro）
+3. データ統合に追加（yearData）
+4. **月別アーカイブページ作成**（archive/2026/02.astro, archive-sanrenpuku/2026/02.astro）
+5. **年間indexページに2月リンク追加**（archive/2026/index.astro, archive-sanrenpuku/2026/index.astro）
+6. コミット・プッシュ（全ファイル一括）
 
 ---
 
