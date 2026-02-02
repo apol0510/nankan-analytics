@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import archiveData2025_11 from '../../data/archiveSanrenpukuResults_2025-11.json';
 import archiveData2025_12 from '../../data/archiveSanrenpukuResults_2025-12.json';
 import archiveData2026_01 from '../../data/archiveSanrenpukuResults_2026-01.json';
+import archiveData2026_02 from '../../data/archiveSanrenpukuResults_2026-02.json';
 
 // 🔒 Premium会員認証チェック（無料会員はアクセス不可）
 // クライアントサイドでプラン判定を行う想定
@@ -14,7 +15,8 @@ const archiveSanrenpukuResults = {
     ...archiveData2025_12['2025']
   },
   '2026': {
-    ...archiveData2026_01['2026']
+    ...archiveData2026_01['2026'],
+    ...archiveData2026_02['2026']
   }
 };
 

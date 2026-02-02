@@ -4,6 +4,7 @@ import archiveData10 from '../../data/archiveResults_2025-10.json';
 import archiveData11 from '../../data/archiveResults_2025-11.json';
 import archiveData12 from '../../data/archiveResults_2025-12.json';
 import archiveData2026_01 from '../../data/archiveResults_2026-01.json';
+import archiveData2026_02 from '../../data/archiveResults_2026-02.json';
 
 // 全月のデータを統合
 const archiveData = {
@@ -13,7 +14,8 @@ const archiveData = {
     ...archiveData12['2025']
   },
   '2026': {
-    ...archiveData2026_01['2026']
+    ...archiveData2026_01['2026'],
+    ...archiveData2026_02['2026']
   }
 };
 
