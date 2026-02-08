@@ -4066,29 +4066,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <!-- Premium Combo -->
                 <div class="plan-option recommended">
                     <div class="recommended-badge">いままでの馬単も並行して利用する場合</div>
-                    <h3 class="plan-option-name">Premium Combo</h3>
-                    <div class="plan-option-subtitle">従来の馬単3戦略 + 高性能AI搭載の三連複の自動絞り込み機能</div>
-                    <div class="plan-option-price-strike">¥108,000</div>
-                    <div class="plan-option-price">¥78,000</div>
-                    <div class="plan-option-discount">永久アクセス（追加料金なし）</div>
-                    <ul class="plan-option-features">
-                        <li>✅ <strong>馬単3戦略</strong>そのまま利用可能</li>
-                        <li>✅ <strong>高性能AI三連複絞り込み機能</strong>が追加されます</li>
-                        <li>✅ 的中率72% 回収率156%</li>
-                        <li>✅ 買い目点数7-9点の少点数</li>
-                        <li>✅ 永久アクセス（追加料金なし）</li>
-                    </ul>
-                    <button class="btn-plan combo" onclick="openBankModal('Premium Combo', 78000, 'lifetime')">
-                        🏦 銀行振込で申し込む
-                    </button>
-                    <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
-                </div>
-
-                <!-- Premium Sanrenpuku -->
-                <div class="plan-option">
-                    <div class="plan-badge-normal">いままでの馬単からプラン変更する場合</div>
-                    <h3 class="plan-option-name">Premium Sanrenpuku</h3>
-                    <div class="plan-option-subtitle">高性能AI三連複自動絞り込みのみ</div>
+                    <h3 class="plan-option-name">Sanrenpuku Lifetime</h3>
+                    <div class="plan-option-subtitle">高性能AI三連複自動絞り込み（Premium期限内閲覧可能）</div>
                     <div class="plan-option-price-strike">¥108,000</div>
                     <div class="plan-option-price">¥78,000</div>
                     <div class="plan-option-discount">永久アクセス（追加料金なし）</div>
@@ -4097,13 +4076,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <li>✅ 的中率72% 回収率156%</li>
                         <li>✅ 買い目点数7-9点の少点数</li>
                         <li>✅ 永久アクセス（追加料金なし）</li>
-                        <li class="warning-feature">❌ 馬単3戦略は閲覧できません</li>
+                        <li>⚠️ Premium期限内のみ閲覧可能</li>
                     </ul>
-                    <button class="btn-plan sanrenpuku" onclick="openBankModal('Premium Sanrenpuku', 78000, 'lifetime')">
+                    <button class="btn-plan combo" onclick="openBankModal('Sanrenpuku Lifetime', 78000, 'lifetime')">
                         🏦 銀行振込で申し込む
                     </button>
                     <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
                 </div>
+
             </div>
 
             <!-- プラン変更後の流れ -->
@@ -4179,22 +4159,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
                 </div>
 
-                <!-- Premium Combo -->
+                <!-- Sanrenpuku Lifetime -->
                 <div class="plan-option recommended">
                     <div class="recommended-badge">おすすめ</div>
-                    <h3 class="plan-option-name">Premium Combo</h3>
-                    <div class="plan-option-subtitle">馬単3戦略 + AI三連複絞り込み</div>
+                    <h3 class="plan-option-name">Sanrenpuku Lifetime</h3>
+                    <div class="plan-option-subtitle">高性能AI三連複自動絞り込み（Premium期限内閲覧可能）</div>
                     <div class="plan-option-price-strike">¥108,000</div>
                     <div class="plan-option-price">¥78,000</div>
                     <div class="plan-option-discount">永久アクセス（追加料金なし）</div>
                     <ul class="plan-option-features">
-                        <li>✅ <strong>馬単3戦略</strong>全レース対応</li>
                         <li>✅ <strong>高性能AI三連複絞り込み機能</strong></li>
                         <li>✅ 的中率72% 回収率156%</li>
                         <li>✅ 買い目点数7-9点の少点数</li>
                         <li>✅ 永久アクセス（追加料金なし）</li>
+                        <li>⚠️ Premium期限内のみ閲覧可能</li>
                     </ul>
-                    <button class="btn-plan combo" onclick="openBankModal('Premium Combo', 78000, 'lifetime')">
+                    <button class="btn-plan combo" onclick="openBankModal('Sanrenpuku Lifetime', 78000, 'lifetime')">
                         🏦 銀行振込で申し込む
                     </button>
                     <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
