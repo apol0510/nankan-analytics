@@ -321,8 +321,10 @@ exports.handler = async (event, context) => {
           console.warn('⚠️ Airtable credentials not configured, skipping registration');
         } else {
           // プラン名から料金部分を削除（Airtable Single select用）
-          // 例: "Premium (¥9,980/月)" → "Premium"
-          const planName = productName.replace(/\s*\(¥[\d,]+\/[^)]+\)/, '').replace(/\s*\(¥[\d,]+\/[^)]+\)/, '');
+          // 例: "Premium Lifetime (¥78,000（永久アクセス）)" → "Premium Lifetime"
+          // 例: "Premium Annual (¥68,000/年)" → "Premium Annual"
+          // 例: "Premium Monthly (¥18,000/月)" → "Premium Monthly"
+          const planName = productName.replace(/\s*\([¥￥][\d,]+[^)）]*[)）]/g, '');
 
           // 既存顧客チェック
           const searchFormula = `{Email} = "${email}"`;
