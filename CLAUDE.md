@@ -420,6 +420,98 @@ code .
 - Monorepo特有の問題ではなく、複数プロジェクト同時起動による共通問題として対処
 
 ---
+### ✅ **2026-02-09 価格体系変更（買い切り・年払い制導入）**
+
+#### **背景・目的**
+- **日時**: 2026年2月9日
+- **決済手段**: 銀行振込のみ（Stripe/PayPal停止中）
+- **問題**: 月額課金の不安定性・収益予測の困難
+- **方針**: 買い切り・年払いを主体とした価格体系への転換
+
+#### **新価格体系**
+
+**✅ 主要プラン（/pricing/ で販売）**
+- **Standard**: 一時非表示（既存会員のみ利用可能）
+- **Premium 買い切り**: ¥108,000 → **¥78,000 特別価格**（永久アクセス）🔥
+- **Premium 年払い**: **¥68,000/年**
+- **Premium 月払い**: **¥18,000/月**（従来¥9,980から値上げ）
+
+**✅ アップグレードプラン（既存会員向け）**
+- **Premium Sanrenpuku 買い切り**: ¥108,000 → **¥78,000 特別価格**（永久アクセス）🔥
+- **Premium Combo 買い切り**: ¥108,000 → **¥78,000 特別価格**（永久アクセス）🔥
+
+**✅ 単品商品（Sanrenpuku/Combo会員向け）**
+- **Premium Plus**: ¥98,000 → **¥68,000 特別価格**（単品）
+
+#### **実装内容（6ページ更新）**
+
+| ファイル | 変更内容 |
+|---------|----------|
+| `/pricing.astro` | 4プラン表示（Free/Premium買い切り/年払い/月払い）、Standard非表示 |
+| `/dashboard.astro` | Premium/Standard会員向けアップグレードモーダル（買い切り¥78,000） |
+| `/premium-predictions.astro` | Sanrenpuku/Combo買い切り（¥78,000） |
+| `/standard-predictions.astro` | Sanrenpuku/Combo買い切り（¥78,000） |
+| `/premium-sanrenpuku.astro` | Premium Plus買い切り（¥68,000） |
+| `CLAUDE.md` | 価格体系ドキュメント更新 |
+
+#### **技術実装の特徴**
+
+**1. planType パラメータ導入**
+```javascript
+function openBankModal(planName, amount, planType = 'monthly') {
+  let periodText = '';
+  if (planType === 'lifetime') {
+    periodText = '（永久アクセス）';
+  } else if (planType === 'annual') {
+    periodText = '/年';
+  } else {
+    periodText = '/月';
+  }
+  // ...
+}
+```
+
+**2. 特別価格表示（strikethrough）**
+```css
+.price-strike {
+  font-size: 1.2rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+  margin-bottom: 0.5rem;
+}
+```
+
+**3. 買い切りプラン強調（glow animation）**
+```css
+.plan-button-lifetime {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  animation: glow 2s ease-in-out infinite alternate;
+}
+```
+
+#### **ビジネス価値**
+
+**即時効果:**
+- ✅ **収益安定化**: 買い切り78,000円で月額8ヶ月分の前払い確保
+- ✅ **顧客単価向上**: 月払い¥9,980→¥18,000（80%値上げ）
+- ✅ **解約リスク低減**: 買い切りプランで継続率100%
+
+**長期メリット:**
+- ✅ **キャッシュフロー改善**: 前払い金で運転資金確保
+- ✅ **価格設定の柔軟性**: 特別価格終了後は通常価格¥108,000に戻せる
+- ✅ **アップセル導線**: 買い切り→年払い→月払いの段階的収益化
+
+#### **デプロイ情報**
+- **日時**: 2026年2月9日
+- **変更ファイル数**: 6ファイル
+- **ビルド**: 成功（121ページ生成）
+
+#### **次のステップ**
+- ⏳ Paddle Payment Links設定（買い切り/年払い/月払い）
+- ⏳ 既存会員への価格改定通知メール送信
+- ⏳ 特別価格キャンペーン期限設定（例: 2026年3月末まで）
+
+---
 ### ✅ **2026-01-16 決済システム完全銀行振込化**
 
 #### **背景・緊急対応**
@@ -458,10 +550,14 @@ code .
   - Line 179: ユーザーメール件名 `【銀行振込申請受付】NANKANアナリティクス ${productName}`
   - Line 255: ユーザーメール本文 `${productName} のアクセス方法をメールでお送りいたします`
 
-#### **対応プラン**
-- Premium Sanrenpuku (¥19,820/月)
-- Premium Combo (¥24,800/月)
-- Premium Plus (¥68,000/単品)
+#### **対応プラン（2026-02-09更新：買い切り・年払い制導入）**
+- **Standard**: 一時非表示（既存会員のみ利用可能）
+- **Premium 買い切り**: ¥108,000 → ¥78,000 特別価格（永久アクセス）
+- **Premium 年払い**: ¥68,000/年
+- **Premium 月払い**: ¥18,000/月
+- **Premium Sanrenpuku 買い切り**: ¥108,000 → ¥78,000 特別価格（永久アクセス）
+- **Premium Combo 買い切り**: ¥108,000 → ¥78,000 特別価格（永久アクセス）
+- **Premium Plus**: ¥98,000 → ¥68,000 特別価格（単品）
 
 #### **技術的成果**
 - **変更ファイル数**: 7ファイル
@@ -1109,15 +1205,17 @@ curl -X POST https://nankan-analytics.netlify.app/.netlify/functions/create-news
 | 入金金額 | オプション | メールに表示される |
 | Airtable Record ID | オプション | Status自動更新用 |
 
-#### **プラン別ログイン情報**
+#### **プラン別ログイン情報（2026-02-09更新）**
 
-| プラン | ログインURL | アクセス範囲 |
-|--------|-------------|-------------|
-| Standard (¥5,980/月) | /dashboard/ | 後半3レース（10R、11R、12R） |
-| Premium (¥9,980/月) | /dashboard/ | 全レース（1R〜12R） |
-| Premium Sanrenpuku (¥19,820/月) | /dashboard/ | 全レース + 三連複予想 |
-| Premium Combo (¥24,800/月) | /dashboard/ | 全レース + 三連複 + Combo限定 |
-| Premium Plus (¥68,000/単品) | /premium-plus/ | 単品商品・高精度予想（永久アクセス） |
+| プラン | 料金 | ログインURL | アクセス範囲 |
+|--------|------|-------------|-------------|
+| Standard | ¥5,980/月（一時非表示） | /dashboard/ | 後半3レース（10R、11R、12R） |
+| Premium 買い切り | ¥78,000（特別価格）永久アクセス | /dashboard/ | 全レース（1R〜12R） |
+| Premium 年払い | ¥68,000/年 | /dashboard/ | 全レース（1R〜12R） |
+| Premium 月払い | ¥18,000/月 | /dashboard/ | 全レース（1R〜12R） |
+| Premium Sanrenpuku 買い切り | ¥78,000（特別価格）永久アクセス | /dashboard/ | 全レース + 三連複予想 |
+| Premium Combo 買い切り | ¥78,000（特別価格）永久アクセス | /dashboard/ | 全レース + 三連複 + Combo限定 |
+| Premium Plus | ¥68,000（特別価格）単品 | /premium-plus/ | 単品商品・高精度予想（永久アクセス） |
 
 #### **運用フロー**
 

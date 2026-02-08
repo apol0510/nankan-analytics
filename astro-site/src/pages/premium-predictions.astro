@@ -928,17 +928,18 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
             <div class="modal-content">
                 <button class="modal-close" id="closePlanModal">&times;</button>
 
-                <h2 class="modal-title">🔄 プラン変更のご案内</h2>
+                <h2 class="modal-title">🔄 買い切りプランへのアップグレード</h2>
                 <p class="modal-subtitle">
-                    現在のPremium（馬単）プランから、三連複プランへの変更はこちらから
+                    🔥 今だけ特別価格：¥108,000 → <strong>¥78,000</strong>（永久アクセス）
                 </p>
 
                 <!-- 安心メッセージ -->
                 <div class="modal-info">
-                    <h3>✅ ご安心ください</h3>
+                    <h3>✅ 買い切りプランの特徴</h3>
                     <ul>
-                        <li>💰 <strong>決済後に自動で旧プランから新プランに切り替わります</strong></li>
-                        <li>🔄 <strong>即座に利用開始</strong> - プラン変更後すぐに高性能AI三連複の自動絞り込み機能が利用可能</li>
+                        <li>💰 <strong>一度きりの支払いで永久アクセス</strong>（追加料金なし）</li>
+                        <li>🔄 <strong>即座に利用開始</strong> - 決済後すぐに高性能AI三連複の自動絞り込み機能が利用可能</li>
+                        <li>📈 <strong>AIは毎日進化</strong> - 長く使うほどお得（50年利用で月額換算¥130）</li>
                     </ul>
                 </div>
 
@@ -949,41 +950,46 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
 
                 <!-- プラン選択 -->
                 <div class="plan-options">
-                    <!-- Premium Combo -->
+                    <!-- Premium Combo 買い切り -->
                     <div class="plan-option recommended">
                         <div class="recommended-badge">いままでの馬単も並行して利用する場合</div>
-                        <h3 class="plan-option-name">Premium Combo</h3>
+                        <h3 class="plan-option-name">Premium Combo 買い切り</h3>
                         <div class="plan-option-subtitle">従来の馬単3戦略 + 高性能AI搭載の三連複の自動絞り込み機能</div>
-                        <div class="plan-option-price">¥24,800</div>
-                        <div class="plan-option-discount">通常¥29,800 → ¥5,000 OFF！</div>
+                        <div class="plan-option-price-strike">¥108,000</div>
+                        <div class="plan-option-price">¥78,000</div>
+                        <div class="plan-option-discount">永久アクセス（追加料金なし）</div>
                         <ul class="plan-option-features">
                             <li>✅ <strong>馬単3戦略</strong>そのまま利用可能</li>
                             <li>✅ <strong>高性能AI三連複絞り込み機能</strong>が追加されます</li>
                             <li>✅ 的中率72% 回収率156%</li>
                             <li>✅ 買い目点数7-9点の少点数</li>
+                            <li>✅ 永久アクセス（追加料金なし）</li>
                         </ul>
-                        <button class="btn-plan combo" onclick="openBankModal('Premium Combo', 24800)">
-                            🏦 銀行振込でプラン変更
+                        <button class="btn-plan combo" onclick="openBankModal('Premium Combo 買い切り', 78000, 'lifetime')">
+                            🏦 銀行振込で申し込む
                         </button>
-                        <p class="plan-note">変更前: Premium ¥9,980 → 変更後: Combo ¥24,800</p>
+                        <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
                     </div>
 
-                    <!-- Premium Sanrenpuku -->
+                    <!-- Premium Sanrenpuku 買い切り -->
                     <div class="plan-option">
                         <div class="plan-badge-normal">いままでの馬単からプラン変更する場合</div>
-                        <h3 class="plan-option-name">Premium Sanrenpuku</h3>
+                        <h3 class="plan-option-name">Premium Sanrenpuku 買い切り</h3>
                         <div class="plan-option-subtitle">高性能AI三連複自動絞り込みのみ</div>
-                        <div class="plan-option-price">¥19,820</div>
+                        <div class="plan-option-price-strike">¥108,000</div>
+                        <div class="plan-option-price">¥78,000</div>
+                        <div class="plan-option-discount">永久アクセス（追加料金なし）</div>
                         <ul class="plan-option-features">
                             <li>✅ <strong>高性能AI三連複絞り込み機能</strong>を利用できます</li>
                             <li>✅ 的中率72% 回収率156%</li>
                             <li>✅ 買い目点数7-9点の少点数</li>
+                            <li>✅ 永久アクセス（追加料金なし）</li>
                             <li class="warning-feature">❌ 馬単3戦略は閲覧できません</li>
                         </ul>
-                        <button class="btn-plan sanrenpuku" onclick="openBankModal('Premium Sanrenpuku', 19820)">
-                            🏦 銀行振込でプラン変更
+                        <button class="btn-plan sanrenpuku" onclick="openBankModal('Premium Sanrenpuku 買い切り', 78000, 'lifetime')">
+                            🏦 銀行振込で申し込む
                         </button>
-                        <p class="plan-note">変更前: Premium ¥9,980 → 変更後: Sanrenpuku ¥19,820</p>
+                        <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
                     </div>
                 </div>
 
@@ -1415,10 +1421,12 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
     <script is:inline>
       let currentPlan = '';
       let currentAmount = 0;
+      let currentPlanType = 'monthly';
 
-      function openBankModal(planName, amount) {
+      function openBankModal(planName, amount, planType = 'monthly') {
         currentPlan = planName;
         currentAmount = amount;
+        currentPlanType = planType;
 
         // プラン選択モーダルを閉じる
         const planSelectionModal = document.getElementById('planSelectionModal');
@@ -1426,7 +1434,16 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
           planSelectionModal.style.display = 'none';
         }
 
-        document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
+        let periodText = '';
+        if (planType === 'lifetime') {
+          periodText = '（永久アクセス）';
+        } else if (planType === 'annual') {
+          periodText = '/年';
+        } else {
+          periodText = '/月';
+        }
+
+        document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}${periodText})`;
         document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
         document.getElementById('transferAmount').value = amount;
         document.getElementById('bankModal').classList.add('active');
@@ -1485,6 +1502,15 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
             submitLoading.style.display = 'inline';
             formMessage.style.display = 'none';
 
+            let periodText = '';
+            if (currentPlanType === 'lifetime') {
+              periodText = '（永久アクセス）';
+            } else if (currentPlanType === 'annual') {
+              periodText = '/年';
+            } else {
+              periodText = '/月';
+            }
+
             const formData = {
               fullName: document.getElementById('fullName').value,
               email: document.getElementById('email').value,
@@ -1493,7 +1519,7 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
               transferAmount: document.getElementById('transferAmount').value,
               transferName: document.getElementById('fullName').value,  // お名前と同じ
               remarks: document.getElementById('remarks').value,
-              productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
+              productName: `${currentPlan} (¥${currentAmount.toLocaleString()}${periodText})`,
               timestamp: new Date().toISOString()
             };
 
@@ -3344,6 +3370,13 @@ const sanrenpukuLatestResult = getLatestSanrenpukuDayData();
         color: rgb(245, 158, 11);
         font-size: 1.3rem;
         font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .plan-option-price-strike {
+        color: #94a3b8;
+        font-size: 1.2rem;
+        text-decoration: line-through;
         margin-bottom: 8px;
     }
 

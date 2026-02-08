@@ -963,17 +963,18 @@ export const dailyResultsData = {
             <div class="modal-content">
                 <button class="modal-close" id="closePlanModal">&times;</button>
 
-                <h2 class="modal-title">🔄 プラン変更のご案内</h2>
+                <h2 class="modal-title">🔄 買い切りプランへのアップグレード</h2>
                 <p class="modal-subtitle">
-                    現在のStandardプランから、三連複プランへの変更はこちらから
+                    🔥 今だけ特別価格：¥108,000 → <strong>¥78,000</strong>（永久アクセス）
                 </p>
 
                 <!-- 安心メッセージ -->
                 <div class="modal-info">
-                    <h3>✅ ご安心ください</h3>
+                    <h3>✅ 買い切りプランの特徴</h3>
                     <ul>
-                        <li>💰 <strong>決済後に自動で旧プランから新プランに切り替わります</strong></li>
-                        <li>🔄 <strong>即座に利用開始</strong> - プラン変更後すぐに高性能AI三連複の自動絞り込み機能が利用可能</li>
+                        <li>💰 <strong>一度きりの支払いで永久アクセス</strong>（追加料金なし）</li>
+                        <li>🔄 <strong>即座に利用開始</strong> - 決済後すぐに高性能AI三連複の自動絞り込み機能が利用可能</li>
+                        <li>📈 <strong>AIは毎日進化</strong> - 長く使うほどお得（50年利用で月額換算¥130）</li>
                     </ul>
                 </div>
 
@@ -984,41 +985,43 @@ export const dailyResultsData = {
 
                 <!-- プラン選択 -->
                 <div class="plan-options">
-                    <!-- Premium Combo -->
+                    <!-- Premium Combo 買い切り -->
                     <div class="plan-option recommended">
                         <span class="recommended-badge">おすすめ</span>
-                        <h4 class="plan-name">Premium Combo</h4>
+                        <h4 class="plan-name">Premium Combo 買い切り</h4>
                         <p class="plan-subtitle">馬単3戦略 + AI三連複</p>
                         <div class="plan-price">
-                            <span class="price-main">¥24,800</span>
-                            <span class="price-period">/月</span>
+                            <span class="price-strike">¥108,000</span>
+                            <span class="price-main">¥78,000</span>
+                            <span class="price-period">永久</span>
                         </div>
-                        <p class="plan-savings">通常¥29,800 → ¥5,000お得！</p>
+                        <p class="plan-savings">永久アクセス（追加料金なし）</p>
                         <ul class="plan-features">
                             <li>✅ 馬単3戦略（全12R）</li>
                             <li>✅ AI三連複絞り込み買い目</li>
-                            <li>✅ 最も効率的なフル活用</li>
+                            <li>✅ 永久アクセス（追加料金なし）</li>
                         </ul>
-                        <button class="plan-btn primary" onclick="openBankModal('Premium Combo', 24800)">
+                        <button class="plan-btn primary" onclick="openBankModal('Premium Combo 買い切り', 78000, 'lifetime')">
                             🏦 銀行振込で申し込む
                         </button>
                     </div>
 
-                    <!-- Premium Sanrenpuku -->
+                    <!-- Premium Sanrenpuku 買い切り -->
                     <div class="plan-option">
-                        <h4 class="plan-name">Premium Sanrenpuku</h4>
+                        <h4 class="plan-name">Premium Sanrenpuku 買い切り</h4>
                         <p class="plan-subtitle">AI三連複のみ</p>
                         <div class="plan-price">
-                            <span class="price-main">¥19,820</span>
-                            <span class="price-period">/月</span>
+                            <span class="price-strike">¥108,000</span>
+                            <span class="price-main">¥78,000</span>
+                            <span class="price-period">永久</span>
                         </div>
-                        <p class="plan-savings" style="visibility: hidden;">-</p>
+                        <p class="plan-savings">永久アクセス（追加料金なし）</p>
                         <ul class="plan-features">
                             <li>✅ AI三連複絞り込み買い目</li>
                             <li>✅ 7〜9点の少点数買い目</li>
-                            <li>✅ 高精度AI自動判定</li>
+                            <li>✅ 永久アクセス（追加料金なし）</li>
                         </ul>
-                        <button class="plan-btn secondary" onclick="openBankModal('Premium Sanrenpuku', 19820)">
+                        <button class="plan-btn secondary" onclick="openBankModal('Premium Sanrenpuku 買い切り', 78000, 'lifetime')">
                             🏦 銀行振込で申し込む
                         </button>
                     </div>
@@ -1147,12 +1150,23 @@ export const dailyResultsData = {
 <script is:inline>
   let currentPlan = '';
   let currentAmount = 0;
+  let currentPlanType = 'monthly';
 
-  function openBankModal(planName, amount) {
+  function openBankModal(planName, amount, planType = 'monthly') {
     currentPlan = planName;
     currentAmount = amount;
+    currentPlanType = planType;
 
-    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
+    let periodText = '';
+    if (planType === 'lifetime') {
+      periodText = '（永久アクセス）';
+    } else if (planType === 'annual') {
+      periodText = '/年';
+    } else {
+      periodText = '/月';
+    }
+
+    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}${periodText})`;
     document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
     document.getElementById('transferAmount').value = amount;
     document.getElementById('bankModal').classList.add('active');
@@ -1215,6 +1229,15 @@ export const dailyResultsData = {
         submitLoading.style.display = 'inline';
         formMessage.style.display = 'none';
 
+        let periodText = '';
+        if (currentPlanType === 'lifetime') {
+          periodText = '（永久アクセス）';
+        } else if (currentPlanType === 'annual') {
+          periodText = '/年';
+        } else {
+          periodText = '/月';
+        }
+
         const formData = {
           fullName: document.getElementById('fullName').value,
           email: document.getElementById('email').value,
@@ -1223,7 +1246,7 @@ export const dailyResultsData = {
           transferAmount: document.getElementById('transferAmount').value,
           transferName: document.getElementById('fullName').value,  // お名前と同じ
           remarks: document.getElementById('remarks').value,
-          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
+          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}${periodText})`,
           timestamp: new Date().toISOString()
         };
 
@@ -2452,6 +2475,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     .plan-price {
         margin-bottom: 12px;
+    }
+
+    .price-strike {
+        color: #94a3b8;
+        font-size: 1.2rem;
+        text-decoration: line-through;
+        display: block;
+        margin-bottom: 4px;
     }
 
     .price-main {

@@ -52,20 +52,107 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </a>
             </div>
 
-            <!-- プレミアムプラン（中央に配置） -->
+            <!-- プレミアム買い切りプラン（中央・おすすめ） -->
             <div class="plan-card plan-card-recommended">
                 <!-- 人気バッジ -->
                 <div class="recommended-badge">
-                    <span>おすすめ</span>
+                    <span>🔥 今だけ特別価格</span>
                 </div>
 
                 <div class="plan-header">
-                    <h3 class="plan-name">プレミアム</h3>
+                    <h3 class="plan-name">プレミアム買い切り</h3>
                     <div class="plan-price">
-                        <span class="price-amount">¥9,980</span>
+                        <div class="price-strike">¥108,000</div>
+                        <span class="price-amount">¥78,000</span>
+                        <div class="price-period-lifetime">永久アクセス</div>
+                    </div>
+                    <p class="plan-description">一度きりの支払いで永久に使える</p>
+                </div>
+
+                <ul class="plan-features">
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>永久アクセス（追加料金なし）</strong></span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>全レース（1R〜12R）の予想</strong></span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>高精度AI予想</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>詳細な投資戦略</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>優先サポート</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>ログインポイント30pt/日</span>
+                    </li>
+                </ul>
+
+                <button class="plan-button plan-button-lifetime" onclick="openBankModal('プレミアム買い切り', 78000, 'lifetime')">
+                    🏦 銀行振込で申し込む
+                </button>
+            </div>
+
+            <!-- プレミアム年払いプラン -->
+            <div class="plan-card">
+                <div class="plan-header">
+                    <h3 class="plan-name">プレミアム年払い</h3>
+                    <div class="plan-price">
+                        <span class="price-amount">¥68,000</span>
+                        <span class="price-period">/年</span>
+                    </div>
+                    <p class="plan-description">年間で約¥30,000お得</p>
+                </div>
+
+                <ul class="plan-features">
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>月額換算 ¥5,667/月</strong></span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>全レース（1R〜12R）の予想</strong></span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>高精度AI予想</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>詳細な投資戦略</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>優先サポート</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>ログインポイント30pt/日</span>
+                    </li>
+                </ul>
+
+                <button class="plan-button plan-button-annual" onclick="openBankModal('プレミアム年払い', 68000, 'annual')">
+                    🏦 銀行振込で申し込む
+                </button>
+            </div>
+
+            <!-- プレミアム月払いプラン -->
+            <div class="plan-card">
+                <div class="plan-header">
+                    <h3 class="plan-name">プレミアム月払い</h3>
+                    <div class="plan-price">
+                        <span class="price-amount">¥18,000</span>
                         <span class="price-period">/月</span>
                     </div>
-                    <p class="plan-description">全レース制覇を目指す方に</p>
+                    <p class="plan-description">柔軟に始めたい方に</p>
                 </div>
 
                 <ul class="plan-features">
@@ -87,17 +174,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </li>
                     <li class="feature-item">
                         <span class="check-icon">✓</span>
-                        <span>ログインポイント30pt</span>
+                        <span>ログインポイント30pt/日</span>
                     </li>
                 </ul>
 
-                <button class="plan-button plan-button-premium" onclick="openBankModal('Premium', 9980)">
+                <button class="plan-button plan-button-monthly" onclick="openBankModal('プレミアム月払い', 18000, 'monthly')">
                     🏦 銀行振込で申し込む
                 </button>
             </div>
 
-            <!-- スタンダードプラン -->
-            <div class="plan-card">
+            <!-- スタンダードプラン（非表示） -->
+            <div class="plan-card" style="display: none;">
                 <div class="plan-header">
                     <h3 class="plan-name">スタンダード</h3>
                     <div class="plan-price">
@@ -130,7 +217,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </li>
                 </ul>
 
-                <button class="plan-button plan-button-standard" onclick="openBankModal('Standard', 5980)">
+                <button class="plan-button plan-button-standard" onclick="openBankModal('Standard', 5980, 'monthly')">
                     🏦 銀行振込で申し込む
                 </button>
             </div>
@@ -164,14 +251,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="faq-item">
                     <h3 class="faq-question">Q: 支払い方法は何が利用できますか？</h3>
                     <p class="faq-answer">
-                        クレジットカード（Visa、MasterCard、JCB、American Express）がご利用いただけます。
+                        現在、銀行振込のみ対応しております。振込後、入金確認取れ次第、即時にログイン情報をメールでお送りいたします。
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">Q: 買い切りプランと年払い・月払いの違いは？</h3>
+                    <p class="faq-answer">
+                        <strong>【買い切りプラン】</strong><br>
+                        ・¥78,000の一度きりの支払いで永久アクセス<br>
+                        ・追加料金は一切かかりません<br>
+                        ・AIは毎日進化し続けるため、長く使うほどお得<br><br>
+                        <strong>【年払いプラン】</strong><br>
+                        ・¥68,000/年（月額換算¥5,667）<br>
+                        ・月払いより年間¥30,000以上お得<br><br>
+                        <strong>【月払いプラン】</strong><br>
+                        ・¥18,000/月<br>
+                        ・いつでも解約可能
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">Q: 買い切りプランは本当に永久に使えますか？</h3>
+                    <p class="faq-answer">
+                        はい。一度ご購入いただければ、追加料金なしで永久にご利用いただけます。AIは毎日進化し続けるため、長く使うほどお得になります。50年間使えば月額換算¥130です。
                     </p>
                 </div>
 
                 <div class="faq-item">
                     <h3 class="faq-question">Q: 利用期間について教えてください</h3>
                     <p class="faq-answer">
-                        月額制のサブスクリプションサービスです。初回決済日から1ヶ月ごとに自動更新されます。解約申請をされない限り、継続してご利用いただけます。
+                        <strong>【買い切りプラン】</strong>永久アクセス（追加料金なし）<br>
+                        <strong>【年払いプラン】</strong>1年間（自動更新）<br>
+                        <strong>【月払いプラン】</strong>1ヶ月ごとの自動更新
                     </p>
                 </div>
 
@@ -313,12 +425,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <script is:inline>
   let currentPlan = '';
   let currentAmount = 0;
+  let currentPlanType = 'monthly';
 
-  function openBankModal(planName, amount) {
+  function openBankModal(planName, amount, planType = 'monthly') {
     currentPlan = planName;
     currentAmount = amount;
+    currentPlanType = planType;
 
-    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
+    let periodText = '';
+    if (planType === 'lifetime') {
+      periodText = '（永久アクセス）';
+    } else if (planType === 'annual') {
+      periodText = '/年';
+    } else {
+      periodText = '/月';
+    }
+
+    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}${periodText})`;
     document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
     document.getElementById('transferAmount').value = amount;
     document.getElementById('bankModal').classList.add('active');
@@ -381,6 +504,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         submitLoading.style.display = 'inline';
         formMessage.style.display = 'none';
 
+        let periodText = '';
+        if (currentPlanType === 'lifetime') {
+          periodText = '（永久アクセス）';
+        } else if (currentPlanType === 'annual') {
+          periodText = '/年';
+        } else {
+          periodText = '/月';
+        }
+
         const formData = {
           fullName: document.getElementById('fullName').value,
           email: document.getElementById('email').value,
@@ -389,7 +521,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           transferAmount: document.getElementById('transferAmount').value,
           transferName: document.getElementById('fullName').value,  // お名前と同じ
           remarks: document.getElementById('remarks').value,
-          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
+          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}${periodText})`,
           timestamp: new Date().toISOString()
         };
 
@@ -472,10 +604,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     /* プランカード */
     .plans-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto 5rem auto;
+    }
+
+    @media (max-width: 1200px) {
+        .plans-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
     .plan-card {
@@ -535,9 +673,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         color: #f1f5f9;
     }
 
+    .price-strike {
+        font-size: 1.2rem;
+        color: #94a3b8;
+        text-decoration: line-through;
+        margin-bottom: 0.5rem;
+    }
+
     .price-period {
         color: #94a3b8;
         font-size: 1rem;
+    }
+
+    .price-period-lifetime {
+        color: #10b981;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
     }
 
     .plan-description {
@@ -620,6 +772,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
 
     .plan-button-premium:hover {
+        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        border-color: #7c3aed;
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
+    }
+
+    .plan-button-lifetime {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        border: 2px solid #f59e0b;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    .plan-button-lifetime:hover {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        border-color: #d97706;
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6);
+    }
+
+    @keyframes glow {
+        from {
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+        to {
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.8);
+        }
+    }
+
+    .plan-button-annual {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: 2px solid #10b981;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .plan-button-annual:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        border-color: #059669;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+    }
+
+    .plan-button-monthly {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: white;
+        border: 2px solid #8b5cf6;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+    }
+
+    .plan-button-monthly:hover {
         background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
         border-color: #7c3aed;
         box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);

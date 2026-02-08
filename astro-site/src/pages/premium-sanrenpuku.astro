@@ -82,9 +82,9 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
                         <div class="price-note">※ Premium Predictions会員様向けアップグレードプラン</div>
                     </div>
 
-                    <button onclick="openBankModal(\'Premium Plus\', 68000)" class="order-btn">
+                    <button onclick="openBankModal('Premium Plus 買い切り', 68000, 'lifetime')" class="order-btn">
                         今すぐ申し込む →
-                    </a>
+                    </button>
                     <p class="order-note">
                         ※ Stripeの安全な決済ページに移動します<br>
                         ※ お申し込み後、すぐに三連複予想をご利用いただけます
@@ -662,12 +662,23 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
 <script is:inline>
   let currentPlan = '';
   let currentAmount = 0;
+  let currentPlanType = 'monthly';
 
-  function openBankModal(planName, amount) {
+  function openBankModal(planName, amount, planType = 'monthly') {
     currentPlan = planName;
     currentAmount = amount;
+    currentPlanType = planType;
 
-    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
+    let periodText = '';
+    if (planType === 'lifetime') {
+      periodText = '（永久アクセス）';
+    } else if (planType === 'annual') {
+      periodText = '/年';
+    } else {
+      periodText = '/月';
+    }
+
+    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}${periodText})`;
     document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
     document.getElementById('transferAmount').value = amount;
     document.getElementById('bankModal').classList.add('active');
@@ -730,6 +741,15 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
         submitLoading.style.display = 'inline';
         formMessage.style.display = 'none';
 
+        let periodText = '';
+        if (currentPlanType === 'lifetime') {
+          periodText = '（永久アクセス）';
+        } else if (currentPlanType === 'annual') {
+          periodText = '/年';
+        } else {
+          periodText = '/月';
+        }
+
         const formData = {
           fullName: document.getElementById('fullName').value,
           email: document.getElementById('email').value,
@@ -738,7 +758,7 @@ const sanrenpukuRaces = sortedRaces.map(raceData => {
           transferAmount: document.getElementById('transferAmount').value,
           transferName: document.getElementById('fullName').value,  // お名前と同じ
           remarks: document.getElementById('remarks').value,
-          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
+          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}${periodText})`,
           timestamp: new Date().toISOString()
         };
 
