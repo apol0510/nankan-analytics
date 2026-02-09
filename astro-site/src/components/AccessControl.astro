@@ -153,9 +153,11 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             try {
                 const demoData = JSON.parse(localStorage.getItem(demoKeys[0]));
                 console.log('🎭 デモモード認証:', demoData);
-                return { 
-                    user: { id: 'demo_user', email: 'demo@example.com', demo: true }, 
-                    plan: demoData.planType.toLowerCase() 
+                return {
+                    user: { id: 'demo_user', email: 'demo@example.com', demo: true },
+                    plan: demoData.planType.toLowerCase(),
+                    planType: 'Monthly',
+                    lifetimeSanrenpuku: false
                 };
             } catch (error) {
                 console.error('Demo data parsing error:', error);
@@ -168,24 +170,28 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             try {
                 const testData = JSON.parse(localStorage.getItem(testSubscriptionKeys[0]));
                 console.log('📦 旧形式認証データ発見:', testData);
-                return { 
-                    user: { id: testData.userId, legacy: true }, 
-                    plan: testData.planType.toLowerCase() 
+                return {
+                    user: { id: testData.userId, legacy: true },
+                    plan: testData.planType.toLowerCase(),
+                    planType: 'Monthly',
+                    lifetimeSanrenpuku: false
                 };
             } catch (error) {
                 console.error('Test subscription data parsing error:', error);
             }
         }
 
-        // 2. 新形式のuser-planチェック
+        // 2. 新形式のuser-planチェック（2026-02-09更新: Lifetime対応）
         const userPlanData = localStorage.getItem('user-plan');
         if (userPlanData) {
             try {
                 const userData = JSON.parse(userPlanData);
                 console.log('✅ user-plan認証:', userData);
-                return { 
-                    user: { email: userData.email }, 
-                    plan: userData.plan || 'free' 
+                return {
+                    user: { email: userData.email },
+                    plan: userData.plan || 'free',
+                    planType: userData.planType || 'Monthly',  // 追加
+                    lifetimeSanrenpuku: userData.lifetimeSanrenpuku || false  // 追加
                 };
             } catch (error) {
                 console.error('User plan parsing error:', error);
@@ -197,13 +203,15 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         const userPlan = localStorage.getItem('userPlan');
         if (isLoggedIn === 'true') {
             console.log('✅ 旧形式認証（isLoggedIn）:', userPlan);
-            return { 
-                user: { legacy: true }, 
-                plan: userPlan || 'free' 
+            return {
+                user: { legacy: true },
+                plan: userPlan || 'free',
+                planType: 'Monthly',
+                lifetimeSanrenpuku: false
             };
         }
 
-        // 4. nankan_user認証情報を取得（新テスト認証用）
+        // 4. nankan_user認証情報を取得（新テスト認証用・2026-02-09更新: Lifetime対応）
         const nankanUser = localStorage.getItem('nankan_user');
         if (nankanUser) {
             try {
@@ -211,38 +219,50 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
                 console.log('✅ nankan_user認証:', userData);
                 return {
                     user: { email: userData.email, name: userData.name },
-                    plan: userData.plan || 'free'
+                    plan: userData.plan || 'free',
+                    planType: userData.planType || 'Monthly',  // 追加
+                    lifetimeSanrenpuku: userData.lifetimeSanrenpuku || false  // 追加
                 };
             } catch (error) {
                 console.error('Nankan user parsing error:', error);
             }
         }
 
-        // 5. ローカルストレージから認証情報を取得
+        // 5. ローカルストレージから認証情報を取得（2026-02-09更新: Lifetime対応）
         const authData = localStorage.getItem('auth_data');
         if (authData) {
             try {
-                const { user, plan, expiresAt } = JSON.parse(authData);
+                const { user, plan, expiresAt, planType, lifetimeSanrenpuku } = JSON.parse(authData);
 
                 // 有効期限チェック
                 if (new Date() > new Date(expiresAt)) {
                     localStorage.removeItem('auth_data');
-                    return { user: null, plan: 'free' };
+                    return { user: null, plan: 'free', planType: 'Monthly', lifetimeSanrenpuku: false };
                 }
 
-                return { user, plan: plan || 'free' };
+                return {
+                    user,
+                    plan: plan || 'free',
+                    planType: planType || 'Monthly',
+                    lifetimeSanrenpuku: lifetimeSanrenpuku || false
+                };
             } catch (error) {
                 console.error('Auth data parsing error:', error);
                 localStorage.removeItem('auth_data');
             }
         }
 
-        // 6. セッションストレージチェック
+        // 6. セッションストレージチェック（2026-02-09更新: Lifetime対応）
         const sessionAuth = sessionStorage.getItem('temp_auth');
         if (sessionAuth) {
             try {
-                const { plan } = JSON.parse(sessionAuth);
-                return { user: { temp: true }, plan: plan || 'free' };
+                const { plan, planType, lifetimeSanrenpuku } = JSON.parse(sessionAuth);
+                return {
+                    user: { temp: true },
+                    plan: plan || 'free',
+                    planType: planType || 'Monthly',
+                    lifetimeSanrenpuku: lifetimeSanrenpuku || false
+                };
             } catch (error) {
                 sessionStorage.removeItem('temp_auth');
             }
@@ -250,11 +270,11 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
 
         // 7. デフォルトは未登録
         console.log('❌ 認証データなし - 未登録状態');
-        return { user: null, plan: null };
+        return { user: null, plan: null, planType: 'Monthly', lifetimeSanrenpuku: false };
     }
 
-    // プラン階層チェック（2025-11-26更新: 退会申請・有効期限チェック強化）
-    function canAccessContent(userPlan, requiredPlan, user) {
+    // プラン階層チェック（2026-02-09更新: Lifetime対応）
+    function canAccessContent(userPlan, requiredPlan, user, planType = 'Monthly', lifetimeSanrenpuku = false) {
         // 🚨 2025-11-26追加: 退会申請チェック（最優先）
         const isWithdrawalRequested = localStorage.getItem('isWithdrawalRequested') === 'true';
         if (isWithdrawalRequested) {
@@ -290,11 +310,11 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             'premium': 2,
             'Premium': 2,
 
-            // 新プラン（2025-10-31更新）
-            'Premium Predictions': 2,      // 馬単のみ（¥9,980）
-            'Premium Sanrenpuku': 2,       // 三連複のみ（¥19,820）
-            'Premium Combo': 3,            // 馬単+三連複（¥24,800）
-            'Premium Plus': 4              // 1鞍超精密（¥68,000）
+            // 新プラン（2026-02-09更新）
+            'Premium Predictions': 2,      // 馬単のみ（廃止予定）
+            'Premium Sanrenpuku': 2,       // 三連複のみ（廃止予定）
+            'Premium Combo': 3,            // 馬単+三連複（廃止予定）
+            'Premium Plus': 4              // 1鞍超精密（¥68,000・単品）
         };
 
         const userLevel = planHierarchy[effectivePlan] || 0;  // effectivePlanを使用
@@ -314,18 +334,31 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
             return hasValidFreeUser; // 登録済みユーザーのみアクセス許可
         }
 
-        // 三連複専用ページの特殊処理（有効期限考慮）
+        // 三連複専用ページの特殊処理（2026-02-09更新: Lifetime Sanrenpuku対応）
         if (requiredPlan === 'Premium Sanrenpuku') {
             const hasValidUser = user !== null && (user.email || user.legacy || user.demo || user.temp || user.isTest);
-            // Premium Sanrenpuku または Premium Combo でアクセス可能
-            // ⚠️ userLevelは使わない（Premium Predictions等が誤ってアクセスできてしまうため）
+
             // 🔧 有効期限切れの場合はアクセス不可
-            const canAccess = hasValidUser && effectivePlan !== 'Free' && (
-                effectivePlan === 'Premium Sanrenpuku' ||
-                effectivePlan === 'Premium Combo'
-            );
-            console.log(`🐎 三連複アクセスチェック:`, canAccess, { userPlan, effectivePlan, hasValidUser });
-            return canAccess;
+            if (effectivePlan === 'Free') {
+                console.log(`🐎 三連複アクセスチェック: Free - アクセス拒否`);
+                return false;
+            }
+
+            // 1. Premium Sanrenpuku または Premium Combo でアクセス可能（従来プラン）
+            if (effectivePlan === 'Premium Sanrenpuku' || effectivePlan === 'Premium Combo') {
+                console.log(`🐎 三連複アクセスチェック: ${effectivePlan} - アクセス許可`);
+                return hasValidUser;
+            }
+
+            // 2. ✅ Sanrenpuku Lifetime購入者（新仕様）
+            //    - Premium有効中のみSanrenpuku機能が使える
+            if (lifetimeSanrenpuku === true && effectivePlan === 'Premium') {
+                console.log(`🐎 三連複アクセスチェック: Sanrenpuku Lifetime + Premium - アクセス許可`);
+                return hasValidUser;
+            }
+
+            console.log(`🐎 三連複アクセスチェック: アクセス拒否`, { userPlan, effectivePlan, hasValidUser, lifetimeSanrenpuku });
+            return false;
         }
 
         // 馬単専用ページの特殊処理（premium, Premium, Premium Predictions）（有効期限考慮）
@@ -380,9 +413,9 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
         const requiredPlan = accessControl.dataset.requiredPlan;
         
         try {
-            // 認証状態の取得
-            const { user, plan } = getCurrentUserPlan();
-            console.log(`🔒 認証チェック - ユーザー:`, user, `プラン:`, plan, `必要プラン:`, requiredPlan);
+            // 認証状態の取得（2026-02-09更新: Lifetime対応）
+            const { user, plan, planType, lifetimeSanrenpuku } = getCurrentUserPlan();
+            console.log(`🔒 認証チェック - ユーザー:`, user, `プラン:`, plan, `PlanType:`, planType, `LifetimeSanrenpuku:`, lifetimeSanrenpuku, `必要プラン:`, requiredPlan);
 
             // 開発モードでの優先表示（デバッグ用）
             if (isDevelopmentMode()) {
@@ -401,8 +434,8 @@ const { requiredPlan, showUpgrade = true } = Astro.props;
                 }, 10000);
             }
             
-            // アクセス権限チェック
-            if (canAccessContent(plan, requiredPlan, user)) {
+            // アクセス権限チェック（2026-02-09更新: Lifetime対応）
+            if (canAccessContent(plan, requiredPlan, user, planType, lifetimeSanrenpuku)) {
                 // アクセス許可
                 console.log(`✅ アクセス許可: ${getPlanDisplayName(plan)} → ${requiredPlan}コンテンツ`);
                 console.log('📋 DOM要素状態 - loading:', loadingState, 'content:', contentArea, 'denied:', accessDenied);
