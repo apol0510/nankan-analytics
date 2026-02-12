@@ -408,7 +408,7 @@ exports.handler = async (event, context) => {
               'PlanType': planType,
               'Status': 'pending',
               'PaymentMethod': 'Bank Transfer',
-              'ExpirationDate': expirationDate
+              '有効期限': expirationDate
             }
           };
 
@@ -440,7 +440,7 @@ exports.handler = async (event, context) => {
               'PlanType': planType,
               'Status': 'pending',
               'PaymentMethod': 'Bank Transfer',
-              'ExpirationDate': expirationDate
+              '有効期限': expirationDate
             }
           };
 
