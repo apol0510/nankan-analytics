@@ -325,8 +325,7 @@ exports.handler = async (event, context) => {
           // 例: "Premium Annual (¥68,000/年)" → "Premium Annual"
           // 例: "Premium Monthly (¥18,000/月)" → "Premium Monthly"
           const planName = productName
-            .replace(/\s*\([¥￥][\d,]+[^)）]*[)）]/g, '')  // 価格部分削除
-            .replace(/\s*\([^)）]*[)）]/g, '')              // 残りの括弧削除
+            .replace(/\s*\(.*\)$/, '')  // 最後の(...)を完全削除
             .trim();
 
           // 有効期限計算（2026-02-09価格体系）
