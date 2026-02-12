@@ -313,135 +313,137 @@ exports.handler = async (event, context) => {
     // Airtable登録（Premium Plus以外の月額プラン）
     // ========================================
     if (!productName.includes('Premium Plus')) {
+      // プラン名から料金部分を削除（Airtable Single select用）
+      // 例: "Premium Lifetime (¥78,000（永久アクセス）)" → "Premium Lifetime"
+      // 例: "Premium Annual (¥68,000/年)" → "Premium Annual"
+      // 例: "Premium Monthly (¥18,000/月)" → "Premium Monthly"
+      const planName = productName
+        .replace(/\s*\(.*\)$/, '')  // 最後の(...)を完全削除
+        .trim();
+
+      // 有効期限計算（2026-02-09価格体系）
+      const today = new Date();
+      let expirationDate = null;
+
+      if (planName.includes('Lifetime')) {
+        // 買い切りプラン: 2099年12月31日（永久）
+        expirationDate = '2099-12-31';
+      } else if (planName.includes('Annual')) {
+        // 年払いプラン: 1年後
+        const expDate = new Date(today);
+        expDate.setFullYear(expDate.getFullYear() + 1);
+        expirationDate = expDate.toISOString().split('T')[0];
+      } else if (planName.includes('Monthly')) {
+        // 月払いプラン: 1ヶ月後
+        const expDate = new Date(today);
+        expDate.setMonth(expDate.getMonth() + 1);
+        expirationDate = expDate.toISOString().split('T')[0];
+      } else {
+        // デフォルト: 1ヶ月後
+        const expDate = new Date(today);
+        expDate.setMonth(expDate.getMonth() + 1);
+        expirationDate = expDate.toISOString().split('T')[0];
+      }
+
+      console.log('📅 計算された有効期限:', {
+        productName,
+        planName,
+        expirationDate
+      });
+
+      // Airtable登録処理
       try {
         const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
         const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
         if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
-          console.warn('⚠️ Airtable credentials not configured, skipping registration');
-        } else {
-          // プラン名から料金部分を削除（Airtable Single select用）
-          // 例: "Premium Lifetime (¥78,000（永久アクセス）)" → "Premium Lifetime"
-          // 例: "Premium Annual (¥68,000/年)" → "Premium Annual"
-          // 例: "Premium Monthly (¥18,000/月)" → "Premium Monthly"
-          const planName = productName
-            .replace(/\s*\(.*\)$/, '')  // 最後の(...)を完全削除
-            .trim();
+          console.error('❌ Airtable credentials not configured - CRITICAL ERROR');
+          throw new Error('Airtable credentials missing');
+        }
 
-          // 有効期限計算（2026-02-09価格体系）
-          const today = new Date();
-          let expirationDate = null;
+        // 既存顧客チェック
+        const searchFormula = `{Email} = "${email}"`;
+        const searchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?filterByFormula=${encodeURIComponent(searchFormula)}`;
 
-          if (planName.includes('Lifetime')) {
-            // 買い切りプラン: 2099年12月31日（永久）
-            expirationDate = '2099-12-31';
-          } else if (planName.includes('Annual')) {
-            // 年払いプラン: 1年後
-            const expDate = new Date(today);
-            expDate.setFullYear(expDate.getFullYear() + 1);
-            expirationDate = expDate.toISOString().split('T')[0];
-          } else if (planName.includes('Monthly')) {
-            // 月払いプラン: 1ヶ月後
-            const expDate = new Date(today);
-            expDate.setMonth(expDate.getMonth() + 1);
-            expirationDate = expDate.toISOString().split('T')[0];
-          } else {
-            // デフォルト: 1ヶ月後
-            const expDate = new Date(today);
-            expDate.setMonth(expDate.getMonth() + 1);
-            expirationDate = expDate.toISOString().split('T')[0];
+        const searchResponse = await fetch(searchUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+            'Content-Type': 'application/json'
           }
+        });
 
-          console.log('📅 計算された有効期限:', {
-            productName,
-            planName,
-            expirationDate
-          });
+        if (!searchResponse.ok) {
+          throw new Error(`Airtable search failed: ${searchResponse.status}`);
+        }
 
-          // 既存顧客チェック
-          const searchFormula = `{Email} = "${email}"`;
-          const searchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers?filterByFormula=${encodeURIComponent(searchFormula)}`;
+        const searchData = await searchResponse.json();
+        const existingRecords = searchData.records || [];
 
-          const searchResponse = await fetch(searchUrl, {
-            method: 'GET',
+        if (existingRecords.length > 0) {
+          // 既存顧客 - Update
+          const recordId = existingRecords[0].id;
+          const updateUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers/${recordId}`;
+
+          const updatePayload = {
+            fields: {
+              '氏名': fullName,
+              'プラン': planName,
+              'Status': 'pending',
+              'PaymentMethod': 'Bank Transfer',
+              'ExpirationDate': expirationDate
+            }
+          };
+
+          const updateResponse = await fetch(updateUrl, {
+            method: 'PATCH',
             headers: {
               'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
               'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(updatePayload)
           });
 
-          if (!searchResponse.ok) {
-            throw new Error(`Airtable search failed: ${searchResponse.status}`);
+          if (!updateResponse.ok) {
+            const errorText = await updateResponse.text();
+            console.error('❌ Airtable update error details:', errorText);
+            throw new Error(`Airtable update failed: ${updateResponse.status} - ${errorText}`);
           }
 
-          const searchData = await searchResponse.json();
-          const existingRecords = searchData.records || [];
+          console.log('✅ Airtable updated (existing customer):', email);
+        } else {
+          // 新規顧客 - Create
+          const createUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers`;
 
-          if (existingRecords.length > 0) {
-            // 既存顧客 - Update
-            const recordId = existingRecords[0].id;
-            const updateUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers/${recordId}`;
-
-            const updatePayload = {
-              fields: {
-                '氏名': fullName,
-                'プラン': planName,
-                'Status': 'pending',
-                'PaymentMethod': 'Bank Transfer',
-                'ExpirationDate': expirationDate
-              }
-            };
-
-            const updateResponse = await fetch(updateUrl, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(updatePayload)
-            });
-
-            if (!updateResponse.ok) {
-              const errorText = await updateResponse.text();
-              console.error('❌ Airtable update error details:', errorText);
-              throw new Error(`Airtable update failed: ${updateResponse.status} - ${errorText}`);
+          const createPayload = {
+            fields: {
+              'Email': email,
+              '氏名': fullName,
+              'プラン': planName,
+              'Status': 'pending',
+              'PaymentMethod': 'Bank Transfer',
+              'ExpirationDate': expirationDate
             }
+          };
 
-            console.log('✅ Airtable updated (existing customer):', email);
-          } else {
-            // 新規顧客 - Create
-            const createUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers`;
+          console.log('📤 Airtable create payload:', JSON.stringify(createPayload, null, 2));
 
-            const createPayload = {
-              fields: {
-                'Email': email,
-                '氏名': fullName,
-                'プラン': planName,
-                'Status': 'pending',
-                'PaymentMethod': 'Bank Transfer',
-                'ExpirationDate': expirationDate
-              }
-            };
+          const createResponse = await fetch(createUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(createPayload)
+          });
 
-            console.log('📤 Airtable create payload:', JSON.stringify(createPayload, null, 2));
-
-            const createResponse = await fetch(createUrl, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(createPayload)
-            });
-
-            if (!createResponse.ok) {
-              const errorText = await createResponse.text();
-              console.error('❌ Airtable create error details:', errorText);
-              throw new Error(`Airtable create failed: ${createResponse.status} - ${errorText}`);
-            }
-
-            console.log('✅ Airtable created (new customer):', email);
+          if (!createResponse.ok) {
+            const errorText = await createResponse.text();
+            console.error('❌ Airtable create error details:', errorText);
+            throw new Error(`Airtable create failed: ${createResponse.status} - ${errorText}`);
           }
+
+          console.log('✅ Airtable created (new customer):', email);
         }
       } catch (airtableError) {
         console.error('❌ Airtable registration error:', airtableError);
