@@ -106,6 +106,17 @@ git push origin main
 
 **マコさんが「穴馬更新コミットプッシュ」と指示したら：**
 
+### **Step 0: Git状態確認（最優先・スキップ絶対禁止）**
+```bash
+git status
+```
+
+**⚠️ 致命的エラー防止：**
+- src/data/darkHorseData.json が modified または untracked の場合 → 必ず git add する
+- public/data/darkHorseData.json が modified または untracked の場合 → 必ず git add する
+- **両方のファイルを git add しないと、本番サイトに反映されない**
+- **この確認を怠ると、コミット漏れが発生し、本番サイトが古いデータのままになる**
+
 ### **Step 1: ファイル確認**
 ```bash
 # darkHorseData.json の先頭部分を確認
@@ -148,9 +159,17 @@ Edit src/pages/dark-horse-picks.astro
 - この更新を忘れると「穴馬を見る」ボタンが「再確認する」のままになる
 
 ### **Step 5: コミット・プッシュ（必須・スキップ禁止）**
+
+**⚠️ 致命的エラー防止：必ず両方のファイルを追加すること**
 ```bash
-# データファイルのコミット
+# Git状態を再確認（絶対にスキップしないこと）
+git status
+
+# データファイルのコミット（両方必須）
 git add src/data/darkHorseData.json public/data/darkHorseData.json
+
+# 追加されたか確認（絶対にスキップしないこと）
+git status
 
 git commit -m "$(cat <<'EOF'
 🐴 穴馬データ更新・YYYY-MM-DD
@@ -831,3 +850,9 @@ git push origin main
 - 新月開始時の必須手順を詳細化
 - アーカイブページのインポート追加手順を明記
 - よくあるミスのチェックリスト追加
+
+### 2.3.0 (2026-02-12) - 穴馬更新の致命的エラー防止策追加
+- Step 0: Git状態確認を最優先で追加
+- Step 5: コミット前後にgit status確認を義務化
+- src/data/ と public/data/ 両方のコミットを強調
+- コミット漏れ防止のための警告メッセージ追加
