@@ -211,32 +211,63 @@ git push origin main
 - ✅ マコさんが貼り付けたデータを信頼し、必ず同期・コミット・プッシュする
 
 **理由：**
-- 月別ファイル（archiveResults_2025-12.json）にデータが存在しても
+- 月別ファイル（archiveResults_YYYY-MM.json）にデータが存在しても
 - トップページ用ファイル（archiveResults.json）が古い可能性がある
 - public/data/が古い可能性がある
 - **→ 毎回必ず全ての同期処理を実行する**
 
 ---
 
+### **🚨 Step 0: 現在の年月を確認（最優先・絶対に忘れない）**
+
+**重要：手順書の例（2025-12）をそのままコピーしてはいけない！**
+
+```bash
+# 1. 現在日付を確認（<env>タグから読み取る）
+# 例: Today's date: 2026-02-12 → 2026年2月
+
+# 2. 対象ファイルの存在確認
+ls -la src/data/archiveResults_2026-*.json
+
+# 3. 最新月のファイルを特定
+# 例: archiveResults_2026-02.json が最新
+```
+
+**❌ よくある間違い（絶対にしないこと）：**
+- 手順書の例（`2025-12`）をそのままコピーして実行する
+- 現在日付を確認せずに古い年月のファイルを更新してしまう
+- → **必ず`<env>Today's date`から現在の年月を読み取る**
+
+---
+
 ### **Step 1: 月別ファイル確認**
 ```bash
-# archiveResults_2025-12.json を確認
-Read src/data/archiveResults_2025-12.json
+# ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
+# 例: 2026年2月なら archiveResults_2026-02.json
+
+Read src/data/archiveResults_YYYY-MM.json
 ```
 
 ### **Step 2: トップページ用ファイル更新（必須・スキップ禁止）**
 ```bash
-# 月別ファイルから最新1日分のみ抽出してarchiveResults.jsonに保存
+# ⚠️ 注意：year, month変数は現在の年月に置き換える！
+# 例: 2026年2月なら year='2026', month='02'
+
 python3 -c "
 import json
+from datetime import datetime
+
+# 現在の年月を自動取得
+now = datetime.now()
+year = str(now.year)
+month = str(now.month).zfill(2)
 
 # 月別ファイル読み込み
-with open('src/data/archiveResults_2025-12.json', 'r', encoding='utf-8') as f:
+filename = f'src/data/archiveResults_{year}-{month}.json'
+with open(filename, 'r', encoding='utf-8') as f:
     monthly_data = json.load(f)
 
 # 最新1日分のみ抽出
-year = '2025'
-month = '12'
 days = sorted(monthly_data[year][month].keys(), reverse=True)
 latest_day = days[0]
 latest_day_data = monthly_data[year][month][latest_day]
@@ -254,7 +285,7 @@ top_page_data = {
 with open('src/data/archiveResults.json', 'w', encoding='utf-8') as f:
     json.dump(top_page_data, f, ensure_ascii=False, indent=2)
 
-print(f'✅ 最新日: {latest_day}')
+print(f'✅ 最新日: {year}-{month}-{latest_day}')
 print(f'✅ 会場: {latest_day_data[\"venue\"]}')
 print(f'✅ 的中: {latest_day_data[\"hitRaces\"]}/{latest_day_data[\"totalRaces\"]}')
 print(f'✅ 回収率: {latest_day_data[\"recoveryRate\"]}%')
@@ -263,17 +294,22 @@ print(f'✅ 回収率: {latest_day_data[\"recoveryRate\"]}%')
 - ✅ **既存データがあっても必ず実行**
 - ✅ **最新1日分のみ抽出**（1年後もファイルサイズ1.8KB維持）
 - ✅ 編集ミス防止のため手動編集なし
+- ✅ **datetime.now()で現在の年月を自動取得**（手動指定によるミスを防止）
 
 ### **Step 3: JSON検証**
 ```bash
-# データ構造が正しいか確認
+# データ構造が正しいか確認（年月を動的に取得）
 python3 -c "
 import json
 with open('src/data/archiveResults.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
-    days = list(data['2025']['12'].keys())
+    year = list(data.keys())[0]
+    month = list(data[year].keys())[0]
+    days = list(data[year][month].keys())
     latest_day = days[0]
-    latest_data = data['2025']['12'][latest_day]
+    latest_data = data[year][month][latest_day]
+    print(f'Year: {year}')
+    print(f'Month: {month}')
     print(f'Days: {days}')
     print(f'Latest Day: {latest_day}')
     print(f'Venue: {latest_data[\"venue\"]}')
@@ -284,15 +320,21 @@ with open('src/data/archiveResults.json', 'r', encoding='utf-8') as f:
 
 ### **Step 4: public/dataに同期（必須・スキップ禁止）**
 ```bash
-cp src/data/archiveResults_2025-12.json public/data/
+# ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
+# 例: 2026年2月なら archiveResults_2026-02.json
+
+cp src/data/archiveResults_YYYY-MM.json public/data/
 cp src/data/archiveResults.json public/data/
 ```
 - ✅ **既存ファイルがあっても必ず実行**
 
 ### **Step 5: コミット・プッシュ（必須・スキップ禁止）**
 ```bash
+# ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
+# 例: 2026年2月なら archiveResults_2026-02.json
+
 # 月別ファイル + トップページ用ファイルを同時にコミット
-git add src/data/archiveResults_2025-12.json src/data/archiveResults.json public/data/archiveResults_2025-12.json public/data/archiveResults.json
+git add src/data/archiveResults_YYYY-MM.json src/data/archiveResults.json public/data/archiveResults_YYYY-MM.json public/data/archiveResults.json
 
 git commit -m "$(cat <<'EOF'
 📊 馬単結果更新・YYYY-MM-DD
@@ -324,92 +366,148 @@ git push origin main
 ### **🚨 重要：三連複は馬単と違う運用方法 🚨**
 
 **三連複結果の用途：**
-1. `/archive-sanrenpuku/2025/11/`（11月全日分）
-2. `/archive-sanrenpuku/2025/12/`（12月全日分）
+1. `/archive-sanrenpuku/YYYY/MM/`（当月全日分）
+2. `/archive-sanrenpuku/YYYY/MM-1/`（前月全日分）
 3. `/standard-predictions/`（最新日のみ使用）
 4. `/premium-predictions/`（最新日のみ使用）
 
-**→ archiveSanrenpukuResults.jsonには11月全日分+12月全日分が必要！**
+**→ archiveSanrenpukuResults.jsonには前月全日分+当月全日分が必要！**
+
+---
+
+### **🚨 Step 0: 現在の年月を確認（最優先・絶対に忘れない）**
+
+**重要：手順書の例（2025-11, 2025-12）をそのままコピーしてはいけない！**
+
+```bash
+# 1. 現在日付を確認（<env>タグから読み取る）
+# 例: Today's date: 2026-02-12 → 2026年2月（当月）、2026年1月（前月）
+
+# 2. 対象ファイルの存在確認
+ls -la src/data/archiveSanrenpukuResults_2026-*.json
+
+# 3. 前月と当月のファイルを特定
+# 例: archiveSanrenpukuResults_2026-01.json（前月）
+# 例: archiveSanrenpukuResults_2026-02.json（当月）
+```
+
+**❌ よくある間違い（絶対にしないこと）：**
+- 手順書の例（`2025-11`, `2025-12`）をそのままコピーして実行する
+- 現在日付を確認せずに古い年月のファイルを更新してしまう
+- → **必ず`<env>Today's date`から現在の年月と前月を計算する**
 
 ---
 
 ### **Step 1: 月別ファイル確認**
 ```bash
-# archiveSanrenpukuResults_2025-12.json を確認
-Read src/data/archiveSanrenpukuResults_2025-12.json
+# ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
+# 例: 2026年2月なら archiveSanrenpukuResults_2026-02.json
+
+Read src/data/archiveSanrenpukuResults_YYYY-MM.json
 ```
 
-### **Step 2: 11月分+12月分を統合（必須・スキップ禁止）**
+### **Step 2: 前月分+当月分を統合（必須・スキップ禁止）**
 ```bash
-# 11月分 + 12月分を結合してarchiveSanrenpukuResults.jsonに保存
+# ⚠️ 注意：年月は現在の年月と前月に置き換える！
+# 例: 2026年2月なら 2026-01（前月）+ 2026-02（当月）
+
 python3 -c "
 import json
+from datetime import datetime, timedelta
 
-# 11月分の月別ファイルを読み込み
-with open('src/data/archiveSanrenpukuResults_2025-11.json', 'r', encoding='utf-8') as f:
-    nov_data = json.load(f)
+# 現在の年月を自動取得
+now = datetime.now()
+year = str(now.year)
+month = str(now.month).zfill(2)
 
-# 12月分の月別ファイルを読み込み
-with open('src/data/archiveSanrenpukuResults_2025-12.json', 'r', encoding='utf-8') as f:
-    dec_data = json.load(f)
+# 前月を自動計算
+prev_month_date = now.replace(day=1) - timedelta(days=1)
+prev_year = str(prev_month_date.year)
+prev_month = str(prev_month_date.month).zfill(2)
 
-# 11月分 + 12月分を結合
+# 前月の月別ファイルを読み込み
+prev_filename = f'src/data/archiveSanrenpukuResults_{prev_year}-{prev_month}.json'
+with open(prev_filename, 'r', encoding='utf-8') as f:
+    prev_data = json.load(f)
+
+# 当月の月別ファイルを読み込み
+curr_filename = f'src/data/archiveSanrenpukuResults_{year}-{month}.json'
+with open(curr_filename, 'r', encoding='utf-8') as f:
+    curr_data = json.load(f)
+
+# 前月分 + 当月分を結合
 combined_data = {
-    '2025': {
-        '11': nov_data['2025']['11'],
-        '12': dec_data['2025']['12']
+    prev_year: {
+        prev_month: prev_data[prev_year][prev_month]
     }
 }
+
+# 当月が異なる年の場合（例: 2025-12 → 2026-01）
+if year != prev_year:
+    combined_data[year] = {
+        month: curr_data[year][month]
+    }
+else:
+    combined_data[year][month] = curr_data[year][month]
 
 # archiveSanrenpukuResults.jsonに保存
 with open('src/data/archiveSanrenpukuResults.json', 'w', encoding='utf-8') as f:
     json.dump(combined_data, f, ensure_ascii=False, indent=2)
 
 # 確認
-nov_days = list(nov_data['2025']['11'].keys())
-dec_days = list(dec_data['2025']['12'].keys())
-print(f'✅ 11月: {len(nov_days)}日分')
-print(f'✅ 12月: {len(dec_days)}日分')
-print(f'✅ 合計: {len(nov_days) + len(dec_days)}日分')
+prev_days = list(prev_data[prev_year][prev_month].keys())
+curr_days = list(curr_data[year][month].keys())
+print(f'✅ 前月（{prev_year}-{prev_month}）: {len(prev_days)}日分')
+print(f'✅ 当月（{year}-{month}）: {len(curr_days)}日分')
+print(f'✅ 合計: {len(prev_days) + len(curr_days)}日分')
 "
 ```
 - ✅ **既存データがあっても必ず実行**
-- ✅ **11月全日分 + 12月全日分を統合**
+- ✅ **前月全日分 + 当月全日分を統合**
 - ✅ /archive-sanrenpuku/ で全日分表示
+- ✅ **datetime.now()で現在の年月と前月を自動計算**（手動指定によるミスを防止）
 
 ### **Step 3: JSON検証**
 ```bash
-# データ構造が正しいか確認
+# データ構造が正しいか確認（年月を動的に取得）
 python3 -c "
 import json
 with open('src/data/archiveSanrenpukuResults.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
-    nov_days = len(data['2025']['11'].keys()) if '11' in data['2025'] else 0
-    dec_days = len(data['2025']['12'].keys()) if '12' in data['2025'] else 0
-    print(f'11月: {nov_days}日分')
-    print(f'12月: {dec_days}日分')
-    print(f'合計: {nov_days + dec_days}日分')
+    total_days = 0
+    for year in data.keys():
+        for month in data[year].keys():
+            days_count = len(data[year][month].keys())
+            print(f'{year}年{month}月: {days_count}日分')
+            total_days += days_count
+    print(f'合計: {total_days}日分')
 "
 ```
 
 ### **Step 4: public/dataに同期（必須・スキップ禁止）**
 ```bash
-cp src/data/archiveSanrenpukuResults_2025-12.json public/data/
+# ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
+# 例: 2026年2月なら archiveSanrenpukuResults_2026-02.json
+
+cp src/data/archiveSanrenpukuResults_YYYY-MM.json public/data/
 cp src/data/archiveSanrenpukuResults.json public/data/
 ```
 - ✅ **既存ファイルがあっても必ず実行**
 
 ### **Step 5: コミット・プッシュ（必須・スキップ禁止）**
 ```bash
+# ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
+# 例: 2026年2月なら archiveSanrenpukuResults_2026-02.json
+
 # 月別ファイル + アーカイブファイルを同時にコミット
-git add src/data/archiveSanrenpukuResults_2025-12.json src/data/archiveSanrenpukuResults.json public/data/archiveSanrenpukuResults_2025-12.json public/data/archiveSanrenpukuResults.json
+git add src/data/archiveSanrenpukuResults_YYYY-MM.json src/data/archiveSanrenpukuResults.json public/data/archiveSanrenpukuResults_YYYY-MM.json public/data/archiveSanrenpukuResults.json
 
 git commit -m "$(cat <<'EOF'
 📊 三連複結果更新・YYYY-MM-DD
 
 - MM/DD（会場）: 的中○/12レース
 - 回収率: ○○%
-- 月別ファイル + 11月全日分+12月全日分統合
+- 月別ファイル + 前月全日分+当月全日分統合
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -717,5 +815,19 @@ git push origin main
 
 ---
 
-**最終更新**: 2026-02-02
-**バージョン**: 2.1.0 - 月末処理の注意事項追加
+**最終更新**: 2026-02-12
+**バージョン**: 2.2.0 - 年月指定の自動化・再発防止対策実装
+
+## 🔄 更新履歴
+
+### 2.2.0 (2026-02-12) - 年月指定の自動化・再発防止対策
+- **馬単結果更新**: 年月を手動指定から`datetime.now()`による自動取得に変更
+- **三連複結果更新**: 前月・当月を自動計算する仕組みを実装
+- **Step 0追加**: 現在の年月確認を最優先手順として追加
+- **警告メッセージ追加**: 手順書の例をそのままコピーしてはいけない旨を明記
+- **再発防止**: 2026-02-12に発生した「2025年12月のファイルを誤って更新」問題を完全解決
+
+### 2.1.0 (2026-02-02) - 月末処理の注意事項追加
+- 新月開始時の必須手順を詳細化
+- アーカイブページのインポート追加手順を明記
+- よくあるミスのチェックリスト追加
