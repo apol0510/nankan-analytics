@@ -317,29 +317,43 @@ exports.handler = async (event, context) => {
       // 例: "Premium Lifetime (¥78,000（永久アクセス）)" → "Premium Lifetime"
       // 例: "Premium Annual (¥68,000/年)" → "Premium Annual"
       // 例: "Premium Monthly (¥18,000/月)" → "Premium Monthly"
-      const planName = productName
+      const fullPlanName = productName
         .replace(/\s*\(.*\)$/, '')  // 最後の(...)を完全削除
+        .trim();
+
+      // PlanTypeを判定（Lifetime, Annual, Monthly）
+      let planType = 'Monthly';  // デフォルト
+      if (fullPlanName.includes('Lifetime')) {
+        planType = 'Lifetime';
+      } else if (fullPlanName.includes('Annual')) {
+        planType = 'Annual';
+      } else if (fullPlanName.includes('Monthly')) {
+        planType = 'Monthly';
+      }
+
+      // プラン名を正規化（Airtable Single select用）
+      // "Premium Lifetime" → "Premium"
+      // "Premium Annual" → "Premium"
+      // "Premium Monthly" → "Premium"
+      // "Premium Sanrenpuku Lifetime" → "Premium Sanrenpuku"
+      const planName = fullPlanName
+        .replace(/\s+(Lifetime|Annual|Monthly)$/, '')  // 末尾のLifetime/Annual/Monthlyを削除
         .trim();
 
       // 有効期限計算（2026-02-09価格体系）
       const today = new Date();
       let expirationDate = null;
 
-      if (planName.includes('Lifetime')) {
+      if (planType === 'Lifetime') {
         // 買い切りプラン: 2099年12月31日（永久）
         expirationDate = '2099-12-31';
-      } else if (planName.includes('Annual')) {
+      } else if (planType === 'Annual') {
         // 年払いプラン: 1年後
         const expDate = new Date(today);
         expDate.setFullYear(expDate.getFullYear() + 1);
         expirationDate = expDate.toISOString().split('T')[0];
-      } else if (planName.includes('Monthly')) {
+      } else if (planType === 'Monthly') {
         // 月払いプラン: 1ヶ月後
-        const expDate = new Date(today);
-        expDate.setMonth(expDate.getMonth() + 1);
-        expirationDate = expDate.toISOString().split('T')[0];
-      } else {
-        // デフォルト: 1ヶ月後
         const expDate = new Date(today);
         expDate.setMonth(expDate.getMonth() + 1);
         expirationDate = expDate.toISOString().split('T')[0];
@@ -347,7 +361,9 @@ exports.handler = async (event, context) => {
 
       console.log('📅 計算された有効期限:', {
         productName,
+        fullPlanName,
         planName,
+        planType,
         expirationDate
       });
 
@@ -389,6 +405,7 @@ exports.handler = async (event, context) => {
             fields: {
               '氏名': fullName,
               'プラン': planName,
+              'PlanType': planType,
               'Status': 'pending',
               'PaymentMethod': 'Bank Transfer',
               'ExpirationDate': expirationDate
@@ -420,6 +437,7 @@ exports.handler = async (event, context) => {
               'Email': email,
               '氏名': fullName,
               'プラン': planName,
+              'PlanType': planType,
               'Status': 'pending',
               'PaymentMethod': 'Bank Transfer',
               'ExpirationDate': expirationDate
