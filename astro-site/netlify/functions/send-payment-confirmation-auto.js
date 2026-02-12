@@ -174,7 +174,7 @@ exports.handler = async (event, context) => {
     console.log('✅ Payment confirmation email sent:', email);
 
     // ========================================
-    // Step 4: PaymentEmailSent を true に更新 + ExpiryDate 設定
+    // Step 4: PaymentEmailSent を true に更新 + ExpirationDate 設定
     // ========================================
     const updatePayload = {
       fields: {
@@ -182,17 +182,38 @@ exports.handler = async (event, context) => {
       }
     };
 
-    // 月額プランの場合のみ 有効期限 を設定（Premium Plus はスキップ）
+    // 有効期限計算（2026-02-09価格体系対応）
     if (!productName.includes('Premium Plus') && !productName.includes('Plus')) {
       const today = new Date();
-      const expiryDate = new Date(today);
-      expiryDate.setMonth(expiryDate.getMonth() + 1);
-      const expiryDateString = expiryDate.toISOString().split('T')[0];
+      let expirationDate = null;
 
-      updatePayload.fields['有効期限'] = expiryDateString;
-      console.log('📅 有効期限設定:', expiryDateString, 'for', productName);
+      if (productName.includes('Lifetime')) {
+        // 買い切りプラン: 2099年12月31日（永久）
+        expirationDate = '2099-12-31';
+        console.log('📅 有効期限設定: 永久アクセス (2099-12-31) for', productName);
+      } else if (productName.includes('Annual')) {
+        // 年払いプラン: 1年後
+        const expDate = new Date(today);
+        expDate.setFullYear(expDate.getFullYear() + 1);
+        expirationDate = expDate.toISOString().split('T')[0];
+        console.log('📅 有効期限設定: 1年後', expirationDate, 'for', productName);
+      } else if (productName.includes('Monthly')) {
+        // 月払いプラン: 1ヶ月後
+        const expDate = new Date(today);
+        expDate.setMonth(expDate.getMonth() + 1);
+        expirationDate = expDate.toISOString().split('T')[0];
+        console.log('📅 有効期限設定: 1ヶ月後', expirationDate, 'for', productName);
+      } else {
+        // デフォルト: 1ヶ月後
+        const expDate = new Date(today);
+        expDate.setMonth(expDate.getMonth() + 1);
+        expirationDate = expDate.toISOString().split('T')[0];
+        console.log('📅 有効期限設定: デフォルト1ヶ月後', expirationDate, 'for', productName);
+      }
+
+      updatePayload.fields['ExpirationDate'] = expirationDate;
     } else {
-      console.log('💎 Premium Plus: 有効期限設定スキップ');
+      console.log('💎 Premium Plus: 有効期限設定スキップ（単品商品）');
     }
 
     // PaymentMethod を "Bank Transfer" と設定（未設定の場合のみ）
@@ -213,8 +234,8 @@ exports.handler = async (event, context) => {
 
     if (updateResponse.ok) {
       console.log('✅ PaymentEmailSent updated to true:', airtableRecordId);
-      if (updatePayload.fields['ExpiryDate']) {
-        console.log('✅ ExpiryDate updated:', updatePayload.fields['ExpiryDate']);
+      if (updatePayload.fields['ExpirationDate']) {
+        console.log('✅ ExpirationDate updated:', updatePayload.fields['ExpirationDate']);
       }
     } else {
       const errorText = await updateResponse.text();

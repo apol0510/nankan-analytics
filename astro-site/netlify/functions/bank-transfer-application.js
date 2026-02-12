@@ -324,7 +324,40 @@ exports.handler = async (event, context) => {
           // 例: "Premium Lifetime (¥78,000（永久アクセス）)" → "Premium Lifetime"
           // 例: "Premium Annual (¥68,000/年)" → "Premium Annual"
           // 例: "Premium Monthly (¥18,000/月)" → "Premium Monthly"
-          const planName = productName.replace(/\s*\([¥￥][\d,]+[^)）]*[)）]/g, '');
+          const planName = productName
+            .replace(/\s*\([¥￥][\d,]+[^)）]*[)）]/g, '')  // 価格部分削除
+            .replace(/\s*\([^)）]*[)）]/g, '')              // 残りの括弧削除
+            .trim();
+
+          // 有効期限計算（2026-02-09価格体系）
+          const today = new Date();
+          let expirationDate = null;
+
+          if (planName.includes('Lifetime')) {
+            // 買い切りプラン: 2099年12月31日（永久）
+            expirationDate = '2099-12-31';
+          } else if (planName.includes('Annual')) {
+            // 年払いプラン: 1年後
+            const expDate = new Date(today);
+            expDate.setFullYear(expDate.getFullYear() + 1);
+            expirationDate = expDate.toISOString().split('T')[0];
+          } else if (planName.includes('Monthly')) {
+            // 月払いプラン: 1ヶ月後
+            const expDate = new Date(today);
+            expDate.setMonth(expDate.getMonth() + 1);
+            expirationDate = expDate.toISOString().split('T')[0];
+          } else {
+            // デフォルト: 1ヶ月後
+            const expDate = new Date(today);
+            expDate.setMonth(expDate.getMonth() + 1);
+            expirationDate = expDate.toISOString().split('T')[0];
+          }
+
+          console.log('📅 計算された有効期限:', {
+            productName,
+            planName,
+            expirationDate
+          });
 
           // 既存顧客チェック
           const searchFormula = `{Email} = "${email}"`;
@@ -355,7 +388,8 @@ exports.handler = async (event, context) => {
                 '氏名': fullName,
                 'プラン': planName,
                 'Status': 'pending',
-                'PaymentMethod': 'Bank Transfer'
+                'PaymentMethod': 'Bank Transfer',
+                'ExpirationDate': expirationDate
               }
             };
 
@@ -385,7 +419,8 @@ exports.handler = async (event, context) => {
                 '氏名': fullName,
                 'プラン': planName,
                 'Status': 'pending',
-                'PaymentMethod': 'Bank Transfer'
+                'PaymentMethod': 'Bank Transfer',
+                'ExpirationDate': expirationDate
               }
             };
 
