@@ -61,6 +61,13 @@ exports.handler = async (event, context) => {
     // ========================================
     const recordUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Customers/${airtableRecordId}`;
 
+    console.log('🔍 Debug info:', {
+      AIRTABLE_BASE_ID,
+      airtableRecordId,
+      recordUrl,
+      tokenPrefix: AIRTABLE_API_KEY.substring(0, 7)
+    });
+
     const recordResponse = await fetch(recordUrl, {
       method: 'GET',
       headers: {
