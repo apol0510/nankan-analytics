@@ -374,24 +374,12 @@ function generateEmailHTML(fullName, email, productName, planType, expirationDat
           <a href="${planInfo.loginUrl}" class="login-button" target="_blank" style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 15px 0;">
             ${planInfo.buttonText}
           </a>
+          <p style="margin: 15px 0 0 0; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; color: #92400e; font-size: 0.95rem;">
+            <strong>⚠️ 重要</strong><br>
+            一度ログアウトしてから再度ログインしてください
+          </p>
         </div>
       </div>
-    </div>
-
-
-    <div class="section">
-      <h4 style="margin: 0 0 15px 0; color: #1e293b;">📋 ご利用方法</h4>
-      <ol style="margin: 0; padding-left: 20px; color: #475569;">
-        <li style="margin-bottom: 10px;">
-          上記の「${planInfo.buttonText}」ボタンをクリック
-        </li>
-        <li style="margin-bottom: 10px;">
-          メールアドレス <strong>${email}</strong> を入力してマジックリンクを受信
-        </li>
-        <li style="margin-bottom: 10px;">
-          ${planInfo.usageInstructions}
-        </li>
-      </ol>
     </div>
 
 
@@ -427,8 +415,7 @@ function getPlanInfo(productName, planType) {
   if (productName.includes('Standard')) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
-      buttonText: 'ダッシュボードにログイン',
-      usageInstructions: '後半3レース（10R、11R、12R）の予想データにアクセス可能です'
+      buttonText: 'ダッシュボードにログイン'
     };
   }
 
@@ -436,8 +423,7 @@ function getPlanInfo(productName, planType) {
   if (productName.includes('Premium') && !productName.includes('Sanrenpuku') && !productName.includes('Combo') && !productName.includes('Plus')) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
-      buttonText: 'ダッシュボードにログイン',
-      usageInstructions: '全レース（1R〜12R）の予想データと穴馬データにアクセス可能です'
+      buttonText: 'ダッシュボードにログイン'
     };
   }
 
@@ -445,8 +431,7 @@ function getPlanInfo(productName, planType) {
   if (productName.includes('Premium Sanrenpuku') || productName.includes('Sanrenpuku')) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
-      buttonText: 'ダッシュボードにログイン',
-      usageInstructions: '全レース（1R〜12R）の予想データ + 三連複予想 + 穴馬データにアクセス可能です'
+      buttonText: 'ダッシュボードにログイン'
     };
   }
 
@@ -454,8 +439,7 @@ function getPlanInfo(productName, planType) {
   if (productName.includes('Premium Combo') || productName.includes('Combo')) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
-      buttonText: 'ダッシュボードにログイン',
-      usageInstructions: '全レース（1R〜12R）の予想データ + 三連複予想 + 穴馬データ + Combo限定コンテンツにアクセス可能です'
+      buttonText: 'ダッシュボードにログイン'
     };
   }
 
@@ -463,15 +447,13 @@ function getPlanInfo(productName, planType) {
   if (productName.includes('Premium Plus') || productName.includes('Plus')) {
     return {
       loginUrl: `${baseUrl}/premium-plus/`,
-      buttonText: 'Premium Plus ページにアクセス',
-      usageInstructions: 'Premium Plus専用の超高精度予想データと実績画像（直近5戦）にアクセスできます。単品商品のため永久アクセス可能です'
+      buttonText: 'Premium Plus ページにアクセス'
     };
   }
 
   // デフォルト
   return {
     loginUrl: `${baseUrl}/dashboard/`,
-    buttonText: 'ダッシュボードにログイン',
-    usageInstructions: 'ダッシュボードから各種予想データにアクセスできます'
+    buttonText: 'ダッシュボードにログイン'
   };
 }
