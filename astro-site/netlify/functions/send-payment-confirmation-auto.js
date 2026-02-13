@@ -397,7 +397,7 @@ function generateEmailHTML(fullName, email, productName, planType, expirationDat
       <h4 style="margin: 0 0 15px 0; color: #1e293b;">📞 サポート</h4>
       <p style="margin: 0; color: #475569; line-height: 1.8;">
         ご不明な点やログインできない場合は、お気軽にお問い合わせください。<br>
-        📧 <a href="mailto:nankan.analytics@keiba.link" style="color: #3b82f6;">nankan.analytics@keiba.link</a>
+        📧 <a href="mailto:support@keiba.link" style="color: #3b82f6;">support@keiba.link</a>
       </p>
     </div>
 

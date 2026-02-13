@@ -64,7 +64,7 @@ exports.handler = async (event, context) => {
     // SendGrid API設定
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
     const FROM_EMAIL = 'noreply@keiba.link';  // 既存の検証済みアドレスを使用
-    const ADMIN_EMAIL = 'nankan.analytics@keiba.link';
+    const ADMIN_EMAIL = 'support@keiba.link';
 
     if (!SENDGRID_API_KEY) {
       throw new Error('SendGrid API key not configured');
@@ -257,7 +257,7 @@ exports.handler = async (event, context) => {
     <div class="section">
       <p style="margin: 0; color: #475569;">
         <strong>ご不明な点がございましたら、お気軽にお問い合わせください。</strong><br>
-        📧 <a href="mailto:nankan.analytics@keiba.link" style="color: #3b82f6;">nankan.analytics@keiba.link</a>
+        📧 <a href="mailto:support@keiba.link" style="color: #3b82f6;">support@keiba.link</a>
       </p>
     </div>
 

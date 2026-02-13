@@ -1,24 +1,25 @@
-functionsDirectory = "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site/netlify/functions"
+functionsDirectory = "/Users/apolon/Projects/nankan-analytics/astro-site/netlify/functions"
 functionsDirectoryOrigin = "config"
 headersOrigin = "config"
 redirectsOrigin = "config"
 plugins = []
 
 [build]
-publish = "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site/dist"
+edge_functions = "/Users/apolon/Projects/nankan-analytics/astro-site/netlify/edge-functions"
+publish = "/Users/apolon/Projects/nankan-analytics/astro-site/dist"
 publishOrigin = "config"
 commandOrigin = "config"
 command = "npm run build"
-functions = "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics/astro-site/netlify/functions"
+functions = "/Users/apolon/Projects/nankan-analytics/astro-site/netlify/functions"
 
 [build.environment]
 NODE_VERSION = "20"
 NPM_VERSION = "10"
-NETLIFY_CACHE_VERSION = "v6"
-BUILD_TIMESTAMP = "2025-09-14-13:58-FINAL-DEPLOY"
-BET_DISPLAY_VERSION = "v5-FINAL-BETTING-SYSTEM"
-FORCE_REBUILD = "EMERGENCY"
-CACHE_CLEAR = "TOTAL"
+NETLIFY_CACHE_VERSION = "v9"
+BUILD_TIMESTAMP = "2026-01-12-22:22-ARCHIVE-2026-COMPLETE"
+BET_DISPLAY_VERSION = "v8-ARCHIVE-2026-BOTH-YEARS"
+FORCE_REBUILD = "ARCHIVE-DATA-2025-2026-BOTH"
+CACHE_CLEAR = "TOTAL-REBUILD-20260112-2222"
 
 [build.processing]
 
@@ -32,6 +33,10 @@ CACHE_CLEAR = "TOTAL"
 
 [build.services]
 
+[[edge_functions]]
+function = "admin-auth"
+path = "/admin/*"
+
 [dev]
 command = "npm run dev"
 port = 4321.0
@@ -42,6 +47,12 @@ autoLaunch = false
 
 [functions."*"]
 node_bundler = "esbuild"
+
+[[headers]]
+for = "/admin/*"
+
+[headers.values]
+Basic-Auth = "nankan-admin:NANKANsecure2025!"
 
 [[headers]]
 for = "/*"
@@ -80,6 +91,30 @@ Cache-Control = "public, max-age=31536000"
 from = "/*"
 to = "/index.html"
 status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/tokutei"
+to = "/legal"
+status = 301.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/tokutei/"
+to = "/legal/"
+status = 301.0
 force = false
 
 [redirects.query]
