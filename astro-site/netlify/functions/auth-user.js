@@ -117,6 +117,7 @@ exports.handler = async (event, context) => {
       const newRecord = await base('Customers').create({
         'Email': email,
         'プラン': 'Free',
+        'PlanType': '',  // 無料登録はPlanTypeを空に（monthlyデフォルト値防止）
         'ポイント': 1,
         '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0]
       });
