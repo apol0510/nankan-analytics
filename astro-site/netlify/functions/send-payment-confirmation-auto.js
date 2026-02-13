@@ -9,6 +9,8 @@
  *   4. PaymentEmailSent を true に更新
  */
 
+import { SUPPORT_EMAIL, FROM_EMAIL } from './config/email-config.js';
+
 exports.handler = async (event, context) => {
   // CORSヘッダー設定
   const headers = {
@@ -128,7 +130,7 @@ exports.handler = async (event, context) => {
     // Step 3: メール送信
     // ========================================
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-    const FROM_EMAIL = 'noreply@keiba.link';
+    // FROM_EMAIL は email-config.js からインポート済み
 
     if (!SENDGRID_API_KEY) {
       throw new Error('SendGrid API key not configured');
@@ -397,7 +399,7 @@ function generateEmailHTML(fullName, email, productName, planType, expirationDat
       <h4 style="margin: 0 0 15px 0; color: #1e293b;">📞 サポート</h4>
       <p style="margin: 0; color: #475569; line-height: 1.8;">
         ご不明な点やログインできない場合は、お気軽にお問い合わせください。<br>
-        📧 <a href="mailto:support@keiba.link" style="color: #3b82f6;">support@keiba.link</a>
+        📧 <a href="mailto:${SUPPORT_EMAIL}" style="color: #3b82f6;">${SUPPORT_EMAIL}</a>
       </p>
     </div>
 

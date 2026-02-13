@@ -3,6 +3,8 @@
  * Premium Plus (¥68,000) の銀行振込申請を受け付け、確認メールを送信
  */
 
+import { SUPPORT_EMAIL, ADMIN_EMAIL, FROM_EMAIL } from './config/email-config.js';
+
 exports.handler = async (event, context) => {
   // CORSヘッダー設定
   const headers = {
@@ -63,8 +65,7 @@ exports.handler = async (event, context) => {
 
     // SendGrid API設定
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-    const FROM_EMAIL = 'noreply@keiba.link';  // 既存の検証済みアドレスを使用
-    const ADMIN_EMAIL = 'support@keiba.link';
+    // FROM_EMAIL, ADMIN_EMAIL は email-config.js からインポート済み
 
     if (!SENDGRID_API_KEY) {
       throw new Error('SendGrid API key not configured');
@@ -257,7 +258,7 @@ exports.handler = async (event, context) => {
     <div class="section">
       <p style="margin: 0; color: #475569;">
         <strong>ご不明な点がございましたら、お気軽にお問い合わせください。</strong><br>
-        📧 <a href="mailto:support@keiba.link" style="color: #3b82f6;">support@keiba.link</a>
+        📧 <a href="mailto:${SUPPORT_EMAIL}" style="color: #3b82f6;">${SUPPORT_EMAIL}</a>
       </p>
     </div>
 

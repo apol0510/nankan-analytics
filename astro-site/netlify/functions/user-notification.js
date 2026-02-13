@@ -140,7 +140,7 @@ export default async function handler(request, context) {
                 <p>ご不明な点がございましたら、お気軽にお問い合わせください</p>
                 <p style="margin: 5px 0 0 0;">
                   <strong>NANKANアナリティクス</strong><br>
-                  📧 support@nankan-analytics.keiba.link
+                  📧 support@keiba.link
                 </p>
                 <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
                 <p style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
