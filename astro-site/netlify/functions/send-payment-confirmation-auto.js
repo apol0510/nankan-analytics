@@ -88,7 +88,7 @@ exports.handler = async (event, context) => {
     const email = fields.Email;
     const fullName = fields['氏名'];
     const productName = fields['プラン'];
-    const planType = fields['PlanType'] || 'monthly';  // monthly, annual, lifetime
+    const planType = fields['PlanType'] || null;  // monthly, annual, lifetime, null for Free
     const expirationDate = fields['有効期限'] || fields['ExpiryDate'] || null;
     const paymentAmount = fields['入金金額'] || fields['金額'] || null;
     const paymentEmailSent = fields.PaymentEmailSent || false;
@@ -288,9 +288,10 @@ function generateEmailHTML(fullName, email, productName, planType, expirationDat
     planTypeDisplay = '（買い切り）';
   } else if (planType === 'annual') {
     planTypeDisplay = '（年払い）';
-  } else {
+  } else if (planType === 'monthly') {
     planTypeDisplay = '（月払い）';
   }
+  // planType が null または '' の場合（Freeプラン）は何も表示しない
 
   // 有効期限表示用（買い切りの場合は特別表記）
   let expirationDisplay = '';
