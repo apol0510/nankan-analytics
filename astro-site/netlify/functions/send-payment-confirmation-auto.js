@@ -89,9 +89,11 @@ exports.handler = async (event, context) => {
     const fullName = fields['氏名'];
     const productName = fields['プラン'];
     const planType = fields['PlanType'] || 'monthly';  // monthly, annual, lifetime
+    const expirationDate = fields['有効期限'] || fields['ExpiryDate'] || null;
+    const paymentAmount = fields['入金金額'] || fields['金額'] || null;
     const paymentEmailSent = fields.PaymentEmailSent || false;
 
-    console.log('📋 Record info:', { email, fullName, productName, planType, paymentEmailSent });
+    console.log('📋 Record info:', { email, fullName, productName, planType, expirationDate, paymentAmount, paymentEmailSent });
 
     if (!email || !fullName || !productName) {
       console.error('⚠️ Missing required fields:', { email, fullName, productName });
@@ -155,7 +157,7 @@ exports.handler = async (event, context) => {
       from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
       content: [{
         type: 'text/html',
-        value: generateEmailHTML(fullName, email, productName, planType, planInfo, japanTime)
+        value: generateEmailHTML(fullName, email, productName, planType, expirationDate, paymentAmount, planInfo, japanTime)
       }],
       tracking_settings: {
         click_tracking: { enable: false },
@@ -279,7 +281,7 @@ exports.handler = async (event, context) => {
 /**
  * メールHTML生成
  */
-function generateEmailHTML(fullName, email, productName, planType, planInfo, japanTime) {
+function generateEmailHTML(fullName, email, productName, planType, expirationDate, paymentAmount, planInfo, japanTime) {
   // プランタイプ表示用
   let planTypeDisplay = '';
   if (planType === 'lifetime') {
@@ -288,6 +290,26 @@ function generateEmailHTML(fullName, email, productName, planType, planInfo, jap
     planTypeDisplay = '（年払い）';
   } else {
     planTypeDisplay = '（月払い）';
+  }
+
+  // 有効期限表示用（買い切りの場合は特別表記）
+  let expirationDisplay = '';
+  if (expirationDate) {
+    if (expirationDate === '2099-12-31' || planType === 'lifetime') {
+      expirationDisplay = `${expirationDate}（永久アクセス）`;
+    } else {
+      expirationDisplay = expirationDate;
+    }
+  }
+
+  // 入金金額表示用（フォーマット）
+  let amountDisplay = '';
+  if (paymentAmount) {
+    // 数値の場合はカンマ区切り、文字列の場合はそのまま
+    const amount = typeof paymentAmount === 'number'
+      ? paymentAmount.toLocaleString('ja-JP')
+      : paymentAmount;
+    amountDisplay = `¥${amount}`;
   }
   return `
 <!DOCTYPE html>
@@ -331,6 +353,18 @@ function generateEmailHTML(fullName, email, productName, planType, planInfo, jap
         <span class="label">プラン:</span>
         <span class="value"><strong>${productName} ${planTypeDisplay}</strong></span>
       </div>
+      ${expirationDisplay ? `
+      <div class="info-row">
+        <span class="label">有効期限:</span>
+        <span class="value"><strong>${expirationDisplay}</strong></span>
+      </div>
+      ` : ''}
+      ${amountDisplay ? `
+      <div class="info-row">
+        <span class="label">お支払い金額:</span>
+        <span class="value"><strong>${amountDisplay}</strong></span>
+      </div>
+      ` : ''}
       <div class="info-row" style="border-bottom: none;">
         <span class="label">ログインURL:</span>
         <div class="value" style="margin-top: 10px;">
