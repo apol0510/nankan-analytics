@@ -88,9 +88,10 @@ exports.handler = async (event, context) => {
     const email = fields.Email;
     const fullName = fields['氏名'];
     const productName = fields['プラン'];
+    const planType = fields['PlanType'] || 'monthly';  // monthly, annual, lifetime
     const paymentEmailSent = fields.PaymentEmailSent || false;
 
-    console.log('📋 Record info:', { email, fullName, productName, paymentEmailSent });
+    console.log('📋 Record info:', { email, fullName, productName, planType, paymentEmailSent });
 
     if (!email || !fullName || !productName) {
       console.error('⚠️ Missing required fields:', { email, fullName, productName });
@@ -132,7 +133,7 @@ exports.handler = async (event, context) => {
     }
 
     // プラン別の情報を取得
-    const planInfo = getPlanInfo(productName);
+    const planInfo = getPlanInfo(productName, planType);
 
     // 日本時間
     const japanTime = new Date().toLocaleString('ja-JP', {
@@ -154,7 +155,7 @@ exports.handler = async (event, context) => {
       from: { email: FROM_EMAIL, name: 'NANKANアナリティクス' },
       content: [{
         type: 'text/html',
-        value: generateEmailHTML(fullName, email, productName, planInfo, japanTime)
+        value: generateEmailHTML(fullName, email, productName, planType, planInfo, japanTime)
       }],
       tracking_settings: {
         click_tracking: { enable: false },
@@ -278,7 +279,16 @@ exports.handler = async (event, context) => {
 /**
  * メールHTML生成
  */
-function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
+function generateEmailHTML(fullName, email, productName, planType, planInfo, japanTime) {
+  // プランタイプ表示用
+  let planTypeDisplay = '';
+  if (planType === 'lifetime') {
+    planTypeDisplay = '（買い切り）';
+  } else if (planType === 'annual') {
+    planTypeDisplay = '（年払い）';
+  } else {
+    planTypeDisplay = '（月払い）';
+  }
   return `
 <!DOCTYPE html>
 <html>
@@ -319,7 +329,7 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
       <h3 style="margin: 0 0 15px 0; color: #1e40af;">🔑 ログイン情報</h3>
       <div class="info-row">
         <span class="label">プラン:</span>
-        <span class="value"><strong>${productName}</strong></span>
+        <span class="value"><strong>${productName} ${planTypeDisplay}</strong></span>
       </div>
       <div class="info-row" style="border-bottom: none;">
         <span class="label">ログインURL:</span>
@@ -331,12 +341,6 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
       </div>
     </div>
 
-    ${planInfo.accessDetails ? `
-    <div class="access-list">
-      <h4 style="margin: 0 0 15px 0; color: #065f46;">📌 アクセス可能なコンテンツ</h4>
-      ${planInfo.accessDetails}
-    </div>
-    ` : ''}
 
     <div class="section">
       <h4 style="margin: 0 0 15px 0; color: #1e293b;">📋 ご利用方法</h4>
@@ -345,9 +349,7 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
           上記の「${planInfo.buttonText}」ボタンをクリック
         </li>
         <li style="margin-bottom: 10px;">
-          <strong>ログイン情報入力</strong><br>
-          メールアドレス: <strong>${email}</strong><br>
-          ${planInfo.passwordInfo || 'パスワードは登録時に設定したものをご使用ください'}
+          メールアドレス <strong>${email}</strong> を入力してマジックリンクを受信
         </li>
         <li style="margin-bottom: 10px;">
           ${planInfo.usageInstructions}
@@ -355,12 +357,6 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
       </ol>
     </div>
 
-    ${planInfo.additionalNotes ? `
-    <div class="section">
-      <h4 style="margin: 0 0 15px 0; color: #1e293b;">💡 追加情報</h4>
-      ${planInfo.additionalNotes}
-    </div>
-    ` : ''}
 
     <div class="section">
       <h4 style="margin: 0 0 15px 0; color: #1e293b;">📞 サポート</h4>
@@ -387,7 +383,7 @@ function generateEmailHTML(fullName, email, productName, planInfo, japanTime) {
 /**
  * プラン別の情報を取得
  */
-function getPlanInfo(productName) {
+function getPlanInfo(productName, planType) {
   const baseUrl = 'https://nankan-analytics.keiba.link';
 
   // Standard
@@ -395,20 +391,7 @@ function getPlanInfo(productName) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
       buttonText: 'ダッシュボードにログイン',
-      passwordInfo: 'パスワードは登録時に設定したものをご使用ください',
-      usageInstructions: '後半3レース（10R、11R、12R）の予想データにアクセス可能です',
-      accessDetails: `
-        <ul style="margin: 0; padding-left: 20px; color: #065f46;">
-          <li>後半3レース（10R、11R、12R）の予想データ</li>
-          <li>Standard Predictions ページ</li>
-        </ul>
-      `,
-      additionalNotes: `
-        <p style="margin: 0; color: #475569; line-height: 1.8;">
-          ✨ <strong>Premium会員へのアップグレード</strong>も可能です。<br>
-          Premium会員になると、全レース（1R〜12R）の予想データにアクセスできます。
-        </p>
-      `
+      usageInstructions: '後半3レース（10R、11R、12R）の予想データにアクセス可能です'
     };
   }
 
@@ -417,21 +400,7 @@ function getPlanInfo(productName) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
       buttonText: 'ダッシュボードにログイン',
-      passwordInfo: 'パスワードは登録時に設定したものをご使用ください',
-      usageInstructions: '全レース（1R〜12R）の予想データにアクセス可能です',
-      accessDetails: `
-        <ul style="margin: 0; padding-left: 20px; color: #065f46;">
-          <li>全レース（1R〜12R）の予想データ</li>
-          <li>Premium Predictions ページ</li>
-          <li>穴馬データ</li>
-        </ul>
-      `,
-      additionalNotes: `
-        <p style="margin: 0; color: #475569; line-height: 1.8;">
-          ✨ <strong>Premium Sanrenpuku会員へのアップグレード</strong>も可能です。<br>
-          三連複予想データと高精度な買い目が利用できます。
-        </p>
-      `
+      usageInstructions: '全レース（1R〜12R）の予想データと穴馬データにアクセス可能です'
     };
   }
 
@@ -440,21 +409,7 @@ function getPlanInfo(productName) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
       buttonText: 'ダッシュボードにログイン',
-      passwordInfo: 'パスワードは登録時に設定したものをご使用ください',
-      usageInstructions: '全レース（1R〜12R）の予想データ + 三連複予想にアクセス可能です',
-      accessDetails: `
-        <ul style="margin: 0; padding-left: 20px; color: #065f46;">
-          <li>全レース（1R〜12R）の予想データ</li>
-          <li>三連複予想データ（高精度買い目）</li>
-          <li>穴馬データ</li>
-        </ul>
-      `,
-      additionalNotes: `
-        <p style="margin: 0; color: #475569; line-height: 1.8;">
-          ✨ <strong>Premium Plus（単品商品）</strong>もご購入いただけます。<br>
-          Premium Sanrenpuku会員限定で、さらに高精度な予想データが利用可能です。
-        </p>
-      `
+      usageInstructions: '全レース（1R〜12R）の予想データ + 三連複予想 + 穴馬データにアクセス可能です'
     };
   }
 
@@ -463,22 +418,7 @@ function getPlanInfo(productName) {
     return {
       loginUrl: `${baseUrl}/dashboard/`,
       buttonText: 'ダッシュボードにログイン',
-      passwordInfo: 'パスワードは登録時に設定したものをご使用ください',
-      usageInstructions: '全レース（1R〜12R）の予想データ + 三連複予想にアクセス可能です',
-      accessDetails: `
-        <ul style="margin: 0; padding-left: 20px; color: #065f46;">
-          <li>全レース（1R〜12R）の予想データ</li>
-          <li>三連複予想データ（高精度買い目）</li>
-          <li>穴馬データ</li>
-          <li>Combo会員限定コンテンツ</li>
-        </ul>
-      `,
-      additionalNotes: `
-        <p style="margin: 0; color: #475569; line-height: 1.8;">
-          ✨ <strong>Premium Plus（単品商品）</strong>もご購入いただけます。<br>
-          Premium Combo会員限定で、さらに高精度な予想データが利用可能です。
-        </p>
-      `
+      usageInstructions: '全レース（1R〜12R）の予想データ + 三連複予想 + 穴馬データ + Combo限定コンテンツにアクセス可能です'
     };
   }
 
@@ -487,22 +427,7 @@ function getPlanInfo(productName) {
     return {
       loginUrl: `${baseUrl}/premium-plus/`,
       buttonText: 'Premium Plus ページにアクセス',
-      passwordInfo: 'ログインは不要です。直接アクセスしてご覧ください',
-      usageInstructions: 'Premium Plus専用の高精度予想データにアクセスできます',
-      accessDetails: `
-        <ul style="margin: 0; padding-left: 20px; color: #065f46;">
-          <li>Premium Plus専用の超高精度予想データ</li>
-          <li>実績画像（直近5戦）</li>
-          <li>単品商品のため、追加料金なしで永久アクセス可能</li>
-        </ul>
-      `,
-      additionalNotes: `
-        <p style="margin: 0; color: #475569; line-height: 1.8;">
-          💡 <strong>Premium Plus は単品商品です</strong><br>
-          月額プランではなく、一度ご購入いただければ永久的にアクセス可能です。<br>
-          Premium Sanrenpuku会員・Premium Combo会員のみが購入できる限定商品です。
-        </p>
-      `
+      usageInstructions: 'Premium Plus専用の超高精度予想データと実績画像（直近5戦）にアクセスできます。単品商品のため永久アクセス可能です'
     };
   }
 
@@ -510,9 +435,6 @@ function getPlanInfo(productName) {
   return {
     loginUrl: `${baseUrl}/dashboard/`,
     buttonText: 'ダッシュボードにログイン',
-    passwordInfo: 'パスワードは登録時に設定したものをご使用ください',
-    usageInstructions: 'ダッシュボードから各種予想データにアクセスできます',
-    accessDetails: null,
-    additionalNotes: null
+    usageInstructions: 'ダッシュボードから各種予想データにアクセスできます'
   };
 }
