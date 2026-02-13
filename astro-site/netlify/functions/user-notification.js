@@ -112,7 +112,6 @@ export default async function handler(request, context) {
                   <ul style="color: #475569; padding-left: 20px; line-height: 1.8;">
                     <li><strong>全レース（1R〜12R）詳細予想</strong></li>
                     <li>AI分析による予想データ</li>
-                    <li>毎日ログインで1ポイント獲得</li>
                   </ul>
                 </div>
 
