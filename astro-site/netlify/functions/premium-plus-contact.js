@@ -3,6 +3,7 @@
  * Premium Plus専用のお問い合わせを受け付け、確認メールを送信
  */
 
+import { SUPPORT_EMAIL, ADMIN_EMAIL, FROM_EMAIL } from './config/email-config.js';
 exports.handler = async (event, context) => {
   // CORSヘッダー設定
   const headers = {
@@ -60,8 +61,8 @@ exports.handler = async (event, context) => {
 
     // SendGrid API設定
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-    const FROM_EMAIL = 'support@keiba.link';  // 🔧 2025-11-26変更: 迷惑メール対策でsupportに変更
-    const ADMIN_EMAIL = 'support@keiba.link';
+    // FROM_EMAIL は email-config.js からインポート済み
+    // ADMIN_EMAIL は email-config.js からインポート済み
 
     if (!SENDGRID_API_KEY) {
       throw new Error('SendGrid API key not configured');
@@ -203,7 +204,7 @@ exports.handler = async (event, context) => {
       <h4 style="margin: 0 0 10px 0; color: #1e40af;">📌 今後の流れ</h4>
       <p style="margin: 0;">
         AI開発者が内容を確認の上、<strong>2営業日以内</strong>にご返信いたします。<br>
-        お急ぎの場合は、直接 <a href="mailto:support@keiba.link" style="color: #3b82f6;">support@keiba.link</a> までご連絡ください。
+        お急ぎの場合は、直接 <a href="mailto:${SUPPORT_EMAIL}" style="color: #3b82f6;">${SUPPORT_EMAIL}</a> までご連絡ください。
       </p>
     </div>
 

@@ -6,6 +6,7 @@ const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+import { SUPPORT_EMAIL, ADMIN_EMAIL, FROM_EMAIL } from './config/email-config.js';
 exports.handler = async (event, context) => {
   console.log('🔔 期限切れ通知システム開始');
 
@@ -205,7 +206,7 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
       </div>
 
       <div style="text-align: center; margin: 30px 0;">
-        <a href="mailto:support@keiba.link?subject=【プラン復帰】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A希望期間: （3ヶ月 or 6ヶ月）%0A振込金額: （上記の割引価格）%0A振込完了日: （ご記入ください）" class="btn" style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+        <a href="mailto:${SUPPORT_EMAIL}?subject=【プラン復帰】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A希望期間: （3ヶ月 or 6ヶ月）%0A振込金額: （上記の割引価格）%0A振込完了日: （ご記入ください）" class="btn" style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold;">
           復帰を申し込む（メールで連絡）
         </a>
       </div>

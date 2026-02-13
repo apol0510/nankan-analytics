@@ -6,6 +6,7 @@ const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+import { SUPPORT_EMAIL, ADMIN_EMAIL, FROM_EMAIL } from './config/email-config.js';
 exports.handler = async (event, context) => {
   console.log('⚠️ 有効期限1週間前通知システム開始');
 
@@ -192,7 +193,7 @@ function generateCustomerEmail(fullName, email, plan, expiryDate) {
       </div>
 
       <div style="text-align: center; margin: 30px 0;">
-        <a href="mailto:support@keiba.link?subject=【プラン継続】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A振込金額: ${planInfo.discountPrice}%0A振込完了日: （ご記入ください）" class="btn" style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+        <a href="mailto:${SUPPORT_EMAIL}?subject=【プラン継続】${plan} - ${email}&body=お名前: ${fullName}%0Aメールアドレス: ${email}%0A希望プラン: ${plan}%0A振込金額: ${planInfo.discountPrice}%0A振込完了日: （ご記入ください）" class="btn" style="display: inline-block; background-color: #3b82f6; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold;">
           継続を申し込む（メールで連絡）
         </a>
       </div>
