@@ -565,8 +565,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         console.log('ポイント通知表示:', data.user.pointsAdded);
                         showPointsNotification(data.user.pointsAdded);
                     } else {
-                        const message = `✅ ${planDisplayName}でログインしました（本日のポイントは付与済み）`;
-                        console.log('成功メッセージ（ポイント付与済み）:', message);
+                        const message = `✅ ${planDisplayName}でログインしました`;
+                        console.log('成功メッセージ:', message);
                         showSuccess(message);
                     }
                     
@@ -724,7 +724,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         loginPointsValue.textContent = `+${loginInfo.pointsAdded}pt`;
                         loginInfoPoints.style.display = 'flex';
                     } else {
-                        loginInfoMessage.textContent = `${loginInfo.planDisplayName}でログインしました（本日のポイントは付与済み）`;
+                        loginInfoMessage.textContent = `${loginInfo.planDisplayName}でログインしました`;
                         loginInfoPoints.style.display = 'none';
                     }
 

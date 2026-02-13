@@ -291,7 +291,7 @@ exports.handler = async (event, context) => {
     } else if (pointsAdded > 0) {
       message = `ログイン成功！本日のポイント${pointsAdded}pt付与`;
     } else {
-      message = 'ログイン成功！（本日のポイントは付与済み）';
+      message = 'ログイン成功！';
     }
 
     return {
