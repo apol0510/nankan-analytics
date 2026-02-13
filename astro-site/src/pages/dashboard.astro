@@ -110,11 +110,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div id="membership-status" class="status-value">読み込み中...</div>
                             <div id="membership-details" class="status-details"></div>
                         </div>
-                        <!-- プラン変更ボタン -->
+                        <!-- 三連複追加ボタン -->
                         <div class="plan-change-section" id="plan-change-section" style="display: none;">
                             <button class="plan-change-btn" id="plan-change-btn">
-                                <span class="btn-icon">🔄</span>
-                                <span class="btn-text">プラン変更</span>
+                                <span class="btn-icon">➕</span>
+                                <span class="btn-text">三連複を追加</span>
                             </button>
                         </div>
                     </div>
@@ -863,9 +863,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const planChangeBtn = document.getElementById('plan-change-btn');
 
             if (data.plan === 'premium' || data.plan === 'Premium') {
-                // Premium会員：プラン変更ボタン表示（三連複へのアップグレード）
+                // Premium会員：三連複追加ボタン表示
                 planChangeSection.style.display = 'block';
-                planChangeBtn.innerHTML = '<span class="btn-icon">🔄</span><span class="btn-text">プラン変更</span>';
+                planChangeBtn.innerHTML = '<span class="btn-icon">➕</span><span class="btn-text">三連複を追加</span>';
             } else if (data.plan === 'standard' || data.plan === 'Standard') {
                 // Standard会員：プランアップグレードボタン表示
                 planChangeSection.style.display = 'block';
@@ -4075,12 +4075,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             </div>
 
-            <!-- プラン変更後の流れ -->
+            <!-- 購入後の流れ -->
             <div class="modal-flow">
-                <h3>📋 プラン変更後の流れ</h3>
+                <h3>📋 購入後の流れ</h3>
                 <ol>
-                    <li><strong>今すぐ利用開始</strong> - 変更後すぐに高性能AI三連複の自動絞り込み機能が利用できます</li>
-                    <li><strong>プラン変更</strong> - 決済後に自動で旧プランから新プランに切り替わります</li>
+                    <li><strong>今すぐ利用開始</strong> - 購入後すぐに高性能AI三連複の自動絞り込み機能が利用できます</li>
+                    <li><strong>自動で追加</strong> - 決済後に自動でPremium会員に三連複予想が追加されます</li>
                 </ol>
             </div>
         </div>
@@ -4169,17 +4169,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const closePremiumBtn = document.getElementById('closePremiumModal');
         const closeStandardBtn = document.getElementById('closeStandardModal');
 
-        console.log('🔄 プラン変更モーダル初期化', {
+        console.log('➕ 三連複追加モーダル初期化', {
             planChangeBtn: !!planChangeBtn,
             premiumModal: !!premiumModal,
             standardModal: !!standardModal
         });
 
-        // プラン変更ボタンクリック
+        // 三連複追加ボタンクリック
         if (planChangeBtn) {
-            console.log('✅ プラン変更ボタンイベントリスナー登録');
+            console.log('✅ 三連複追加ボタンイベントリスナー登録');
             planChangeBtn.addEventListener('click', function() {
-                console.log('🖱️ プラン変更ボタンクリック');
+                console.log('🖱️ 三連複追加ボタンクリック');
                 const userPlanData = localStorage.getItem('user-plan');
                 if (!userPlanData) {
                     console.warn('⚠️ user-plan データがありません');
@@ -4529,7 +4529,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
           <div class="bank-step">
             <span class="bank-step-number">3</span>
-            <span>入金確認取れ次第、即時にプラン変更処理を実施します</span>
+            <span>入金確認取れ次第、即時に三連複予想を追加します</span>
           </div>
         </div>
 
@@ -4583,7 +4583,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             ・土日祝日の場合、確認が翌営業日となる場合がございます<br>
             ・<strong>お名前と同じ名義で振込をお願いします</strong><br>
             ・名義が異なる場合は、備考欄にその旨をご記入ください<br>
-            ・プラン変更後のキャンセル・返金は承っておりません
+            ・購入後のキャンセル・返金は承っておりません
           </div>
         </div>
       </div>
