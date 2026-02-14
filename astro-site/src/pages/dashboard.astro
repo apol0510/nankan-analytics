@@ -74,11 +74,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <div class="login-info-content">
                         <h3 id="login-info-title">ログイン成功</h3>
                         <div id="login-info-message" class="login-info-message"></div>
-                        <div id="login-info-points" class="login-info-points" style="display: none;">
-                            <span class="points-icon">🎆</span>
-                            <span id="login-points-text">ログインポイント獲得！</span>
-                            <span id="login-points-value" class="points-value">+0pt</span>
-                        </div>
                     </div>
                     <button id="login-info-close" class="close-btn">×</button>
                 </div>
@@ -555,20 +550,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         email: data.user.email
                     };
                     localStorage.setItem('loginInfo', JSON.stringify(loginInfo));
-                    
-                    // ログインポイント付与通知
-                    if (data.user.pointsAdded > 0) {
-                        const message = `✅ ${planDisplayName}でログイン！ログインポイント${data.user.pointsAdded}pt獲得`;
-                        console.log('成功メッセージ:', message);
-                        showSuccess(message);
-                        console.log('ポイント通知表示:', data.user.pointsAdded);
-                        showPointsNotification(data.user.pointsAdded);
-                    } else {
-                        const message = `✅ ${planDisplayName}でログインしました`;
-                        console.log('成功メッセージ:', message);
-                        showSuccess(message);
-                    }
-                    
+
+                    // ログイン成功メッセージ
+                    const message = `✅ ${planDisplayName}でログインしました`;
+                    console.log('成功メッセージ:', message);
+                    showSuccess(message);
+
                     document.getElementById('email-input').value = '';
                     
                     // ダッシュボード表示用データ準備（Functionsから取得した実データを使用）
@@ -1235,27 +1222,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             });
         }
 
-        // ポイント獲得通知表示
-        function showPointsNotification(points) {
-            console.log('showPointsNotification 呼び出し:', points);
-            const notification = document.createElement('div');
-            notification.className = 'points-notification';
-            notification.innerHTML = `
-                <div class="notification-content">
-                    🎆 ログインポイント獲得！
-                    <span class="points-added">+${points}pt</span>
-                </div>
-            `;
-            document.body.appendChild(notification);
-            console.log('ポイント通知をDOMに追加:', notification);
-            
-            // アニメーション後に削除
-            setTimeout(() => {
-                notification.classList.add('fade-out');
-                setTimeout(() => notification.remove(), 500);
-            }, 3000);
-        }
-        
         // ポイント表示更新（射幸心を煽る演出付き）
         function updatePointsDisplay(points, hasClaimedReward = false) {
             console.log('🎯 updatePointsDisplay開始 - 受け取ったpoints:', points, typeof points);
