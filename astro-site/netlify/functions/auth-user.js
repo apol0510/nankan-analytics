@@ -430,10 +430,13 @@ async function registerToBlastMail(email, registrationSource = 'nankan-analytics
     const searchUrl = `https://api.bme.jp/rest/1.0/contact/list?${searchParams.toString()}`;
 
     console.log('🔍 BlastMail search URL:', searchUrl);
-    console.log('🔍 BlastMail search method: GET');
+    console.log('🔍 BlastMail search method: POST (with query params)');
 
     const searchResponse = await fetch(searchUrl, {
-      method: 'GET'
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
     });
 
     let existingContact = null;
