@@ -503,7 +503,8 @@ async function registerToBlastMail(email, registrationSource = 'nankan-analytics
       access_token: accessToken,
       format: 'json',
       c15: email,                           // E-Mail（必須フィールド）
-      c19: registrationSource               // 登録元サイト（registration_source: c19）
+      c19: registrationSource,              // 登録元サイト（registration_source: c19）
+      recipient_group_no: '2'               // リスト: analytics（グループ番号2）
     });
 
     const registerResponse = await fetch(registerUrl, {
