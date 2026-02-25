@@ -114,14 +114,19 @@ exports.handler = async (event, context) => {
       // （実際のプロジェクトでは新規登録とログインを分離することを推奨）
 
       // 新規ユーザーとして登録
-      const newRecord = await base('Customers').create({
+      const createFields = {
         'Email': email,
         'プラン': 'Free',
         // PlanTypeは省略（無料登録時は不要、デフォルト値防止のため明示的に含めない）
         'ポイント': 1,
-        '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0],
-        'Source': 'nankan-analytics'  // 登録元サイト
-      });
+        '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0]
+      };
+
+      // Sourceフィールドは存在する場合のみ追加（エラー防止）
+      // TODO: Airtableに手動で'Source'フィールドを追加後、このコメントを削除
+      // createFields['Source'] = 'nankan-analytics';
+
+      const newRecord = await base('Customers').create(createFields);
 
       // BlastMail読者登録（無料会員）
       try {
