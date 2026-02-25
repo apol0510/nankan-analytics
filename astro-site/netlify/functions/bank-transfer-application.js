@@ -441,9 +441,8 @@ exports.handler = async (event, context) => {
               'PlanType': planType,
               'Status': 'pending',
               'PaymentMethod': 'Bank Transfer',
-              '有効期限': expirationDate
-              // TODO: Airtableに手動で'Source'フィールドを追加後、以下をコメント解除
-              // 'Source': 'nankan-analytics'
+              '有効期限': expirationDate,
+              'Source': 'nankan-analytics'  // 登録元サイト
             }
           };
 
