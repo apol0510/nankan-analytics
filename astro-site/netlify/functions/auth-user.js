@@ -122,6 +122,14 @@ exports.handler = async (event, context) => {
         '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0]
       });
 
+      // BlastMail読者登録（無料会員）
+      try {
+        await registerToBlastMail(email, 'nankan-analytics');
+      } catch (blastMailError) {
+        console.error('⚠️ BlastMail登録エラー（処理は継続）:', blastMailError.message);
+        // BlastMailエラーでも処理は続行
+      }
+
       // 新規ユーザー通知は独立したuser-notification.jsで処理（復活防止対策）
       try {
         const notificationResponse = await fetch(`${context.NETLIFY_DEV ? 'http://localhost:8888' : 'https://nankan-analytics.netlify.app'}/.netlify/functions/user-notification`, {
@@ -366,6 +374,92 @@ function normalizePlan(planValue) {
     default:
       console.warn(`⚠️ 未知のプラン値: "${planValue}" -> デフォルト 'Free'`);
       return 'Free';
+  }
+}
+
+// BlastMail読者登録関数
+async function registerToBlastMail(email, registrationSource = 'nankan-analytics') {
+  const BLASTMAIL_USERNAME = process.env.BLASTMAIL_USERNAME;
+  const BLASTMAIL_PASSWORD = process.env.BLASTMAIL_PASSWORD;
+  const BLASTMAIL_API_KEY = process.env.BLASTMAIL_API_KEY;
+
+  if (!BLASTMAIL_USERNAME || !BLASTMAIL_PASSWORD || !BLASTMAIL_API_KEY) {
+    console.warn('⚠️ BlastMail credentials not configured, skipping reader registration');
+    return null;
+  }
+
+  try {
+    // Step 1: ログイン（access_token取得）
+    const loginUrl = 'https://api.bme.jp/rest/1.0/authenticate/login';
+    const loginParams = new URLSearchParams({
+      username: BLASTMAIL_USERNAME,
+      password: BLASTMAIL_PASSWORD,
+      api_key: BLASTMAIL_API_KEY,
+      format: 'json'
+    });
+
+    const loginResponse = await fetch(loginUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: loginParams.toString()
+    });
+
+    if (!loginResponse.ok) {
+      throw new Error(`BlastMail login failed: ${loginResponse.status}`);
+    }
+
+    const loginData = await loginResponse.json();
+    const accessToken = loginData.accessToken;
+
+    if (!accessToken) {
+      throw new Error('BlastMail access token not returned');
+    }
+
+    console.log('✅ BlastMail login successful, access_token obtained');
+
+    // Step 2: 読者登録 (c19 = registration_source カスタムフィールド)
+    const registerUrl = 'https://api.bme.jp/rest/1.0/contact/detail/create';
+    const registerParams = new URLSearchParams({
+      access_token: accessToken,
+      format: 'json',
+      c15: email,                           // E-Mail（必須フィールド）
+      c19: registrationSource               // 登録元サイト（registration_source: c19）
+    });
+
+    const registerResponse = await fetch(registerUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: registerParams.toString()
+    });
+
+    if (!registerResponse.ok) {
+      const errorText = await registerResponse.text();
+      console.log('⚠️ BlastMail registration response (not ok):', registerResponse.status, errorText);
+
+      // 重複登録エラーは成功として扱う
+      if (errorText.includes('Has already been registered') ||
+          errorText.includes('already registered') ||
+          errorText.includes('既に登録')) {
+        console.log('ℹ️ BlastMail reader already registered:', email);
+        console.log('ℹ️ Error details:', errorText);
+        return null;
+      } else {
+        throw new Error(`BlastMail reader registration failed: ${registerResponse.status} - ${errorText}`);
+      }
+    }
+
+    const registerData = await registerResponse.json();
+    console.log('✅ BlastMail reader registered:', email, 'ContactID:', registerData.contactID, 'registration_source:', registrationSource);
+    return registerData;
+
+  } catch (error) {
+    console.error('❌ BlastMail registration error:', error);
+    // BlastMailエラーでも処理は続行（登録は継続）
+    return null;
   }
 }
 
