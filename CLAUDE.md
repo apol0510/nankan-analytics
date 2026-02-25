@@ -617,7 +617,235 @@ function openBankModal(planName, amount, planType = 'monthly') {
 
 ---
 
+## 🚨 **次回作業：SendGrid Marketing Campaigns 移行（2026-02-26開始）** 🚨
 
+### **背景・目的**
+- **日時**: 2026年2月26日
+- **問題**: BlastMailのAPI制約により、複数サイト登録ユーザーの完全自動化が不可能
+- **解決策**: SendGrid Marketing Campaigns への完全移行
+- **方針**: 1つのアカウントで統合管理（Advanced プラン $90/月、100,000通）
+
+### **BlastMailの制約（判明した問題）**
+
+**技術的制約:**
+- ❌ フィルタ配信でカスタムフィールド（c20, c21）を条件に使えない
+- ❌ フィルタ配信でリスト（グループ）を条件に使えない
+- ❌ REST API v1.0で既存ユーザーの検索・更新ができない（404エラー）
+- ❌ API v2はCookie認証必須（Netlify Functionsから使用不可）
+
+**ビジネス影響:**
+- ❌ 両方のサイトに登録したユーザーは、最初のサイトのメールしか受け取れない
+- ❌ サイト別メルマガ配信の完全自動化が不可能
+
+### **SendGrid Marketing Campaigns の利点**
+
+**完全自動化が可能:**
+```javascript
+// 既存ユーザーのカスタムフィールド更新（API v3）
+const updateContact = async (email, customFields) => {
+  const response = await fetch('https://api.sendgrid.com/v3/marketing/contacts', {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      contacts: [
+        {
+          email: email,
+          custom_fields: {
+            'registered_nankan': 'true',      // カスタムフィールド1
+            'registered_intelligence': 'true' // カスタムフィールド2
+          }
+        }
+      ]
+    })
+  });
+};
+```
+
+**料金:**
+- Advanced プラン: $90/月（月100,000通）
+- analytics: 10万通対応
+- intelligence: 2,000通も同じアカウントで管理
+
+**システム設計:**
+```
+1. ユーザー登録（nankan-analytics）
+   → SendGrid Marketing Campaigns APIでコンタクト作成
+   → custom_fields.registered_nankan = 'true'
+
+2. 同じユーザーが登録（keiba-intelligence）
+   → SendGrid API で既存コンタクトを更新（PUTメソッド）
+   → custom_fields.registered_intelligence = 'true' を追加
+   ✅ 既存のregistered_nankanはそのまま維持される
+
+3. メルマガ配信
+   → SendGrid管理画面 or API でセグメント指定
+   → 自動的に対象ユーザーに配信
+```
+
+**配信時のセグメント:**
+```
+セグメント1: registered_nankan = 'true' → nankan-analyticsユーザーのみ
+セグメント2: registered_intelligence = 'true' → keiba-intelligenceユーザーのみ
+セグメント3: registered_nankan = 'true' AND registered_intelligence = 'true' → 両方登録ユーザー
+```
+
+---
+
+### **次回作業の手順**
+
+#### **Step 1: SendGrid Marketing Campaigns カスタムフィールド作成（マコさん作業）**
+
+**SendGrid 管理画面での作業:**
+1. **SendGrid ダッシュボードにログイン**
+   - https://app.sendgrid.com/
+
+2. **Marketing → Contacts に移動**
+
+3. **Custom Fields を作成**
+   - 左メニューから「Custom Fields」を選択
+   - 「Create Custom Field」ボタンをクリック
+
+4. **以下の2つのカスタムフィールドを作成：**
+
+   **カスタムフィールド1:**
+   - Field Name: `registered_nankan`
+   - Field Type: `Text`
+   - 説明: nankan-analyticsに登録したかどうか
+
+   **カスタムフィールド2:**
+   - Field Name: `registered_intelligence`
+   - Field Type: `Text`
+   - 説明: keiba-intelligenceに登録したかどうか
+
+5. **作成後、各フィールドのIDを確認**
+   - カスタムフィールド作成後、それぞれに `e1_T` のような ID が自動生成されます
+   - この ID をクロに伝える（実装で使用）
+
+---
+
+#### **Step 2: Netlify Functions 実装（クロ作業）**
+
+**実装ファイル:**
+1. `netlify/functions/register-to-sendgrid-marketing.js`（新規作成）
+   - SendGrid Marketing Campaigns API v3 統合
+   - カスタムフィールド自動更新
+   - 既存ユーザー・新規ユーザー判定
+
+2. `auth-user.js` 修正（nankan-analytics）
+   - BlastMail登録を削除
+   - SendGrid Marketing Campaigns 登録に置き換え
+   - `registered_nankan = 'true'` 設定
+
+3. `register-free.js` 修正（keiba-intelligence）
+   - BlastMail登録を削除
+   - SendGrid Marketing Campaigns 登録に置き換え
+   - `registered_intelligence = 'true'` 設定
+
+**技術実装:**
+```javascript
+// register-to-sendgrid-marketing.js
+export default async function handler(request, context) {
+  const { email, site } = JSON.parse(await request.text());
+
+  const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+  const CUSTOM_FIELD_NANKAN = 'e1_T';  // マコさんから取得
+  const CUSTOM_FIELD_INTELLIGENCE = 'e2_T';  // マコさんから取得
+
+  const customField = site === 'nankan-analytics'
+    ? CUSTOM_FIELD_NANKAN
+    : CUSTOM_FIELD_INTELLIGENCE;
+
+  // SendGrid Marketing Campaigns API v3
+  const response = await fetch('https://api.sendgrid.com/v3/marketing/contacts', {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      contacts: [
+        {
+          email: email,
+          custom_fields: {
+            [customField]: 'true'
+          }
+        }
+      ]
+    })
+  });
+
+  return new Response(JSON.stringify({ success: true }));
+}
+```
+
+---
+
+#### **Step 3: テスト実施**
+
+**テストケース:**
+1. **新規ユーザー（nankan-analytics）**
+   - 登録 → SendGridにコンタクト作成 → `registered_nankan = 'true'`
+
+2. **既存ユーザー（keiba-intelligence）**
+   - 登録 → SendGridで既存コンタクト更新 → `registered_intelligence = 'true'` 追加
+   - → `registered_nankan` は維持される ✅
+
+3. **SendGrid管理画面で確認**
+   - 両方のカスタムフィールドが正しく設定されているか確認
+
+---
+
+#### **Step 4: デプロイ・本番反映**
+
+**コミットメッセージ例:**
+```
+🚀 BlastMail → SendGrid Marketing Campaigns 完全移行
+
+- BlastMail登録削除（API制約により複数サイト対応不可）
+- SendGrid Marketing Campaigns統合（完全自動化実現）
+- カスタムフィールド: registered_nankan / registered_intelligence
+- 既存ユーザーの複数サイト登録に完全対応 ✅
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+---
+
+### **期待される成果**
+
+**技術的成果:**
+- ✅ 複数サイト登録ユーザーの完全自動化
+- ✅ 既存ユーザーのカスタムフィールド更新が可能
+- ✅ BlastMailのAPI制約から解放
+
+**ビジネス価値:**
+- ✅ **analytics: 10万通/月対応**
+- ✅ **intelligence: 2,000通/月対応**
+- ✅ **同じアカウントで統合管理**
+- ✅ **完全自動化（手動作業ゼロ）**
+
+**料金:**
+- $90/月（Advanced プラン、100,000通）
+
+---
+
+### **重要な注意事項**
+
+**マコさんへ:**
+- ✅ SendGrid カスタムフィールド作成後、IDをクロに伝える
+- ✅ カスタムフィールドID例: `e1_T`, `e2_T`（自動生成される）
+
+**クロへ:**
+- ✅ マコさんからカスタムフィールドIDを受け取ってから実装開始
+- ✅ 環境変数 `SENDGRID_API_KEY` が既に設定済みか確認
+- ✅ テスト実施後、本番デプロイ
+
+---
 
 ### ✅ **2026-01-12 Queue方式メルマガ配信システム完全実装**
 
