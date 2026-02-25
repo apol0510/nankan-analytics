@@ -517,8 +517,9 @@ exports.handler = async (event, context) => {
           const registerParams = new URLSearchParams({
             access_token: accessToken,
             format: 'json',
-            c15: email,      // E-Mail（必須）
-            c0: fullName     // 氏名
+            c15: email,                    // E-Mail（必須）
+            c0: fullName,                  // 氏名
+            c19: 'nankan-analytics'        // 登録元サイト（registration_source）
           });
 
           const registerResponse = await fetch(registerUrl, {
@@ -531,10 +532,14 @@ exports.handler = async (event, context) => {
 
           if (!registerResponse.ok) {
             const errorText = await registerResponse.text();
+            console.log('⚠️ BlastMail registration response (not ok):', registerResponse.status, errorText);
 
             // 重複登録エラーは成功として扱う
-            if (errorText.includes('Has already been registered')) {
+            if (errorText.includes('Has already been registered') ||
+                errorText.includes('already registered') ||
+                errorText.includes('既に登録')) {
               console.log('ℹ️ BlastMail reader already registered:', email);
+              console.log('ℹ️ Error details:', errorText);
             } else {
               throw new Error(`BlastMail reader registration failed: ${registerResponse.status} - ${errorText}`);
             }
