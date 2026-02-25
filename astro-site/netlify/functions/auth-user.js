@@ -421,89 +421,14 @@ async function registerToBlastMail(email, registrationSource = 'nankan-analytics
 
     console.log('✅ BlastMail login successful, access_token obtained');
 
-    // Step 2: 既存ユーザーチェック（メールアドレスで検索）
-    // contact/search エンドポイントを試す
-    const searchParams = new URLSearchParams({
-      access_token: accessToken,
-      format: 'json',
-      email: email  // メールアドレスで検索（c15ではなくemailパラメータ）
-    });
-    const searchUrl = `https://api.bme.jp/rest/1.0/contact/search?${searchParams.toString()}`;
-
-    console.log('🔍 BlastMail search URL (trying /contact/search):', searchUrl);
-
-    const searchResponse = await fetch(searchUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-
-    let existingContact = null;
-    if (searchResponse.ok) {
-      const searchData = await searchResponse.json();
-      console.log('🔍 BlastMail search response:', JSON.stringify(searchData));
-      if (searchData.contacts && searchData.contacts.length > 0) {
-        existingContact = searchData.contacts[0];
-        console.log('ℹ️ BlastMail existing contact found:', email, 'ContactID:', existingContact.contactID, 'Current c19:', existingContact.c19);
-      } else {
-        console.log('ℹ️ BlastMail existing contact not found, will create new');
-      }
-    } else {
-      const errorText = await searchResponse.text();
-      console.error('⚠️ BlastMail search failed:', searchResponse.status, errorText);
-    }
-
-    // Step 3: 既存ユーザーの場合は registration_source を追加更新
-    if (existingContact) {
-      const currentSource = existingContact.c19 || '';
-      const sources = currentSource.split(',').map(s => s.trim()).filter(s => s);
-
-      // 既に含まれている場合はスキップ
-      if (sources.includes(registrationSource)) {
-        console.log('ℹ️ Registration source already includes:', registrationSource);
-        return existingContact;
-      }
-
-      // 新しいsourceを追加
-      sources.push(registrationSource);
-      const newSource = sources.join(',');
-
-      // 既存ユーザーを更新
-      const updateUrl = 'https://api.bme.jp/rest/1.0/contact/detail/update';
-      const updateParams = new URLSearchParams({
-        access_token: accessToken,
-        format: 'json',
-        contact_id: existingContact.contactID,
-        c19: newSource  // カンマ区切りで追加
-      });
-
-      const updateResponse = await fetch(updateUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: updateParams.toString()
-      });
-
-      if (!updateResponse.ok) {
-        const errorText = await updateResponse.text();
-        console.error('⚠️ BlastMail update failed:', errorText);
-        // BlastMail更新失敗でも処理は継続（ユーザー登録を優先）
-        return existingContact;
-      }
-
-      console.log('✅ BlastMail registration_source updated:', email, 'New sources:', newSource);
-      return existingContact;
-    }
-
-    // Step 4: 新規ユーザー登録
+    // Step 2: 新規ユーザー登録（検索・更新機能は削除）
+    // BlastMail REST API v1.0 の検索機能は利用不可（404エラー）
+    // 常に新規登録を試み、既存ユーザーの場合は400エラーを無視する
     const registerUrl = 'https://api.bme.jp/rest/1.0/contact/detail/create';
     const registerParams = new URLSearchParams({
       access_token: accessToken,
       format: 'json',
       c15: email,                           // E-Mail（必須フィールド）
-      c19: registrationSource,              // 登録元サイト（registration_source: c19）
       recipient_group_no: '2'               // リスト: analytics（グループ番号2）
     });
 
@@ -517,12 +442,17 @@ async function registerToBlastMail(email, registrationSource = 'nankan-analytics
 
     if (!registerResponse.ok) {
       const errorText = await registerResponse.text();
-      console.log('⚠️ BlastMail registration response (not ok):', registerResponse.status, errorText);
-      throw new Error(`BlastMail reader registration failed: ${registerResponse.status} - ${errorText}`);
+      // 400エラー（既に登録済み）は無視
+      if (registerResponse.status === 400 && errorText.includes('already been registered')) {
+        console.log('ℹ️ BlastMail already registered:', email, '（スキップ）');
+        return null;
+      }
+      // その他のエラーは例外を投げる
+      throw new Error(`BlastMail registration failed: ${registerResponse.status} - ${errorText}`);
     }
 
     const registerData = await registerResponse.json();
-    console.log('✅ BlastMail reader registered:', email, 'ContactID:', registerData.contactID, 'registration_source:', registrationSource);
+    console.log('✅ BlastMail reader registered:', email, 'ContactID:', registerData.contactID, 'List: analytics');
     return registerData;
 
   } catch (error) {
