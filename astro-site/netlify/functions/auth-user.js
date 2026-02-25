@@ -101,9 +101,10 @@ exports.handler = async (event, context) => {
       .base(process.env.AIRTABLE_BASE_ID);
 
     // ユーザー検索（WithdrawalRequestedフィールドも取得）
+    // 🚨 重要: Sourceフィールドでフィルタリング（nankan-analytics登録者のみ）
     const records = await base('Customers')
       .select({
-        filterByFormula: `{Email} = '${email}'`,
+        filterByFormula: `AND({Email} = '${email}', OR({Source} = 'nankan-analytics', {Source} = BLANK()))`,
         maxRecords: 1
       })
       .firstPage();
