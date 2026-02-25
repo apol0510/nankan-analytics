@@ -422,15 +422,15 @@ async function registerToBlastMail(email, registrationSource = 'nankan-analytics
     console.log('✅ BlastMail login successful, access_token obtained');
 
     // Step 2: 既存ユーザーチェック（メールアドレスで検索）
+    // contact/search エンドポイントを試す
     const searchParams = new URLSearchParams({
       access_token: accessToken,
       format: 'json',
-      c15: email  // メールアドレスで検索
+      email: email  // メールアドレスで検索（c15ではなくemailパラメータ）
     });
-    const searchUrl = `https://api.bme.jp/rest/1.0/contact/list?${searchParams.toString()}`;
+    const searchUrl = `https://api.bme.jp/rest/1.0/contact/search?${searchParams.toString()}`;
 
-    console.log('🔍 BlastMail search URL:', searchUrl);
-    console.log('🔍 BlastMail search method: POST (with query params)');
+    console.log('🔍 BlastMail search URL (trying /contact/search):', searchUrl);
 
     const searchResponse = await fetch(searchUrl, {
       method: 'POST',
