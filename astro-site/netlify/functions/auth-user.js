@@ -480,7 +480,8 @@ async function registerToBlastMail(email, registrationSource = 'nankan-analytics
       if (!updateResponse.ok) {
         const errorText = await updateResponse.text();
         console.error('⚠️ BlastMail update failed:', errorText);
-        throw new Error(`BlastMail update failed: ${updateResponse.status}`);
+        // BlastMail更新失敗でも処理は継続（ユーザー登録を優先）
+        return existingContact;
       }
 
       console.log('✅ BlastMail registration_source updated:', email, 'New sources:', newSource);
