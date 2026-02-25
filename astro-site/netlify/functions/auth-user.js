@@ -119,7 +119,8 @@ exports.handler = async (event, context) => {
         'プラン': 'Free',
         // PlanTypeは省略（無料登録時は不要、デフォルト値防止のため明示的に含めない）
         'ポイント': 1,
-        '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0]
+        '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0],
+        'Source': 'nankan-analytics'  // 登録元サイト
       });
 
       // BlastMail読者登録（無料会員）

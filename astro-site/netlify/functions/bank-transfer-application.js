@@ -441,7 +441,8 @@ exports.handler = async (event, context) => {
               'PlanType': planType,
               'Status': 'pending',
               'PaymentMethod': 'Bank Transfer',
-              '有効期限': expirationDate
+              '有効期限': expirationDate,
+              'Source': 'nankan-analytics'  // 登録元サイト
             }
           };
 
