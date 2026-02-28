@@ -186,6 +186,27 @@ exports.handler = async (event, context) => {
     const jstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
     const today = jstDate.toISOString().split('T')[0];
 
+    // 🔍 強制ログアウトチェック（2026-02-28追加）
+    const forceLogout = user.get('ForceLogout') === true || user.get('ForceLogout') === 1;
+    if (forceLogout) {
+      console.log(`🚨 強制ログアウトフラグ検出: ${email}`);
+
+      // フラグをリセット
+      await base('Customers').update(user.id, {
+        'ForceLogout': false
+      });
+
+      return {
+        statusCode: 401,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success: false,
+          forceLogout: true,
+          message: 'セッションが無効化されました。再度ログインしてください。'
+        })
+      };
+    }
+
     // 🔍 退会申請チェック（2025-11-26追加）
     // 🔧 2025-11-27修正: let に変更（自動リセット時に再代入が必要）
     let withdrawalRequested = user.get('WithdrawalRequested') === 1 || user.get('WithdrawalRequested') === true;

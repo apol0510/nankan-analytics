@@ -502,6 +502,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     throw new Error(`認証API接続エラー: ${fetchError.message}`);
                 }
                 
+                // 🚨 2026-02-28追加: 強制ログアウトチェック
+                if (data.forceLogout) {
+                    console.log('🚨 強制ログアウト検出');
+                    // LocalStorageをクリア
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('userPlan');
+                    localStorage.removeItem('user-plan');
+
+                    showError('プランが更新されました。再度ログインしてください。');
+                    return;
+                }
+
                 if (data.success && data.user) {
                     console.log('✅ ログイン成功:', data.user);
 
