@@ -51,9 +51,10 @@ exports.handler = async (event, context) => {
     console.log('🔍 Event httpMethod:', event.httpMethod);
     
     // リクエストボディ取得
-    const { email } = JSON.parse(event.body || '{}');
+    const { email, allowRegistration } = JSON.parse(event.body || '{}');
     console.log('🔍 Parsed email:', email);
     console.log('🔍 IP Address:', ipAddress);
+    console.log('🔍 Allow Registration:', allowRegistration);
 
     if (!email) {
       return {
@@ -110,21 +111,77 @@ exports.handler = async (event, context) => {
       .firstPage();
 
     if (records.length === 0) {
-      // 🚨 2026-03-02修正: 新規ユーザーの自動登録を削除
-      // 理由: セキュリティ問題（誰でも任意のメールアドレスで登録できてしまう）
-      // 正しいフロー: 新規ユーザーは /pricing/ の無料登録フォームから登録する
+      // 🚨 2026-03-02修正: 新規ユーザーの自動登録を条件付きで許可
+      // allowRegistration=true の場合のみ新規登録可能（/free-signup/ からのみ）
+      // allowRegistration=false または未指定の場合はエラー（/dashboard/ からの自動登録を防止）
 
-      console.log(`❌ ログイン失敗: ユーザーが見つかりません - ${email}`);
+      if (!allowRegistration) {
+        console.log(`❌ ログイン失敗: ユーザーが見つかりません（登録不可） - ${email}`);
+        return {
+          statusCode: 401,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            success: false,
+            error: 'このメールアドレスは登録されていません。',
+            message: '新規登録は /free-signup/ ページから行ってください。',
+            redirectTo: '/free-signup/'
+          })
+        };
+      }
+
+      // allowRegistration=true の場合、新規ユーザーとして登録
+      console.log(`✅ 新規ユーザー登録許可: ${email}`);
+
+      const newRecord = await base('Customers').create({
+        'Email': email,
+        'プラン': 'Free',
+        'ポイント': 1,
+        '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0],
+        'Source': 'nankan-analytics'
+      });
+
+      // BlastMail読者登録（無料会員）
+      try {
+        await registerToBlastMail(email, 'nankan-analytics');
+      } catch (blastMailError) {
+        console.error('⚠️ BlastMail登録エラー（処理は継続）:', blastMailError.message);
+      }
+
+      // 新規ユーザー通知
+      try {
+        const notificationResponse = await fetch(`${context.NETLIFY_DEV ? 'http://localhost:8888' : 'https://nankan-analytics.netlify.app'}/.netlify/functions/user-notification`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            isNewUser: true
+          })
+        });
+
+        if (notificationResponse.ok) {
+          console.log('✅ 新規ユーザー通知送信成功');
+        } else {
+          console.error('⚠️ 新規ユーザー通知送信失敗（処理は継続）:', notificationResponse.status);
+        }
+      } catch (notificationError) {
+        console.error('⚠️ 新規ユーザー通知エラー（処理は継続）:', notificationError.message);
+      }
 
       return {
-        statusCode: 401,
+        statusCode: 200,
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          success: false,
-          error: 'このメールアドレスは登録されていません。',
-          message: '新規登録は /pricing/ ページから行ってください。',
-          redirectTo: '/pricing/'
-        })
+          success: true,
+          isNewUser: true,
+          user: {
+            email,
+            plan: 'free',
+            points: 1,
+            pointsAdded: 1,
+            lastLogin: new Date().toISOString().split('T')[0]
+          },
+          message: '新規ユーザー登録完了！初回ログインポイント1pt付与'
+        }, null, 2)
       };
     }
 

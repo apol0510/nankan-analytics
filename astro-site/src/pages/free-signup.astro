@@ -543,7 +543,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: email
+                    email: email,
+                    allowRegistration: true  // 🔧 2026-03-02追加: 新規登録を許可
                 })
             });
 
