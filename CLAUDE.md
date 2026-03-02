@@ -36,6 +36,7 @@
 
 - 🔮 **「予想更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-予想更新の手順)
 - 🐴 **「穴馬更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-穴馬更新の手順)
+  - 🚨 **必ず STORAGE_VERSION を更新すること！** （Step 4 絶対スキップ禁止）
 - 📊 **「馬単結果更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-馬単結果更新の手順)
 - 📊 **「三連複結果更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-三連複結果更新の手順)
 - 📸 **「画像更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-画像更新の手順)
@@ -44,6 +45,7 @@
 - ❌ 「更新不要」判定は絶対にしない
 - ✅ 既存データがあっても必ず全手順を実行する
 - ✅ マコさんが貼り付けたデータを信頼し、必ず同期・コミット・プッシュする
+- 🔴 **穴馬更新時は STORAGE_VERSION を必ず更新すること（Step 4 スキップ禁止）**
 
 ### 📂 **データファイルの場所ルール（絶対厳守）** 📂
 

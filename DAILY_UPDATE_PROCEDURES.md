@@ -144,7 +144,11 @@ with open('src/data/darkHorseData.json', 'r', encoding='utf-8') as f:
 "
 ```
 
-### **Step 4: STORAGE_VERSION更新（必須・スキップ禁止）** 🚨
+---
+
+## 🚨🚨🚨 **STOP！ここで必ず STORAGE_VERSION を更新すること！** 🚨🚨🚨
+
+### **Step 4: STORAGE_VERSION更新（必須・スキップ絶対禁止）** 🔴🔴🔴
 
 **🔴 絶対に忘れないこと！LocalStorageキャッシュが残る原因になります**
 
