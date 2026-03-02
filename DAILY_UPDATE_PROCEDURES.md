@@ -144,39 +144,60 @@ with open('src/data/darkHorseData.json', 'r', encoding='utf-8') as f:
 "
 ```
 
-### **Step 4: STORAGE_VERSION更新（必須・スキップ禁止）**
+### **Step 4: STORAGE_VERSION更新（必須・スキップ禁止）** 🚨
+
+**🔴 絶対に忘れないこと！LocalStorageキャッシュが残る原因になります**
+
 ```bash
 # dark-horse-picks.astro のSTORAGE_VERSIONを更新日付に変更
 Edit src/pages/dark-horse-picks.astro
 
 # Line 396 と Line 435 の2箇所を更新
-# const STORAGE_VERSION = 'YYYY-MM-DD'; ← 更新日付に変更
+# const STORAGE_VERSION = 'YYYY-MM-DD'; ← darkHorseData.jsonの"date"と同じ日付に変更
 ```
 
-**⚠️ 重要：**
-- darkHorseData.jsonの `"date": "2025-12-04"` と同じ日付に更新
-- **2箇所（Line 396, Line 435）両方とも更新すること**
-- この更新を忘れると「穴馬を見る」ボタンが「再確認する」のままになる
+**検索・置換で一括更新（推奨）：**
+```javascript
+// 古い日付（前回の更新日）を検索
+STORAGE_VERSION = '2026-03-02'
+
+// 新しい日付（今日の日付）に置換
+STORAGE_VERSION = '2026-03-03'
+
+// 必ず2箇所（Line 396, Line 435）両方とも置換されたか確認
+```
+
+**⚠️ この更新を忘れると：**
+- ❌ ブラウザのLocalStorageに古いデータが残る
+- ❌ 「穴馬を見る」ボタンが「再確認する」のままになる
+- ❌ ハードリロードしても古い穴馬データが表示され続ける
+- ❌ 月替わり時に特に問題が発生しやすい
+
+**✅ 正しく更新すると：**
+- ✅ ブラウザが古いバージョンを検出してLocalStorageを自動クリア
+- ✅ 最新の穴馬データが正しく表示される
+- ✅ 「穴馬を見る」ボタンが正しく動作する
 
 ### **Step 5: コミット・プッシュ（必須・スキップ禁止）**
 
-**⚠️ 致命的エラー防止：必ず両方のファイルを追加すること**
+**⚠️ 致命的エラー防止：必ず3つのファイルを追加すること**
 ```bash
 # Git状態を再確認（絶対にスキップしないこと）
 git status
 
-# データファイルのコミット（両方必須）
-git add src/data/darkHorseData.json public/data/darkHorseData.json
+# データファイル + STORAGE_VERSION更新をコミット（3つ全て必須）
+git add src/data/darkHorseData.json public/data/darkHorseData.json src/pages/dark-horse-picks.astro
 
 # 追加されたか確認（絶対にスキップしないこと）
 git status
 
 git commit -m "$(cat <<'EOF'
-🐴 穴馬データ更新・YYYY-MM-DD
+🐴 穴馬更新・YYYY-MM-DD
 
 - 会場: ○○競馬
 - レース数: ○R
 - 穴馬候補数: ○頭
+- STORAGE_VERSION更新 ✅
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
