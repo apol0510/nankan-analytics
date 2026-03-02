@@ -234,32 +234,20 @@ exports.handler = async (event, context) => {
     // 🔧 プラン値正規化: 大文字小文字混在問題解決
     const normalizedPlan = normalizePlan(currentPlan);
 
-    // 🚨 2025-11-27修正: 有料プラン契約中なのに退会フラグが残っている場合は自動リセット + 有効期限修正
-    // 原因: Standard退会 → Premium Sanrenpuku購入時にフラグ・有効期限がリセットされないバグ
-    if (withdrawalRequested && !isExpired && (normalizedPlan !== 'Free' && normalizedPlan !== 'free')) {
-      console.log(`⚠️ ユーザー ${email} は有料プラン契約中なのに退会フラグが残っています - 自動リセットします`);
-      console.log(`   プラン: ${normalizedPlan}, 現在の有効期限: ${validUntil}, 期限切れ: ${isExpired}`);
+    // 🚨 2026-03-02削除: 退会フラグ自動リセットロジックを削除
+    // 削除理由: 退会後のログインで有効期限が30日延長されるバグが発生
+    // 正しい対処: プラン購入時にWebhook側で退会フラグをリセット（Stripe/PayPal Webhook）
+    //
+    // バグシナリオ:
+    // 1. Premium購入（有効期限: 2026-04-01）
+    // 2. 退会申請（WithdrawalRequested=true, 有効期限: 2026-04-01のまま）
+    // 3. 退会後ログイン → 有効期限が自動的に30日延長される（2026-04-01 → 2026-05-01）
+    //
+    // if (withdrawalRequested && !isExpired && (normalizedPlan !== 'Free' && normalizedPlan !== 'free')) {
+    //   // 削除されたロジック: 有効期限を30日延長していた
+    // }
 
-      // 🔧 2025-11-27追加: 有効期限も正しい値に修正（有料プランなら1ヶ月後）
-      const now = new Date();
-      const newExpiryDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
-      const newExpiryDateStr = newExpiryDate.toISOString().split('T')[0];
-
-      console.log(`   新しい有効期限: ${newExpiryDateStr}`);
-
-      // 退会フラグ + 有効期限を自動リセット
-      await base('Customers').update(user.id, {
-        'WithdrawalRequested': false,
-        'WithdrawalDate': null,
-        'WithdrawalReason': null,
-        '有効期限': newExpiryDateStr
-      });
-
-      // ローカル変数も更新（後続処理で正しい値を使用）
-      withdrawalRequested = false;
-      validUntil = newExpiryDateStr;
-      console.log(`✅ 退会フラグ・有効期限リセット完了`);
-    } else if (withdrawalRequested) {
+    if (withdrawalRequested) {
       console.log(`🚫 ユーザー ${email} は退会申請済みです`);
     }
 
