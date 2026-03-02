@@ -45,6 +45,46 @@
 - ✅ 既存データがあっても必ず全手順を実行する
 - ✅ マコさんが貼り付けたデータを信頼し、必ず同期・コミット・プッシュする
 
+### 📂 **データファイルの場所ルール（絶対厳守）** 📂
+
+**⚠️ 重要：クロが間違えやすいポイント**
+
+| 用途 | 正しい場所 | 間違った場所 |
+|------|-----------|-------------|
+| **データ確認・読み込み** | `/src/data/` | ❌ `/public/data/` |
+| **データ更新・書き込み** | `/src/data/` | ❌ `/public/data/` |
+| **同期コピー（最後）** | `/src/data/` → `/public/data/` | - |
+
+**🚨 絶対に守るルール：**
+1. ✅ **データ確認は必ず `/src/data/` から**
+   - 例: `src/data/archiveResults_2026-03.json`
+   - 例: `src/data/archiveSanrenpukuResults_2026-03.json`
+
+2. ✅ **データ更新は必ず `/src/data/` に**
+   - 馬単結果更新 → `src/data/archiveResults_2026-03.json`
+   - 三連複結果更新 → `src/data/archiveSanrenpukuResults_2026-03.json`
+
+3. ✅ **更新後、必ず `/public/data/` に同期コピー**
+   ```bash
+   cp src/data/archiveResults_2026-03.json public/data/
+   cp src/data/archiveSanrenpukuResults_2026-03.json public/data/
+   ```
+
+4. ❌ **絶対にしてはいけないこと**
+   - `/public/data/` を確認して「データがない」と言う
+   - `/public/data/` に直接書き込む
+   - `/src/data/` を確認せずに新規作成する
+
+**理由：**
+- `/src/data/` = ビルド時にインポートされる**マスターデータ**
+- `/public/data/` = ブラウザからのAPI読み込み用**コピー**
+- 必ず `/src/data/` が正しいデータを持っている
+
+**月替わり時も同じルール：**
+- 月が変わっても、常に `/src/data/` を確認
+- MONTHLY_ARCHIVE_GUIDE.md に従って作業する
+- 自動化スクリプトも `/src/data/` を基準に動作
+
 ---
 
 ## 🚨 **最優先：プロジェクト識別ルール（複数ウィンドウ対応）** 🚨

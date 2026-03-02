@@ -100,6 +100,41 @@ git push origin main
 
 ---
 
+## 📂 **データファイルの場所ルール（超重要）** 📂
+
+### ⚠️ **クロが間違えやすいポイント**
+
+**絶対に守るルール：**
+
+1. ✅ **データ確認・読み込みは必ず `/src/data/` から**
+   - 例: `src/data/archiveResults_2026-03.json`
+   - 例: `src/data/archiveSanrenpukuResults_2026-03.json`
+
+2. ✅ **データ更新・書き込みは必ず `/src/data/` に**
+   - 馬単結果更新 → `src/data/archiveResults_2026-03.json`
+   - 三連複結果更新 → `src/data/archiveSanrenpukuResults_2026-03.json`
+
+3. ✅ **更新後、必ず `/public/data/` に同期コピー**
+   ```bash
+   cp src/data/archiveResults_2026-03.json public/data/
+   cp src/data/archiveSanrenpukuResults_2026-03.json public/data/
+   ```
+
+4. ❌ **絶対にしてはいけないこと**
+   - `/public/data/` を確認して「データがない」と言う
+   - `/public/data/` に直接書き込む
+   - `/src/data/` を確認せずに新規作成する
+
+**理由：**
+- `/src/data/` = ビルド時にインポートされる**マスターデータ**（正しいデータ）
+- `/public/data/` = ブラウザからのAPI読み込み用**コピー**（同期先）
+
+**月替わり時も同じ：**
+- 自動化スクリプトは `/src/data/` を基準に動作
+- 月が変わっても、常に `/src/data/` が正解
+
+---
+
 ## 🗂️ ファイル構成
 
 ### 馬単アーカイブ

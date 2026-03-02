@@ -259,10 +259,34 @@ ls -la src/data/archiveResults_2026-*.json
 
 ---
 
+### 📂 **データファイルの場所ルール（絶対厳守）**
+
+**⚠️ クロちゃんが間違えやすいポイント**
+
+| 用途 | 正しい場所 | 間違った場所 |
+|------|-----------|-------------|
+| **データ確認・読み込み** | `/src/data/` | ❌ `/public/data/` |
+| **データ更新・書き込み** | `/src/data/` | ❌ `/public/data/` |
+| **同期コピー（最後）** | `/src/data/` → `/public/data/` | - |
+
+**絶対に守るルール：**
+1. ✅ **データ確認は必ず `/src/data/` から**
+   - 例: `src/data/archiveResults_2026-03.json`
+2. ✅ **データ更新は必ず `/src/data/` に**
+3. ✅ **更新後、必ず `/public/data/` に同期コピー**
+4. ❌ **絶対に `/public/data/` を確認して「データがない」と言わない**
+
+**理由：**
+- `/src/data/` = マスターデータ（正しいデータ）
+- `/public/data/` = コピー（同期先）
+
+---
+
 ### **Step 1: 月別ファイル確認**
 ```bash
 # ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
 # 例: 2026年2月なら archiveResults_2026-02.json
+# ⚠️ 必ず /src/data/ から確認（/public/data/ ではない）
 
 Read src/data/archiveResults_YYYY-MM.json
 ```
@@ -417,10 +441,34 @@ ls -la src/data/archiveSanrenpukuResults_2026-*.json
 
 ---
 
+### 📂 **データファイルの場所ルール（絶対厳守）**
+
+**⚠️ クロちゃんが間違えやすいポイント**
+
+| 用途 | 正しい場所 | 間違った場所 |
+|------|-----------|-------------|
+| **データ確認・読み込み** | `/src/data/` | ❌ `/public/data/` |
+| **データ更新・書き込み** | `/src/data/` | ❌ `/public/data/` |
+| **同期コピー（最後）** | `/src/data/` → `/public/data/` | - |
+
+**絶対に守るルール：**
+1. ✅ **データ確認は必ず `/src/data/` から**
+   - 例: `src/data/archiveSanrenpukuResults_2026-03.json`
+2. ✅ **データ更新は必ず `/src/data/` に**
+3. ✅ **更新後、必ず `/public/data/` に同期コピー**
+4. ❌ **絶対に `/public/data/` を確認して「データがない」と言わない**
+
+**理由：**
+- `/src/data/` = マスターデータ（正しいデータ）
+- `/public/data/` = コピー（同期先）
+
+---
+
 ### **Step 1: 月別ファイル確認**
 ```bash
 # ⚠️ 注意：YYYY-MMは現在の年月に置き換える！
 # 例: 2026年2月なら archiveSanrenpukuResults_2026-02.json
+# ⚠️ 必ず /src/data/ から確認（/public/data/ ではない）
 
 Read src/data/archiveSanrenpukuResults_YYYY-MM.json
 ```
