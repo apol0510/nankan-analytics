@@ -186,11 +186,15 @@ exports.handler = async (event, context) => {
     console.log('✅ Payment confirmation email sent:', email);
 
     // ========================================
-    // Step 4: PaymentEmailSent を true に更新 + ExpirationDate 設定
+    // Step 4: PaymentEmailSent を true に更新 + ExpirationDate 設定 + 退会フラグリセット
     // ========================================
     const updatePayload = {
       fields: {
-        'PaymentEmailSent': true
+        'PaymentEmailSent': true,
+        // 🔧 2026-03-02追加: 入金確認時に退会フラグをリセット（新規プラン購入時）
+        'WithdrawalRequested': false,
+        'WithdrawalDate': null,
+        'WithdrawalReason': null
       }
     };
 
@@ -223,7 +227,9 @@ exports.handler = async (event, context) => {
         console.log('📅 有効期限設定: デフォルト1ヶ月後', expirationDate, 'for', productName);
       }
 
+      // 🔧 2026-03-02修正: 日本語フィールド「有効期限」も同時更新（auth-user.jsで優先されるため）
       updatePayload.fields['ExpirationDate'] = expirationDate;
+      updatePayload.fields['有効期限'] = expirationDate;
     } else {
       console.log('💎 Premium Plus: 有効期限設定スキップ（単品商品）');
     }

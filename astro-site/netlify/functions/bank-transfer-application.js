@@ -409,7 +409,11 @@ exports.handler = async (event, context) => {
               'PlanType': planType,
               'Status': 'pending',
               'PaymentMethod': 'Bank Transfer',
-              '有効期限': expirationDate
+              '有効期限': expirationDate,
+              // 🔧 2026-03-02追加: 新規プラン購入時に退会フラグをリセット
+              'WithdrawalRequested': false,
+              'WithdrawalDate': null,
+              'WithdrawalReason': null
             }
           };
 
