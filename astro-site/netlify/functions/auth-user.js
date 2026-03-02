@@ -110,70 +110,21 @@ exports.handler = async (event, context) => {
       .firstPage();
 
     if (records.length === 0) {
-      // ❌ ユーザーが見つからない = ログイン失敗
-      // ※ただし、新規ユーザー登録は許可するため、失敗記録はしない
-      // （実際のプロジェクトでは新規登録とログインを分離することを推奨）
+      // 🚨 2026-03-02修正: 新規ユーザーの自動登録を削除
+      // 理由: セキュリティ問題（誰でも任意のメールアドレスで登録できてしまう）
+      // 正しいフロー: 新規ユーザーは /pricing/ の無料登録フォームから登録する
 
-      // 新規ユーザーとして登録
-      const newRecord = await base('Customers').create({
-        'Email': email,
-        'プラン': 'Free',
-        // PlanTypeは省略（無料登録時は不要、デフォルト値防止のため明示的に含めない）
-        'ポイント': 1,
-        '最終ポイント付与日': new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })).toISOString().split('T')[0],
-        'Source': 'nankan-analytics'  // 登録元サイト
-      });
-
-      // BlastMail読者登録（無料会員）
-      try {
-        await registerToBlastMail(email, 'nankan-analytics');
-      } catch (blastMailError) {
-        console.error('⚠️ BlastMail登録エラー（処理は継続）:', blastMailError.message);
-        // BlastMailエラーでも処理は続行
-      }
-
-      // 新規ユーザー通知は独立したuser-notification.jsで処理（復活防止対策）
-      try {
-        const notificationResponse = await fetch(`${context.NETLIFY_DEV ? 'http://localhost:8888' : 'https://nankan-analytics.netlify.app'}/.netlify/functions/user-notification`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: email,
-            isNewUser: true
-          })
-        });
-
-        if (notificationResponse.ok) {
-          const notificationResult = await notificationResponse.json();
-          console.log('✅ 新規ユーザー通知送信成功:', notificationResult);
-        } else {
-          console.error('⚠️ 新規ユーザー通知送信失敗（処理は継続）:', notificationResponse.status);
-        }
-      } catch (notificationError) {
-        console.error('⚠️ 新規ユーザー通知エラー（処理は継続）:', notificationError.message);
-      }
-
-      // 🚨 一時的に無効化
-      // // ✅ 新規登録成功 → ログイン試行カウンターリセット
-      // resetLoginAttempts(ipAddress);
+      console.log(`❌ ログイン失敗: ユーザーが見つかりません - ${email}`);
 
       return {
-        statusCode: 200,
+        statusCode: 401,
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          success: true,
-          isNewUser: true,
-          user: {
-            email,
-            plan: 'free',
-            points: 1,
-            pointsAdded: 1,
-            lastLogin: new Date().toISOString().split('T')[0]
-          },
-          message: '新規ユーザー登録完了！初回ログインポイント1pt付与'
-        }, null, 2)
+          success: false,
+          error: 'このメールアドレスは登録されていません。',
+          message: '新規登録は /pricing/ ページから行ってください。',
+          redirectTo: '/pricing/'
+        })
       };
     }
 

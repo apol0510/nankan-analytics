@@ -484,9 +484,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         // レスポンステキストを取得してログ出力
                         const errorText = await response.text();
                         console.error('🚨 Response error text:', errorText);
+
+                        // 🔧 2026-03-02追加: 401エラー（未登録ユーザー）の場合は /pricing/ にリダイレクト
+                        if (response.status === 401) {
+                            try {
+                                const errorData = JSON.parse(errorText);
+                                if (errorData.redirectTo) {
+                                    showError(errorData.error + '\n' + errorData.message);
+                                    setTimeout(() => {
+                                        window.location.href = errorData.redirectTo;
+                                    }, 3000);
+                                    return;
+                                }
+                            } catch (e) {
+                                // JSON解析失敗時はそのままエラーを投げる
+                            }
+                        }
+
                         throw new Error(`Functions error: ${response.status} - ${errorText}`);
                     }
-                    
+
                     data = await response.json();
                 } catch (fetchError) {
                     console.error('Functions呼び出しエラー:', fetchError);
