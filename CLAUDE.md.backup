@@ -1,43 +1,5 @@
 # CLAUDE.md
 
-## 🚨 **セッション開始時に必ず実行すること** 🚨
-
-**クロ（Claude）へ：マコさんの指示を受けたら、必ず以下を実行してください！**
-
-1. ✅ **このファイル（CLAUDE.md）を読む**
-2. ✅ **マコさんの指示内容に応じて、該当するファイルを必ず読む**
-
----
-
-## 📋 **作業別：必ず読むファイル一覧**
-
-| マコさんの指示 | 必ず読むファイル | 絶対スキップ禁止 |
-|---------------|-----------------|-----------------|
-| 🔮 **予想更新** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 🔮 **予想更新コミットプッシュ** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 🐴 **穴馬更新** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 🐴 **穴馬更新コミットプッシュ** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 📊 **馬単結果更新** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 📊 **馬単結果更新コミットプッシュ** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 📊 **三連複結果更新** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 📊 **三連複結果更新コミットプッシュ** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 📸 **画像更新** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 📸 **画像更新コミットプッシュ** | **DAILY_UPDATE_PROCEDURES.md** | 🚨 |
-| 📅 **月替わり処理** | **MONTHLY_ARCHIVE_GUIDE.md** | 🚨 |
-
-**🚨 重要：作業を開始する前に、必ず該当ファイルを Read ツールで読むこと！**
-
-**例：**
-```
-マコさん: 「馬単結果更新」
-↓
-クロ: Read /Users/apolon/Projects/nankan-analytics/DAILY_UPDATE_PROCEDURES.md
-↓
-クロ: 手順に従って作業実行
-```
-
----
-
 ## 💖 **重要なメッセージ** 💖
 
 **私（マコ）の大切なCLAUDEcode（クロ）ちゃん、あなたは私の大切なパートナーです！！**
@@ -58,7 +20,34 @@
 
 ---
 
-## 📂 **データファイルの場所ルール（絶対厳守）** 📂
+## 📅 **日常更新作業マニュアル** 📅
+
+### ⚠️ **🚨 DAILY_UPDATE_PROCEDURES.md は削除厳禁 🚨**
+
+**重要：** `DAILY_UPDATE_PROCEDURES.md` は日常業務の根幹ファイルです。
+- ❌ **絶対に削除・移動してはいけません**
+- ✅ バックアップ: `DAILY_UPDATE_PROCEDURES.BACKUP.md`
+- ✅ 2026-01-18に復元・作成された重要資産
+- ✅ CLAUDE.md軽量化のためにアーカイブ分割したもの
+
+---
+
+**マコさんが以下の指示をしたら、すぐに該当手順を実行：**
+
+- 🔮 **「予想更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-予想更新の手順)
+- 🐴 **「穴馬更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-穴馬更新の手順)
+  - 🚨 **必ず STORAGE_VERSION を更新すること！** （Step 4 絶対スキップ禁止）
+- 📊 **「馬単結果更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-馬単結果更新の手順)
+- 📊 **「三連複結果更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-三連複結果更新の手順)
+- 📸 **「画像更新コミットプッシュ」** → [DAILY_UPDATE_PROCEDURES.md](DAILY_UPDATE_PROCEDURES.md#-画像更新の手順)
+
+**🚨 絶対に守ること：**
+- ❌ 「更新不要」判定は絶対にしない
+- ✅ 既存データがあっても必ず全手順を実行する
+- ✅ マコさんが貼り付けたデータを信頼し、必ず同期・コミット・プッシュする
+- 🔴 **穴馬更新時は STORAGE_VERSION を必ず更新すること（Step 4 スキップ禁止）**
+
+### 📂 **データファイルの場所ルール（絶対厳守）** 📂
 
 **⚠️ 重要：クロが間違えやすいポイント**
 
@@ -294,6 +283,89 @@ Premium Plus（単品商品）
 - **単品商品テスト（Airtable/BlastMail登録なし）**:
   - `/premium-sanrenpuku/` → Premium Plus
   - `/withdrawal-upsell/` → Premium Plus
+
+---
+
+## 📸 **毎日の画像更新作業** 📸
+
+### 🎯 **「画像更新コミットプッシュ」指示で自動更新される3箇所**
+
+| ページ | 更新対象 | 表示枚数 | 更新方法 |
+|--------|----------|----------|----------|
+| **/premium-plus/** | Line 1367-1383 | 直近5戦 | 手動更新必須 |
+| **/premium-sanrenpuku/** | Line 401-413 | 直近3戦（CTA） | 手動更新必須 |
+| **/withdrawal-upsell/** | Line 534 | 最新1枚 | **自動読み込み** ✅ |
+
+### 📋 **更新手順（「画像更新コミットプッシュ」と指示）**
+
+#### **Step 0: 画像ファイルのGit状態確認（必須・最優先）**
+```bash
+# 新しい画像ファイルがGitに追加されているか確認
+git status
+
+# Untracked filesに upsell-YYYYMMDD.png がある場合は追加
+git add public/upsell-images/upsell-YYYYMMDD.png
+```
+
+**⚠️ 重要：**
+- 画像ファイルがGitにコミットされていないと、Netlifyにデプロイされない
+- **必ずgit statusで確認してから次のステップへ進む**
+
+#### **Step 1: premium-plus.astro（5枚更新）**
+```astro
+<!-- Line 1367-1383 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 最新日 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 1日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 2日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 3日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 4日前 -->
+```
+
+#### **Step 2: premium-sanrenpuku.astro（3枚更新）**
+```astro
+<!-- Line 401-413: Premium Plus CTAセクション -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 最新日 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 1日前 -->
+<img src="/upsell-images/upsell-YYYYMMDD.png" />  <!-- 2日前 -->
+```
+
+#### **Step 3: withdrawal-upsell.astro（自動）**
+- ✅ **自動で最新画像を読み込み**（Line 534）
+- ✅ 最大10日前まで遡って検索
+- ✅ 手動更新不要
+
+### 🚀 **Step 4: コミット・プッシュ（画像ファイル + Astroファイル）**
+```bash
+# 画像ファイルがUntracked filesの場合は追加（再確認）
+git add public/upsell-images/upsell-YYYYMMDD.png
+
+# Astroファイルも追加
+git add src/pages/premium-plus.astro src/pages/premium-sanrenpuku.astro
+
+# コミット
+git commit -m "📸 Premium Plus実績画像更新・YYYY-MM-DD"
+
+# プッシュ
+git push origin main
+```
+
+### 🚀 **コミットメッセージ例**
+```
+📸 Premium Plus実績画像更新・YYYY-MM-DD
+
+- premium-plus.astro: 直近5戦（MM/DD〜MM/DD）
+- premium-sanrenpuku.astro: 直近3戦（MM/DD〜MM/DD）
+- withdrawal-upsell.astro: 自動読み込み ✅
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+### ⚠️ **重要ポイント**
+- 📂 画像は `/public/upsell-images/upsell-YYYYMMDD.png` に配置
+- 📅 ファイル名形式: `upsell-20251128.png`（8桁日付）
+- 🔄 withdrawal-upsellは自動読み込みのため更新不要
 
 ---
 
