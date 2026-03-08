@@ -1792,4 +1792,104 @@ After:
 
 ---
 
+### ✅ **2026-03-09 2場開催対応（大井・船橋）**
+
+#### **背景・目的**
+- **日時**: 2026年3月9日
+- **問題**: 大井競馬と船橋競馬の2場開催日だが、船橋の予想が反映されていない
+- **要求**: 船橋の予想も公開できるようにする（既存システムに影響ゼロで簡易対応）
+- **方針**: 2場開催は稀なので、完全な多会場システムではなく、ページ複製による簡易対応
+
+#### **実装内容**
+
+##### **新規作成ファイル:**
+| ファイル | 説明 |
+|---------|------|
+| `src/data/allRacesPrediction-funabashi.json` | 船橋競馬12レース分の予想データ |
+| `public/data/allRacesPrediction-funabashi.json` | 本番用コピー |
+| `src/pages/premium-predictions-funabashi.astro` | Premium会員向け船橋予想ページ（全12レース） |
+| `src/pages/standard-predictions-funabashi.astro` | Standard会員向け船橋予想ページ（後半3レース・参照用のみ） |
+
+##### **修正ファイル:**
+- `src/pages/dashboard.astro`
+  - 船橋予想カード追加（Premium/Premium Plus会員に表示）
+  - 大井/船橋の表記を明確化
+
+#### **アクセス方法**
+
+**Premium会員・Premium Plus会員:**
+- ダッシュボードに「💎 船橋競馬 Premium予想」カードが表示
+- `/premium-predictions-funabashi/` で全12レース閲覧可能
+
+**Standard会員:**
+- 船橋予想は表示されない（募集停止中のため、大井のみ表示）
+- `/standard-predictions-funabashi/` は既存会員参照用として存在
+
+#### **会員別表示状況（2場開催時）**
+
+| プラン | 大井 | 船橋 |
+|--------|------|------|
+| Standard（既存会員のみ） | ✅ 後半3レース | ❌ 表示なし |
+| Premium | ✅ 全レース | ✅ 全レース |
+| Premium Plus | ✅ 全レース | ✅ 全レース |
+
+#### **既存システムへの影響**
+
+✅ **影響ゼロ** - 大井競馬の予想ページ・データは一切変更していません
+- 大井予想: `/premium-predictions/`, `/standard-predictions/`（そのまま）
+- 船橋予想: `/premium-predictions-funabashi/`, `/standard-predictions-funabashi/`（新規）
+- ダッシュボード: 大井・船橋の2つのカードを並行表示
+
+#### **技術的成果**
+- ✅ 2場開催対応を既存システム影響ゼロで実現
+- ✅ ページ複製による簡易実装（1〜2時間）
+- ✅ 完全な多会場システムへの移行は不要（2場開催は稀）
+- ✅ Standard会員は募集停止中のため、船橋カードは非表示
+
+#### **ビジネス価値**
+- ✅ **即時対応**: 2場開催日でも両会場の予想を提供可能
+- ✅ **顧客体験向上**: Premium/Premium Plus会員は両会場の予想を閲覧可能
+- ✅ **運用効率**: 既存システム影響ゼロで安全に実装
+
+#### **デプロイ情報**
+- **コミット1**: `c895d215` - 船橋競馬予想ページ追加
+- **コミット2**: `1b893eee` - Standard会員向け船橋カード追加（後に削除）
+- **コミット3**: `6e065d90` - Standard会員向け船橋カード削除（募集停止中のため）
+- **日時**: 2026年3月9日
+- **Netlify**: 自動ビルド完了・本番反映済み
+
+#### **次回2場開催時の手順**
+
+**Step 1: データファイル作成**
+```bash
+# 船橋データをsrc/data/に作成
+# ファイル名: allRacesPrediction-funabashi.json
+
+# public/dataに同期コピー
+cp src/data/allRacesPrediction-funabashi.json public/data/
+```
+
+**Step 2: ページ確認**
+- `/premium-predictions-funabashi/` にアクセス
+- `/standard-predictions-funabashi/` にアクセス（参照用）
+
+**Step 3: ダッシュボード確認**
+- Premium/Premium Plus会員は自動的に船橋カードが表示される
+- Standard会員は大井のみ表示（募集停止中のため）
+
+**Step 4: コミット・プッシュ**
+```bash
+git add src/data/allRacesPrediction-funabashi.json public/data/allRacesPrediction-funabashi.json
+git commit -m "🏇 船橋競馬予想更新・YYYY-MM-DD"
+git push origin main
+```
+
+#### **注意事項**
+- ✅ 船橋データは `/src/data/` に作成し、`/public/data/` に同期コピー
+- ✅ 既存ページ（大井）は一切変更しない
+- ✅ Standard会員は募集停止中のため、船橋カードは表示しない
+- ✅ 2場開催は稀なので、完全な多会場システムは不要
+
+---
+
 
