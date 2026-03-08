@@ -163,7 +163,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <a href="/free-prediction/" class="view-btn">予想を見る</a>
                     </div>
 
-                    <!-- 大井競馬 Standard予想 -->
+                    <!-- 大井競馬 Standard予想（既存会員のみ・募集停止中） -->
                     <div id="standard-predictions" class="prediction-card standard" style="display: none;">
                         <div class="card-header">
                             <h3>⚡ 大井競馬 Standard予想</h3>
@@ -174,19 +174,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div class="confidence">AI分析完了！</div>
                         </div>
                         <a href="/standard-predictions/" class="view-btn">大井予想を見る</a>
-                    </div>
-
-                    <!-- 船橋競馬 Standard予想 -->
-                    <div id="standard-predictions-funabashi" class="prediction-card standard" style="display: none;">
-                        <div class="card-header">
-                            <h3>⚡ 船橋競馬 Standard予想</h3>
-                            <span class="plan-badge standard">STANDARD</span>
-                        </div>
-                        <div class="race-info">
-                            <div class="race-title">後半3レース（10R-12R）</div>
-                            <div class="confidence">AI分析完了！</div>
-                        </div>
-                        <a href="/standard-predictions-funabashi/" class="view-btn">船橋予想を見る</a>
                     </div>
 
                     <!-- Premium予想（Premium会員専用） -->
@@ -1392,15 +1379,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('free-predictions').style.display = 'none';
             }
 
-            // Standard予想の表示制御（Standard会員のみ）
+            // Standard予想の表示制御（Standard会員のみ・既存会員のみ表示）
             if (planLower === 'standard') {
-                console.log('Standard予想を表示（大井＋船橋）');
+                console.log('Standard予想を表示（大井のみ）');
                 document.getElementById('standard-predictions').style.display = 'block';
-                document.getElementById('standard-predictions-funabashi').style.display = 'block';
             } else {
                 console.log('Standard予想を非表示');
                 document.getElementById('standard-predictions').style.display = 'none';
-                document.getElementById('standard-predictions-funabashi').style.display = 'none';
             }
 
             // Premium予想の表示制御（プラン別）
