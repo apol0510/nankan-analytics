@@ -77,7 +77,7 @@
 
 ```bash
 # nankan-analyticsのみ開く
-cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics"
+cd "/Users/apolon/Projects/nankan-analytics"
 code .
 ```
 
@@ -97,7 +97,7 @@ code .
 
 ```bash
 # ワークスペースファイルから開く
-cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics"
+cd "/Users/apolon/Projects/nankan-analytics"
 code nankan-analytics.code-workspace
 ```
 
@@ -145,7 +145,7 @@ rm -rf ~/Library/Application\ Support/Code/Code\ Cache
 
 **3. 再起動（1プロジェクトのみ開く）**
 ```bash
-cd "/Users/apolon/Library/Mobile Documents/com~apple~CloudDocs/WorkSpace/nankan-analytics"
+cd "/Users/apolon/Projects/nankan-analytics"
 code .
 ```
 
