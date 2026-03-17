@@ -9,7 +9,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="campaign-header">
             <div class="campaign-badge">🌸 春の特別キャンペーン 🌸</div>
             <h1 class="campaign-title">
-                <span class="gradient-text">本日限定</span>
+                <span class="gradient-text">期間限定</span>
                 <br>プレミアム買い切りプラン
             </h1>
             <p class="campaign-subtitle">
@@ -35,7 +35,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <span class="countdown-label">秒</span>
                     </div>
                 </div>
-                <p class="countdown-note">※本日23:59まで</p>
+                <p class="countdown-note">※3月18日23:59まで</p>
             </div>
         </div>
 
@@ -44,7 +44,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="price-card">
                 <!-- 限定バッジ -->
                 <div class="limited-badge">
-                    <span>🔥 本日限定・36%OFF</span>
+                    <span>🔥 期間限定・36%OFF</span>
                 </div>
 
                 <div class="price-header">
@@ -57,7 +57,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             </div>
                             <div class="arrow-down">↓</div>
                             <div class="campaign-price">
-                                <span class="price-label">本日限定価格</span>
+                                <span class="price-label">期間限定価格</span>
                                 <span class="price-value highlight">¥49,800</span>
                             </div>
                         </div>
@@ -110,12 +110,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- なぜ今なのか -->
         <div class="why-now-section">
-            <h2 class="section-title">なぜ本日限定なのか？</h2>
+            <h2 class="section-title">なぜ期間限定なのか？</h2>
             <div class="why-now-grid">
                 <div class="why-now-card">
                     <div class="why-now-icon">🌸</div>
                     <h3>春の感謝キャンペーン</h3>
-                    <p>日頃のご愛顧に感謝して、本日限定で特別価格をご用意しました。</p>
+                    <p>日頃のご愛顧に感謝して、期間限定で特別価格をご用意しました。</p>
                 </div>
                 <div class="why-now-card">
                     <div class="why-now-icon">⚡</div>
@@ -140,7 +140,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <div class="comparison-cell">5年間の総額</div>
                 </div>
                 <div class="comparison-row highlight-row">
-                    <div class="comparison-cell"><strong>買い切り（本日限定）</strong></div>
+                    <div class="comparison-cell"><strong>買い切り（期間限定）</strong></div>
                     <div class="comparison-cell"><strong>¥49,800</strong></div>
                     <div class="comparison-cell"><strong>¥49,800</strong></div>
                 </div>
@@ -161,7 +161,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
             </div>
             <p class="comparison-note">
-                ※ 5年間使うと仮定した場合、本日限定プランは<strong>月額換算で約¥830</strong>です。
+                ※ 5年間使うと仮定した場合、期間限定プランは<strong>月額換算で約¥830</strong>です。
             </p>
         </div>
 
@@ -181,7 +181,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="faq-item">
                     <h3 class="faq-question">Q: 通常の¥78,000プランとの違いは？</h3>
                     <p class="faq-answer">
-                        サービス内容は全く同じです。本日限定で特別価格でご提供しているだけです。
+                        サービス内容は全く同じです。期間限定で特別価格でご提供しているだけです。
                         機能面での制限は一切ありません。
                     </p>
                 </div>
@@ -195,10 +195,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
 
                 <div class="faq-item">
-                    <h3 class="faq-question">Q: 本日中に振込できなかった場合は？</h3>
+                    <h3 class="faq-question">Q: 期間内に振込できなかった場合は？</h3>
                     <p class="faq-answer">
-                        申し訳ございませんが、本キャンペーンは本日23:59までの申し込み分のみ有効です。
-                        通常価格（¥78,000）での販売となります。
+                        申し訳ございませんが、本キャンペーンは3月18日23:59までの申し込み分のみ有効です。
+                        期間終了後は通常価格（¥78,000）での販売となります。
                     </p>
                 </div>
 
@@ -217,7 +217,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="final-cta-card">
                 <h2 class="final-cta-title">今すぐ始めて、勝ち続ける</h2>
                 <p class="final-cta-text">
-                    このチャンスは本日限り。<br>
+                    このチャンスは3月18日まで。<br>
                     28,200円の割引は二度とありません。
                 </p>
                 <div class="final-price">
@@ -229,7 +229,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     🏦 今すぐ申し込む
                 </button>
                 <p class="final-cta-note">
-                    ⏰ 残り時間わずか・本日23:59まで
+                    ⏰ 残り時間わずか・3月18日23:59まで
                 </p>
             </div>
         </div>
@@ -351,10 +351,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   // カウントダウンタイマー
   function updateCountdown() {
     const now = new Date();
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    // 3月18日 23:59:59 に設定
+    const endDate = new Date('2026-03-18T23:59:59+09:00');
 
-    const diff = endOfDay - now;
+    const diff = endDate - now;
 
     if (diff <= 0) {
       document.getElementById('hours').textContent = '00';
