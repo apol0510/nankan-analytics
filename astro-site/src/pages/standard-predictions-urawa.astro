@@ -3,7 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AccessControl from '../components/AccessControl.astro';
 import ProgressBarConfidence from '../components/ProgressBarConfidence.astro';
-import allRacesData from '../data/allRacesPrediction-funabashi.json';
+import allRacesData from '../data/allRacesPrediction-urawa.json';
 import { processRaceData, normalizeHorseData, getRoleDisplayConfig, validateDataIntegrity, getHorseConfidenceFromMark, calculateMarkBasedConfidence, convertToStarRating, getRecommendationStars, generateStandardizedBets, calculateScoreBasedStats, getPredictionDataWithStrategies, calculateProgressBarConfidence } from '../lib/shared-prediction-logic.js';
 import { convertToYesterdayResults, getLatestDayData, convertToSanrenpukuYesterdayResults, getLatestSanrenpukuDayData } from '../lib/archive-utils.js';
 import { getRaceTier, PLAN_ACCESS } from '../lib/race-config.js';

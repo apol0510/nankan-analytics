@@ -94,11 +94,9 @@ export const PLAN_ACCESS = {
   standard: {
     name: 'スタンダード会員',
     races: (totalRaces = 12) => {
-      if (totalRaces === 8) return [6, 7, 8];
-      if (totalRaces === 10) return [8, 9, 10];
-      return [10, 11, 12]; // 12レース時
+      return [getMainRaceNumber(totalRaces)]; // メインレースのみ
     },
-    features: ['後半3レース予想', '基礎コンテンツ']
+    features: ['メインレース馬単買い目', '全レース予想（買い目なし）']
   },
   premium: {
     name: 'プレミアム会員',

@@ -39,7 +39,7 @@ const track = allRacesData.track; // "大井競馬"
 const [year, month, day] = raceDate.split('-');
 const formattedDate = `${year}年${parseInt(month)}月${parseInt(day)}日`;
 
-// Standard会員向け: 後半3レース（totalRaces別に動的取得）
+// Standard会員向け: メインレースのみ（totalRaces別に動的取得）
 // 🛡️ 復活防止対策: sortedRacesの安全性チェック
 const totalRaces = allRacesData.totalRaces || 12;
 const standardRaceNumbers = PLAN_ACCESS.standard.races(totalRaces); // [6,7,8] or [8,9,10] or [10,11,12]
@@ -153,7 +153,7 @@ export const dailyResultsData = {
 
 ---
 
-<BaseLayout title="スタンダード会員予想" description={`AI技術による${track}後半3レース（10R, 11R, 12R）の詳細分析。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
+<BaseLayout title="スタンダード会員予想" description={`AI技術による${track}メインレースの馬単買い目付き予想。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
     <AccessControl requiredPlan="standard">
         <div class="page-container">
         <!-- ヘッダーセクション -->
@@ -162,7 +162,7 @@ export const dailyResultsData = {
                 <span class="pulse"></span>
                 <span class="ai-status">AI分析完了</span>
             </div>
-            <h1 class="race-title">{formattedDate} {track} - 後半3レース予想</h1>
+            <h1 class="race-title">{formattedDate} {track} - メインレース予想</h1>
             <div class="ai-metrics">
                 <div class="metric">
                     <div class="metric-value">{standardRaces.length}</div>
@@ -251,19 +251,19 @@ export const dailyResultsData = {
             </div>
         </section>
 
-        <!-- 【新規追加】プレミアムレースプレビュー（1R-9R）- アコーディオン形式 -->
+        <!-- 【新規追加】全レースプレビュー（メインレース以外）- アコーディオン形式 -->
         <section style="margin-bottom: 60px;">
             <div class="analysis-section">
                 <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--primary-color); text-align: center; margin-bottom: 15px;">
-                    👀 全レースプレビュー
+                    👀 全レースプレビュー（買い目なし）
                 </h2>
                 <p style="text-align: center; color: var(--body-text-color); font-size: 1.1rem; margin-bottom: 40px; opacity: 0.9;">
-                    プレミアムレース（1R-9R）の本命・対抗・単穴情報をプレビュー表示
+                    メインレース以外の全レース予想（本命・対抗・単穴）をプレビュー表示
                 </p>
 
-                <!-- プレミアムレース一覧（1R-9R）- アコーディオン -->
+                <!-- プレミアムレース一覧（メインレース以外）- アコーディオン -->
                 <div class="races-container">
-                    {sortedRaces.filter(race => !['10R', '11R', '12R'].includes(race.raceNumber)).map((raceData) => {
+                    {sortedRaces.filter(race => !race.isMainRace).map((raceData) => {
                         // 各レースのデータ処理
                         const normalizedHorses = normalizeHorseData(raceData) || [];
                         const raceHorses = Array.isArray(normalizedHorses) ? normalizedHorses : [];

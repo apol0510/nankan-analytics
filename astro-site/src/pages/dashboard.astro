@@ -138,7 +138,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div class="plan-title" id="plan-title">プラン特典</div>
                         </div>
                         <div class="plan-benefits" id="plan-benefits">
-                            <div class="plan-benefit">🏇 後半3レース予想</div>
+                            <div class="plan-benefit">🏇 メインレース馬単買い目</div>
                         </div>
                     </div>
                     
@@ -176,14 +176,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <a href="/free-prediction-funabashi/" class="view-btn">船橋予想を見る</a>
                     </div>
 
-                    <!-- 大井競馬 Standard予想（既存会員のみ・募集停止中） -->
+                    <!-- 浦和競馬 無料予想 -->
+                    <div id="free-predictions-urawa" class="prediction-card free">
+                        <div class="card-header">
+                            <h3>🎁 浦和競馬 無料予想</h3>
+                            <span class="plan-badge free">FREE</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">全レース（無料）</div>
+                            <div class="confidence">AI分析完了！</div>
+                        </div>
+                        <a href="/free-prediction-urawa/" class="view-btn">浦和予想を見る</a>
+                    </div>
+
+                    <!-- 大井競馬 Standard予想 -->
                     <div id="standard-predictions" class="prediction-card standard" style="display: none;">
                         <div class="card-header">
                             <h3>⚡ 大井競馬 Standard予想</h3>
                             <span class="plan-badge standard">STANDARD</span>
                         </div>
                         <div class="race-info">
-                            <div class="race-title">後半3レース（10R-12R）</div>
+                            <div class="race-title">メインレース馬単買い目</div>
                             <div class="confidence">AI分析完了！</div>
                         </div>
                         <a href="/standard-predictions/" class="view-btn">大井予想を見る</a>
@@ -213,6 +226,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             <div class="confidence">AI分析完了！</div>
                         </div>
                         <a href="/premium-predictions-funabashi/" class="view-btn">船橋予想を見る</a>
+                    </div>
+
+                    <!-- 浦和競馬 Premium予想（Premium会員専用） -->
+                    <div id="premium-predictions-urawa" class="prediction-card premium" style="display: none;">
+                        <div class="card-header">
+                            <h3>💎 浦和競馬 Premium予想（馬単3戦略）</h3>
+                            <span class="plan-badge premium">PREMIUM</span>
+                        </div>
+                        <div class="race-info">
+                            <div class="race-title">全レース（1R-12R）</div>
+                            <div class="confidence">AI分析完了！</div>
+                        </div>
+                        <a href="/premium-predictions-urawa/" class="view-btn">浦和予想を見る</a>
                     </div>
 
                     <!-- Premium Sanrenpuku予想（Premium Sanrenpuku/Combo会員専用） -->
@@ -926,12 +952,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         function updateVipBenefits(plan) {
             const benefits = {
                 standard: [
-                    '⚡ 後半3レース予想',
-                    '📊 統計データ閲覧'
+                    '⚡ メインレース馬単買い目',
+                    '📊 全レース予想（買い目なし）'
                 ],
                 Standard: [
-                    '⚡ 後半3レース予想',
-                    '📊 統計データ閲覧'
+                    '⚡ メインレース馬単買い目',
+                    '📊 全レース予想（買い目なし）'
                 ],
                 premium: [
                     '💎 全レース予想',
@@ -953,8 +979,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         function updatePlanBenefits(plan) {
             const benefits = {
                 standard: [
-                    '🏇 後半3レース予想',
-                    '📊 統計データ閲覧'
+                    '🏇 メインレース馬単買い目',
+                    '📊 全レース予想（買い目なし）'
                 ]
             };
             
@@ -1385,13 +1411,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             // 無料予想の表示制御
             if (planLower === 'free' || planLower === '' || !planLower) {
-                console.log('無料予想を表示（Free会員・大井＋船橋）');
+                console.log('無料予想を表示（Free会員・大井＋船橋＋浦和）');
                 document.getElementById('free-predictions').style.display = 'block';
                 document.getElementById('free-predictions-funabashi').style.display = 'block';
+                document.getElementById('free-predictions-urawa').style.display = 'block';
             } else {
                 console.log('無料予想を非表示（有料会員）');
                 document.getElementById('free-predictions').style.display = 'none';
                 document.getElementById('free-predictions-funabashi').style.display = 'none';
+                document.getElementById('free-predictions-urawa').style.display = 'none';
             }
 
             // Standard予想の表示制御（Standard会員のみ・既存会員のみ表示）
@@ -1405,10 +1433,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             // Premium予想の表示制御（プラン別）
             if (planLower === 'premium') {
-                // Premium会員：馬単予想のみ（大井＋船橋）
+                // Premium会員：馬単予想のみ（大井＋船橋＋浦和）
                 console.log('Premium予想を表示（馬単のみ）');
                 document.getElementById('premium-predictions').style.display = 'block';
                 document.getElementById('premium-predictions-funabashi').style.display = 'block';
+                document.getElementById('premium-predictions-urawa').style.display = 'block';
             } else if (planLower === 'premium sanrenpuku') {
                 // Premium Sanrenpuku会員：三連複予想のみ
                 console.log('Premium Sanrenpuku予想を表示');
@@ -1419,10 +1448,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('sanrenpuku-predictions').style.display = 'block';
                 document.getElementById('combo-umatan-predictions').style.display = 'block';
             } else if (planLower === 'premium plus') {
-                // Premium Plus会員：Premium予想表示（大井＋船橋）
+                // Premium Plus会員：Premium予想表示（大井＋船橋＋浦和）
                 console.log('Premium Plus予想を表示');
                 document.getElementById('premium-predictions').style.display = 'block';
                 document.getElementById('premium-predictions-funabashi').style.display = 'block';
+                document.getElementById('premium-predictions-urawa').style.display = 'block';
             }
 
             // プラン管理の表示制御（無料会員のみ）
