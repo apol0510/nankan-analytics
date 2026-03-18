@@ -50,48 +50,29 @@ const standardRaces = (Array.isArray(sortedRaces) ? sortedRaces : []).filter(rac
     return standardRaceNumbers.includes(raceNum);
 });
 
-// Standard会員向け2段構成買い目生成関数
-function generateTwoLineUmatanBets(horses) {
+// Standard会員向け1段構成買い目生成関数（本命軸のみ）
+function generateOneLineUmatanBets(horses) {
     // 配列チェック
     if (!Array.isArray(horses) || horses.length === 0) return null;
 
-    // 本命・対抗・単穴を特定
+    // 本命を特定
     const honmei = horses.find(h => h.role === '本命');
-    const taikou = horses.find(h => h.role === '対抗');
-    const tananaList = horses.filter(h => h.role === '単穴');
+    if (!honmei) return null;
 
-    if (!honmei || !taikou) return null;
-
-    // 連下候補（連下・押さえ）
-    const renkaList = horses.filter(h => h.role === '連下' || h.role === '押さえ');
-
-    // 本命軸の相手（対抗・単穴・連下最初の2頭）
-    const honmeiOpponents = [
-        taikou.number,
-        ...tananaList.map(h => h.number),
-        ...renkaList.slice(0, 2).map(h => h.number)
-    ].filter(Boolean);
-
-    // 対抗軸の相手（本命・単穴・連下最初の2頭）
-    const taikouOpponents = [
-        honmei.number,
-        ...tananaList.map(h => h.number),
-        ...renkaList.slice(0, 2).map(h => h.number)
-    ].filter(Boolean);
+    // 相手馬を役割順に並べる（対抗・単穴・連下・押さえ）
+    const opponents = horses
+        .filter(h => h.role !== '本命')
+        .sort((a, b) => {
+            const order = { '対抗': 1, '単穴': 2, '連下': 3, '押さえ': 4 };
+            return (order[a.role] || 99) - (order[b.role] || 99);
+        })
+        .map(h => h.number)
+        .filter(Boolean);
 
     return {
-        honmei: {
-            axis: honmei.number,
-            axisName: honmei.name,
-            opponents: honmeiOpponents.slice(0, 5), // 最初5頭
-            opponentsExtra: honmeiOpponents.slice(5) // 抑え（カッコ内）
-        },
-        taikou: {
-            axis: taikou.number,
-            axisName: taikou.name,
-            opponents: taikouOpponents.slice(0, 5),
-            opponentsExtra: taikouOpponents.slice(5)
-        }
+        axis: honmei.number,
+        axisName: honmei.name,
+        opponents: opponents
     };
 }
 
@@ -564,8 +545,8 @@ export const dailyResultsData = {
             const progressBarB = calculateProgressBarConfidence('B', raceMainHorseScore, raceSubHorseScore);
             const progressBarC = calculateProgressBarConfidence('C', raceMainHorseScore, raceSubHorseScore);
 
-            // Standard会員向け2段構成買い目生成
-            const twoLineBets = generateTwoLineUmatanBets(raceHorses);
+            // Standard会員向け1段構成買い目生成（本命軸のみ）
+            const oneLineBets = generateOneLineUmatanBets(raceHorses);
 
             return (
                 <div class={`race-${raceNum}r-accordion`}>
@@ -762,79 +743,28 @@ export const dailyResultsData = {
                                 )}
                             </div>
 
-                            <!-- AI推奨馬単買い目（2段構成） -->
-                            {twoLineBets && (
-                                <div class="betting-section-two-line">
+                            <!-- AI推奨馬単買い目（1段構成・本命軸のみ） -->
+                            {oneLineBets && (
+                                <div class="betting-section-one-line">
                                     <h2 class="section-title">
-                                        <span>💰</span>
+                                        <span>🎯</span>
                                         <span>AI推奨馬単買い目</span>
                                     </h2>
 
                                     <div class="betting-formula">
-                                        <!-- 本命軸 -->
-                                        <div class="formula-row honmei-axis">
-                                            <div class="formula-header">
-                                                <span class="axis-mark">◎</span>
-                                                <span class="axis-text">本命</span>
-                                                <span class="axis-horse-name">{twoLineBets.honmei.axisName}</span>
-                                            </div>
-                                            <div class="formula-content">
-                                                <span class="axis-number">{twoLineBets.honmei.axis}</span>
-                                                <span class="formula-arrow">⇔</span>
-                                                <span class="opponents-list">
-                                                    {twoLineBets.honmei.opponents.map((num, idx) => (
-                                                        <>
-                                                            <span class="opponent-number">{num}</span>
-                                                            {idx < twoLineBets.honmei.opponents.length - 1 && <span class="opponent-separator">.</span>}
-                                                        </>
-                                                    ))}
-                                                    {twoLineBets.honmei.opponentsExtra && twoLineBets.honmei.opponentsExtra.length > 0 && (
-                                                        <>
-                                                            <span class="opponent-paren">(</span>
-                                                            {twoLineBets.honmei.opponentsExtra.map((num, idx) => (
-                                                                <>
-                                                                    <span class="opponent-number optional">{num}</span>
-                                                                    {idx < twoLineBets.honmei.opponentsExtra.length - 1 && <span class="opponent-separator">.</span>}
-                                                                </>
-                                                            ))}
-                                                            <span class="opponent-paren">)</span>
-                                                        </>
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <!-- 対抗軸 -->
-                                        <div class="formula-row taikou-axis">
-                                            <div class="formula-header">
-                                                <span class="axis-mark">○</span>
-                                                <span class="axis-text">対抗</span>
-                                                <span class="axis-horse-name">{twoLineBets.taikou.axisName}</span>
-                                            </div>
-                                            <div class="formula-content">
-                                                <span class="axis-number">{twoLineBets.taikou.axis}</span>
-                                                <span class="formula-arrow">⇔</span>
-                                                <span class="opponents-list">
-                                                    {twoLineBets.taikou.opponents.map((num, idx) => (
-                                                        <>
-                                                            <span class="opponent-number">{num}</span>
-                                                            {idx < twoLineBets.taikou.opponents.length - 1 && <span class="opponent-separator">.</span>}
-                                                        </>
-                                                    ))}
-                                                    {twoLineBets.taikou.opponentsExtra && twoLineBets.taikou.opponentsExtra.length > 0 && (
-                                                        <>
-                                                            <span class="opponent-paren">(</span>
-                                                            {twoLineBets.taikou.opponentsExtra.map((num, idx) => (
-                                                                <>
-                                                                    <span class="opponent-number optional">{num}</span>
-                                                                    {idx < twoLineBets.taikou.opponentsExtra.length - 1 && <span class="opponent-separator">.</span>}
-                                                                </>
-                                                            ))}
-                                                            <span class="opponent-paren">)</span>
-                                                        </>
-                                                    )}
-                                                </span>
-                                            </div>
+                                        <div class="formula-label">AI推奨軸</div>
+                                        <div class="formula-horse-name">{oneLineBets.axisName}</div>
+                                        <div class="formula-content">
+                                            <span class="axis-number">{oneLineBets.axis}</span>
+                                            <span class="formula-arrow">⇔</span>
+                                            <span class="opponents-list">
+                                                {oneLineBets.opponents.map((num, idx) => (
+                                                    <>
+                                                        <span class="opponent-number">{num}</span>
+                                                        {idx < oneLineBets.opponents.length - 1 && <span class="opponent-dot">.</span>}
+                                                    </>
+                                                ))}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -1771,7 +1701,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /* 2段構成買い目スタイル */
-    .betting-section-two-line {
+    /* 1段構成の馬単買い目スタイル */
+    .betting-section-one-line {
         background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
         padding: 30px;
         border-radius: 15px;
@@ -1779,98 +1710,73 @@ document.addEventListener('DOMContentLoaded', function() {
         border: 2px solid rgba(251, 191, 36, 0.3);
     }
 
-    .betting-formula {
-        margin-top: 20px;
-    }
-
-    .formula-row {
-        background: rgba(15, 23, 42, 0.8);
-        border-radius: 12px;
-        padding: 20px 25px;
-        margin-bottom: 15px;
-        border: 2px solid rgba(100, 116, 139, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .formula-row:hover {
-        border-color: rgba(251, 191, 36, 0.5);
-        box-shadow: 0 5px 15px rgba(251, 191, 36, 0.1);
-    }
-
-    .formula-row.honmei-axis {
-        border-left: 4px solid #ef4444;
-    }
-
-    .formula-row.taikou-axis {
-        border-left: 4px solid #3b82f6;
-    }
-
-    .formula-header {
+    .betting-section-one-line .section-title {
+        color: #fbbf24;
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        text-align: center;
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 15px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+        justify-content: center;
+        gap: 10px;
     }
 
-    .axis-mark {
-        font-size: 1.8rem;
-        font-weight: bold;
+    .betting-formula {
+        background: rgba(15, 23, 42, 0.8);
+        border-radius: 12px;
+        padding: 25px 30px;
+        border: 2px solid rgba(100, 116, 139, 0.3);
     }
 
-    .honmei-axis .axis-mark {
-        color: #ef4444;
-    }
-
-    .taikou-axis .axis-mark {
-        color: #3b82f6;
-    }
-
-    .axis-text {
+    .formula-label {
         font-size: 1rem;
         font-weight: 700;
         color: #94a3b8;
-        min-width: 50px;
+        margin-bottom: 8px;
+        text-align: center;
     }
 
-    .axis-horse-name {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #e2e8f0;
+    .formula-horse-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #fbbf24;
+        text-align: center;
+        margin-bottom: 20px;
     }
 
     .formula-content {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 15px;
         flex-wrap: wrap;
     }
 
     .axis-number {
-        font-size: 2.2rem;
+        font-size: 2.5rem;
         font-weight: 800;
         color: #fbbf24;
-        background: rgba(251, 191, 36, 0.1);
-        border: 2px solid rgba(251, 191, 36, 0.3);
+        background: rgba(251, 191, 36, 0.15);
+        border: 3px solid rgba(251, 191, 36, 0.4);
         border-radius: 12px;
-        padding: 8px 20px;
-        min-width: 70px;
+        padding: 10px 25px;
+        min-width: 80px;
         text-align: center;
     }
 
     .formula-arrow {
-        font-size: 2rem;
-        color: #94a3b8;
+        font-size: 2.5rem;
+        color: #cbd5e1;
         font-weight: bold;
     }
 
     .opponents-list {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         flex-wrap: wrap;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: 700;
     }
 
@@ -1878,26 +1784,47 @@ document.addEventListener('DOMContentLoaded', function() {
         color: #e2e8f0;
         background: rgba(100, 116, 139, 0.3);
         border-radius: 8px;
-        padding: 4px 12px;
-        min-width: 45px;
+        padding: 6px 16px;
+        min-width: 50px;
         text-align: center;
         border: 1px solid rgba(100, 116, 139, 0.4);
+        transition: all 0.2s;
     }
 
-    .opponent-number.optional {
-        color: #94a3b8;
-        background: rgba(100, 116, 139, 0.2);
+    .opponent-number:hover {
+        background: rgba(251, 191, 36, 0.2);
+        border-color: rgba(251, 191, 36, 0.5);
+        transform: translateY(-2px);
     }
 
-    .opponent-separator {
+    .opponent-dot {
         color: #64748b;
         font-size: 1.2rem;
+        padding: 0 2px;
     }
 
-    .opponent-paren {
-        color: #64748b;
-        font-size: 1.8rem;
-        font-weight: bold;
+    @media (max-width: 768px) {
+        .betting-section-one-line {
+            padding: 20px;
+        }
+
+        .betting-formula {
+            padding: 20px;
+        }
+
+        .formula-content {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .axis-number {
+            font-size: 2rem;
+        }
+
+        .opponents-list {
+            font-size: 1.5rem;
+            justify-content: center;
+        }
     }
 
     /* レスポンシブ対応 */
