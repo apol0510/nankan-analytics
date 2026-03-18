@@ -75,7 +75,7 @@ function generateOneLineUmatanBets(horses) {
     }
 
     // 相手馬を役割順に並べる（軸馬以外を対抗・単穴・連下・押さえの順）
-    // 最大6頭に制限
+    // 最大5頭に制限
     const opponents = horses
         .filter(h => h.number !== axisHorse.number)
         .sort((a, b) => {
@@ -84,7 +84,7 @@ function generateOneLineUmatanBets(horses) {
         })
         .map(h => h.number)
         .filter(Boolean)
-        .slice(0, 6); // 最大6頭
+        .slice(0, 5); // 最大5頭
 
     return {
         axis: axisHorse.number,
