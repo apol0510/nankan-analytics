@@ -217,6 +217,30 @@ export const prerender = true;
             </div>
         </div>
 
+        <!-- 常時表示CTA: プラン案内 -->
+        <div class="pricing-cta-section">
+            <div class="pricing-cta-card">
+                <div class="cta-header">
+                    <h2>🎯 もっと穴馬情報を活用しませんか？</h2>
+                    <p class="cta-subtitle">会員プランなら、より多くのレースの穴馬情報を毎日取得できます</p>
+                </div>
+                <div class="cta-plans">
+                    <div class="plan-box">
+                        <div class="plan-name">⭐ Standard</div>
+                        <div class="plan-feature">1日3レースまで</div>
+                    </div>
+                    <div class="plan-box premium">
+                        <div class="plan-name">👑 Premium</div>
+                        <div class="plan-feature">全レース無制限</div>
+                    </div>
+                </div>
+                <a href="/pricing" class="pricing-cta-button">
+                    <span>料金プランを見る</span>
+                    <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+
         <!-- SEO強化コンテンツ -->
         <section class="seo-content">
             <div class="content-card">
@@ -1323,6 +1347,144 @@ export const prerender = true;
 
         .cta-button.secondary:hover {
             background: rgba(59, 130, 246, 0.3);
+        }
+
+        /* 常時表示プライシングCTA */
+        .pricing-cta-section {
+            margin: 40px 0;
+            padding: 0 20px;
+        }
+
+        .pricing-cta-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .pricing-cta-card:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+        }
+
+        .cta-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-subtitle {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .cta-plans {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .plan-box {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px 30px;
+            min-width: 200px;
+            transition: all 0.3s;
+        }
+
+        .plan-box:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .plan-box.premium {
+            border-color: rgba(251, 191, 36, 0.4);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .plan-box.premium:hover {
+            border-color: rgba(251, 191, 36, 0.6);
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.3);
+        }
+
+        .plan-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #60a5fa;
+        }
+
+        .plan-box.premium .plan-name {
+            color: #fbbf24;
+        }
+
+        .plan-feature {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        .pricing-cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .pricing-cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 28px rgba(59, 130, 246, 0.5);
+        }
+
+        .pricing-cta-button .arrow {
+            font-size: 1.3rem;
+            transition: transform 0.3s;
+        }
+
+        .pricing-cta-button:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+            .cta-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .cta-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .cta-plans {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .plan-box {
+                min-width: 80%;
+            }
+
+            .pricing-cta-button {
+                font-size: 1rem;
+                padding: 14px 28px;
+            }
         }
 
         /* モーダル */
