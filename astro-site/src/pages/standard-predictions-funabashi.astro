@@ -151,29 +151,46 @@ export const dailyResultsData = {
     ],
 };
 
-// Standard会員向け1段構成買い目生成関数（本命軸のみ）
+// Standard会員向け1段構成買い目生成関数（本命軸 or 対抗軸の自動判定）
 function generateOneLineUmatanBets(horses) {
     // 配列チェック
     if (!Array.isArray(horses) || horses.length === 0) return null;
 
-    // 本命を特定
+    // 本命と対抗を特定
     const honmei = horses.find(h => h.role === '本命');
+    const taikou = horses.find(h => h.role === '対抗');
+
     if (!honmei) return null;
 
-    // 相手馬を役割順に並べる（対抗・単穴・連下・押さえ）
+    // 本命と対抗の点数差を確認（2ポイント以内なら対抗軸に切り替え）
+    let axisHorse = honmei;
+    let axisLabel = '本命';
+
+    if (taikou && honmei.score && taikou.score) {
+        const scoreDiff = honmei.score - taikou.score;
+        if (scoreDiff <= 2) {
+            axisHorse = taikou;
+            axisLabel = '対抗';
+            console.log(`🔄 軸を対抗に変更: 本命${honmei.score}点 vs 対抗${taikou.score}点 (差${scoreDiff}点)`);
+        }
+    }
+
+    // 相手馬を役割順に並べる（軸馬以外を対抗・単穴・連下・押さえの順）
     const opponents = horses
-        .filter(h => h.role !== '本命')
+        .filter(h => h.number !== axisHorse.number)
         .sort((a, b) => {
-            const order = { '対抗': 1, '単穴': 2, '連下': 3, '押さえ': 4 };
+            const order = { '本命': 0, '対抗': 1, '単穴': 2, '連下': 3, '押さえ': 4 };
             return (order[a.role] || 99) - (order[b.role] || 99);
         })
         .map(h => h.number)
         .filter(Boolean);
 
     return {
-        axis: honmei.number,
-        axisName: honmei.name,
-        opponents: opponents
+        axis: axisHorse.number,
+        axisName: axisHorse.name,
+        axisLabel: axisLabel,
+        opponents: opponents,
+        scoreDiff: taikou && honmei.score && taikou.score ? honmei.score - taikou.score : null
     };
 }
 
@@ -753,7 +770,12 @@ function generateOneLineUmatanBets(horses) {
                                         </h2>
 
                                         <div class="betting-formula">
-                                            <div class="formula-label">AI推奨軸</div>
+                                            <div class="formula-label">
+                                                AI推奨軸
+                                                {oneLineBets.scoreDiff !== null && oneLineBets.scoreDiff <= 2 && (
+                                                    <span class="axis-switch-note">（{oneLineBets.axisLabel}軸）</span>
+                                                )}
+                                            </div>
                                             <div class="formula-horse-name">{oneLineBets.axisName}</div>
                                             <div class="formula-content">
                                                 <span class="axis-number">{oneLineBets.axis}</span>
@@ -2429,6 +2451,13 @@ document.addEventListener('DOMContentLoaded', function() {
         color: #94a3b8;
         margin-bottom: 8px;
         text-align: center;
+    }
+
+    .axis-switch-note {
+        font-size: 0.85rem;
+        color: #f59e0b;
+        margin-left: 8px;
+        font-weight: 600;
     }
 
     .formula-horse-name {
