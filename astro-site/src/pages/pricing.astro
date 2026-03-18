@@ -165,37 +165,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </button>
             </div>
 
-            <!-- スタンダードプラン（非表示） -->
-            <div class="plan-card" style="display: none;">
+            <!-- ライトプラン（Standard） -->
+            <div class="plan-card">
                 <div class="plan-header">
-                    <h3 class="plan-name">スタンダード</h3>
+                    <h3 class="plan-name">ライト</h3>
                     <div class="plan-price">
-                        <span class="price-amount">¥5,980</span>
+                        <span class="price-amount">¥3,980</span>
                         <span class="price-period">/月</span>
                     </div>
-                    <p class="plan-description">後半戦で勝負したい方に</p>
+                    <p class="plan-description">少点数で勝負したい方に</p>
                 </div>
 
                 <ul class="plan-features">
                     <li class="feature-item">
                         <span class="check-icon">✓</span>
-                        <span>後半3レース（10R、11R、12R）</span>
+                        <span><strong>メインレース馬単買い目</strong></span>
                     </li>
                     <li class="feature-item">
                         <span class="check-icon">✓</span>
-                        <span>高精度AI予想</span>
+                        <span>最大5点の少点数</span>
                     </li>
                     <li class="feature-item">
                         <span class="check-icon">✓</span>
-                        <span>詳細な投資戦略</span>
+                        <span>本命/対抗の自動軸判定</span>
                     </li>
                     <li class="feature-item">
                         <span class="check-icon">✓</span>
-                        <span>優先サポート</span>
+                        <span>全レース予想（買い目なし）</span>
+                    </li>
+                    <li class="feature-item">
+                        <span class="check-icon">✓</span>
+                        <span>大井・川崎・浦和・船橋対応</span>
                     </li>
                 </ul>
 
-                <button class="plan-button plan-button-standard" onclick="openBankModal('Standard', 5980, 'monthly')">
+                <button class="plan-button plan-button-standard" onclick="openBankModal('Standard (ライト)', 3980, 'monthly')">
                     🏦 銀行振込で申し込む
                 </button>
             </div>
