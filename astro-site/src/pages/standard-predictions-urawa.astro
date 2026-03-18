@@ -151,6 +151,49 @@ export const dailyResultsData = {
     ],
 };
 
+// 2段構成の馬単買い目生成関数
+function generateTwoLineUmatanBets(horses) {
+    // 配列チェック
+    if (!Array.isArray(horses) || horses.length === 0) return null;
+
+    const honmei = horses.find(h => h.role === '本命');
+    const taikou = horses.find(h => h.role === '対抗');
+    const tananaList = horses.filter(h => h.role === '単穴');
+
+    if (!honmei || !taikou) return null;
+
+    const renkaList = horses.filter(h => h.role === '連下' || h.role === '押さえ');
+
+    // 本命軸の相手馬: 対抗 + 単穴 + 連下/押さえ(最大2頭)
+    const honmeiOpponents = [
+        taikou.number,
+        ...tananaList.map(h => h.number),
+        ...renkaList.slice(0, 2).map(h => h.number)
+    ].filter(Boolean);
+
+    // 対抗軸の相手馬: 本命 + 単穴 + 連下/押さえ(最大2頭)
+    const taikouOpponents = [
+        honmei.number,
+        ...tananaList.map(h => h.number),
+        ...renkaList.slice(0, 2).map(h => h.number)
+    ].filter(Boolean);
+
+    return {
+        honmei: {
+            axis: honmei.number,
+            axisName: honmei.name,
+            opponents: honmeiOpponents.slice(0, 5),
+            opponentsExtra: honmeiOpponents.slice(5)
+        },
+        taikou: {
+            axis: taikou.number,
+            axisName: taikou.name,
+            opponents: taikouOpponents.slice(0, 5),
+            opponentsExtra: taikouOpponents.slice(5)
+        }
+    };
+}
+
 ---
 
 <BaseLayout title="スタンダード会員予想" description={`AI技術による${track}メインレースの馬単買い目付き予想。機械学習モデルによる高精度予想のスタンダード版を提供中。`}>
@@ -714,210 +757,72 @@ export const dailyResultsData = {
                                 )}
                             </div>
 
-                            <!-- AI推奨投資戦略 -->
-                            {raceStrategies && (
-                                <div class="recommendation-section">
-                                    <h2 class="section-title">
-                                        <span>📊</span>
-                                        <span>AI推奨投資戦略 - 最適化買い目</span>
-                                    </h2>
+                            <!-- 2段構成の馬単買い目 -->
+                            {(() => {
+                                const twoLineBets = generateTwoLineUmatanBets(raceData.horses);
+                                if (!twoLineBets) return null;
 
-                                    <!-- 戦略1: 少点数的中型モデル -->
-                                    {raceStrategies.safe && (
-                                        <div class="bet-strategy">
-                                            <div class="strategy-title">🎯 少点数的中型モデル</div>
-                                            <div class="bet-list">
-                                                {raceData.strategies?.safe?.bets && raceData.strategies.safe.bets.map(bet => {
-                                                    // 🔧 復活防止対策: JSONデータ構造に対応した取得方法
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.numbers || bet?.horses || JSON.stringify(bet));
+                                return (
+                                    <div class="betting-section-two-line">
+                                        <h2 class="section-title">
+                                            <span>🎯</span>
+                                            <span>馬単買い目（2段構成）</span>
+                                        </h2>
 
-                                                    // 🔧 点数計算修正: 「X点」表記から正確に抽出
-                                                    let points = 1; // デフォルト
-                                                    if (betStr && typeof betStr === 'string') {
-                                                        // 「3点」のような表記から点数を抽出
-                                                        const pointMatch = betStr.match(/(\d+)点/);
-                                                        if (pointMatch) {
-                                                            points = parseInt(pointMatch[1]);
-                                                        } else {
-                                                            // フォールバック: 従来の計算方法
-                                                            if (betStr.includes('⇔')) {
-                                                                const parts = betStr.split('⇔');
-                                                                if (parts.length === 2) {
-                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
-                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
-                                                                    points = leftHorses.length * rightHorses.length * 2;
-                                                                }
-                                                            } else if (betStr.includes('→')) {
-                                                                const parts = betStr.split('→');
-                                                                if (parts.length === 2) {
-                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
-                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
-                                                                    points = leftHorses.length * rightHorses.length;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // 買い目表示用: 点数表記を除いた馬券部分のみ表示
-                                                    const displayBet = betStr.replace(/\s*\d+点\s*$/, '');
-
-                                                    return (
-                                                    <div class="bet-item">
-                                                        <span class="bet-type">馬単</span>
-                                                        <span class="bet-horses">{displayBet}</span>
-                                                        <span class="bet-points">{points}点</span>
-                                                    </div>
-                                                );
-                                            })}
+                                        {/* 本命軸 */}
+                                        <div class="formula-row honmei-axis">
+                                            <div class="axis-label">
+                                                <span class="icon">◎</span>
+                                                <span class="text">本命</span>
+                                                <span class="horse-name">{twoLineBets.honmei.axisName}</span>
+                                                <span class="separator">|</span>
+                                                <span class="number">{twoLineBets.honmei.axis}</span>
                                             </div>
-
-                                            <!-- プログレスバー信頼値 -->
-                                            <ProgressBarConfidence
-                                                strategyType="A"
-                                                progressConfidence={progressBarA.progressConfidence}
-                                                baseScore={progressBarA.baseScore}
-                                                reduction={progressBarA.reduction}
-                                                strategyTitle="🎯 少点数的中型モデル"
-                                            />
-
-                                            <div class="strategy-features">
-                                                <div class="feature-item">
-                                                    <span class="feature-label">🎯 的中重視</span>
-                                                    <span class="feature-badge blue">中</span>
-                                                </div>
-                                                <div class="feature-item">
-                                                    <span class="feature-label">💰 配当期待</span>
-                                                    <span class="feature-badge gray">低</span>
-                                                </div>
+                                            <div class="arrow">⇔</div>
+                                            <div class="opponents">
+                                                {twoLineBets.honmei.opponents.map((num, idx) => (
+                                                    <span key={idx} class="opponent-number">{num}</span>
+                                                ))}
+                                                {twoLineBets.honmei.opponentsExtra.length > 0 && (
+                                                    <span class="extra-opponents">
+                                                        ({twoLineBets.honmei.opponentsExtra.map((num, idx) => (
+                                                            <span key={idx} class="extra-number">{num}</span>
+                                                        ))})
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
-                                    )}
 
-                                    <!-- 戦略2: バランス型 -->
-                                    {raceStrategies.balance && (
-                                        <div class="bet-strategy">
-                                            <div class="strategy-title">⚖️ バランス型モデル</div>
-                                            <div class="bet-list">
-                                                {raceData.strategies?.balance?.bets && raceData.strategies.balance.bets.map(bet => {
-                                                    // 🔧 復活防止対策: JSONデータ構造に対応した取得方法
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.numbers || bet?.horses || JSON.stringify(bet) || '');
-
-                                                    // 🔧 点数計算修正: 「X点」表記から正確に抽出
-                                                    let points = 1; // デフォルト
-                                                    if (betStr && typeof betStr === 'string') {
-                                                        // 「3点」のような表記から点数を抽出
-                                                        const pointMatch = betStr.match(/(\d+)点/);
-                                                        if (pointMatch) {
-                                                            points = parseInt(pointMatch[1]);
-                                                        } else {
-                                                            // フォールバック: 従来の計算方法
-                                                            if (betStr.includes('⇔')) {
-                                                                const parts = betStr.split('⇔');
-                                                                if (parts.length === 2) {
-                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
-                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
-                                                                    points = leftHorses.length * rightHorses.length * 2;
-                                                                }
-                                                            } else if (betStr.includes('→')) {
-                                                                const parts = betStr.split('→');
-                                                                if (parts.length === 2) {
-                                                                    const leftHorses = parts[0].trim().split(',').filter(h => h.trim());
-                                                                    const rightHorses = parts[1].trim().split(/[,、]/).filter(h => h.trim());
-                                                                    points = leftHorses.length * rightHorses.length;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // 買い目表示用: 点数表記を除いた馬券部分のみ表示
-                                                    const displayBet = betStr.replace(/\s*\d+点\s*$/, '');
-
-                                                    return (
-                                                        <div class="bet-item">
-                                                            <span class="bet-type">馬単</span>
-                                                            <span class="bet-horses">{displayBet}</span>
-                                                            <span class="bet-points">{points}点</span>
-                                                        </div>
-                                                    );
-                                                })}
+                                        {/* 対抗軸 */}
+                                        <div class="formula-row taikou-axis">
+                                            <div class="axis-label">
+                                                <span class="icon">○</span>
+                                                <span class="text">対抗</span>
+                                                <span class="horse-name">{twoLineBets.taikou.axisName}</span>
+                                                <span class="separator">|</span>
+                                                <span class="number">{twoLineBets.taikou.axis}</span>
                                             </div>
-
-                                            <!-- プログレスバー信頼値 -->
-                                            <ProgressBarConfidence
-                                                strategyType="B"
-                                                progressConfidence={progressBarB.progressConfidence}
-                                                baseScore={progressBarB.baseScore}
-                                                reduction={progressBarB.reduction}
-                                                strategyTitle="⚖️ バランス型モデル"
-                                            />
-
-                                            <div class="strategy-features">
-                                                <div class="feature-item">
-                                                    <span class="feature-label">🎯 的中重視</span>
-                                                    <span class="feature-badge blue">中</span>
-                                                </div>
-                                                <div class="feature-item">
-                                                    <span class="feature-label">💰 配当期待</span>
-                                                    <span class="feature-badge blue">中</span>
-                                                </div>
+                                            <div class="arrow">⇔</div>
+                                            <div class="opponents">
+                                                {twoLineBets.taikou.opponents.map((num, idx) => (
+                                                    <span key={idx} class="opponent-number">{num}</span>
+                                                ))}
+                                                {twoLineBets.taikou.opponentsExtra.length > 0 && (
+                                                    <span class="extra-opponents">
+                                                        ({twoLineBets.taikou.opponentsExtra.map((num, idx) => (
+                                                            <span key={idx} class="extra-number">{num}</span>
+                                                        ))})
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
-                                    )}
 
-                                    <!-- 戦略3: 高配当狙い -->
-                                    {raceStrategies.aggressive && (
-                                        <div class="bet-strategy">
-                                            <div class="strategy-title">🚀 高配当追求型モデル</div>
-                                            <div class="bet-list">
-                                                {raceData.strategies?.aggressive?.bets && raceData.strategies.aggressive.bets.map(bet => {
-                                                    const betStr = typeof bet === 'string' ? bet : (bet?.horses || bet?.numbers || JSON.stringify(bet) || '');
-                                                    let points = 1;
-                                                    if (betStr && typeof betStr === 'string') {
-                                                        if (betStr.includes('⇔')) {
-                                                            const targets = betStr.split('⇔')[1]?.split(',').length || 1;
-                                                            points = targets * 2;
-                                                        } else if (betStr.includes('→')) {
-                                                            const targets = betStr.split('→')[1]?.split(',').length || 1;
-                                                            points = targets;
-                                                        }
-                                                    }
-
-                                                    // 買い目表示用: 点数表記を除いた馬券部分のみ表示
-                                                    const displayBet = betStr.replace(/\s*\d+点\s*$/, '');
-
-                                                    return (
-                                                        <div class="bet-item">
-                                                            <span class="bet-type">馬単</span>
-                                                            <span class="bet-horses">{displayBet}</span>
-                                                            <span class="bet-points">{points}点</span>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-
-                                            <!-- プログレスバー信頼値 -->
-                                            <ProgressBarConfidence
-                                                strategyType="C"
-                                                progressConfidence={progressBarC.progressConfidence}
-                                                baseScore={progressBarC.baseScore}
-                                                reduction={progressBarC.reduction}
-                                                strategyTitle="🚀 高配当追求型モデル"
-                                            />
-
-                                            <div class="strategy-features">
-                                                <div class="feature-item">
-                                                    <span class="feature-label">🎯 的中重視</span>
-                                                    <span class="feature-badge gray">低</span>
-                                                </div>
-                                                <div class="feature-item">
-                                                    <span class="feature-label">💰 配当期待</span>
-                                                    <span class="feature-badge green">高</span>
-                                                </div>
-                                            </div>
+                                        <div class="betting-note">
+                                            <p>※ ( ) 内は資金に余裕がある場合の追加買い目です</p>
                                         </div>
-                                    )}
-                                </div>
-                            )}
+                                    </div>
+                                );
+                            })()}
 
                         </div>
                     </div>
@@ -2538,6 +2443,169 @@ document.addEventListener('DOMContentLoaded', function() {
 
         .modal-title {
             font-size: 1.5rem;
+        }
+    }
+
+    /* 2段構成の馬単買い目スタイル */
+    .betting-section-two-line {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        padding: 30px;
+        margin: 30px 0;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+
+    .betting-section-two-line .section-title {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .formula-row {
+        background: white;
+        border-radius: 12px;
+        padding: 20px 25px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .formula-row .axis-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        min-width: 200px;
+    }
+
+    .formula-row .icon {
+        font-size: 1.5rem;
+    }
+
+    .honmei-axis .icon {
+        color: #dc2626;
+    }
+
+    .taikou-axis .icon {
+        color: #2563eb;
+    }
+
+    .formula-row .text {
+        color: #374151;
+        font-size: 0.95rem;
+    }
+
+    .formula-row .horse-name {
+        color: #1f2937;
+        font-weight: 800;
+        font-size: 1.15rem;
+    }
+
+    .formula-row .separator {
+        color: #9ca3af;
+        margin: 0 4px;
+    }
+
+    .formula-row .number {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 800;
+        font-size: 1.1rem;
+    }
+
+    .formula-row .arrow {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #667eea;
+        flex-shrink: 0;
+    }
+
+    .formula-row .opponents {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .formula-row .opponent-number {
+        background: #f3f4f6;
+        border: 2px solid #667eea;
+        color: #1f2937;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        transition: all 0.2s;
+    }
+
+    .formula-row .opponent-number:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .formula-row .extra-opponents {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    .formula-row .extra-number {
+        background: #e5e7eb;
+        border: 1px dashed #9ca3af;
+        color: #4b5563;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .betting-note {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        padding: 12px 20px;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    .betting-note p {
+        color: #4b5563;
+        font-size: 0.9rem;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .formula-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .formula-row .axis-label {
+            min-width: auto;
+            flex-wrap: wrap;
+        }
+
+        .formula-row .arrow {
+            align-self: center;
+        }
+
+        .formula-row .opponents {
+            width: 100%;
+            justify-content: center;
         }
     }
 
