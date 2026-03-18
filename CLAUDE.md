@@ -146,7 +146,7 @@ Free → Standard → Premium → Sanrenpuku/Combo → Plus
 
 Important
 
-- Standard: ライトプラン（募集停止中）
+- Standard: ライトプラン（募集中）
 - Premium Plus は単品商品
 - 三連複は Premium 有効期間内のみ
 - 飛び級不可
