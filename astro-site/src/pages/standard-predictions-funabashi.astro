@@ -176,23 +176,21 @@ function generateOneLineUmatanBets(horses) {
     }
 
     // 相手馬を馬番順に並べる（軸馬以外を番号順）
-    // ただし、対抗と単穴は必ず含める
+    // ただし、対抗は必ず含める
     const taikouHorse = horses.find(h => h.role === '対抗');
-    const tananaHorse = horses.find(h => h.role === '単穴');
+    const taikouNumber = taikouHorse?.number;
 
-    // 対抗と単穴の番号を取得
-    const mustInclude = [taikouHorse?.number, tananaHorse?.number].filter(Boolean);
-
-    // 対抗・単穴以外の馬を取得
+    // 対抗以外の馬を馬番順で取得
     const otherHorses = horses
         .filter(h => h.number !== axisHorse.number)
-        .filter(h => !mustInclude.includes(h.number))
+        .filter(h => h.number !== taikouNumber)
         .sort((a, b) => a.number - b.number) // 馬番順にソート
         .map(h => h.number)
         .filter(Boolean);
 
-    // 対抗・単穴を優先し、残り枠に他の馬を追加（最大5頭）
-    const opponents = [...mustInclude, ...otherHorses]
+    // 対抗を優先し、残り枠に他の馬を追加（最大5頭）
+    const opponents = [taikouNumber, ...otherHorses]
+        .filter(Boolean)
         .slice(0, 5)
         .sort((a, b) => a - b); // 最終的に馬番順でソート
 
