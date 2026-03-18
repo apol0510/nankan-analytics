@@ -804,82 +804,32 @@ function generateOneLineUmatanBets(horses) {
 
         </div>
 
-        <!-- 三連複導線セクション -->
+        <!-- Premium会員アップグレードCTA -->
         <div class="sanrenpuku-upsell-section" style="margin-bottom: 0;">
           <div class="sanrenpuku-upsell-card">
             <div class="upsell-icon-wrapper">
-              <span class="new-badge">NEW</span>
+              <span class="new-badge">UPGRADE</span>
             </div>
             <div class="upsell-content">
-              <h3 class="upsell-title">馬単の買い目が絞りきれない方へ</h3>
+              <h3 class="upsell-title">全レースの買い目を見たい方へ</h3>
               <p class="upsell-description">
-                <strong>馬単3戦略 → 絞り込み機能搭載</strong><br>
-                高性能AI自動判定で買い目を絞り込む三連複がおすすめです！
+                <strong>Premium会員なら全12レースの馬単買い目が見放題</strong><br>
+                メインレースだけでなく、1R〜12R全ての予想と買い目をご利用いただけます！
               </p>
               <div class="upsell-stats">
-                <span class="stat-highlight">📊 過去1年間：的中率72% 回収率156%</span>
-                <span class="stat-highlight">🎯 買い目点数：わずか7〜9点の少点数！</span>
+                <span class="stat-highlight">🏆 全レース対応：1R〜12Rまで買い目表示</span>
+                <span class="stat-highlight">📊 高精度AI予想：すべてのレースで利用可能</span>
               </div>
               <div class="upsell-buttons">
-                <a href="/sanrenpuku-demo" class="btn-sample">
-                  ✨ 絞り込み機能を実体験する
+                <a href="/archive/" class="btn-archive">
+                  📊 Premium実績を見る
                 </a>
-                <a href="/archive-sanrenpuku/" class="btn-archive">
-                  📊 三連複の実績を見る
+                <a href="/pricing/" class="btn-purchase-modal">
+                  ⬆️ Premiumにアップグレード
                 </a>
-                <button class="btn-purchase-modal" id="openPlanModal">
-                  ➕ 三連複を追加
-                </button>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- プラン変更モーダル -->
-        <div id="planSelectionModal" class="modal-overlay" style="display: none;">
-            <div class="modal-content">
-                <button class="modal-close" id="closePlanModal">&times;</button>
-
-                <h2 class="modal-title">🔄 三連複予想の買い切り購入</h2>
-                <p class="modal-subtitle">
-                    🔥 今だけ特別価格：¥108,000 → <strong>¥78,000</strong>（永久アクセス）
-                </p>
-
-                <!-- 安心メッセージ -->
-                <div class="modal-info">
-                    <h3>✅ 買い切りプランの特徴</h3>
-                    <ul>
-                        <li>💰 <strong>一度きりの支払いで永久アクセス</strong>（追加料金なし）</li>
-                        <li>🔄 <strong>即座に利用開始</strong> - 決済後すぐに高性能AI三連複の自動絞り込み機能が利用可能</li>
-                        <li>📈 <strong>AIは毎日進化</strong> - 長く使うほどお得（50年利用で月額換算¥130）</li>
-                    </ul>
-                </div>
-
-                <!-- プラン選択 -->
-                <div class="plan-options">
-                    <!-- Sanrenpuku Lifetime -->
-                    <div class="plan-option recommended">
-                        <span class="recommended-badge">馬単予想 + 三連複予想の両方を利用する</span>
-                        <h4 class="plan-name">Sanrenpuku Lifetime</h4>
-                        <p class="plan-subtitle">AI三連複（Premium期限内閲覧可能）</p>
-                        <div class="plan-price">
-                            <span class="price-strike">¥108,000</span>
-                            <span class="price-main">¥78,000</span>
-                            <span class="price-period">永久</span>
-                        </div>
-                        <p class="plan-savings">永久アクセス（追加料金なし）</p>
-                        <ul class="plan-features">
-                            <li>✅ AI三連複絞り込み買い目</li>
-                            <li>✅ 7〜9点の少点数買い目</li>
-                            <li>✅ Premium会員の間はずっと利用可能</li>
-                        </ul>
-                        <button class="plan-btn primary" onclick="openBankModal('Premium Sanrenpuku Lifetime', 78000, 'lifetime')">
-                            🏦 銀行振込で申し込む
-                        </button>
-                    </div>
-
-                </div>
-            </div>
         </div>
 
     </AccessControl>
@@ -1178,33 +1128,6 @@ window.setTestAuth = function(plan) {
 console.log('%c🔑 テスト認証機能が利用可能です', 'color: #60a5fa; font-weight: bold;');
 console.log('%c使用方法: setTestAuth("standard") または setTestAuth("premium")', 'color: #94a3b8;');
 
-// プラン変更モーダル制御
-document.addEventListener('DOMContentLoaded', function() {
-    const openBtn = document.getElementById('openPlanModal');
-    const closeBtn = document.getElementById('closePlanModal');
-    const modal = document.getElementById('planSelectionModal');
-
-    if (openBtn && modal) {
-        openBtn.addEventListener('click', function() {
-            modal.style.display = 'flex';
-        });
-    }
-
-    if (closeBtn && modal) {
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
-    }
-
-    // モーダル外クリックで閉じる
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-    }
-});
 </script>
 
 <style>
