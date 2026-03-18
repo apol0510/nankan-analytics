@@ -75,14 +75,15 @@ function generateOneLineUmatanBets(horses) {
     }
 
     // 相手馬を馬番順に並べる（軸馬以外を番号順）
-    // ただし、対抗は必ず含める
+    // ただし、対抗は必ず含める、押さえは除外
     const taikouHorse = horses.find(h => h.role === '対抗');
     const taikouNumber = taikouHorse?.number;
 
-    // 対抗以外の馬を馬番順で取得
+    // 対抗以外の馬を馬番順で取得（押さえは除外）
     const otherHorses = horses
         .filter(h => h.number !== axisHorse.number)
         .filter(h => h.number !== taikouNumber)
+        .filter(h => h.role !== '押さえ') // 押さえを除外
         .sort((a, b) => a.number - b.number) // 馬番順にソート
         .map(h => h.number)
         .filter(Boolean);
