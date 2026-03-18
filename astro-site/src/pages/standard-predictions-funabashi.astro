@@ -175,14 +175,11 @@ function generateOneLineUmatanBets(horses) {
         }
     }
 
-    // 相手馬を役割順に並べる（軸馬以外を対抗・単穴・連下・押さえの順）
+    // 相手馬を馬番順に並べる（軸馬以外を番号順）
     // 最大5頭に制限
     const opponents = horses
         .filter(h => h.number !== axisHorse.number)
-        .sort((a, b) => {
-            const order = { '本命': 0, '対抗': 1, '単穴': 2, '連下': 3, '押さえ': 4 };
-            return (order[a.role] || 99) - (order[b.role] || 99);
-        })
+        .sort((a, b) => a.number - b.number) // 馬番順にソート
         .map(h => h.number)
         .filter(Boolean)
         .slice(0, 5); // 最大5頭
