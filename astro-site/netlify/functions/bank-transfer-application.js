@@ -324,21 +324,26 @@ exports.handler = async (event, context) => {
 
       // PlanTypeを判定（Lifetime, Annual, Monthly）
       let planType = 'Monthly';  // デフォルト
-      if (fullPlanName.includes('Lifetime')) {
+      if (fullPlanName.includes('Lifetime') || fullPlanName.includes('買い切り')) {
         planType = 'Lifetime';
-      } else if (fullPlanName.includes('Annual')) {
+      } else if (fullPlanName.includes('Annual') || fullPlanName.includes('年払い')) {
         planType = 'Annual';
-      } else if (fullPlanName.includes('Monthly')) {
+      } else if (fullPlanName.includes('Monthly') || fullPlanName.includes('30日')) {
         planType = 'Monthly';
       }
 
       // プラン名を正規化（Airtable Single select用）
       // "Premium Lifetime" → "Premium"
-      // "Premium Annual" → "Premium"
-      // "Premium Monthly" → "Premium"
+      // "Premium 買い切り" → "Premium"
+      // "Premium 年払い (Standard Upgrade)" → "Premium"
+      // "Premium 30日 (Standard Upgrade)" → "Premium"
       // "Premium Sanrenpuku Lifetime" → "Premium Sanrenpuku"
+      // "Standard (ライト) - Campaign" → "Standard"
       const planName = fullPlanName
-        .replace(/\s+(Lifetime|Annual|Monthly)$/, '')  // 末尾のLifetime/Annual/Monthlyを削除
+        .replace(/\s*\(Standard Upgrade\)/, '')  // (Standard Upgrade)を削除
+        .replace(/\s*-\s*Campaign/, '')  // - Campaignを削除
+        .replace(/\s*\(ライト\)/, '')  // (ライト)を削除
+        .replace(/\s+(Lifetime|Annual|Monthly|買い切り|年払い|30日)$/, '')  // 末尾のプラン種別を削除
         .trim();
 
       // 有効期限計算（2026-02-09価格体系）
