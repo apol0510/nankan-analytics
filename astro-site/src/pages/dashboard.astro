@@ -1411,7 +1411,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             // 無料予想の表示制御
             if (planLower === 'free' || planLower === '' || !planLower) {
-                console.log('無料予想を表示（Free会員・大井＋船橋＋浦和）');
+                console.log('無料予想を表示（Free会員・メイン＋船橋＋浦和）');
                 document.getElementById('free-predictions').style.display = 'block';
                 document.getElementById('free-predictions-funabashi').style.display = 'block';
                 document.getElementById('free-predictions-urawa').style.display = 'block';
@@ -1424,7 +1424,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             // Standard予想の表示制御（Standard会員のみ・既存会員のみ表示）
             if (planLower === 'standard') {
-                console.log('Standard予想を表示（大井のみ）');
+                console.log('Standard予想を表示（メインのみ）');
                 document.getElementById('standard-predictions').style.display = 'block';
             } else {
                 console.log('Standard予想を非表示');
@@ -1433,7 +1433,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             // Premium予想の表示制御（プラン別）
             if (planLower === 'premium') {
-                // Premium会員：馬単予想のみ（大井＋船橋＋浦和）
+                // Premium会員：馬単予想のみ（メイン＋船橋＋浦和）
                 console.log('Premium予想を表示（馬単のみ）');
                 document.getElementById('premium-predictions').style.display = 'block';
                 document.getElementById('premium-predictions-funabashi').style.display = 'block';
@@ -1448,7 +1448,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 document.getElementById('sanrenpuku-predictions').style.display = 'block';
                 document.getElementById('combo-umatan-predictions').style.display = 'block';
             } else if (planLower === 'premium plus') {
-                // Premium Plus会員：Premium予想表示（大井＋船橋＋浦和）
+                // Premium Plus会員：Premium予想表示（メイン＋船橋＋浦和）
                 console.log('Premium Plus予想を表示');
                 document.getElementById('premium-predictions').style.display = 'block';
                 document.getElementById('premium-predictions-funabashi').style.display = 'block';
