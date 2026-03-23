@@ -53,12 +53,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <div class="price-comparison">
                             <div class="original-price">
                                 <span class="price-label">通常価格</span>
-                                <span class="price-value strike">¥5,980<span class="price-period-inline">/月</span></span>
+                                <span class="price-value strike">¥5,980<span class="price-period-inline">/30日</span></span>
                             </div>
                             <div class="arrow-down">↓</div>
                             <div class="campaign-price">
                                 <span class="price-label">キャンペーン価格</span>
-                                <span class="price-value highlight">¥3,980<span class="price-period-inline highlight-period">/月</span></span>
+                                <span class="price-value highlight">¥3,980<span class="price-period-inline highlight-period">/30日</span></span>
                             </div>
                         </div>
                         <div class="price-save">2,000円OFF！</div>
@@ -150,7 +150,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <h3 class="faq-question">Q: キャンペーン価格はいつまで適用されますか？</h3>
                     <p class="faq-answer">
                         3月25日(水) 23:59までにお申し込みいただいた方が対象です。
-                        キャンペーン中にお申し込みいただければ、<strong>ご利用中は¥3,980/月のまま</strong>ご継続いただけます。
+                        キャンペーン中にお申し込みいただければ、<strong>ご利用中は¥3,980/30日のまま</strong>ご継続いただけます。
                     </p>
                 </div>
 
@@ -181,9 +181,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     通常¥5,980が今だけ¥3,980。
                 </p>
                 <div class="final-price">
-                    <span class="final-price-strike">¥5,980/月</span>
+                    <span class="final-price-strike">¥5,980/30日</span>
                     <span class="final-price-arrow">→</span>
-                    <span class="final-price-value">¥3,980/月</span>
+                    <span class="final-price-value">¥3,980/30日</span>
                 </div>
                 <button class="cta-button large" onclick="openBankModal('Standard (ライト) - Campaign', 3980, 'monthly')">
                     🏦 今すぐ申し込む
@@ -346,7 +346,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     currentAmount = amount;
     currentPlanType = planType;
 
-    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/月)`;
+    document.getElementById('modalPlanInfo').textContent = `プラン: ${planName} (¥${amount.toLocaleString()}/30日)`;
     document.getElementById('modalAmount').textContent = `¥${amount.toLocaleString()}`;
     document.getElementById('transferAmount').value = amount;
     document.getElementById('bankModal').classList.add('active');
@@ -417,7 +417,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           transferAmount: document.getElementById('transferAmount').value,
           transferName: document.getElementById('fullName').value,
           remarks: document.getElementById('remarks').value,
-          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/月)`,
+          productName: `${currentPlan} (¥${currentAmount.toLocaleString()}/30日)`,
           timestamp: new Date().toISOString()
         };
 
