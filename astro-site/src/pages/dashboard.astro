@@ -4146,33 +4146,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
     </div>
 
-    <!-- プラン変更モーダル（Standard会員用 - Premium買い切りのみ） -->
+    <!-- プラン変更モーダル（Standard会員用 - Premium 3プラン） -->
     <div id="standardPlanModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <button class="modal-close" id="closeStandardModal">&times;</button>
 
-            <h2 class="modal-title">⬆️ プレミアム買い切り</h2>
+            <h2 class="modal-title">⬆️ プレミアムへアップグレード</h2>
             <p class="modal-subtitle">
-                🔥 今だけ特別価格：¥108,000 → <strong>¥78,000</strong>（永久アクセス）
+                全レース（1R〜12R）の予想・買い目が利用可能に
             </p>
-
-            <!-- 安心メッセージ -->
-            <div class="modal-info">
-                <h3>✅ 買い切りプランの特徴</h3>
-                <ul>
-                    <li>💰 <strong>一度きりの支払いで永久アクセス</strong>（追加料金なし）</li>
-                    <li>🔄 <strong>即座に利用開始</strong> - 決済後すぐに全機能が利用可能</li>
-                    <li>📈 <strong>AIは毎日進化</strong> - 長く使うほどお得（50年利用で月額換算¥130）</li>
-                </ul>
-            </div>
 
             <!-- プラン選択 -->
             <div class="plan-options">
                 <!-- Premium 買い切り -->
-                <div class="plan-option">
-                    <div class="plan-badge-normal">全レース馬単予想</div>
+                <div class="plan-option recommended">
+                    <div class="recommended-badge">おすすめ</div>
                     <h3 class="plan-option-name">Premium 買い切り</h3>
-                    <div class="plan-option-subtitle">全レース対応・馬単3戦略</div>
+                    <div class="plan-option-subtitle">一度きりの支払いで永久アクセス</div>
                     <div class="plan-option-price-strike">¥108,000</div>
                     <div class="plan-option-price">¥78,000</div>
                     <div class="plan-option-discount">永久アクセス（追加料金なし）</div>
@@ -4180,12 +4170,45 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <li>✅ <strong>全12レース</strong>の馬単予想</li>
                         <li>✅ <strong>3戦略</strong>買い目パターン</li>
                         <li>✅ AI精密分析</li>
-                        <li>✅ 永久アクセス（追加料金なし）</li>
+                        <li>✅ 追加料金なし</li>
                     </ul>
                     <button class="btn-plan premium" onclick="openBankModal('Premium 買い切り', 78000, 'lifetime')">
                         🏦 銀行振込で申し込む
                     </button>
-                    <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
+                </div>
+
+                <!-- Premium 年払い -->
+                <div class="plan-option">
+                    <div class="plan-badge-normal">年払い</div>
+                    <h3 class="plan-option-name">Premium 年払い</h3>
+                    <div class="plan-option-subtitle">年間一括でお得に利用</div>
+                    <div class="plan-option-price">¥68,000</div>
+                    <div class="plan-option-discount">/年</div>
+                    <ul class="plan-option-features">
+                        <li>✅ <strong>全12レース</strong>の馬単予想</li>
+                        <li>✅ <strong>3戦略</strong>買い目パターン</li>
+                        <li>✅ AI精密分析</li>
+                    </ul>
+                    <button class="btn-plan premium" onclick="openBankModal('Premium 年払い', 68000, 'yearly')">
+                        🏦 銀行振込で申し込む
+                    </button>
+                </div>
+
+                <!-- Premium 30日 -->
+                <div class="plan-option">
+                    <div class="plan-badge-normal">30日</div>
+                    <h3 class="plan-option-name">Premium 30日</h3>
+                    <div class="plan-option-subtitle">まずは試したい方に</div>
+                    <div class="plan-option-price">¥18,000</div>
+                    <div class="plan-option-discount">/30日</div>
+                    <ul class="plan-option-features">
+                        <li>✅ <strong>全12レース</strong>の馬単予想</li>
+                        <li>✅ <strong>3戦略</strong>買い目パターン</li>
+                        <li>✅ AI精密分析</li>
+                    </ul>
+                    <button class="btn-plan premium" onclick="openBankModal('Premium 30日', 18000, 'monthly')">
+                        🏦 銀行振込で申し込む
+                    </button>
                 </div>
             </div>
 
@@ -4193,8 +4216,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="modal-flow">
                 <h3>📋 購入後の流れ</h3>
                 <ol>
-                    <li><strong>今すぐ利用開始</strong> - 購入後すぐに全レースの予想が利用可能</li>
-                    <li><strong>プラン切替</strong> - 決済後に自動でプレミアムに切り替わります</li>
+                    <li><strong>今すぐ利用開始</strong> - 入金確認後すぐに全レースの予想が利用可能</li>
+                    <li><strong>プラン切替</strong> - プレミアムに切り替わります</li>
                 </ol>
             </div>
         </div>
