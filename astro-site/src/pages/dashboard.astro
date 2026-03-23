@@ -4146,12 +4146,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
     </div>
 
-    <!-- プラン変更モーダル（Standard会員用 - 全プラン3択） -->
+    <!-- プラン変更モーダル（Standard会員用 - Premium買い切りのみ） -->
     <div id="standardPlanModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <button class="modal-close" id="closeStandardModal">&times;</button>
 
-            <h2 class="modal-title">⬆️ 三連複予想の買い切り購入</h2>
+            <h2 class="modal-title">⬆️ プレミアム買い切り</h2>
             <p class="modal-subtitle">
                 🔥 今だけ特別価格：¥108,000 → <strong>¥78,000</strong>（永久アクセス）
             </p>
@@ -4187,35 +4187,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </button>
                     <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
                 </div>
-
-                <!-- Sanrenpuku Lifetime -->
-                <div class="plan-option recommended">
-                    <div class="recommended-badge">おすすめ</div>
-                    <h3 class="plan-option-name">Sanrenpuku Lifetime</h3>
-                    <div class="plan-option-subtitle">高性能AI三連複自動絞り込み（Premium期限内閲覧可能）</div>
-                    <div class="plan-option-price-strike">¥108,000</div>
-                    <div class="plan-option-price">¥78,000</div>
-                    <div class="plan-option-discount">永久アクセス（追加料金なし）</div>
-                    <ul class="plan-option-features">
-                        <li>✅ <strong>高性能AI三連複絞り込み機能</strong></li>
-                        <li>✅ 的中率72% 回収率156%</li>
-                        <li>✅ 買い目点数7-9点の少点数</li>
-                        <li>✅ 永久アクセス（追加料金なし）</li>
-                        <li>✅ Premium会員の間はずっと利用可能</li>
-                    </ul>
-                    <button class="btn-plan combo" onclick="openBankModal('Premium Sanrenpuku Lifetime', 78000, 'lifetime')">
-                        🏦 銀行振込で申し込む
-                    </button>
-                    <p class="plan-note">🔥 今だけ特別価格：¥108,000 → ¥78,000</p>
-                </div>
             </div>
 
-            <!-- プラン変更後の流れ -->
+            <!-- 購入後の流れ -->
             <div class="modal-flow">
-                <h3>📋 プラン変更後の流れ</h3>
+                <h3>📋 購入後の流れ</h3>
                 <ol>
-                    <li><strong>今すぐ利用開始</strong> - 変更後すぐに全機能が利用可能</li>
-                    <li><strong>プラン変更</strong> - 決済後に自動で新プランに切り替わります</li>
+                    <li><strong>今すぐ利用開始</strong> - 購入後すぐに全レースの予想が利用可能</li>
+                    <li><strong>プラン切替</strong> - 決済後に自動でプレミアムに切り替わります</li>
                 </ol>
             </div>
         </div>
