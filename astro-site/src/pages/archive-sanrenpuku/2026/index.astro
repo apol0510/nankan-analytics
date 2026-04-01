@@ -9,9 +9,8 @@ const year = '2026';
 const yearData = {
   ...archiveData2026_01[year],
   ...archiveData2026_02[year],
-  ...archiveData2026_03[year]
-,
-  ...archiveData2026_04['2026']
+  ...archiveData2026_03[year],
+  ...archiveData2026_04[year]
 };
 const months = Object.keys(yearData).sort().reverse(); // 新しい順
 
