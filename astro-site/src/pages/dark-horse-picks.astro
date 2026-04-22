@@ -417,7 +417,7 @@ export const prerender = true;
         // 解決: バージョン番号 + darkHorseData.jsonのdata.dateの二重チェック
         // ⚠️ 絶対に削除・変更してはいけない: このシステムがないと古いボタン状態が残り続ける
         function loadUsedPicks() {
-            const STORAGE_VERSION = '2026-04-22'; // ⚠️ darkHorseData更新時にこの日付も更新すること
+            const STORAGE_VERSION = '2026-04-23'; // ⚠️ darkHorseData更新時にこの日付も更新すること
             const dataDate = "{data.date}"; // darkHorseData.jsonの日付を使用
             const stored = localStorage.getItem(STORAGE_KEY);
 
@@ -456,7 +456,7 @@ export const prerender = true;
 
         // 使用済みレース保存（バージョン情報付き）
         function saveUsedPicks() {
-            const STORAGE_VERSION = '2026-04-22'; // ⚠️ loadUsedPicks()と同じバージョン番号を使用
+            const STORAGE_VERSION = '2026-04-23'; // ⚠️ loadUsedPicks()と同じバージョン番号を使用
             const dataDate = "{data.date}"; // darkHorseData.jsonの日付を使用
             const data = {
                 version: STORAGE_VERSION, // 🔴 バージョン番号追加（ブラウザキャッシュ対策）
