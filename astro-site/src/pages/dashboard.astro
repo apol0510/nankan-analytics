@@ -164,7 +164,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </div>
 
                     <!-- 船橋競馬 無料予想 -->
-                    <div id="free-predictions-funabashi" class="prediction-card free">
+                    <div id="free-predictions-funabashi" class="prediction-card free" style="display: none;">
                         <div class="card-header">
                             <h3>🎁 船橋競馬 無料予想</h3>
                             <span class="plan-badge free">FREE</span>
@@ -177,7 +177,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     </div>
 
                     <!-- 浦和競馬 無料予想 -->
-                    <div id="free-predictions-urawa" class="prediction-card free">
+                    <div id="free-predictions-urawa" class="prediction-card free" style="display: none;">
                         <div class="card-header">
                             <h3>🎁 浦和競馬 無料予想</h3>
                             <span class="plan-badge free">FREE</span>
@@ -1409,12 +1409,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             const planLower = (plan || '').toLowerCase();
 
-            // 無料予想の表示制御
+            // 無料予想の表示制御（船橋・浦和は非表示）
             if (planLower === 'free' || planLower === '' || !planLower) {
-                console.log('無料予想を表示（Free会員・メイン＋船橋＋浦和）');
+                console.log('無料予想を表示（Free会員・メインのみ）');
                 document.getElementById('free-predictions').style.display = 'block';
-                document.getElementById('free-predictions-funabashi').style.display = 'block';
-                document.getElementById('free-predictions-urawa').style.display = 'block';
+                document.getElementById('free-predictions-funabashi').style.display = 'none';
+                document.getElementById('free-predictions-urawa').style.display = 'none';
             } else {
                 console.log('無料予想を非表示（有料会員）');
                 document.getElementById('free-predictions').style.display = 'none';
