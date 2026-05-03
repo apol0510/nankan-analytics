@@ -7,6 +7,7 @@ import archiveData2026_01 from '../../data/archiveResults_2026-01.json';
 import archiveData2026_02 from '../../data/archiveResults_2026-02.json';
 import archiveData2026_03 from '../../data/archiveResults_2026-03.json';
 import archiveData2026_04 from '../../data/archiveResults_2026-04.json';
+import archiveData2026_05 from '../../data/archiveResults_2026-05.json';
 
 // 全月のデータを統合
 const archiveData = {
@@ -20,6 +21,10 @@ const archiveData = {
     ...archiveData2026_02['2026'],
     ...archiveData2026_03['2026'],
     ...archiveData2026_04['2026']
+  }
+,
+  '2026': {
+    ...archiveData2026_05['2026']
   }
 };
 
