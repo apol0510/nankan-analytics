@@ -44,21 +44,19 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
-# 🚨 旧ドメイン → 新ドメイン リダイレクト（最優先）
+# 🚨 旧ドメイン → 新ドメイン リダイレクト（最優先 / Host condition で確実に発火）
 # nankan-analytics.keiba.link/* → https://analytics.keiba.link/:splat
 #
-# 注: Netlify は redirect の to を "/.netlify/..." で始められないため
-# functions 除外ルールは書けない（書くと netlify.toml の redirects 全体が
-# パースエラーで無効化される）。Netlify Edge が予約パス /.netlify/functions/*
-# を内部で先に処理するため、force=true でも admin tool 経由の POST など
-# functions 呼び出しはそのまま旧ドメインで通る。
-#
-# 一時的に 302 で運用。完全移行確認後に status = 301 に切り替える。
+# 絶対URL from の書き方では Netlify が同サイト紐付ドメインを自己リダイレクトと
+# 認識してスキップしてしまうため、conditions = { Host = ... } 方式で書く。
+# public/_redirects にも同等のルールを置いており二重に確実化。
+# 一時的に 302。完全移行確認後に status = 301 に切替予定。
 [[redirects]]
-  from = "https://nankan-analytics.keiba.link/*"
+  from = "/*"
   to = "https://analytics.keiba.link/:splat"
   status = 302
   force = true
+  conditions = {Host = ["nankan-analytics.keiba.link"]}
 
 [[redirects]]
   from = "/tokutei"

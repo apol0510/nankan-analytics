@@ -1,2 +1,12 @@
+# 🚨 旧ドメイン → 新ドメイン リダイレクト（最優先 / Host condition で確実に発火）
+# nankan-analytics.keiba.link/* → https://analytics.keiba.link/:splat
+# - 302 一時リダイレクト（完全移行確認後に 301 に切替）
+# - ! suffix で force=true（既存ファイルより優先）
+# - Host=nankan-analytics.keiba.link で旧ドメインからのアクセスのみ対象
+/*  https://analytics.keiba.link/:splat  302!  Host=nankan-analytics.keiba.link
+
+# API Routes - SSR function
 /api/*  /.netlify/functions/ssr  200
+
+# SPA fallback
 /*      /index.html               200
