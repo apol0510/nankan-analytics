@@ -32,3 +32,16 @@
   for = "*.js"
   [headers.values]
     Cache-Control = "max-age=31536000, immutable"
+
+# 🚨 旧ドメイン → 新ドメイン リダイレクト
+# nankan-analytics.keiba.link/* → https://analytics.keiba.link/:splat
+# - 一時的に 302 で運用。完全移行確認後に 301 に切り替える
+# - force = true: 既存ファイルがあっても強制的に新ドメインへ飛ばす
+# - Netlify Edge は予約パス /.netlify/functions/* を redirects 評価前に
+#   内部処理するため、admin tool 経由の POST など functions 呼び出しは
+#   そのまま旧ドメインで通る想定
+[[redirects]]
+  from = "https://nankan-analytics.keiba.link/*"
+  to = "https://analytics.keiba.link/:splat"
+  status = 302
+  force = true
