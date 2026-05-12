@@ -126,30 +126,6 @@ Standard買い目 | 下記参照
 
 ---
 
-## Repository Rule
-
-Allowed
-
-
-/Users/apolon/Projects/nankan-analytics
-
-
-Forbidden
-
-
-/Users/apolon/Projects/Keiba review platform
-/Users/apolon/Projects/nankan-analytics-pro
-/Users/apolon/Projects/*
-
-
-Correct search
-
-
-grep -r "pattern" /Users/apolon/Projects/nankan-analytics/astro-site
-
-
----
-
 ## Data Rule
 
 Master
@@ -285,6 +261,18 @@ docs/MAINTENANCE_HISTORY.md
 
 
 ---
+
+## Python実行ルール
+
+- `python3 -c "..."` の複数行実行は禁止
+- Python は必ず heredoc 形式で実行する: `python3 <<'PY' ... PY`
+- Bash文字列内に `#` コメントを入れない
+
+## 結果更新ルール
+
+- 「馬単結果更新」「三連複結果更新」と指示されたら確認を求めず即座に全手順を実行する
+- 月別ファイル内の最新日をそのまま採用する
+- 月替わりでも確認を求めず自動で対象月を判定する
 
 ## Rule
 
