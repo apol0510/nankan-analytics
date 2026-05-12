@@ -46,14 +46,22 @@
 
 # 🚨 旧ドメイン → 新ドメイン リダイレクト（最優先）
 # nankan-analytics.keiba.link/* → https://analytics.keiba.link/:splat
-# 一時的に 302 で運用（メール・ブックマーク・キャッシュ経由でも新サイトに到達できる保険）
-# force = false: .netlify/functions/* など既存ルーティングは優先されるため POST系処理は壊れない
-# 完全移行確認後に status = 301 に切り替える
+#
+# 1. 先に .netlify/functions/* を「同ホスト内に rewrite」で除外
+#    （POST系・Webhook・admin 操作の API を壊さないため）
+# 2. その下で旧ドメインの通常ページを新ドメインへ強制リダイレクト（force = true）
+# 3. 一時的に 302 で運用。完全移行確認後に status = 301 に切り替える
+[[redirects]]
+  from = "https://nankan-analytics.keiba.link/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "https://nankan-analytics.keiba.link/*"
   to = "https://analytics.keiba.link/:splat"
   status = 302
-  force = false
+  force = true
 
 [[redirects]]
   from = "/tokutei"
