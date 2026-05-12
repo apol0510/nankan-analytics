@@ -100,7 +100,7 @@ export const handler = async (event, context) => {
     }
     
     // マジックリンク生成
-    const siteUrl = process.env.SITE_URL || 'https://nankan-analytics.keiba.link';
+    const siteUrl = process.env.SITE_URL || 'https://analytics.keiba.link';
     const magicLink = `${siteUrl}/dashboard?token=${token}&email=${encodeURIComponent(email)}`;
     
     // メール送信（Resend使用）

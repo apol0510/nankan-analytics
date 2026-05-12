@@ -44,6 +44,17 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
+# 🚨 旧ドメイン → 新ドメイン リダイレクト（最優先）
+# nankan-analytics.keiba.link/* → https://analytics.keiba.link/:splat
+# 一時的に 302 で運用（メール・ブックマーク・キャッシュ経由でも新サイトに到達できる保険）
+# force = false: .netlify/functions/* など既存ルーティングは優先されるため POST系処理は壊れない
+# 完全移行確認後に status = 301 に切り替える
+[[redirects]]
+  from = "https://nankan-analytics.keiba.link/*"
+  to = "https://analytics.keiba.link/:splat"
+  status = 302
+  force = false
+
 [[redirects]]
   from = "/tokutei"
   to = "/legal"
